@@ -1,0 +1,78 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci:
+    name: Check Coding Standards
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup castor
+        uses: castor-php/setup-castor@v0.1.0
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: 'ghcr.io'
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and start the test infrastructure
+        run: castor docker:build
+
+      - name: Install dependencies
+        run: castor backend:install
+
+      - name: Install qa tools
+        run: castor qa:install
+
+      - name: PHP CS
+        run: castor qa:cs --dry-run
+
+      - name: PHPStan
+        run: castor qa:phpstan
+
+      - name: Twig linter
+        run: castor qa:twig-cs --dry-run
+
+      - name: Lint the documentation
+        run: castor qa:doctor-rst --error-format=github
+
+  tests:
+    name: Run tests for PHP ${{ matrix.php-versions }}
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 15
+      matrix:
+        php-versions:  ['8.3', '8.4']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup castor
+        uses: castor-php/setup-castor@v0.1.0
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: 'ghcr.io'
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and start the test infrastructure
+        run: castor docker:build --php-version ${{ matrix.php-versions }}
+
+      - name: Install dependencies
+        run: castor backend:install --php-version ${{ matrix.php-versions }}
+
+      - name: Run tests
+        run: castor qa:phpunit --php-version ${{ matrix.php-versions }}

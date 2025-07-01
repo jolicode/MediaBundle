@@ -1,0 +1,312 @@
+{% extends ea.templatePath('layout') %}
+{% trans_default_domain 'JoliMediaEasyAdminBundle' %}
+
+{% block body_class 'ea-detail' %}
+
+{% block content_title %}
+    {{ file|basename }}
+{% endblock %}
+
+{% block content_footer_wrapper '' %}
+
+{% block content_top_header %}
+    {% set has_search = true %}
+    {{ parent() }}
+{% endblock %}
+
+{% block search %}
+    {% if breadcrumb|length >= 1 %}
+        <ul class="breadcrumb m-0 p-0 bg-transparent">
+            {% for element in breadcrumb %}
+                <li class="breadcrumb-item breadcrumb-item--ellipsis{{ loop.last ? ' active' : '' }}">
+                    {% if loop.last %}
+                        {{ element.name }}
+                    {% else %}
+                        <a href="{{ element.url }}">{{ element.name }}</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
+
+{% block page_actions %}
+    <a
+        href="{{ ea_url().setRoute('joli_media_easy_admin_choose_directory') }}&routeParams%5Bkey%5D="
+        data-folder="{{ media.folderPath }}"
+        data-bs-toggle="modal"
+        data-bs-target="#modal-folder-choice"
+        class="btn btn-secondary pr-0"
+        data-component="media-move"
+    >
+        <i class="fa fa-folder-tree"></i> {{ 'action.move_file'|trans }}
+    </a>
+    <a
+        class="btn btn-secondary pr-0"
+        data-component="media-rename"
+    >
+        <i class="fa fa-pen-to-square"></i> {{ 'action.rename_file'|trans }}
+    </a>
+
+    <a
+        href="{{ ea_url().setRoute('joli_media_easy_admin_delete') }}"
+        class="action-delete btn btn-secondary pr-0 text-danger"
+        data-bs-toggle="modal"
+        data-bs-target="#modal-delete"
+        formaction="{{ ea_url().setRoute('joli_media_easy_admin_delete') }}"
+    >
+        <i class="action-icon fa fa-fw fa-trash-o"></i> <span class="action-label">{{ 'action.delete_file'|trans }}</span>
+    </a>
+
+    {{ form_start(move_form, { attr: { id: 'move-form' } }) }}
+        {{ form_widget(move_form) }}
+    {{ form_end(move_form) }}
+
+    <div id="modal-folder-choice" class="modal-folder-choice modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
+                        <span class="btn-label">{{ 'action.cancel'|trans(domain: 'EasyAdminBundle') }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-move" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h4>{{ 'media.move_modal.title'|trans }}</h4>
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
+                        <span class="btn-label">{{ 'action.cancel'|trans(domain: 'EasyAdminBundle') }}</span>
+                    </button>
+
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary" id="modal-move-button" form="move-form">
+                        <span class="btn-label">{{ 'action.move_to_this_directory'|trans }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ form_start(delete_form, { attr: { id: 'delete-form' } }) }}
+        {{ form_widget(delete_form) }}
+    {{ form_end(delete_form) }}
+
+    <div id="modal-delete" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h4>{{ 'delete_modal.title'|trans(domain: 'EasyAdminBundle') }}</h4>
+                    <p>{{ 'delete_modal.content'|trans(domain: 'EasyAdminBundle') }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
+                        <span class="btn-label">{{ 'action.cancel'|trans(domain: 'EasyAdminBundle') }}</span>
+                    </button>
+
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-danger" id="modal-delete-button" form="delete-form">
+                        <span class="btn-label">{{ 'action.delete'|trans(domain: 'EasyAdminBundle') }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content_header_wrapper %}
+    <div class="joli-media-header-tools">
+        {{ parent() }}
+
+        <div class="rename-file-container">
+            {{ form_start(rename_form, { action: ea_url().setRoute('joli_media_easy_admin_show', { key: file }) }) }}
+                {{ form_widget(rename_form.to, {
+                    attr: {
+                        class: 'form-control',
+                        placeholder: 'media.placeholder'|trans,
+                        'aria-label': 'media.placeholder'|trans,
+                    },
+                    required: true,
+                }) }}
+                {{ form_widget(rename_form.submit) }}
+            {{ form_end(rename_form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    {% if media.variations|length > 0 %}
+        <div class="nav-tabs-custom form-tabs-tablist">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link{% if displayed_tab == 1 %} active{% endif %}" href="#tab-general" id="tablist-tab-general" data-bs-toggle="tab" aria-selected="true" role="tab">
+                        <span class="icon tab-nav-item-icon">
+                            <i class="fas fa-circle-info"></i>
+                        </span>
+                        {{ 'general'|trans }}
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link{% if displayed_tab == 2 %} active{% endif %}" href="#tab-variations" id="tablist-tab-variations" data-bs-toggle="tab" aria-selected="false" tabindex="-1" role="tab">
+                        <span class="icon tab-nav-item-icon">
+                            <i class="fas fa-images"></i>
+                        </span>
+                        {{ 'variation.label_plural'|trans }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="nav-tabs-custom form-tabs-content">
+            <div class="tab-content">
+                <div id="tab-general" class="tab-pane{% if displayed_tab == 1 %} active{% endif %} field-form_tab" role="tabpanel" aria-labelledby="tablist-tab-general">
+                    <div class="row">
+                        {{ block('media_general') }}
+                    </div>
+                </div>
+                <div id="tab-variations" class="tab-pane{% if displayed_tab == 2 %} active{% endif %} field-form_tab" role="tabpanel" aria-labelledby="tablist-tab-variations">
+                    <div class="row">
+                        <table class="table datagrid file-explorer-list {{ media.variations|length == 0 ? 'datagrid-empty' }}">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th data-column="name" class="header-for-name text-left" dir="ltr" style="width: 20%">{{ 'variation.label'|trans }}</th>
+                                    {% if config.isVisible('show_variations_stored') %}
+                                        <th data-column="stored" class="header-for-stored text-left" dir="ltr">{{ 'variation.stored'|trans }}</th>
+                                    {% endif %}
+                                    <th data-column="file-size" class="header-for-file-size text-left" dir="ltr">{{ 'media.size.label_long'|trans }}</th>
+                                    <th data-column="dimensions" class="header-for-dimensions text-left" dir="ltr">{{ 'media.dimensions'|trans }}</th>
+                                    <th data-column="url" class="header-for-url text-left" dir="ltr">URL</th>
+                                    <th data-column="actions" class="header-for-actions text-left" dir="ltr">{{ 'action.entity_actions'|trans(domain: 'EasyAdminBundle') }}</th>
+                                </tr>
+                            <tbody>
+                                {% for variation in media.variations %}
+                                    <tr>
+                                        <th data-column="name" data-label="name" class="text-left" dir="ltr">{{ variation.variation.name }}</th>
+                                        {% if config.isVisible('show_variations_stored') %}
+                                            <td data-column="stored" data-label="stored" class="text-left text-lowercase" dir="ltr">
+                                                {% if variation.isStored %}
+                                                    <span class="badge badge-success">{{ 'label.true'|trans(domain: 'EasyAdminBundle') }}</span>
+                                                {% else %}
+                                                    <span class="badge badge-danger">{{ 'label.false'|trans(domain: 'EasyAdminBundle') }}</span>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                        <td data-column="file-size" data-label="file-size" class="text-left" dir="ltr">
+                                            {% if variation.isStored %}
+                                                {{ variation.fileSize|readable_filesize }}</td>
+                                            {% else %}
+                                                <span class="badge badge-secondary">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td data-column="dimensions" data-label="dimensions" class="text-left" dir="ltr">
+                                            {% if variation.isStored %}
+                                                {% set dimensions = variation.binary.pixelDimensions %}
+                                                {% if dimensions is not null and dimensions.width is defined %}
+                                                    {{ dimensions.width }}x{{ dimensions.height }}
+                                                {% else %}
+                                                    <span class="badge badge-secondary">N/A</span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="badge badge-secondary">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td data-column="url" data-label="url" class="text-left" dir="ltr">
+                                            <a href="{{ variation.url }}" id="media-{{ variation.variation.name }}-url"><code class="long-text-break">{{ variation.url }}</code></a>
+                                        </td>
+                                        <td data-column="actions" data-label="actions" class="text-left" dir="ltr">
+                                            <a href="{{ variation.url }}" class="btn btn-sm btn-default clipboard-btn" data-clipboard-target="#media-{{ variation.variation.name }}-url">
+                                                <i class="fa-regular fa-clone" aria-hidden="true"></i>&nbsp;&nbsp;
+                                                {{ 'action.copy'|trans }}
+                                            </a>
+
+                                            {% if config.isVisible('show_variations_action_regenerate') %}
+                                                <a href="{{ ea_url().setRoute('joli_media_easy_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}" class="btn btn-sm btn-default clipboard-btn">
+                                                    <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>&nbsp;&nbsp;
+                                                    {{ 'action.regenerate'|trans }}
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        {{ block('media_general') }}
+    {% endif %}
+{% endblock %}
+
+{% block media_general %}
+    <div class="form-panel">
+        <div class="form-panel-body show">
+            <dl class="datalist">
+                <div class="data-row">
+                    <dt class="mb-1">
+                        {{ 'preview.label'|trans }}
+                    </dt>
+                    <dd>
+                        {{ include('@JoliMediaEasyAdmin/_preview.html.twig', { variation: 'joli_media_easy_admin_large', className: 'media-preview' }) }}
+                    </dd>
+                </div>
+                <div class="data-row">
+                    <dt>{{ 'media.url.label_long'|trans }}</dt>
+                    <dd class="d-flex jm-box">
+                        <a href="{{ media.url }}" id="media-url" class="flex-fill"><code class="long-text-break">{{ media.url }}</code></a>
+                        <button class="btn btn-primary btn-sm clipboard-btn" data-clipboard-target="#media-url">
+                            <i class="fa-regular fa-clone"></i> {{ 'action.copy'|trans }}
+                        </button>
+                    </dd>
+                </div>
+                {% if config.isVisible('show_markdown_code') %}
+                    <div class="data-row">
+                        <dt class="mb-1">Markdown</dt>
+                        <dd class="d-flex align-items-start jm-box">
+                            <pre class="flex-fill mb-0"><code id="media-markdown-code" class="long-text-break">
+                                {{- include('@JoliMediaEasyAdmin/_as_markdown.html.twig')|escape -}}
+                            </code></pre>
+                            <button class="btn btn-primary btn-sm clipboard-btn" data-clipboard-target="#media-markdown-code">
+                                <i class="fa-regular fa-clone"></i> {{ 'action.copy'|trans }}
+                            </button>
+                        </dd>
+                    </div>
+                {% endif %}
+                {% if config.isVisible('show_html_code') %}
+                    <div class="data-row">
+                        <dt class="mb-1">HTML</dt>
+                        <dd class="d-flex align-items-start jm-box">
+                            <pre class="flex-fill mb-0"><code id="media-html-code" class="long-text-break">
+                                {{- include('@JoliMediaEasyAdmin/_as_html.html.twig')|escape -}}
+                            </code></pre>
+                            <button class="btn btn-primary btn-sm clipboard-btn" data-clipboard-target="#media-html-code">
+                                <i class="fa-regular fa-clone"></i> {{ 'action.copy'|trans }}
+                            </button>
+                        </dd>
+                    </div>
+                {% endif %}
+                <div class="data-row">
+                    <dt class="mb-1">{{ 'media.type.label_long'|trans }}</dt>
+                    <dd class="d-flex align-items-start">
+                        {{ 'media.type.%s'|format(media.fileType)|trans }}
+                    </dd>
+                </div>
+                <div class="data-row">
+                    <dt class="mb-1">{{ 'media.size.label_long'|trans }}</dt>
+                    <dd class="d-flex align-items-start">
+                        {{ media.fileSize|readable_filesize }}
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+{% endblock %}

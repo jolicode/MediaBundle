@@ -1,0 +1,19 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    tmpDir: tools/phpstan/var/application
+    level: 8
+    paths:
+        - src
+        - tests/src
+    excludePaths:
+        - castor.php
+        - src/Bridge/EasyAdmin/src/JoliMediaEasyAdminBundle.php
+        - src/Bridge/SonataAdmin/src/JoliMediaSonataAdminBundle.php
+        - src/JoliMediaBundle.php
+    inferPrivatePropertyTypeFromConstructor: true
+
+    ignoreErrors:
+        -
+            identifier: missingType.generics

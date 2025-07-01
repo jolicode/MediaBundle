@@ -1,0 +1,182 @@
+{% extends base_template %}
+{% trans_default_domain 'JoliMediaSonataAdminBundle' %}
+
+{% form_theme create_media_form '@JoliMediaSonataAdmin/form/upload_form_theme.html.twig' %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li{% if current_key == '' %} class="active"{% endif %}>
+        <a href="{{ path(app.request.attributes.get('_route'), { key: '' }) }}">Media</a>
+    </li>
+    {% if '' != current_key %}
+        {% set keys = current_key|split('/') %}
+        {% set path = '' %}
+        {% for key in keys %}
+            {% set path = path ~ key ~ '/' %}
+            {% if not loop.last %}
+                <li class="breadcrumb-item--ellipsis">
+                    <a href="{{ path(app.request.attributes.get('_route'), { key: path }) }}">{{ key }}</a>
+                </li>
+            {% else %}
+                <li class="breadcrumb-item--ellipsis active"><span>{{ key }}</span></li>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+{% block title %}{{ 'media_explorer'|trans }} - {{ current_key ? current_key : 'Root' }}{% endblock %}
+
+{% block navbar_title %}{% endblock %}
+
+{% block sonata_page_content_nav %}
+    <div class="joli-media-header-tools">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <div class="nav navbar-left btn-group" role="group" aria-label="Change view mode">
+                    <a href="{{ path(app.request.attributes.get('_route'), { key: current_key, view_mode: 'list' }) }}" class="btn btn-default navbar-btn {% if app.session.get('view_mode', 'grid') == 'list' %}active{% endif %}">
+                        <span>
+                            <i class="fas fa-list"></i> {{ 'view.list'|trans }}
+                        </span>
+                    </a>
+                    <a href="{{ path(app.request.attributes.get('_route'), { key: current_key, view_mode: 'grid' }) }}" class="btn btn-default navbar-btn {% if app.session.get('view_mode', 'grid') == 'grid' %}active{% endif %}">
+                        <span>
+                            <i class="fas fa-th-large"></i> {{ 'view.grid'|trans }}
+                        </span>
+                    </a>
+                </div>
+                <div class="navbar-collapse">
+                    <div class="nav navbar-right">
+                        {{ block('delete_directory_button') }}
+                        {{ block('rename_directory_button') }}
+                        <a href="#" data-component="folder-create" data-current-key="{{ path(app.request.attributes.get('_route'), { key: current_key }) }}" class="btn btn-default navbar-btn">
+                            <span>
+                                <i class="fas fa-folder-plus"></i> {{ 'directory.create'|trans }}
+                            </span>
+                        </a>
+                        {{ block('choose_directory_button') }}
+                        {{ block('add_media_button') }}
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="sonata-ba-form dropzone-container">
+            {{ form_start(create_media_form, { attr: {
+                class: 'dropzone',
+                'data-component': 'dropzone',
+                'data-dropzone-config': config.uploadOptions|json_encode(constant('JSON_THROW_ON_ERROR')),
+            } }) }}
+                {{ form_widget(create_media_form.path) }}
+                {{ form_widget(create_media_form._token) }}
+                <div class="dz-preview-template">
+                    {{ include('@JoliMediaSonataAdmin/uploaded_file_preview.html.twig') }}
+                </div>
+            {{ form_end(create_media_form) }}
+        </div>
+        <div class="sonata-ba-form new-directory-container">
+            {{ form_start(create_directory_form, { action: path('joli_media_sonata_admin_create_directory') }) }}
+                {{ form_widget(create_directory_form.directory) }}
+                {{ form_widget(create_directory_form.submit) }}
+            {{ form_end(create_directory_form) }}
+        </div>
+        {{ block('rename_directory_container') }}
+    </div>
+{% endblock %}
+
+{% block content %}
+    {{ block('content_header') }}
+    <div class="gallery">
+        {% if app.session.get('view_mode') == 'list' %}
+            <div class="box box-primary">
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-bordered table-striped table-hover sonata-ba-list gallery-list">
+                        <thead>
+                            <tr class="sonata-ba-list-field-header">
+
+                                <th class="sonata-ba-list-field-header-string sonata-ba-list-field-header-order-asc sonata-ba-list-field-order-active">
+                                    {{ 'media.name'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-string">
+                                    {{ 'media.type.label'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-string">
+                                    {{ 'media.size.label_long'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-string">
+                                    {{ 'media.dimensions'|trans }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if parent_key != '' and current_key != '.' -%}
+                                <tr>
+                                    <td class="sonata-ba-list-field sonata-ba-list-field-string">
+                                        <a class="sonata-link-identifier gallery-list-item gallery-list-item--back" href="{{ path(app.request.attributes.get('_route'), { key: parent_key }) }}">
+                                            <span class="gallery-list-item__icon"><i class="fas fa-arrow-left"></i></span>
+                                            {{ 'back'|trans }}
+                                        </a>
+                                    </td>
+                                    <td class="sonata-ba-list-field sonata-ba-list-field-string">
+                                        <span class="label label-primary">{{ 'directory.label'|trans }}</span>
+                                    </td>
+                                    <td class="sonata-ba-list-field sonata-ba-list-field-string">
+                                        &nbsp;
+                                    </td>
+                                    <td class="sonata-ba-list-field sonata-ba-list-field-string">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {%- for directory in directories -%}
+                                <tr>
+                                    <td class="sonata-ba-list-field sonata-ba-list-field-string">
+                                        <a class="sonata-link-identifier gallery-list-item" href="{{ path(app.request.attributes.get('_route'), { key: directory }) }}">
+                                            <span class="gallery-list-item__icon"><i class="fas fa-folder"></i></span>
+                                            <span class="gallery-list-item__name">{{ directory|basename }}</span>
+                                        </a>
+                                    </td>
+                                    <td class="sonata-ba-list-field sonata-ba-list-field-string">
+                                        <span class="label label-primary">{{ 'directory.label'|trans }}</span>
+                                    </td>
+                                    <td class="sonata-ba-list-field sonata-ba-list-field-string">
+                                        &nbsp;
+                                    </td>
+                                    <td class="sonata-ba-list-field sonata-ba-list-field-string">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                            {%- endfor -%}
+                            {% for media in medias -%}
+                                {{ block('media_list_view') }}
+                            {%- endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <ul class="gallery-grid gallery-grid--folders">
+                {% if parent_key != '' and current_key != '.' -%}
+                    <li class="gallery-grid-item gallery-grid-item--back">
+                        <a href="{{ path(app.request.attributes.get('_route'), { key: parent_key }) }}" class="gallery-grid-item__link">
+                            <span class="gallery-grid-item__icon"><i class="fas fa-arrow-left"></i></span>
+                            <span class="gallery-grid-item__name">{{ 'back'|trans }}</span>
+                        </a>
+                    </li>
+                {%- endif -%}
+
+                {%- for directory in directories -%}
+                    <li class="gallery-grid-item">
+                        <a href="{{ path(app.request.attributes.get('_route'), { key: directory }) }}" class="gallery-grid-item__link">
+                            <span class="gallery-grid-item__icon"><i class="fas fa-folder"></i></span>
+                            <span class="gallery-grid-item__name">{{ directory|basename }}</span>
+                        </a>
+                    </li>
+                {%- endfor -%}
+            </ul>
+
+            <ul class="gallery-grid gallery-grid--files">
+                {% for media in medias -%}
+                    {{ block('media_grid_view') }}
+                {%- endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}

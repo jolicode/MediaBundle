@@ -1,0 +1,113 @@
+action:
+    choose_a_file: 'Choisir un fichier'
+    copy: 'Copier'
+    delete_directory: 'Supprimer ce dossier'
+    delete_file: 'Supprimer ce fichier'
+    move_file: 'Déplacer le fichier'
+    move_to_this_directory: 'Déplacer vers ce dossier'
+    regenerate: 'Régénérer'
+    remove: 'Détacher'
+    rename_directory: 'Renommer le dossier'
+    rename_file: 'Renommer le fichier'
+browser:
+    audio:
+        unsupported: 'Votre navigateur ne supporte pas la lecture audio.'
+    video:
+        unsupported: 'Votre navigateur ne supporte pas la lecture vidéo.'
+directory:
+    add: 'Ajouter ce dossier'
+    create: 'Créer un nouveau dossier'
+    created_failure: 'Échec de la création du dossier "%directory%" : %error%'
+    created_success: 'Le dossier "%directory%" a été créé avec succès'
+    create_this_directory: 'Créer ce dossier'
+    delete:
+        confirm: 'Êtes-vous sûr de vouloir supprimer ce dossier ? Cette action ne peut pas être annulée. Tous les fichiers et sous-dossiers seront supprimés.'
+    deleted_success: 'Le dossier "%directory%" a été supprimé avec succès'
+    label: 'Dossier'
+    list_failure: 'Impossible de lister le contenu du dossier "%directory%"'
+    move:
+        failure: 'Échec du déplacement du dossier "%from%" vers "%to%" : %error%'
+        success: 'Le dossier "%from%" a été déplacé avec succès vers "%to%"'
+    placeholder: 'Entrez un nom pour le nouveau dossier'
+    rename:
+        failure: 'Échec du renommage du dossier "%from%" en "%to%" : %error%'
+        placeholder: 'Entrez un nouveau nom pour ce dossier'
+        success: 'Le dossier "%from%" a été renommé en "%to%" avec succès'
+    sub:
+        add: 'Ajouter un sous-dossier'
+document:
+    download: 'Télécharger le document'
+general: 'Général'
+media:
+    add: 'Ajouter un média'
+    delete:
+        confirm: 'Êtes-vous sûr de vouloir supprimer ce média ? Cette action ne peut pas être annulée.'
+    deleted_success: 'Le média “%media%” a été supprimé avec succès'
+    dimensions: 'Dimensions'
+    error:
+        in_use: 'Le media "%media%" est utilisé dans le champ "%field%" de l''entité "%entity%". Il ne peut pas être supprimé.'
+    inaccessible:
+        explanation: 'Le média "%media%" n''est pas accessible. Il a peut-être été supprimé ou déplacé.'
+        label: 'Média inaccessible'
+    move_modal:
+        content: 'Souhaitez-vous vraiment déplacer ce média vers le dossier "%directory%" ?'
+        title: 'Déplacer le média'
+    move_failure: 'Échec du déplacement du média "%from%" vers le dossier "%to%" : %error%'
+    move_success: 'Le fichier "%from%" a été déplacé avec succès vers "%to%"'
+    name: 'Nom'
+    placeholder: 'Entrez un nouveau nom de fichier pour ce média'
+    renamed_failure: 'Échec du renommage du média "%from%" en "%to%" : %error%'
+    renamed_success: 'Le média "%from%" a été renommé en "%to%" avec succès'
+    size:
+        label: 'Taille'
+        label_long: 'Taille du fichier'
+    type:
+        audio: 'Audio'
+        csv: 'CSV'
+        excel: 'Excel'
+        file: 'Fichier'
+        html: 'HTML'
+        image: 'Image'
+        label: 'Type'
+        label_long: 'Type de fichier'
+        pdf: 'PDF'
+        powerpoint: 'PowerPoint'
+        text: 'Texte'
+        video: 'Vidéo'
+        word: 'Word'
+        xml: 'XML'
+        zip: 'ZIP'
+    unavailable:
+        simple: 'Le média n’est pas disponible.'
+    upload:
+        dropzone:
+            default_message: 'Déposez vos fichiers ici ou cliquez pour télécharger'
+            fallback_message: 'Votre navigateur ne supporte pas le drag’n’drop pour le téléchargement de fichiers.'
+            fallback_text: 'Veuillez utiliser le formulaire ci-dessous pour envoyer vos fichiers.'
+            file_too_big: 'Le fichier est trop volumineux ({{filesize}}Mo). La taille maximale autorisée est de {{maxFilesize}}Mo.'
+            invalid_file_type: 'Type de fichier non autorisé.'
+            max_files_exceeded: 'Vous ne pouvez pas télécharger plus de {{maxFiles}} fichiers.'
+        error:
+            already_exists: 'Le fichier "%file%" existe déjà, veuillez changer le nom du fichier.'
+            default: 'Échec de l''envoi du fichier'
+            invalid_form: 'Le formulaire est invalide. Veuillez réessayer.'
+            unable_to_write_file: 'Il n''a pas été possible d''écrire le fichier "%file%"'
+    url:
+        label: 'URL'
+        label_long: 'URL du média'
+media_explorer: 'Explorateur de médias'
+media_library: 'Médiathèque'
+no_file_found: 'Aucun fichier trouvé'
+back: 'Retour'
+preview:
+    label: 'Aperçu'
+    unavailable: 'Aperçu non disponible.'
+root: 'Racine'
+variation:
+    label: 'Variante'
+    label_plural: 'Variantes'
+    regenerated_success: 'La variante “%variation%” a été régénérée avec succès pour le média “%media%”'
+    stored: 'Stockée ?'
+view:
+    grid: 'Vue grille'
+    list: 'Vue liste'

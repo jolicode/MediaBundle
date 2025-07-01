@@ -1,0 +1,181 @@
+{% extends base_template %}
+{% trans_default_domain 'JoliMediaEasyAdminBundle' %}
+
+{% block page_title %}{{ 'media_explorer'|trans }} - {{ current_key ? current_key : 'root'|trans }}{% endblock %}
+
+{% block body_class %}ea-content-width-full{% endblock %}
+
+{% block page_content %}
+    {{ block('body_breadcrumb') }}
+    {{ block('body_content_header_wrapper') }}
+
+    <div class="gallery">
+        {% if app.session.get('view_mode') == 'list' %}
+            <table class="table datagrid gallery-list {{ (directories|length + medias|length) == 0 ? 'datagrid-empty' }}">
+                <thead>
+                    <tr>
+                        <th data-column="name" class="text-left" dir="ltr">
+                            <span>{{ 'media.name'|trans }}</span>
+                        </th>
+                        <th data-column="type" class="text-left" dir="ltr">
+                            <span>{{ 'media.type.label'|trans }}</span>
+                        </th>
+                        <th data-column="file-size" class="text-left" dir="ltr">
+                            <span>{{ 'media.size.label_long'|trans }}</span>
+                        </th>
+                        <th data-column="dimensions" class="text-left" dir="ltr">
+                            <span>{{ 'media.dimensions'|trans }}</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if parent_key != '' and current_key != '.' -%}
+                        <tr>
+                            <td data-column="name" data-label="name" class="text-left" dir="ltr">
+                                <a href="{{ ea_url().setRoute(route_name, '.' != parent_key ? { key: parent_key } : { }) }}" class="gallery-list-item gallery-list-item--back">
+                                    <span class="gallery-list-item__icon"><i class="fas fa-arrow-left"></i></span>
+                                    {{ 'back'|trans }}
+                                </a>
+                            </td>
+                            <td data-column="type" data-label="name" class="text-left" dir="ltr">
+                                <span class="badge badge-info">{{ 'directory.label'|trans }}</span>
+                            </td>
+                            <td data-column="file-size" data-label="name" class="text-left" dir="ltr">
+                                &nbsp;
+                            </td>
+                            <td data-column="dimensions" data-label="name" class="text-left" dir="ltr">
+                                &nbsp;
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% for directory in directories %}
+                        <tr>
+                            <td data-column="name" data-label="name" class="text-left" dir="ltr">
+                                <a href="{{ ea_url().setRoute(route_name, { key: directory }) }}" class="gallery-list-item">
+                                    <span class="gallery-list-item__icon"><i class="fa fa-folder"></i></span>
+                                    <span class="gallery-list-item__name">{{ directory|basename }}</span>
+                                </a>
+                            </td>
+                            <td data-column="type" data-label="name" class="text-left" dir="ltr">
+                                <span class="badge badge-info">{{ 'directory.label'|trans }}</span>
+                            </td>
+                            <td data-column="file-size" data-label="name" class="text-left" dir="ltr">
+                                &nbsp;
+                            </td>
+                            <td data-column="dimensions" data-label="name" class="text-left" dir="ltr">
+                                &nbsp;
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% for media in medias %}
+                        {{ block('media_list_view') }}
+                    {% endfor %}
+                    {% if directories|length + medias|length == 0 %}
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info"></i> <strong>{{ 'no_file_found'|trans }}</strong>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        {% else %}
+            <ul class="gallery-grid gallery-grid--folders">
+                {% if parent_key != '' and current_key != '.' -%}
+                    <li class="gallery-grid-item gallery-grid-item--back">
+                        <a href="{{ ea_url().setRoute(route_name, '.' != parent_key ? { key: parent_key } : { }) }}" class="gallery-grid-item__link">
+                            <span class="gallery-grid-item__icon"><i class="fas fa-arrow-left"></i></span>
+                            <span class="gallery-grid-item__name">{{ 'back'|trans }}</span>
+                        </a>
+                    </li>
+                {%- endif -%}
+
+                {%- for directory in directories -%}
+                    <li class="gallery-grid-item">
+                        <a href="{{ ea_url().setRoute(route_name, { key: directory }) }}" class="gallery-grid-item__link">
+                            <span class="gallery-grid-item__icon"><i class="fas fa-folder"></i></span>
+                            <span class="gallery-grid-item__name">{{ directory|basename }}</span>
+                        </a>
+                    </li>
+                {%- endfor -%}
+            </ul>
+
+            <ul class="gallery-grid gallery-grid--files">
+                {% for media in medias -%}
+                    {{ block('media_grid_view') }}
+                {%- endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block content_header_wrapper %}
+    <div class="joli-media-header-tools">
+        <section class="content-header">
+            {% block content_header %}
+                <div class="content-header-title">
+                    <h1 class="title d-none">{{ 'media_library'|trans }}</h1>
+                    <div class="btn-group" role="group" aria-label="Change view mode">
+                        <a href="{{ ea_url().setRoute(route_name, { key: current_key, view_mode: 'list' }) }}" class="btn btn-secondary {{ app.session.get('view_mode', 'grid') == 'list' ? 'active' }}">
+                            <span>
+                                <i class="fas fa-list"></i> {{ 'view.list'|trans }}
+                            </span>
+                        </a><a href="{{ ea_url().setRoute(route_name, { key: current_key, view_mode: 'grid' }) }}" class="btn btn-secondary {{ app.session.get('view_mode', 'grid') == 'grid' ? 'active' }}">
+                            <span>
+                                <i class="fas fa-th-large"></i> {{ 'view.grid'|trans }}
+                            </span>
+                        </a>
+                    </div>
+                </div>
+
+                {% block page_actions_wrapper %}
+                    <div class="page-actions">
+                        {% block page_actions %}
+                            {{ block('delete_directory_button') }}
+                            {{ block('rename_directory_button') }}
+                            {% block create_directory_button %}
+                                <a
+                                    class="btn btn-secondary me-sm-2"
+                                    data-component="folder-create"
+                                >
+                                    <i class="fa-solid fa-folder-plus"></i> {{ 'directory.create'|trans }}
+                                </a>
+                            {% endblock %}
+                            {{ block('choose_directory_button') }}
+                            {{ block('add_media_button') }}
+                        {% endblock %}
+                    </div>
+                {% endblock %}
+            {% endblock content_header %}
+        </section>
+        <div class="dropzone-container">
+            {{ form_start(create_media_form, { attr: {
+                class: 'dropzone',
+                'data-component': 'dropzone',
+                'data-dropzone-config': config.uploadOptions|json_encode(constant('JSON_THROW_ON_ERROR')),
+            } }) }}
+                {{ form_widget(create_media_form.path) }}
+                {{ form_widget(create_media_form._token) }}
+                <div class="dz-preview-template">
+                    {{ include('@JoliMediaEasyAdmin/uploaded_file_preview.html.twig') }}
+                </div>
+            </form>
+        </div>
+        <div class="new-directory-container">
+            {{ form_start(create_directory_form, { action: ea_url().setRoute('joli_media_easy_admin_create_directory') }) }}
+                {{ form_widget(create_directory_form.directory, {
+                    attr: {
+                        class: 'form-control',
+                        placeholder: 'directory.placeholder'|trans,
+                        'aria-label': 'directory.placeholder'|trans,
+                    },
+                    required: true,
+                }) }}
+                {{ form_widget(create_directory_form.submit) }}
+            {{ form_end(create_directory_form) }}
+        </div>
+        {{ block('rename_directory_container') }}
+    </div>
+{% endblock %}

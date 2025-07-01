@@ -1,0 +1,40 @@
+{% trans_default_domain 'JoliMediaSonataAdminBundle' %}
+
+{% if media is defined and media %}
+    {% if media.isStored %}
+        {% if media.fileType == 'image' %}
+            {{ include('@JoliMediaSonataAdmin/_as_image.html.twig') }}
+        {% elseif media.fileType == 'audio' %}
+            {% set className = className|default('') %}
+            <audio controls{% if className %} class="{{ className }}"{% endif %}>
+                <source src="{{ media.url }}">
+                {{ 'browser.audio.unsupported'|trans }}
+                <a href="{{ media.url }}">{{ 'document.download'|trans }}</a>
+            </audio>
+        {% elseif media.fileType == 'video' %}
+            {% set className = className|default('') %}
+            <video controls{% if className %} class="{{ className }}"{% endif %}>
+                <source src="{{ media.url }}">
+                {{ 'browser.video.unsupported'|trans }}
+                <a href="{{ media.url }}">{{ 'document.download'|trans }}</a>
+            </video>
+        {% else %}
+            <span class="gallery-list-item">
+                <span class="gallery-list-item__preview">
+                    {{ include('@JoliMediaSonataAdmin/_as_image.html.twig') }}
+                </span>
+                <span class="gallery-list-item__name">{{ media.filename }}</span>
+            </span>
+            <p>
+                {{ 'preview.unavailable'|trans }}<br>
+                <a href="{{ media.url }}">{{ 'document.download'|trans }}</a>
+            </p>
+        {% endif %}
+    {% else %}
+        <span class="label label-warning" title="{{ 'media.inaccessible.explanation'|trans({ '%media%': media.filename }) }}">
+            {{- 'media.inaccessible.label'|trans -}}
+        </span>
+    {% endif %}
+{% else %}
+    {{ 'media.unavailable.simple'|trans }}
+{% endif %}

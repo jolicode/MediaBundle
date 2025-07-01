@@ -1,0 +1,37 @@
+{% block joli_media_sonata_admin_choice_widget %}
+    <template id="template-null-label-{{ id }}">
+        <span class="label label-info">{{ 'short_object_description_placeholder'|trans(domain: 'SonataAdminBundle') }}</span>
+    </template>
+
+    <div class="media-choice js-joli-media-choice-container{% if media is empty %} empty{% endif %}" data-media-id="{{ id }}">
+        <span id="joli-media-container_{{ id }}">
+            {% if media is not empty %}
+                {{ include('@JoliMediaSonataAdmin/_preview.html.twig', { className: 'media-preview' }) }}
+            {% else %}
+                <span class="label label-info">{{ 'short_object_description_placeholder'|trans(domain: 'SonataAdminBundle') }}</span>
+            {% endif %}
+        </span>
+        <span class="field-actions">
+            <span class="btn-group">
+                <a href="{{ path('joli_media_sonata_admin_choose') }}"
+                    data-folder="{{ folder }}"
+                    class="btn btn-info btn-sm sonata-ba-action js-joli-media-choice-edit"
+                >
+                    <i class="fas fa-file"></i> {{ 'action.choose_a_file'|trans(domain: 'JoliMediaSonataAdminBundle') }}
+                </a>
+                <button
+                    class="btn btn-danger btn-sm sonata-ba-action hide-when-empty js-joli-media-choice-delete"
+                    title="Remove"
+                >
+                    <i class="fas fa-trash"></i> {{ 'action.remove'|trans(domain: 'JoliMediaSonataAdminBundle') }}
+                </button>
+            </span>
+        </span>
+        {{- block('form_widget_simple') -}}
+    </div>
+    {{ include('@SonataAdmin/CRUD/Association/edit_modal.html.twig') }}
+{% endblock %}
+
+{% block joli_media_sonata_admin_choice_row %}
+    {{- block('form_row') -}}
+{% endblock %}

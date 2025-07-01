@@ -1,0 +1,19 @@
+{%- trans_default_domain 'JoliMediaEasyAdminBundle' -%}
+
+{%- if media.fileType == 'image' -%}
+    {{- include('@JoliMediaEasyAdmin/_as_image.html.twig') -}}
+{%- elseif media.fileType == 'audio' -%}
+    <audio controls>
+        <source src="{{ media.url }}">
+        {{ 'browser.audio.unsupported'|trans }}
+        <a href="{{ media.url }}">{{ 'document.download'|trans }}</a>
+    </audio>
+{%- elseif media.fileType == 'video' -%}
+    <video controls>
+        <source src="{{ media.url }}">
+        {{ 'browser.video.unsupported'|trans }}
+        <a href="{{ media.url }}">{{ 'document.download'|trans }}</a>
+    </video>
+{%- else -%}
+    {{ 'preview.unavailable'|trans }} <a href="{{ media.url }}">{{ 'document.download'|trans }}</a>
+{%- endif -%}

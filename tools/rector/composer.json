@@ -1,0 +1,13 @@
+{
+    "type": "project",
+    "require": {
+        "rector/rector": "^2.0.15"
+    },
+    "config": {
+        "bump-after-update": true,
+        "platform": {
+            "php": "8.2"
+        },
+        "sort-packages": true
+    }
+}

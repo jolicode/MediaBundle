@@ -1,0 +1,28 @@
+.new-directory-container {
+  display: none;
+  top: 100%;
+  left: 0;
+  right: 0;
+  min-height: auto;
+  margin-top: 1rem;
+  padding: 1.5rem;
+  color: var(--jm-dropzone-color);
+  background-color: var(--jm-color-gray-100);
+  border: dashed 1px var(--jm-dropdzone-border-color);
+  border-radius: 4px;
+  z-index: 100;
+
+  &.new-directory-active {
+    display: block;
+  }
+
+  form {
+    display: flex;
+    flex-direction: row;
+  }
+
+  input[type=text] {
+    flex-grow: 1;
+    margin-right: 1.5rem;
+  }
+}

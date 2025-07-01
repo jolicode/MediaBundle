@@ -1,0 +1,126 @@
+/* ==========================================================================
+   Dropzone
+   ========================================================================== */
+
+/* Rules
+   ========================================================================== */
+
+.dropzone-container {
+  display: none;
+  top: 100%;
+  left: 0;
+  right: 0;
+
+  &.dropzone-active {
+    display: block;
+  }
+
+  input[type=file] {
+    display: none;
+  }
+}
+
+.dropzone {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: auto;
+  margin-top: 1rem;
+  color: var(--jm-dropzone-color);
+  background-color: var(--jm-color-gray-100);
+  border: dashed 1px var(--jm-dropdzone-border-color);
+  border-radius: 4px;
+  z-index: 100;
+}
+
+.dz-message {
+  cursor: pointer;
+  font-size: 1.4375rem;
+  padding: 5rem 1.25rem;
+  margin: 0;
+}
+
+.dz-button {
+  display: block;
+  margin: 0 auto;
+  border: none;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
+.dz-started .dz-message {
+  display: none;
+}
+
+.dz-details {
+  font-size: 15px;
+}
+
+.dropzone .dz-preview {
+  width: 180px;
+
+  .dz-progress {
+    height: 10px;
+    border: none;
+    border-radius: 5px;
+    overflow: hidden;
+
+    .dz-upload {
+      background-color: var(--jm-color-green);
+    }
+  }
+
+  &.dz-complete {
+    .dz-progress {
+      display: none;
+    }
+  }
+
+  .dz-error-marker {
+    color: var(--jm-color-red);
+    display: none;
+    margin-right: .25rem;
+  }
+
+  .dz-success-marker {
+    color: var(--jm-color-green);
+    display: none;
+    margin-right: .25rem;
+  }
+
+  &.dz-error {
+    .dz-error-marker {
+      display: inline-block;
+    }
+
+    .dz-error-message {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--jm-color-red);
+    }
+
+    .dz-image.media-preview {
+      display: none;
+    }
+  }
+
+  &.dz-success .dz-success-marker {
+    display: inline-block;
+  }
+
+  a[data-dz-link] {
+    flex-wrap: wrap;
+    place-content: center;
+    align-items: center;
+    display: flex;
+    width: 180px;
+    height: 109px;
+  }
+}
+
+.dz-preview-template {
+  display: none;
+}

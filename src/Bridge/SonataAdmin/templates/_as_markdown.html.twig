@@ -1,0 +1,19 @@
+{%- trans_default_domain 'JoliMediaSonataAdminBundle' -%}
+
+{%- if media.fileType == 'image' -%}
+    ![Alt text]({{ media.url }})
+{%- elseif media.fileType == 'audio' -%}
+    <audio controls>
+        <source src="{{ media.url }}">
+        {{ 'browser.audio.unsupported'|trans }}
+        <a href="{{ media.url }}">{{ 'document.download'|trans }}</a>
+    </audio>
+{%- elseif media.fileType == 'video' -%}
+    <video controls>
+        <source src="{{ media.url }}">
+        {{ 'browser.video.unsupported'|trans }}
+        <a href="{{ media.url }}">{{ 'document.download'|trans }}</a>
+    </video>
+{%- else -%}
+    [{{ 'document.download'|trans }}]({{ media.url }})
+{%- endif -%}

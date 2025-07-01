@@ -1,0 +1,18 @@
+{
+    "type": "project",
+    "require": {
+        "phpstan/extension-installer": "^1.4.3",
+        "phpstan/phpstan": "^2.1.14",
+        "phpstan/phpstan-symfony": "^2.0.4"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        },
+        "bump-after-update": true,
+        "platform": {
+            "php": "8.2"
+        },
+        "sort-packages": true
+    }
+}

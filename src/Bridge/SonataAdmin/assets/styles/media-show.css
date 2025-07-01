@@ -1,0 +1,9 @@
+.long-text-break {
+    word-break: break-all;
+    white-space: normal;
+}
+
+.media-preview {
+    max-height: 600px;
+    --media-preview-max-width: 800px;
+}

@@ -1,0 +1,18 @@
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/* Custom properties
+   ========================================================================== */
+
+:root {
+  --jm-color-primary: #b9c6dc;
+  --jm-color-secondary: #899dbb;
+  --jm-color-gray-100: #f8fafc;
+  --jm-color-gray-200: #ebf4fe;
+  --jm-color-gray: #4b4b4b;
+  --jm-color-green: #6fcf97;
+  --jm-color-red: #dc2626;
+  --jm-dropzone-color: #293a53;
+  --jm-dropdzone-border-color: #aab6c8;
+}

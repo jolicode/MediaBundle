@@ -1,0 +1,265 @@
+{% extends base_template %}
+{% trans_default_domain 'JoliMediaSonataAdminBundle' %}
+
+{% block title %}
+    {{ 'title_show'|trans({ '%name%': media.filename }, 'SonataAdminBundle') }}
+{% endblock %}
+
+{% block navbar_title %}
+    {{ block('title') }}
+{% endblock %}
+
+{% block sonata_admin_content_actions_wrappers %}
+    <div class="navbar-collapse">
+        <div class="nav navbar-right">
+            <a
+                href="{{ path('joli_media_sonata_admin_choose_directory', { key: '' }) }}"
+                data-component="folder-choice"
+                data-folder="{{ media.folderPath }}"
+                data-current-key="{{ path(app.request.attributes.get('_route'), { key: media.path }) }}"
+                class="btn btn-default navbar-btn"
+            >
+                <span>
+                    <i class="fas fa-folder-open"></i> {{ 'action.move_file'|trans }}
+                </span>
+            </a>
+            <a
+                href="#"
+                data-component="media-rename"
+                data-current-key="{{ path(app.request.attributes.get('_route'), { key: media.path }) }}"
+                class="btn btn-default navbar-btn"
+            >
+                <span>
+                    <i class="fas fa-edit"></i> {{ 'action.rename_file'|trans }}
+                </span>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block sonata_page_content_nav %}
+    {{ parent() }}
+
+    {{ include('@SonataAdmin/CRUD/Association/edit_modal.html.twig', { id: 'folder-choice' }) }}
+    {{ form_start(move_form, { attr: { id: 'move-form' } }) }}
+        {{ form_widget(move_form) }}
+    {{ form_end(move_form) }}
+
+    <div class="sonata-ba-form rename-file-container">
+        {{ form_start(rename_form) }}
+            {{ form_widget(rename_form.to) }}
+            {{ form_widget(rename_form.submit) }}
+        {{ form_end(rename_form) }}
+    </div>
+{% endblock %}
+
+{% block sonata_breadcrumb %}
+    {% set keys = media.path|split('/') %}
+    <ol class="nav navbar-top-links breadcrumb joli-media-breadcrumb">
+        <li>
+            <a href="{{ path('sonata_admin_dashboard') }}"><i class="fa fa-home"></i></a>
+        </li>
+        <li>
+            <a href="{{ path('joli_media_sonata_admin_explore', { key: '' }) }}">Media</a>
+        </li>
+
+        {% set path = '' %}
+        {% for key in keys %}
+            {% set path = path ~ key ~ '/' %}
+            {% if not loop.last %}
+                <li class="breadcrumb-item--ellipsis">
+                    <a href="{{ path('joli_media_sonata_admin_explore', { key: path }) }}">{{ key }}</a>
+                </li>
+            {% else %}
+                <li class="breadcrumb-item--ellipsis active"><span>{{ key }}</span></li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+{% endblock sonata_breadcrumb %}
+
+{% block show %}
+    <div class="sonata-ba-view">
+        {% if config.isVisible('show_variations_list') and media.variations|length > 0 %}
+            {% set tab_prefix = 'tab_' ~ random() %}
+            {% set tab_query_index = app.request.query.get('_tab', 1)|split('_')|last %}
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li{% if tab_query_index == 1 %} class="active"{% endif %}>
+                        <a href="#{{ tab_prefix ~ '_1' }}" class="changer-tab" aria-controls="{{ tab_prefix ~ '_1' }}" data-toggle="tab">
+                            {{ 'general'|trans }}
+                        </a>
+                    </li>
+                    <li{% if (tab_query_index == 2) %} class="active"{% endif %}>
+                        <a href="#{{ tab_prefix ~ '_2' }}" class="changer-tab" aria-controls="{{ tab_prefix ~ '_2' }}" data-toggle="tab">
+                            {{ 'variation.label_plural'|trans }}
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div
+                        class="tab-pane fade{% if not app.request.query.has('_tab') or (tab_query_index == 1) %} in active{% endif %}"
+                        id="{{ tab_prefix ~ '_1' }}"
+                    >
+                        <div class="sonata-ba-collapsed-fields">
+                            {{ block('show_groups') }}
+                        </div>
+                    </div>
+                    <div
+                        class="tab-pane fade{% if (tab_query_index == 2) %} in active{% endif %}"
+                        id="{{ tab_prefix ~ '_2' }}"
+                    >
+                        <div class="sonata-ba-collapsed-fields">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-bordered table-striped table-hover sonata-ba-list">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 20%">{{ 'variation.label'|trans }}</th>
+                                                {% if config.isVisible('show_variations_stored') %}
+                                                    <th>{{ 'variation.stored'|trans }}</th>
+                                                {% endif %}
+                                                <th>{{ 'media.size.label_long'|trans }}</th>
+                                                <th>{{ 'media.dimensions'|trans }}</th>
+                                                <th>URL</th>
+                                                <th>{{ 'list.label__actions'|trans(domain: 'SonataAdminBundle') }}</th>
+                                            </tr>
+                                        <tbody>
+                                            {% for variation in media.variations %}
+                                                <tr class="sonata-ba-view-container">
+                                                    <th>{{ variation.variation.name }}</th>
+                                                    {% if config.isVisible('show_variations_stored') %}
+                                                        <td>
+                                                            {% if variation.isStored %}
+                                                                <span class="label label-success">{{ 'label_type_yes'|trans(domain: 'SonataAdminBundle') }}</span>
+                                                            {% else %}
+                                                                <span class="label label-danger">{{ 'label_type_no'|trans(domain: 'SonataAdminBundle') }}</span>
+                                                            {% endif %}
+                                                        </td>
+                                                    {% endif %}
+                                                    <td>
+                                                        {% if variation.isStored %}
+                                                            {{ variation.fileSize|readable_filesize }}</td>
+                                                        {% else %}
+                                                            <span class="label label-warning bg-gray-active">N/A</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if variation.isStored %}
+                                                            {% set dimensions = variation.binary.pixelDimensions %}
+                                                            {% if dimensions is not null and dimensions.width is defined %}
+                                                                {{ dimensions.width }}x{{ dimensions.height }}
+                                                            {% else %}
+                                                                <span class="label label-warning bg-gray-active">N/A</span>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            <span class="label label-warning bg-gray-active">N/A</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ variation.url }}" id="media-{{ variation.variation.name }}-url" class="long-text-break">{{ variation.url }}</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ variation.url }}" class="btn btn-sm btn-default clipboard-btn" data-clipboard-target="#media-{{ variation.variation.name }}-url">
+                                                            <i class="far fa-clone" aria-hidden="true"></i>&nbsp;&nbsp;
+                                                            {{ 'action.copy'|trans }}
+                                                        </a>
+
+                                                        {% if config.isVisible('show_variations_action_regenerate') %}
+                                                            <a href="{{ path('joli_media_sonata_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}" class="btn btn-sm btn-default clipboard-btn">
+                                                                <i class="fas fa-sync-alt" aria-hidden="true"></i>&nbsp;&nbsp;
+                                                                {{ 'action.regenerate'|trans }}
+                                                            </a>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            {{ block('show_groups') }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block show_groups %}
+    <div class="row">
+        {% block field_row %}
+            <div class="col-md-12">
+                <table class="table">
+                    <tbody>
+                        <tr class="sonata-ba-view-container">
+                            <th>{{ 'preview.label'|trans }}</th>
+                            <td>
+                                {{ include('@JoliMediaSonataAdmin/_preview.html.twig', { variation: 'joli_media_sonata_admin_large', className: 'media-preview' }) }}
+                            </td>
+                        </tr>
+                        <tr class="sonata-ba-view-container">
+                            <th>{{ 'media.url.label_long'|trans }}</th>
+                            <td class="code-preview">
+                                <pre><code><a href="{{ media.url }}" id="media-url">{{ media.url }}</a></code></pre>
+                                <button class="btn btn-info btn-sm clipboard-btn" data-clipboard-target="#media-url">
+                                    <i class="far fa-clone"></i>
+                                    {{ 'action.copy'|trans }}
+                                </button>
+                            </td>
+                        </tr>
+                        {% if config.isVisible('show_markdown_code') %}
+                            <tr class="sonata-ba-view-container">
+                                <th>Markdown</th>
+                                <td class="code-preview">
+                                    <pre><code id="media-markdown-code">
+                                        {{- include('@JoliMediaSonataAdmin/_as_markdown.html.twig')|escape -}}
+                                    </code></pre>
+                                    <button class="btn btn-info btn-sm clipboard-btn" data-clipboard-target="#media-markdown-code">
+                                        <i class="far fa-clone"></i>
+                                        {{ 'action.copy'|trans }}
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        {% if config.isVisible('show_html_code') %}
+                            <tr class="sonata-ba-view-container">
+                                <th>HTML</th>
+                                <td class="code-preview">
+                                    <pre><code id="media-html-code">
+                                        {{- include('@JoliMediaSonataAdmin/_as_html.html.twig')|escape -}}
+                                    </code></pre>
+                                    <button class="btn btn-info btn-sm clipboard-btn" data-clipboard-target="#media-html-code">
+                                        <i class="far fa-clone"></i>
+                                        {{ 'action.copy'|trans }}
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        <tr class="sonata-ba-view-container">
+                            <th>{{ 'media.type.label_long'|trans }}</th>
+                            <td>
+                                {{ 'media.type.%s'|format(media.fileType)|trans }}
+                            </td>
+                        </tr>
+                        <tr class="sonata-ba-view-container">
+                            <th>{{ 'media.size.label_long'|trans }}</th>
+                            <td>
+                                {{ media.fileSize|readable_filesize }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        {% endblock %}
+    </div>
+
+    <form method="post" action="{{ path('joli_media_sonata_admin_delete') }}">
+        {{ form_widget(delete_form.path) }}
+        <button type="submit" class="btn btn-danger" onclick="return confirm('{{ 'media.delete.confirm'|trans }}');">
+            <i class="fas fa-trash"></i> {{ 'action.delete_file'|trans }}
+        </button>
+    {{ form_end(delete_form) }}
+{% endblock %}

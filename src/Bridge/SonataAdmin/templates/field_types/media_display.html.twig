@@ -1,0 +1,5 @@
+{% if value %}
+    {{ include('@JoliMediaSonataAdmin/_preview.html.twig', { media: value, variation: 'joli_media_sonata_admin', className: 'media-preview media-list-preview' }) }}
+{% else %}
+    <span class="label label-warning bg-gray-active">N/A</span>
+{% endif %}

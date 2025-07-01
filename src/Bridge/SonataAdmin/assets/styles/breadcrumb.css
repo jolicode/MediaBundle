@@ -1,0 +1,24 @@
+/* ==========================================================================
+   Breadcrumb
+   ========================================================================== */
+
+/* Rules
+   ========================================================================== */
+
+.sonata-bc .breadcrumb li.breadcrumb-item--ellipsis {
+  max-width: 40ch;
+  overflow: hidden;
+  vertical-align: text-bottom;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  a {
+    display: inline;
+  }
+}
+
+.navbar-left:has(.joli-media-breadcrumb) {
+  overflow: hidden;
+  max-height: 50px;
+  max-width: 90%;
+}

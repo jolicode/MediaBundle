@@ -1,0 +1,68 @@
+/* ==========================================================================
+   Media Preview
+   ========================================================================== */
+
+/* Custom properties
+   ========================================================================== */
+
+.media-preview {
+  --media-preview-border-color: #e2e8f0;
+  --media-preview-background-primary-color: rgb(0 0 0 / 9.8%);
+  --media-preview-background-secondary-color: rgb(0 0 0 / 0%);
+  --media-preview-background-color: var(--jm-color-gray-200);
+  --media-preview-color: var(--gallery-grid-item-hover-icon-color, #b9c6dc);
+}
+
+[data-bs-theme="dark"] .media-preview {
+  --media-preview-background-primary-color: rgb(0 0 0 / 100%);
+  --media-preview-background-secondary-color: rgb(0 0 0 / 65%);
+  --media-preview-background-color: var(--true-gray-800);
+  --media-preview-color: var(--jm-color-gray-200);
+  --media-preview-border-color: var(--true-gray-600);
+}
+
+/* Rules
+    ========================================================================== */
+
+.media-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  max-width: var(--media-preview-max-width, 100%);
+  outline: solid var(--media-preview-border-color) 0.1rem;
+  border-radius: 0.25rem;
+  background: linear-gradient(
+      45deg,
+      var(--media-preview-background-primary-color) 25%,
+      var(--media-preview-background-secondary-color) 25%,
+      var(--media-preview-background-secondary-color) 75%,
+      var(--media-preview-background-primary-color) 75%,
+      var(--media-preview-background-primary-color) 0
+    ),
+    linear-gradient(
+      45deg,
+      var(--media-preview-background-primary-color) 25%,
+      var(--media-preview-background-secondary-color) 25%,
+      var(--media-preview-background-secondary-color) 75%,
+      var(--media-preview-background-primary-color) 75%,
+      var(--media-preview-background-primary-color) 0
+    ),
+    var(--white);
+  background-position:
+    0 0,
+    0.625rem 0.625rem;
+  background-clip: border-box;
+  background-origin: padding-box;
+  background-size: 1.25rem 1.25rem;
+  color: var(--media-preview-color);
+  font-size: 2.5rem;
+
+  img {
+    max-width: 100%;
+  }
+}
+
+.media-preview:not(:has(img)):not(:is(img)) {
+  background: var(--media-preview-background-color);
+}

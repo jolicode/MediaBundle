@@ -1,0 +1,14 @@
+trix-toolbar .trix-button.trix-button--icon.trix-button--icon-image::before {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2017.5%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M17.5%201.875c.344%200%20.625.281.625.625v12.492l-.195-.254-5.313-6.875a.94.94%200%200%200-1.484%200L7.89%2012.06l-1.191-1.67a.931.931%200%200%200-.761-.39.925.925%200%200%200-.762.395L2.05%2014.77l-.176.242V2.5c0-.344.281-.625.625-.625ZM2.5%200A2.502%202.502%200%200%200%200%202.5V15c0%201.379%201.121%202.5%202.5%202.5h15c1.379%200%202.5-1.121%202.5-2.5V2.5C20%201.121%2018.879%200%2017.5%200Zm3.125%207.5a1.875%201.875%200%201%200%200-3.75%201.875%201.875%200%201%200%200%203.75z%22%2F%3E%3C%2Fsvg%3E");
+  background-size: 16px;
+}
+
+.trix-content video {
+    height: auto;
+    max-width: 100%;
+}
+
+trix-editor [data-trix-mutable].attachment audio,
+trix-editor [data-trix-mutable].attachment video {
+    box-shadow: 0 0 0 2px highlight;
+}

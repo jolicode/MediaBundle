@@ -1,0 +1,108 @@
+action:
+    choose_a_file: 'Choose a file'
+    copy: 'Copy'
+    delete_directory: 'Delete this directory'
+    delete_file: 'Delete this file'
+    move_file: 'Move this file'
+    move_to_this_directory: 'Move to this directory'
+    regenerate: 'Regenerate'
+    remove: 'Remove'
+    rename_directory: 'Rename directory'
+    rename_file: 'Rename file'
+browser:
+    audio:
+        unsupported: 'Your browser does not support the audio element.'
+    video:
+        unsupported: 'Your browser does not support the video element.'
+directory:
+    add: 'Add this directory'
+    create: 'Create a new directory'
+    created_failure: 'Failed to create the directory "%directory%": %error%'
+    created_success: 'Directory "%directory%" created successfully'
+    create_this_directory: 'Create this directory'
+    delete:
+        confirm: 'Are you sure you want to delete this directory? This action cannot be undone. All files and subdirectories will be deleted.'
+    deleted_success: 'Directory "%directory%" deleted successfully'
+    label: 'Directory'
+    list_failure: 'Failed to list the directory "%directory%"'
+    move:
+        failure: 'Failed to move the directory "%from%" to "%to%": %error%'
+        success: 'The directory "%from%" was successfully moved to "%to%"'
+    placeholder: 'Enter a name for the new directory'
+    rename:
+        failure: 'Failed to rename the directory "%from%" to "%to%": %error%'
+        placeholder: 'Enter a new name for this directory'
+        success: 'The directory "%from%" was successfully renamed to "%to%"'
+    sub:
+        add: 'Add a new sub-directory'
+document:
+    download: 'Download the document'
+media:
+    add: 'Add media'
+    deleted_success: 'Media "%media%" deleted successfully'
+    dimensions: 'Dimensions'
+    error:
+        in_use: 'The media "%media%" is used in the "%field%" field of the "%entity%" entity. It cannot be deleted.'
+    inaccessible:
+        explanation: 'The media "%media%" is not accessible. It may have been deleted or moved.'
+        label: 'Inaccessible media'
+    placeholder: 'Enter a new file name for this media'
+    move_modal:
+        content: 'Do you really want to move this media to the directory "%directory%"?'
+        title: 'Move the media'
+    move_failure: 'Failed to move the media "%from%" to the directory "%to%": %error%'
+    move_success: 'The file "%from%" was successfully moved to "%to%"'
+    name: 'Name'
+    size:
+        label: 'Size'
+        label_long: 'File size'
+    type:
+        audio: 'Audio'
+        csv: 'CSV'
+        excel: 'Excel'
+        file: 'File'
+        html: 'HTML'
+        image: 'Image'
+        label: 'Type'
+        label_long: 'File type'
+        pdf: 'PDF'
+        powerpoint: 'PowerPoint'
+        text: 'Text'
+        video: 'Video'
+        word: 'Word'
+        xml: 'XML'
+        zip: 'ZIP'
+    unavailable:
+        simple: 'The media is not available.'
+    upload:
+        dropzone:
+            default_message: 'Drop your files here or click to upload'
+            fallback_message: 'Your browser does not support drag’n’drop file uploads.'
+            fallback_text: 'Please use the form below to upload your files.'
+            file_too_big: 'The file is too big ({{filesize}}MiB). Maximum allowed size is {{maxFilesize}}MiB.'
+            invalid_file_type: This file type is not allowed.
+            max_files_exceeded: 'You cannot upload more than {{maxFiles}} files.'
+        error:
+            already_exists: 'The file "%file%" already exists, please change the file name.'
+            default: 'Failed to upload the file.'
+            invalid_form: 'The form is invalid. Please try again.'
+            unable_to_write_file: 'It was not possible to write the file "%file%".'
+    url:
+        label: 'URL'
+        label_long: 'Media URL'
+media_explorer: 'Media explorer'
+media_library: 'Media library'
+no_file_found: 'No file found'
+back: 'Back'
+preview:
+    label: 'Preview'
+    unavailable: 'Preview not available.'
+root: 'Root'
+variation:
+    label: 'Variation'
+    label_plural: 'Variations'
+    regenerated_success: 'Variation "%variation%" regenerated successfully for the media "%media%"'
+    stored: 'Stored?'
+view:
+    grid: 'Grid view'
+    list: 'List view'

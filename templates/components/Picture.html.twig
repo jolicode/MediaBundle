@@ -1,0 +1,39 @@
+{% props alt = null, skipAutoDimensions = false, library = null, sources = { }, variation = null %}
+{% if this.allowAppendWebpAlternativeSource %}
+    <picture {{ attributes.nested('picture') }}>
+        {% for source in sources %}
+            {% if source is iterable %}
+                <twig:joli:Source
+                    media="{{ this.media }}"
+                    mediaAttr="{{ source.media|default(null) }}"
+                    sizes="{{ source.sizes|default(null) }}"
+                    srcset="{{ source.srcset|default(null) }}"
+                />
+            {% else %}
+                <twig:joli:Source
+                    variation="{{ source }}"
+                    media="{{ this.media }}"
+                />
+            {% endif %}
+        {% endfor %}
+
+        <twig:joli:Img
+            media="{{ this.media }}"
+            library="{{ library }}"
+            variation="{{ variation }}"
+            skipAutoDimensions="{{ skipAutoDimensions }}"
+            allowAppendWebpAlternativeSource="{{ true }}"
+            alt="{{ alt }}"
+            attributes="{{ attributes.nested('img').defaults({ loading: 'lazy', decoding: 'async' }) }}"
+        />
+    </picture>
+{% else %}
+    <twig:joli:Img
+        media="{{ this.media }}"
+        library="{{ library }}"
+        variation="{{ variation }}"
+        skipAutoDimensions="{{ skipAutoDimensions }}"
+        alt="{{ alt }}"
+        attributes="{{ attributes.defaults({ loading: 'lazy', decoding: 'async' }) }}"
+    />
+{% endif %}

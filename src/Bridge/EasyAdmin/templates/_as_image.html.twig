@@ -1,0 +1,22 @@
+{%- trans_default_domain 'JoliMediaEasyAdminBundle' -%}
+
+{%- if media.fileType == 'image' -%}
+    <twig:joli:Img
+        media="{{ media }}"
+        class="{{ className|default(null) }}"
+        variation="{{ variation is defined and variation == false ? null : variation|default('joli_media_easy_admin') }}"
+        skipAutoDimensions="{{ skipAutoDimensions|default(false) }}"
+    />
+{%- else -%}
+    {%- if media.filetype == 'pdf' -%}
+        <i class="fa-solid fa-file-pdf" title="{{ 'media.type.pdf'|trans }}"></i>
+    {%- elseif media.filetype == 'video' %}
+        <i class="fa-solid fa-file-video" title="{{ 'media.type.video'|trans }}"></i>
+    {%- elseif media.filetype == 'audio' %}
+        <i class="fa-solid fa-file-audio" title="{{ 'media.type.audio'|trans }}"></i>
+    {%- elseif media.filetype == 'text' %}
+        <i class="fa-solid fa-file-lines" title="{{ 'media.type.text'|trans }}"></i>
+    {%- else %}
+        <i class="fa-solid fa-file" title="{{ 'media.type.file'|trans }}"></i>
+    {%- endif -%}
+{%- endif -%}

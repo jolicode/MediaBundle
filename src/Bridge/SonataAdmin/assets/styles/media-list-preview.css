@@ -1,0 +1,4 @@
+.media-list-preview {
+  --media-preview-max-width: 12.5rem;
+  --media-preview-aspect-ratio: initial;
+}

@@ -1,0 +1,20 @@
+{%- if this.webpAlternativeSource is not null -%}
+    <twig:joli:Source
+        variation="{{ this.webpAlternativeSource }}"
+        media="{{ this.media.media }}"
+    />
+{% endif %}
+<img
+    src="{{ this.path }}"
+    {{- attributes.defaults({ loading: 'lazy', decoding: 'async' }) }}
+    {{- attributes.nested('img') }}
+    {% if this.class is not null -%}
+        class="{{ this.class }}"
+    {% endif %}
+    {% if this.width is not null -%}
+        width="{{ this.width }}"
+    {% endif %}
+    {% if this.height is not null -%}
+        height="{{ this.height }}"
+    {% endif %}
+/>

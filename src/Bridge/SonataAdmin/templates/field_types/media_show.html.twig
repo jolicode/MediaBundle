@@ -1,0 +1,7 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {{- include('@JoliMediaSonataAdmin/field_types/media_display.html.twig', {
+        value: value,
+    }, false) -}}
+{% endblock %}

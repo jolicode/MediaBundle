@@ -1,0 +1,82 @@
+{% block joli_media_easy_admin_choice_widget %}
+    <template id="template-null-label-{{ id }}">
+        {{ include('@EasyAdmin/label/null.html.twig') }}
+    </template>
+
+    <div class="media-choice js-joli-media-choice-container{% if media is empty %} empty{% endif %}" data-media-id="{{ id }}">
+        <span id="joli-media-container_{{ id }}">
+            {% if media is not empty %}
+                {{ include('@JoliMediaEasyAdmin/_preview.html.twig', { className: 'media-preview' }) }}
+            {% else %}
+                {{ include('@EasyAdmin/label/null.html.twig') }}
+            {% endif %}
+        </span>
+        <span class="media-choice__actions">
+            <span class="btn-group">
+                <a
+                    href="{{ ea_url().setRoute('joli_media_easy_admin_choose') }}&routeParams%5Bkey%5D="
+                    data-folder="{{ folder }}"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal-media-choice_{{ id }}"
+                    class="btn btn-link joli-media-choice-edit"
+                >
+                    <i class="fas fa-plus"></i> {{ 'action.choose_a_file'|trans(domain: 'JoliMediaEasyAdminBundle') }}
+                </a>
+                <button
+                    class="btn btn-link text-danger hide-when-empty joli-media-choice-delete"
+                >
+                    <i class="fas fa-minus-circle"></i> {{ 'action.remove'|trans(domain: 'JoliMediaEasyAdminBundle') }}
+                </button>
+            </span>
+        </span>
+        {{- block('form_widget_simple') -}}
+        <small class="form-text form-help form-error">{{ 'media.error.required'|trans(domain: 'JoliMediaEasyAdminBundle') }}</small>
+    </div>
+    <div id="modal-media-choice_{{ id }}" class="modal-media-choice modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
+                        <span class="btn-label">{{ 'action.cancel'|trans(domain: 'EasyAdminBundle') }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block joli_media_easy_admin_choice_row %}
+    {{- block('form_row') -}}
+{% endblock %}
+
+{% block ea_text_editor_widget %}
+    <div
+        id="modal-media-choice_{{ id }}"
+        class="modal-media-choice modal fade"
+        tabindex="-1"
+        data-href="{{ ea_url().setRoute('joli_media_easy_admin_choose') }}&routeParams%5Bkey%5D="
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
+                        <span class="btn-label">{{ 'action.cancel'|trans(domain: 'EasyAdminBundle') }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_widget(form, { attr: attr|merge({
+        class: 'ea-text-editor-content d-none',
+        'data-number-of-rows': form.vars.ea_vars.field.customOptions.get('numOfRows')|default(5),
+        'data-trix-editor-config': form.vars.ea_vars.field.customOptions.get('trixEditorConfig')|default(null)|json_encode,
+    }) }) }}
+
+    <div class="ea-text-editor-wrapper {{ row_attr.class|default('') ~ (not valid ? ' has-error') }}">
+        <trix-editor input="{{ id }}" class="trix-content"></trix-editor>
+    </div>
+{% endblock %}

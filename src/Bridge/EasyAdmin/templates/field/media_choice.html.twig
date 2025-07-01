@@ -1,0 +1,5 @@
+{% if field.value %}
+    {{ include('@JoliMediaEasyAdmin/_preview.html.twig', { media: field.value, variation: 'joli_media_easy_admin', className: 'media-preview media-list-preview' }) }}
+{% else %}
+    {{ include('@EasyAdmin/label/null.html.twig') }}
+{% endif %}

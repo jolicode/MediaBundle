@@ -1,0 +1,534 @@
+<?php
+
+namespace JoliCode\MediaBundle\Storage;
+
+use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Event\MediaEvents;
+use JoliCode\MediaBundle\Event\PostCreateFolderEvent;
+use JoliCode\MediaBundle\Event\PostCreateMediaEvent;
+use JoliCode\MediaBundle\Event\PostDeleteFolderEvent;
+use JoliCode\MediaBundle\Event\PostDeleteMediaEvent;
+use JoliCode\MediaBundle\Event\PostMoveFolderEvent;
+use JoliCode\MediaBundle\Event\PostMoveMediaEvent;
+use JoliCode\MediaBundle\Event\PreCreateFolderEvent;
+use JoliCode\MediaBundle\Event\PreCreateMediaEvent;
+use JoliCode\MediaBundle\Event\PreDeleteFolderEvent;
+use JoliCode\MediaBundle\Event\PreDeleteMediaEvent;
+use JoliCode\MediaBundle\Event\PreMoveFolderEvent;
+use JoliCode\MediaBundle\Event\PreMoveMediaEvent;
+use JoliCode\MediaBundle\Event\PreResolveMediaEvent;
+use JoliCode\MediaBundle\Exception\ForbiddenPathException;
+use JoliCode\MediaBundle\Exception\PathAlreadyExistsException;
+use JoliCode\MediaBundle\Library\Library;
+use JoliCode\MediaBundle\Model\Media;
+use JoliCode\MediaBundle\Resolver\Resolver;
+use JoliCode\MediaBundle\Storage\Strategy\StorageStrategyInterface;
+use League\Flysystem\Config;
+use League\Flysystem\DirectoryListing;
+use League\Flysystem\Filesystem;
+use League\Flysystem\StorageAttributes;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Mime\MimeTypeGuesserInterface;
+use Symfony\Component\Mime\MimeTypesInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+
+class OriginalStorage
+{
+    private Library $library;
+
+    public function __construct(
+        private readonly StorageStrategyInterface $strategy,
+        private readonly Filesystem $filesystem,
+        private readonly string $urlPath,
+        private readonly bool $enableServeUsingPhp,
+        private readonly string $trashPath,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly MimeTypeGuesserInterface $mimeTypeGuesser,
+        private readonly MimeTypesInterface $mimeTypes,
+        private readonly CacheInterface $cache,
+        private readonly EventDispatcherInterface $dispatcher,
+    ) {
+    }
+
+    public function __sleep(): array
+    {
+        return [
+            'urlPath',
+            'strategy',
+        ];
+    }
+
+    public function createDirectory(string $path): void
+    {
+        $path = Resolver::normalizePath($path);
+
+        if ($this->trashPath === $path || str_starts_with($path, $this->trashPath . '/')) {
+            throw new ForbiddenPathException($this->trashPath);
+        }
+
+        if ($this->dispatcher->hasListeners(MediaEvents::PRE_CREATE_FOLDER)) {
+            $event = new PreCreateFolderEvent($this, $path);
+            $this->dispatcher->dispatch($event, MediaEvents::PRE_CREATE_FOLDER);
+        }
+
+        $this->filesystem->createDirectory($path);
+
+        if ($this->dispatcher->hasListeners(MediaEvents::POST_CREATE_FOLDER)) {
+            $event = new PostCreateFolderEvent($this, $path);
+            $this->dispatcher->dispatch($event, MediaEvents::POST_CREATE_FOLDER);
+        }
+    }
+
+    public function createMedia(string $path, string $content): Media
+    {
+        $mimeType = $this->getMimeTypeFormContent($content);
+
+        if (null === $mimeType) {
+            throw new \RuntimeException('Unable to guess the mime type');
+        }
+
+        $format = $this->getExtension($mimeType);
+        $binary = new Binary(
+            $mimeType,
+            $format,
+            $content,
+        );
+
+        return $this->createMediaFromBinary($path, $binary);
+    }
+
+    public function createMediaFromBinary(string $path, Binary $binary): Media
+    {
+        $path = Resolver::normalizePath($path);
+
+        if ($this->dispatcher->hasListeners(MediaEvents::PRE_CREATE_MEDIA)) {
+            $event = new PreCreateMediaEvent($this, $path, $binary);
+            $this->dispatcher->dispatch($event, MediaEvents::PRE_CREATE_MEDIA);
+        }
+
+        $this->filesystem->write($path, $binary->getContent(), [
+            Config::OPTION_VISIBILITY => 'public',
+            Config::OPTION_DIRECTORY_VISIBILITY => 'public',
+        ]);
+
+        $media = new Media($path, $this, $binary);
+
+        if ($this->dispatcher->hasListeners(MediaEvents::POST_CREATE_MEDIA)) {
+            $event = new PostCreateMediaEvent($this, $media);
+            $this->dispatcher->dispatch($event, MediaEvents::POST_CREATE_MEDIA);
+        }
+
+        return $media;
+    }
+
+    public function delete(string $path): void
+    {
+        $path = Resolver::normalizePath($path);
+
+        if ($this->dispatcher->hasListeners(MediaEvents::PRE_DELETE_MEDIA)) {
+            $event = new PreDeleteMediaEvent($this, $path);
+            $this->dispatcher->dispatch($event, MediaEvents::PRE_DELETE_MEDIA);
+        }
+
+        if ($this->dispatcher->hasListeners(MediaEvents::POST_DELETE_MEDIA)) {
+            // create a temporary path to avoid deleting the directory
+            $trashDirectory = \sprintf('%s/%s', $this->trashPath, uniqid());
+            $this->filesystem->createDirectory($trashDirectory);
+            $trashPath = \sprintf('%s/%s', $trashDirectory, $path);
+            $this->filesystem->move($path, $trashPath);
+
+            try {
+                $event = new PostDeleteMediaEvent($this, $path);
+                $this->dispatcher->dispatch($event, MediaEvents::POST_DELETE_MEDIA);
+            } catch (\Throwable $e) {
+                // if an exception is thrown, we rollback the deletion
+                $this->filesystem->move($trashPath, $path);
+                $this->filesystem->deleteDirectory($trashDirectory);
+
+                throw $e;
+            }
+
+            // if no exception was thrown, perform the deletion
+            $this->filesystem->delete($trashPath);
+            $this->library->deleteAllVariations(substr($trashPath, \strlen($trashDirectory) + 1));
+            $this->filesystem->deleteDirectory($trashDirectory);
+        } else {
+            // if no event listeners, just delete the file and its variations
+            $this->filesystem->delete($path);
+            $this->library->deleteAllVariations($path);
+        }
+    }
+
+    public function deleteDirectory(string $path): void
+    {
+        $path = Resolver::normalizePath($path);
+
+        if ($this->trashPath === $path || str_starts_with($path, $this->trashPath . '/')) {
+            throw new ForbiddenPathException($this->trashPath);
+        }
+
+        if ('' === $path) {
+            throw new ForbiddenPathException($this->trashPath);
+        }
+
+        if ($this->dispatcher->hasListeners(MediaEvents::PRE_DELETE_FOLDER)) {
+            $event = new PreDeleteFolderEvent($this, $path);
+            $this->dispatcher->dispatch($event, MediaEvents::PRE_DELETE_FOLDER);
+        }
+
+        if ($this->dispatcher->hasListeners(MediaEvents::POST_DELETE_FOLDER)) {
+            // create a temporary path to avoid deleting the directory
+            $trashDirectory = \sprintf('%s/%s', $this->trashPath, uniqid());
+            $this->filesystem->createDirectory($trashDirectory);
+            $trashPath = \sprintf('%s/%s', $trashDirectory, $path);
+            $this->filesystem->move($path, $trashPath);
+
+            try {
+                $event = new PostDeleteFolderEvent($this, $path);
+                $this->dispatcher->dispatch($event, MediaEvents::POST_DELETE_FOLDER);
+            } catch (\Throwable $e) {
+                // if an exception is thrown, we rollback the deletion
+                $this->filesystem->move($trashPath, $path);
+                $this->filesystem->deleteDirectory($trashDirectory);
+
+                throw $e;
+            }
+
+            // if no exception was thrown, perform the deletion
+            foreach ($this->listMedias($trashPath, recursive: true) as $media) {
+                $this->delete($media->getPath());
+                $this->library->deleteAllVariations(substr($media->getPath(), \strlen($trashDirectory) + 1));
+            }
+
+            $this->filesystem->deleteDirectory($trashDirectory);
+        } else {
+            // if no event listeners, just delete the directory
+            foreach ($this->listMedias($path, recursive: true) as $media) {
+                $this->delete($media->getPath());
+                $this->library->deleteAllVariations($media->getPath());
+            }
+
+            $this->filesystem->deleteDirectory($path);
+        }
+    }
+
+    public function get(string $path): Binary
+    {
+        $path = $this->strategy->getPath($path);
+        $mimeType = $this->getMimeType($path);
+        $format = $this->getExtension($mimeType);
+
+        return new Binary(
+            $mimeType,
+            $format,
+            $this->filesystem->read($path),
+            $path,
+        );
+    }
+
+    public function getFileSize(string $path): int
+    {
+        return $this->filesystem->filesize($this->strategy->getPath($path));
+    }
+
+    public function getFormat(string $path): string
+    {
+        return $this->getExtension($this->getMimeType($path));
+    }
+
+    public function getMimeType(string $path): string
+    {
+        return $this->cache->get(
+            \sprintf('joli_media_mime_type_%s_%s', $this->library->getName(), Resolver::normalizePath($path)),
+            function (ItemInterface $item) use ($path): string {
+                $item->expiresAfter(120);
+                $mimeType = $this->getMimeTypeFormContent($this->filesystem->read($path));
+
+                if (null === $mimeType) {
+                    throw new \RuntimeException(\sprintf('Unable to guess the mime type for the file "%s"', $path));
+                }
+
+                return $mimeType;
+            },
+        );
+    }
+
+    /**
+     * @return false|array{height: int, width: int}
+     */
+    public function getPixelDimensions(string $path): array|false
+    {
+        /**
+         * @return false|array{height: int, width: int}
+         */
+        $cacheGetter = function (ItemInterface $item) use ($path): array|false {
+            $item->expiresAfter(120);
+
+            return $this->get($path)->getPixelDimensions();
+        };
+
+        return $this->cache->get(
+            \sprintf('joli_media_pixel_dimensions_%s_%s', $this->library->getName(), $path),
+            $cacheGetter,
+        );
+    }
+
+    public function getLastModified(string $path): int
+    {
+        return $this->filesystem->lastModified($this->strategy->getPath($path));
+    }
+
+    public function getLibrary(): Library
+    {
+        return $this->library;
+    }
+
+    public function getStrategy(): StorageStrategyInterface
+    {
+        return $this->strategy;
+    }
+
+    public function getTrashPath(): string
+    {
+        return $this->trashPath;
+    }
+
+    public function getUrl(
+        string $path,
+        int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH,
+    ): string {
+        $parameters = [
+            'slug' => $this->strategy->getFilePath(Resolver::normalizePath($path)),
+        ];
+
+        return $this->urlGenerator->generate(
+            $this->getRouteName(),
+            $parameters,
+            $referenceType,
+        );
+    }
+
+    public function getUrlPath(): string
+    {
+        return $this->urlPath;
+    }
+
+    public function has(string $path): bool
+    {
+        return $this->filesystem->fileExists($this->strategy->getPath($path));
+    }
+
+    public function hasDirectory(string $path): bool
+    {
+        return $this->filesystem->directoryExists($this->strategy->getPath($path));
+    }
+
+    public function isServeUsingPhpEnabled(): bool
+    {
+        return $this->enableServeUsingPhp;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function listDirectories(?string $path = null, ?string $contains = null, bool $recursive = true): array
+    {
+        return $this->list($path, $contains, 'dir', $recursive)
+            ->filter(fn (StorageAttributes $attributes): bool => $this->trashPath !== $attributes->path())
+            ->sortByPath()
+            ->map(fn (StorageAttributes $attributes): string => $attributes->path())
+            ->toArray()
+        ;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function listFiles(?string $path = null, ?string $contains = null, bool $recursive = true): array
+    {
+        return $this->list($path, $contains, 'file', $recursive)
+            ->sortByPath()
+            ->map(fn (StorageAttributes $attributes): string => $attributes->path())
+            ->toArray()
+        ;
+    }
+
+    /**
+     * @return Media[]
+     */
+    public function listMedias(?string $path = null, ?string $contains = null, bool $recursive = true): array
+    {
+        $listing = $this->list($path, $contains, 'file', $recursive)
+            ->map(fn (StorageAttributes $attributes): Media => new Media(Resolver::normalizePath($attributes->path()), $this))
+            ->toArray()
+        ;
+
+        if (!$recursive) {
+            usort($listing, fn (Media $a, Media $b): int => strtolower($a->getPath()) <=> strtolower($b->getPath()));
+        }
+
+        return $listing;
+    }
+
+    public function move(string $from, string $to): void
+    {
+        $from = Resolver::normalizePath($from);
+        $to = Resolver::normalizePath($to);
+
+        if ($this->trashPath === $to || str_starts_with($to, $this->trashPath . '/') || $this->trashPath === $from || str_starts_with($from, $this->trashPath . '/')) {
+            throw new ForbiddenPathException($this->trashPath);
+        }
+
+        if ($this->has($to)) {
+            throw new PathAlreadyExistsException($this, $to);
+        }
+
+        if ($this->dispatcher->hasListeners(MediaEvents::PRE_MOVE_MEDIA)) {
+            $event = new PreMoveMediaEvent($this, $from, $to);
+            $this->dispatcher->dispatch($event, MediaEvents::PRE_MOVE_MEDIA);
+        }
+
+        $this->filesystem->move($from, $to);
+
+        if ($this->dispatcher->hasListeners(MediaEvents::POST_MOVE_MEDIA)) {
+            try {
+                $event = new PostMoveMediaEvent($this, $from, $to);
+                $this->dispatcher->dispatch($event, MediaEvents::POST_MOVE_MEDIA);
+            } catch (\Throwable $e) {
+                // if an exception is thrown, we rollback the move
+                $this->filesystem->move($to, $from);
+
+                throw $e;
+            }
+        }
+    }
+
+    public function moveFolder(string $from, string $to): void
+    {
+        $from = Resolver::normalizePath($from);
+        $to = Resolver::normalizePath($to);
+
+        if ($this->trashPath === $to || str_starts_with($to, $this->trashPath . '/') || $this->trashPath === $from || str_starts_with($from, $this->trashPath . '/')) {
+            throw new ForbiddenPathException($this->trashPath);
+        }
+
+        if ($this->hasDirectory($to)) {
+            throw new PathAlreadyExistsException($this, $to);
+        }
+
+        if ($this->dispatcher->hasListeners(MediaEvents::PRE_MOVE_FOLDER)) {
+            $event = new PreMoveFolderEvent($this, $from, $to);
+            $this->dispatcher->dispatch($event, MediaEvents::PRE_MOVE_FOLDER);
+        }
+
+        $this->filesystem->move($from, $to);
+
+        if ($this->dispatcher->hasListeners(MediaEvents::POST_MOVE_FOLDER)) {
+            try {
+                $event = new PostMoveFolderEvent($this, $from, $to);
+                $this->dispatcher->dispatch($event, MediaEvents::POST_MOVE_FOLDER);
+            } catch (\Throwable $e) {
+                // if an exception is thrown, we rollback the move
+                $this->filesystem->move($to, $from);
+
+                throw $e;
+            }
+        }
+    }
+
+    public function resolve(string $path): ?Media
+    {
+        $path = Resolver::normalizePath($path);
+
+        if ($this->dispatcher->hasListeners(MediaEvents::PRE_RESOLVE_MEDIA)) {
+            $event = new PreResolveMediaEvent($this, $path);
+            $this->dispatcher->dispatch($event, MediaEvents::PRE_RESOLVE_MEDIA);
+            $path = $event->path;
+        }
+
+        if ($this->has($path)) {
+            return new Media($path, $this);
+        }
+
+        if (str_starts_with($path, $this->urlPath)) {
+            // in many occasions, the provided path is the full URL path,
+            // so we try to remove the URL path prefix
+            $path = substr($path, \strlen($this->urlPath));
+
+            if ($this->has($path)) {
+                return new Media($path, $this);
+            }
+        }
+
+        return null;
+    }
+
+    public function setLibrary(Library $library): void
+    {
+        $this->library = $library;
+    }
+
+    private function getExtension(string $mimeType): string
+    {
+        $possibleExtensions = $this->mimeTypes->getExtensions($mimeType);
+
+        if ([] === $possibleExtensions) {
+            throw new \InvalidArgumentException(\sprintf('No possible extension found for mime type "%s"', $mimeType));
+        }
+
+        return $possibleExtensions[0];
+    }
+
+    private function getMimeTypeFormContent(string $content): ?string
+    {
+        $temporaryFile = tempnam(sys_get_temp_dir(), 'media');
+        file_put_contents($temporaryFile, $content);
+        $mimeType = $this->mimeTypeGuesser->guessMimeType($temporaryFile);
+        unlink($temporaryFile);
+
+        return $mimeType;
+    }
+
+    private function getRouteName(): string
+    {
+        return 'joli_media_original_' . $this->getLibrary()->getName();
+    }
+
+    private function list(
+        ?string $path = null,
+        ?string $contains = null,
+        ?string $type = null,
+        bool $recursive = true,
+    ): DirectoryListing {
+        $listing = $this->filesystem->listContents($this->strategy->getPath($path ?? ''), $recursive);
+
+        if (null !== $type) {
+            if ('file' === $type) {
+                $listing = $listing->filter(fn (StorageAttributes $attributes): bool => $attributes->isFile());
+            } elseif ('dir' === $type) {
+                $listing = $listing->filter(fn (StorageAttributes $attributes): bool => $attributes->isDir());
+            } else {
+                throw new \InvalidArgumentException('Invalid type');
+            }
+        }
+
+        if (null !== $path && '.' !== $path) {
+            // @TODO check rather using the withPath() method
+            $listing = $listing->filter(fn (StorageAttributes $attributes): bool => (bool) preg_match(
+                '/^' . preg_quote($this->strategy->getPath($path), '/') . '/',
+                $attributes->path(),
+            ));
+        }
+
+        if (null !== $contains) {
+            $listing = $listing->filter(fn (StorageAttributes $attributes): bool => (bool) preg_match(
+                '/' . preg_quote($contains, '/') . '/',
+                $attributes->path(),
+            ));
+        }
+
+        return $listing;
+    }
+}

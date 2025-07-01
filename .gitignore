@@ -1,0 +1,17 @@
+# dependencies
+/composer.lock
+vendor
+
+# Castor stubs
+.castor.stub.php
+
+# QA tools
+.php-cs-fixer.cache
+.phpunit.cache
+phpunit.xml
+.twig-cs-fixer.cache
+
+# frontend dependencies
+node_modules
+npm-debug.log
+yarn-error.log

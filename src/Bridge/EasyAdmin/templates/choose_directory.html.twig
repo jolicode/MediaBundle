@@ -1,0 +1,92 @@
+{% trans_default_domain 'JoliMediaEasyAdminBundle' %}
+
+{% block breadcrumb %}{% endblock %}
+
+{% block add_media_button %}{% endblock %}
+
+{% block delete_directory_button %}{% endblock %}
+
+{% block rename_directory_button %}{% endblock %}
+
+{% block rename_directory_container %}{% endblock %}
+
+{% block page_content %}
+    {% block choose_directory_button %}
+        <a
+            href="{{ ea_url().setRoute('joli_media_easy_admin_move') }}"
+            class="action-move btn btn-primary"
+            data-folder-path="{{ current_key }}"
+            data-bs-toggle="modal"
+            data-bs-target="#modal-move"
+            data-confirmation="{{ 'media.move_modal.content'|trans({ '%directory%': current_key }) }}"
+            formaction="{{ ea_url().setRoute('joli_media_easy_admin_move') }}"
+        >
+            <i class="action-icon fa fa-crosshairs"></i> <span class="action-label">{{ 'action.move_to_this_directory'|trans }}</span>
+        </a>
+    {% endblock %}
+
+    {% block body_breadcrumb %}
+        {{ include(ea.templatePath('flash_messages')) }}
+        <div class="mt-3">
+            {% if breadcrumb|length >= 1 %}
+                <ul class="breadcrumb m-0 p-0 bg-transparent">
+                    {% for element in breadcrumb %}
+                        <li class="breadcrumb-item breadcrumb-item--ellipsis{{ loop.last ? ' active' : '' }}">
+                            {% if loop.last %}
+                                {{ element.name }}
+                            {% else %}
+                                <a href="{{ element.url }}">{{ element.name }}</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    {% endblock %}
+
+    {% block body_content_header_wrapper %}
+        {{ block('content_header_wrapper') }}
+    {% endblock %}
+
+    {% block content_footer_wrapper %}{% endblock %}
+    {% block content_header_wrapper %}{% endblock %}
+
+    {% block media_grid_view %}
+        <li class="gallery-grid-item">
+            <span class="gallery-grid-item__link"
+            >
+                <span class="media-preview">
+                    {{ include('@JoliMediaEasyAdmin/_as_image.html.twig', { skipAutoDimensions: true }) }}
+                </span>
+                <span class="gallery-grid-item__name">{{ media.filename }}</span>
+            </span>
+        </li>
+    {% endblock %}
+
+    {% block media_list_view %}
+        <tr>
+            <td data-column="name" data-label="name" dir="ltr">
+                <span class="gallery-list-item">
+                    <span class="gallery-list-item__preview">
+                        {{ include('@JoliMediaEasyAdmin/_as_image.html.twig', { variation: 'joli_media_easy_admin_small' }) }}
+                    </span>
+                    <span class="gallery-list-item__name">{{ media.filename }}</span>
+                </span>
+            </td>
+            <td data-column="type" data-label="name" class="text-left" dir="ltr">
+                <span class="badge badge-secondary">{{ 'media.type.%s'|format(media.fileType)|trans(domain: 'JoliMediaEasyAdminBundle') }}</span>
+            </td>
+            <td data-column="file-size" data-label="name" class="text-left" dir="ltr">
+                {{ media.fileSize|readable_filesize }}
+            </td>
+            <td data-column="dimensions" data-label="name" class="text-left" dir="ltr">
+                {% set pixelDimensions = media.pixelDimensions %}
+                {% if pixelDimensions.width is defined %}
+                    {{ pixelDimensions.width }}x{{ pixelDimensions.height }}
+                {% else %}
+                    &nbsp;
+                {% endif %}
+            </td>
+        </tr>
+    {% endblock %}
+{% endblock %}
