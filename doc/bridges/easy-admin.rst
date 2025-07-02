@@ -96,9 +96,26 @@ This ``setFolder()`` method can be used to specify which folder should be opened
 The ``MediaChoiceField`` can be nested into a ``CollectionField``, allowing you to manage multiple media items in a single form. This is particularly useful for managing collections of images or other media types::
 
     use JoliCode\MediaBundle\Bridge\EasyAdmin\Field\MediaChoiceField;
+    use Symfony\Component\Asset\PathPackage;
+    use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 
     class ArticleCrudController extends AbstractCrudController
     {
+        public function configureAssets(Assets $assets): Assets
+        {
+            // this should not be needed, but there is a bug in EA with assets in nested forms
+            // see https://github.com/EasyCorp/EasyAdminBundle/issues/6127
+            $package = new PathPackage(
+                '/bundles/jolimediaeasyadmin',
+                new JsonManifestVersionStrategy(__DIR__ . '/../../../public/bundles/jolimediaeasyadmin/manifest.json'),
+            );
+
+            return $assets
+                ->addCssFile($package->getUrl('joli-media-easy-admin.css'))
+                ->addJsFile($package->getUrl('joli-media-easy-admin.js'))
+            ;
+        }
+
         public function configureFields(string $pageName): iterable
         {
             return [
@@ -107,10 +124,37 @@ The ``MediaChoiceField`` can be nested into a ``CollectionField``, allowing you 
                     ->renderExpanded(true)
                     ->useEntryCrudForm(ArticleImagesCrudController::class)
                     ->setEntryIsComplex()
-                    // this should not be needed, but there is a bug in EA with assets in nested forms
-                    // see https://github.com/EasyCorp/EasyAdminBundle/issues/6127
-                    ->addCssFiles($package->getUrl('joli-media-easy-admin.css'))
-                    ->addJsFiles($package->getUrl('joli-media-easy-admin.js')),
             ];
         }
+    }
+
+
+Trix and `TextEditorField` integration
+--------------------------------------
+
+When a `TextEditorField` is used in an EasyAdmin form, a media selector button can added to the toolbar. This allows users to easily insert media into the text editor content. In order to enable this feature, you need to use the form theme provided by the JoliMediaEasyAdminBundle. You can do this by adding the following line to your `configureCrud` method in your EasyAdmin controller::
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return parent::configureCrud($crud)
+            ->addFormTheme('@JoliMediaEasyAdmin/form/form_theme.html.twig')
+        ;
+    }
+
+You also need to make sure that the assets for the JoliMediaEasyAdminBundle are configured correctly. This can be done in the `configureAssets` method of your EasyAdmin controller::
+
+    use Symfony\Component\Asset\PathPackage;
+    use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
+
+    public function configureAssets(Assets $assets): Assets
+    {
+        $package = new PathPackage(
+            '/bundles/jolimediaeasyadmin',
+            new JsonManifestVersionStrategy(__DIR__ . '/../../../public/bundles/jolimediaeasyadmin/manifest.json'),
+        );
+
+        return $assets
+            ->addCssFile($package->getUrl('joli-media-easy-admin.css'))
+            ->addJsFile($package->getUrl('joli-media-easy-admin.js'))
+        ;
     }
