@@ -4,6 +4,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use JoliCode\MediaBundle\Cache\MediaEntityMetadataWarmer;
 use JoliCode\MediaBundle\Command\AuditCommand;
+use JoliCode\MediaBundle\Command\BatchConvertCommand;
 use JoliCode\MediaBundle\Command\Cache\PruneCommand;
 use JoliCode\MediaBundle\Command\Cache\RemoveCommand;
 use JoliCode\MediaBundle\Command\ConvertCommand;
@@ -65,6 +66,14 @@ return static function (ContainerConfigurator $container): void {
         ->set('joli_media.command.audit', AuditCommand::class)
         ->public()
         ->args([
+            service('joli_media.library_container'),
+        ])
+        ->tag('console.command')
+
+        ->set('joli_media.command.batch_convert', BatchConvertCommand::class)
+        ->public()
+        ->args([
+            service('joli_media.converter'),
             service('joli_media.library_container'),
         ])
         ->tag('console.command')
