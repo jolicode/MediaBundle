@@ -7,6 +7,7 @@ use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Variation\Variation;
+use League\Flysystem\UnableToReadFile;
 use Psr\Log\LoggerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
@@ -87,7 +88,17 @@ class Source
         $webpAlternativeSrcset = [];
 
         foreach ($srcset as $descriptor => $name) {
-            $mediaVariation = $this->resolver->resolveMediaVariation($media, $name);
+            try {
+                $mediaVariation = $this->resolver->resolveMediaVariation($media, $name);
+            } catch (UnableToReadFile $e) {
+                $this->logger?->warning('Could not resolve media variation', [
+                    'exception' => $e,
+                    'media' => $media,
+                    'variation' => $name,
+                ]);
+
+                continue;
+            }
 
             if (!$mediaVariation instanceof MediaVariation) {
                 throw new \InvalidArgumentException(\sprintf('Media variation "%s" not found for the media "%s".', $name, $media->getPath()));

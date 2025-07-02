@@ -24,6 +24,8 @@ class ImgTest extends WebTestCase
 
     private const PARTIALLY_STORED_MEDIA = 'partially-stored-media.jpg';
 
+    private const BROKEN_FILENAME = 'some\ filename.jpg';
+
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
@@ -56,6 +58,11 @@ class ImgTest extends WebTestCase
         // store the self::PARTIALLY_STORED_MEDIA media in the "auto_generate" library, but none of its variations
         $binary = new Binary('image/jpeg', Format::JPEG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::JPEG_FIXTURE_PATH));
         $media = new Media(self::PARTIALLY_STORED_MEDIA, $libraries->get('auto_generate')->getOriginalStorage(), $binary);
+        $media->store();
+
+        // store the self::BROKEN_FILENAME media but none of its variations
+        $binary = new Binary('image/jpeg', Format::JPEG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::JPEG_FIXTURE_PATH));
+        $media = new Media(self::BROKEN_FILENAME, $libraries->getDefault()->getOriginalStorage(), $binary);
         $media->store();
     }
 
@@ -181,6 +188,14 @@ class ImgTest extends WebTestCase
                 'style' => 'aspect-ratio: calc(30 / 10)',
             ],
             '<img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" style="aspect-ratio: calc(30 / 10)" width="145" height="109">',
+        ];
+        yield 'existing-media-cannot-be-read' => [
+            Img::class,
+            [
+                'path' => self::BROKEN_FILENAME,
+                'variation' => 'joli-media-easy-admin',
+            ],
+            '<img src="/media/cache/joli-media-easy-admin/some%5C%20filename.jpg" loading="lazy" decoding="async">',
         ];
 
         // picture tags

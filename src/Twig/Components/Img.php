@@ -9,6 +9,7 @@ use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Variation\Variation;
+use League\Flysystem\UnableToReadFile;
 use Psr\Log\LoggerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
@@ -55,7 +56,17 @@ class Img
             $path = $media->getPath();
 
             if (null !== $variation) {
-                $media = $this->resolver->resolveMediaVariation($media, $variation);
+                try {
+                    // try to resolve the media variation
+                    $media = $this->resolver->resolveMediaVariation($media, $variation);
+                } catch (UnableToReadFile $e) {
+                    $this->logger?->warning('Could not resolve media variation', [
+                        'exception' => $e,
+                        'media' => $media,
+                        'variation' => $variation,
+                    ]);
+                    $media = null;
+                }
             }
         } else {
             if (null === $path) {
@@ -81,7 +92,7 @@ class Img
 
                         return;
                     }
-                } catch (MediaNotFoundException) {
+                } catch (MediaNotFoundException|UnableToReadFile) {
                     $media = null;
                 }
             }
