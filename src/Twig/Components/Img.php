@@ -92,7 +92,7 @@ class Img
 
                         return;
                     }
-                } catch (MediaNotFoundException | UnableToReadFile) {
+                } catch (MediaNotFoundException|UnableToReadFile) {
                     $media = null;
                 }
             }

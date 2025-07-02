@@ -96,6 +96,7 @@ class Source
                     'media' => $media,
                     'variation' => $name,
                 ]);
+
                 continue;
             }
 
