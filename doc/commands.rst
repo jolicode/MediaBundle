@@ -108,7 +108,7 @@ The command supports the following options:
 joli:media:convert
 ------------------
 
-This command can be used to generate media variations for one or more media. It is usefull if you want to generate variations for a specific media.
+This command can be used to generate media variations for one or more media. It is useful if you want to generate variations for a specific media.
 
 .. code-block:: terminal
 
