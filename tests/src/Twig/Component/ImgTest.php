@@ -240,6 +240,19 @@ class ImgTest extends WebTestCase
             ],
             '<picture class="picture-class"><source srcset="/media/cache/joli-media-easy-admin/circle-pattern.jpg" type="image/jpeg" width="145" height="109"><source srcset="/media/cache/joli-media-easy-admin-large/circle-pattern.jpg" type="image/jpeg" width="800" height="600"><source srcset="/media/cache/joli-media-easy-admin-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
+        yield 'picture-with-sources-and-skipAutoDimensions' => [
+            Picture::class,
+            [
+                'path' => self::COMPLETELY_STORED_MEDIA,
+                'variation' => 'joli-media-easy-admin',
+                'alt' => 'Alternative text',
+                'picture:class' => 'picture-class',
+                'img:class' => 'img-class',
+                'sources' => ['joli-media-easy-admin', 'joli-media-easy-admin-large'],
+                'skipAutoDimensions' => true,
+            ],
+            '<picture class="picture-class"><source srcset="/media/cache/joli-media-easy-admin/circle-pattern.jpg" type="image/jpeg"><source srcset="/media/cache/joli-media-easy-admin-large/circle-pattern.jpg" type="image/jpeg"><source srcset="/media/cache/joli-media-easy-admin-webp/circle-pattern.d601f6f2.webp" type="image/webp"><img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+        ];
         yield 'partial-picture-with-sources' => [
             Picture::class,
             [
@@ -249,6 +262,19 @@ class ImgTest extends WebTestCase
                 'picture:class' => 'picture-class',
                 'img:class' => 'img-class',
                 'sources' => ['joli-media-easy-admin', 'joli-media-easy-admin-large'],
+            ],
+            '<picture class="picture-class"><source srcset="/media/cache/joli-media-easy-admin/partially-stored-media.jpg"><source srcset="/media/cache/joli-media-easy-admin-large/partially-stored-media.jpg"><source srcset="/media/cache/joli-media-easy-admin-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/joli-media-easy-admin/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+        ];
+        yield 'partial-picture-with-sources-and-skipAutoDimensions' => [
+            Picture::class,
+            [
+                'path' => self::PARTIALLY_STORED_MEDIA,
+                'variation' => 'joli-media-easy-admin',
+                'alt' => 'Alternative text',
+                'picture:class' => 'picture-class',
+                'img:class' => 'img-class',
+                'sources' => ['joli-media-easy-admin', 'joli-media-easy-admin-large'],
+                'skipAutoDimensions' => true,
             ],
             '<picture class="picture-class"><source srcset="/media/cache/joli-media-easy-admin/partially-stored-media.jpg"><source srcset="/media/cache/joli-media-easy-admin-large/partially-stored-media.jpg"><source srcset="/media/cache/joli-media-easy-admin-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/joli-media-easy-admin/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
         ];
@@ -315,7 +341,7 @@ class ImgTest extends WebTestCase
                     ],
                 ]],
             ],
-            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/joli-media-easy-admin-extra-large/partially-stored-media.jpg 2560w, /media/cache/joli-media-easy-admin-large/partially-stored-media.jpg 1920w"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/joli-media-easy-admin-extra-large-webp/partially-stored-media.b16d66f4.webp 2560w, /media/cache/joli-media-easy-admin-large-webp/partially-stored-media.b16d66f4.webp 1920w"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/joli-media-easy-admin-large/partially-stored-media.jpg 1600w, /media/cache/joli-media-easy-admin/partially-stored-media.jpg 1024w"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/joli-media-easy-admin-large-webp/partially-stored-media.b16d66f4.webp 1600w, /media/cache/joli-media-easy-admin-webp/partially-stored-media.b16d66f4.webp 1024w"><source srcset="/media/cache/joli-media-easy-admin-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/joli-media-easy-admin/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/joli-media-easy-admin-extra-large/partially-stored-media.jpg 2560w, /media/cache/joli-media-easy-admin-large/partially-stored-media.jpg 1920w"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/joli-media-easy-admin-extra-large-webp/partially-stored-media.b16d66f4.webp 2560w, /media/cache/joli-media-easy-admin-large-webp/partially-stored-media.b16d66f4.webp 1920w" type="image/webp"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/joli-media-easy-admin-large/partially-stored-media.jpg 1600w, /media/cache/joli-media-easy-admin/partially-stored-media.jpg 1024w"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/joli-media-easy-admin-large-webp/partially-stored-media.b16d66f4.webp 1600w, /media/cache/joli-media-easy-admin-webp/partially-stored-media.b16d66f4.webp 1024w" type="image/webp"><source srcset="/media/cache/joli-media-easy-admin-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/joli-media-easy-admin/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
         ];
     }
 

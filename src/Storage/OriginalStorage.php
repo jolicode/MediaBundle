@@ -244,13 +244,8 @@ class OriginalStorage
             \sprintf('joli_media_mime_type_%s_%s', $this->library->getName(), Resolver::normalizePath($path)),
             function (ItemInterface $item) use ($path): string {
                 $item->expiresAfter(120);
-                $mimeType = $this->getMimeTypeFormContent($this->filesystem->read($path));
 
-                if (null === $mimeType) {
-                    throw new \RuntimeException(\sprintf('Unable to guess the mime type for the file "%s"', $path));
-                }
-
-                return $mimeType;
+                return $this->filesystem->mimeType($this->strategy->getPath($path));
             },
         );
     }

@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Twig\Components;
 
 use JoliCode\MediaBundle\Conversion\Converter;
+use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Resolver\Resolver;
@@ -45,6 +46,7 @@ class Source
         Media $media,
         ?string $variation = null,
         ?array $srcset = null,
+        bool $skipAutoDimensions = false,
     ): void {
         $this->media = $media;
 
@@ -68,11 +70,14 @@ class Source
 
             if ($mediaVariation->isStored()) {
                 $this->type = $mediaVariation->getMimeType();
-                $dimensions = $mediaVariation->getBinary()->getPixelDimensions();
 
-                if (false !== $dimensions) {
-                    $this->width = $dimensions['width'];
-                    $this->height = $dimensions['height'];
+                if (!$skipAutoDimensions) {
+                    $dimensions = $mediaVariation->getBinary()->getPixelDimensions();
+
+                    if (false !== $dimensions) {
+                        $this->width = $dimensions['width'];
+                        $this->height = $dimensions['height'];
+                    }
                 }
             }
 
@@ -114,9 +119,8 @@ class Source
                 ]);
             }
 
-            if ($mediaVariation->isStored()) {
+            if (!$skipAutoDimensions && $mediaVariation->isStored()) {
                 $types[] = $mediaVariation->getMimeType();
-
                 if (null === $this->height) {
                     $dimensions = $mediaVariation->getBinary()->getPixelDimensions();
 
@@ -125,6 +129,9 @@ class Source
                         $this->height = $dimensions['height'];
                     }
                 }
+            } elseif ($mediaVariation->getVariation()->getFormat() instanceof Format) {
+                // if the variation forces a format, we can use it to determine the mime type
+                $types[] = $mediaVariation->getVariation()->getFormat()->getMimeType();
             }
 
             if (!\in_array('image/webp', $types, true)) {

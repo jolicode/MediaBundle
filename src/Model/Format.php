@@ -38,4 +38,15 @@ enum Format: string
             self::WEBP => ['webp'],
         };
     }
+
+    public function getMimeType(): string
+    {
+        return match ($this) {
+            self::GIF => 'image/gif',
+            self::HEIF => 'image/heif',
+            self::JPEG => 'image/jpeg',
+            self::PNG => 'image/png',
+            self::WEBP => 'image/webp',
+        };
+    }
 }
