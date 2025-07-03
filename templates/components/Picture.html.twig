@@ -8,11 +8,13 @@
                     mediaAttr="{{ source.media|default(null) }}"
                     sizes="{{ source.sizes|default(null) }}"
                     srcset="{{ source.srcset|default(null) }}"
+                    skipAutoDimensions="{{ skipAutoDimensions }}"
                 />
             {% else %}
                 <twig:joli:Source
                     variation="{{ source }}"
                     media="{{ this.media }}"
+                    skipAutoDimensions="{{ skipAutoDimensions }}"
                 />
             {% endif %}
         {% endfor %}
