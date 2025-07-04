@@ -38,11 +38,13 @@ class BaseTestCase extends TestCase
 {
     public const string JPEG_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.jpeg';
 
-    public const string PNG_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.png';
-
     public const string GIF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.gif';
 
     public const string HEIF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.heic';
+
+    public const string PNG_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.png';
+
+    public const string TIFF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.tiff';
 
     public const array FIXTURE_BINARIES = [
         'gif' => self::GIF_FIXTURE_PATH,

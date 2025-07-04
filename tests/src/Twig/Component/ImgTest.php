@@ -24,6 +24,8 @@ class ImgTest extends WebTestCase
 
     private const PARTIALLY_STORED_MEDIA = 'partially-stored-media.jpg';
 
+    private const TIFF_MEDIA = 'tiff-media.tiff';
+
     private const BROKEN_FILENAME = 'some\ filename.jpg';
 
     public static function setUpBeforeClass(): void
@@ -59,6 +61,13 @@ class ImgTest extends WebTestCase
         $binary = new Binary('image/jpeg', Format::JPEG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::JPEG_FIXTURE_PATH));
         $media = new Media(self::PARTIALLY_STORED_MEDIA, $libraries->get('auto_generate')->getOriginalStorage(), $binary);
         $media->store();
+
+        // store the self::TIFF_MEDIA media
+        $binary = new Binary('image/tiff', Format::TIFF->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::TIFF_FIXTURE_PATH));
+        $media = new Media(self::TIFF_MEDIA, $libraries->getDefault()->getOriginalStorage(), $binary);
+        $media->store();
+
+        $converter->convert($media, 'default', 'joli-media-easy-admin');
 
         // store the self::BROKEN_FILENAME media but none of its variations
         $binary = new Binary('image/jpeg', Format::JPEG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::JPEG_FIXTURE_PATH));
@@ -128,6 +137,15 @@ class ImgTest extends WebTestCase
                 'alt' => 'Alternative text',
             ],
             '<img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109">',
+        ];
+        yield 'existing-media-tiff' => [
+            Img::class,
+            [
+                'path' => self::TIFF_MEDIA,
+                'variation' => 'joli-media-easy-admin',
+                'alt' => 'Alternative text',
+            ],
+            '<img src="/media/cache/joli-media-easy-admin/tiff-media.26258f1a.jpeg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109">',
         ];
         yield 'partial-existing-media' => [
             Img::class,

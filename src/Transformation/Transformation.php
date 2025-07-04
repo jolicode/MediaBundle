@@ -6,6 +6,7 @@ use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\Point;
 use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Variation\Variation;
 
 class Transformation
@@ -36,6 +37,11 @@ class Transformation
         foreach ($this->variation->getTransformerChain() as $transformer) {
             $transformer->transform($this);
         }
+    }
+
+    public function getAlternativeOutputFormat(): ?string
+    {
+        return Format::fromName($this->getOutputFormat())?->getAlternativeFormat()?->value;
     }
 
     /**
@@ -113,6 +119,20 @@ class Transformation
     public function getOutputFormat(): string
     {
         return $this->variation->getFormat()->value ?? $this->binary->getFormat();
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getPossibleOutputFormats(): array
+    {
+        $outputFormats = [$this->getOutputFormat()];
+
+        if (null !== $this->getAlternativeOutputFormat()) {
+            $outputFormats[] = $this->getAlternativeOutputFormat();
+        }
+
+        return $outputFormats;
     }
 
     public function getVariationName(): string
