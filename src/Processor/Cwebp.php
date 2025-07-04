@@ -45,7 +45,7 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
      */
     public function getProcessableInputFormats(): array
     {
-        return [Format::JPEG, Format::PNG, Format::WEBP];
+        return [Format::JPEG, Format::PNG, Format::WEBP, Format::TIFF];
     }
 
     /**
@@ -66,7 +66,7 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
         $temporaryFile = $this->writeTemporaryFile($binary);
         $fileSize = filesize($temporaryFile);
 
-        $nearLossless = Format::JPEG !== Format::fromName($binary->getFormat()) && !$this->guessIsPhotoFile($temporaryFile);
+        $nearLossless = !\in_array(Format::fromName($binary->getFormat()), [Format::JPEG, Format::TIFF]) && !$this->guessIsPhotoFile($temporaryFile);
         $transformationOptions = $transformation->getAsCwebpOptions();
         $process = $this->getCwebpProcess(
             $temporaryFile,

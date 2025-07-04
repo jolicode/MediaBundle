@@ -18,6 +18,38 @@ readonly class Resolver
     ) {
     }
 
+    public function guessMediaVariationFormat(Media|string $media, Variation|string $variation, ?string $libraryName = null): ?string
+    {
+        if ($media instanceof Media) {
+            if (null !== $libraryName && $libraryName !== $media->getLibrary()->getName()) {
+                throw new \InvalidArgumentException(\sprintf('The media "%s" is stored in the library "%s", not in "%s"', $media->getPath(), $media->getLibrary()->getName(), $libraryName));
+            }
+        } else {
+            $media = $this->resolveMedia($media, $libraryName);
+        }
+
+        if (!$variation instanceof Variation) {
+            $variation = $media->getLibrary()->getVariationContainer()->get($variation);
+        }
+
+        $outputFormat = $variation->getFormat()->value ?? $media->getFormat();
+        $outputFormats = [$outputFormat];
+
+        if ($alternativeOutputFormat = Format::fromName($outputFormat)?->getAlternativeFormat()?->value) {
+            $outputFormats[] = $alternativeOutputFormat;
+        }
+
+        foreach ($outputFormats as $outputFormat) {
+            $processors = $this->processorContainer->getProcessors($media->getFormat(), $outputFormat);
+
+            if ([] !== $processors) {
+                return $outputFormat;
+            }
+        }
+
+        return null;
+    }
+
     public function isMediaProcessable(Media $media): bool
     {
         return $this->processorContainer->canProcessInputFormat($media->getFormat());
@@ -69,7 +101,7 @@ readonly class Resolver
                 $variation = $this->getVariation($variation, $libraryName);
 
                 if (!$variation->getFormat() instanceof Format) {
-                    // try to see if there a variation with a coinstrained format that can generate a MediaVariation with this path
+                    // try to see if there is a variation with a constrained format that can generate a MediaVariation with this path
                     foreach (Format::cases() as $format) {
                         $variationClone = $variation->cloneWithOutputFormat($format);
                         $mediaVariation = $this->tryToResolveVariation($path, $variationClone, $libraryName);
@@ -94,7 +126,10 @@ readonly class Resolver
             return null;
         }
 
-        return $this->getVariation($variation, $libraryName)->getForMedia($media);
+        return $this->getVariation($variation, $libraryName)->getForMedia(
+            $media,
+            $this->guessMediaVariationFormat($media, $variation, $libraryName),
+        );
     }
 
     /**

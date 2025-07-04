@@ -35,28 +35,29 @@ readonly class TransformationProcessor
 
     private function runTransformation(Transformation $transformation): Binary
     {
-        $processors = $this->processorContainer->getProcessors(
-            $transformation->getInputFormat(),
-            $transformation->getOutputFormat(),
-        );
+        $outputFormats = $transformation->getPossibleOutputFormats();
 
-        foreach ($processors as $processor) {
-            try {
-                return $processor->process(
-                    $transformation->getBinary(),
-                    $transformation,
-                    [],
-                    $transformation->getOutputFormat(),
-                );
-            } catch (\Exception $e) {
-                // continue with the next processor
-                $this->logger?->error(\sprintf(
-                    'Could not apply the variation "%s" to the media "%s". The "%s" processor failed with the following error:%s',
-                    $transformation->getVariationName(),
-                    $transformation->getBinary()->getPath() ?? '-',
-                    $processor::class,
-                    "\n\n" . $e->getMessage(),
-                ));
+        foreach ($outputFormats as $outputFormat) {
+            $processors = $this->processorContainer->getProcessors($transformation->getInputFormat(), $outputFormat);
+
+            foreach ($processors as $processor) {
+                try {
+                    return $processor->process(
+                        $transformation->getBinary(),
+                        $transformation,
+                        [],
+                        $outputFormat,
+                    );
+                } catch (\Exception $e) {
+                    // continue with the next processor
+                    $this->logger?->error(\sprintf(
+                        'Could not apply the variation "%s" to the media "%s". The "%s" processor failed with the following error:%s',
+                        $transformation->getVariationName(),
+                        $transformation->getBinary()->getPath() ?? '-',
+                        $processor::class,
+                        "\n\n" . $e->getMessage(),
+                    ));
+                }
             }
         }
 

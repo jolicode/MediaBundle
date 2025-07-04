@@ -62,7 +62,7 @@ class Variation
         return $this->format;
     }
 
-    public function getForMedia(Media $media): MediaVariation
+    public function getForMedia(Media $media, ?string $guessedFormat = null): MediaVariation
     {
         if ($media->hasVariation($this->name)) {
             return $media->getVariation($this->name);
@@ -72,10 +72,16 @@ class Variation
             throw new \RuntimeException(\sprintf('The voters for the variation "%s" prevent to process the media "%s"', $this->name, $media->getPath()));
         }
 
-        $forcedFormat = $this->getForcedFormatForMedia($media);
+        $outputFormat = null;
 
-        if ($forcedFormat instanceof Format) {
-            $variation = new MediaVariation($media, $this->cloneWithOutputFormat($forcedFormat));
+        if (!$this->format instanceof Format && null !== $guessedFormat && Format::fromName($guessedFormat) instanceof Format) {
+            $outputFormat = Format::fromName($guessedFormat);
+        } else {
+            $outputFormat = $this->getForcedFormatForMedia($media);
+        }
+
+        if ($outputFormat instanceof Format && !$outputFormat->identical($media->getFormat())) {
+            $variation = new MediaVariation($media, $this->cloneWithOutputFormat($outputFormat));
         } else {
             $variation = new MediaVariation($media, $this);
         }
@@ -140,7 +146,7 @@ class Variation
     private function getForcedFormatForMedia(Media $media): ?Format
     {
         if (!$this->format instanceof Format) {
-            foreach ($this->preProcessors as $preProcessor) {
+            foreach ($this->getPreProcessors() as $preProcessor) {
                 if (null !== $preProcessor->getDefaultOutputFormat() && $preProcessor->supports($media->getBinary())) {
                     return $preProcessor->getDefaultOutputFormat();
                 }

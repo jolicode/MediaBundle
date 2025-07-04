@@ -8,21 +8,35 @@ enum Format: string
     case HEIF = 'heif';
     case JPEG = 'jpeg';
     case PNG = 'png';
+    case TIFF = 'tiff';
     case WEBP = 'webp';
 
     public static function fromName(string $name): ?self
     {
         $name = strtolower($name);
 
-        if ('heic' === $name) {
-            $name = 'heif';
-        }
+        return match ($name) {
+            'heic' => self::HEIF,
+            'jpg' => self::JPEG,
+            'tif' => self::TIFF,
+            default => self::tryFrom($name),
+        };
+    }
 
-        if ('jpg' === $name) {
-            $name = 'jpeg';
-        }
-
-        return self::tryFrom($name);
+    /**
+     * If a variation does not define a target format and no processor is able to output the current format,
+     * this method returns an alternative format that can be used as a fallback.
+     *
+     * For example, if no processor is able to output HEIF, a variation that does not define a specific target
+     * format will return a JPEG content instead.
+     */
+    public function getAlternativeFormat(): ?Format
+    {
+        return match ($this) {
+            self::HEIF => self::JPEG,
+            self::TIFF => self::JPEG,
+            default => null,
+        };
     }
 
     /**
@@ -35,6 +49,7 @@ enum Format: string
             self::HEIF => ['heic', 'heif'],
             self::JPEG => ['jpg', 'jpeg'],
             self::PNG => ['png'],
+            self::TIFF => ['tiff', 'tif'],
             self::WEBP => ['webp'],
         };
     }
@@ -46,7 +61,13 @@ enum Format: string
             self::HEIF => 'image/heif',
             self::JPEG => 'image/jpeg',
             self::PNG => 'image/png',
+            self::TIFF => 'image/tiff',
             self::WEBP => 'image/webp',
         };
+    }
+
+    public function identical(string $value): bool
+    {
+        return $this === self::fromName($value);
     }
 }

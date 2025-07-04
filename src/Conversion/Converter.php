@@ -50,7 +50,10 @@ readonly class Converter
                 continue;
             }
 
-            $mediaVariation = $variation->getForMedia($media);
+            $mediaVariation = $variation->getForMedia(
+                $media,
+                $this->resolver->guessMediaVariationFormat($media, $variation, $libraryName),
+            );
             $this->convertMediaVariation($mediaVariation, $force);
         }
     }

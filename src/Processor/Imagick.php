@@ -29,12 +29,17 @@ readonly class Imagick extends AbstractProcessor implements ProcessorInterface
     ) {
     }
 
+    public function getDefaultOutputFormat(): Format
+    {
+        return Format::JPEG;
+    }
+
     /**
      * @return Format[]
      */
     public function getProcessableInputFormats(): array
     {
-        return [Format::GIF, Format::HEIF, Format::JPEG, Format::PNG, Format::WEBP];
+        return [Format::GIF, Format::HEIF, Format::JPEG, Format::PNG, Format::TIFF, Format::WEBP];
     }
 
     /**
@@ -63,9 +68,15 @@ readonly class Imagick extends AbstractProcessor implements ProcessorInterface
                     $options['animated'] = true;
                 }
 
+                $outputMimeType = $binary->getMimeType();
+
+                if ($outputFormat !== $binary->getFormat()) {
+                    $outputMimeType = Format::fromName($outputFormat)?->getMimeType() ?? $binary->getMimeType();
+                }
+
                 $binary = new Binary(
-                    $binary->getMimeType(),
-                    $binary->getFormat(),
+                    $outputMimeType,
+                    $outputFormat,
                     $image->get($outputFormat, $options),
                 );
                 $this->logger?->info('Processed image with Imagick', [
