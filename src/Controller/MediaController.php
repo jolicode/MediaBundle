@@ -46,8 +46,8 @@ class MediaController extends AbstractController
             $mediaVariation = $this->converter->getMediaVariation($slug, $variation, $library) ?? throw $this->createNotFoundException('File not found');
             $this->converter->convertMediaVariation($mediaVariation, false);
             $binary = $mediaVariation->getBinary();
-        } catch (\InvalidArgumentException|VariationNotFoundException) {
-            throw $this->createNotFoundException('File not found');
+        } catch (\InvalidArgumentException|VariationNotFoundException $e) {
+            throw $this->createNotFoundException('File not found', $e);
         }
 
         return new Response($binary->getContent(), Response::HTTP_OK, [
