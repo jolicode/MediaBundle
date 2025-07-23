@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Controller;
 
 use JoliCode\MediaBundle\Conversion\Converter;
+use JoliCode\MediaBundle\Exception\VariationNotFoundException;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,7 +46,7 @@ class MediaController extends AbstractController
             $mediaVariation = $this->converter->getMediaVariation($slug, $variation, $library) ?? throw $this->createNotFoundException('File not found');
             $this->converter->convertMediaVariation($mediaVariation, false);
             $binary = $mediaVariation->getBinary();
-        } catch (\InvalidArgumentException) {
+        } catch (\InvalidArgumentException|VariationNotFoundException) {
             throw $this->createNotFoundException('File not found');
         }
 
