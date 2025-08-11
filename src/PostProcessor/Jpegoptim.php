@@ -16,6 +16,11 @@ readonly class Jpegoptim extends AbstractPostProcessor implements PostProcessorI
         'max_quality' => 80,
     ];
 
+    public function getName(): string
+    {
+        return 'jpegoptim';
+    }
+
     /**
      * @return Format[]
      */

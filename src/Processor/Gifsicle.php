@@ -28,6 +28,11 @@ readonly class Gifsicle extends AbstractProcessor implements ProcessorInterface
     ) {
     }
 
+    public function getName(): string
+    {
+        return 'gifsicle';
+    }
+
     /**
      * @return Format[]
      */

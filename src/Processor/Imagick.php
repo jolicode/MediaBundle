@@ -34,6 +34,11 @@ readonly class Imagick extends AbstractProcessor implements ProcessorInterface
         return Format::JPEG;
     }
 
+    public function getName(): string
+    {
+        return 'imagick';
+    }
+
     /**
      * @return Format[]
      */

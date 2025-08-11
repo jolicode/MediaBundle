@@ -16,6 +16,11 @@ readonly class Oxipng extends AbstractPostProcessor implements PostProcessorInte
         'zopfli' => true,
     ];
 
+    public function getName(): string
+    {
+        return 'oxipng';
+    }
+
     /**
      * @return Format[]
      */

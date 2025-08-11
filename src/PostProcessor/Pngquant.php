@@ -16,6 +16,11 @@ readonly class Pngquant extends AbstractPostProcessor implements PostProcessorIn
         'speed' => 5,
     ];
 
+    public function getName(): string
+    {
+        return 'pngquant';
+    }
+
     /**
      * @return Format[]
      */

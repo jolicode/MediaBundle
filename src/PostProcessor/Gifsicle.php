@@ -16,6 +16,11 @@ readonly class Gifsicle extends AbstractPostProcessor implements PostProcessorIn
         'colors' => 256,
     ];
 
+    public function getName(): string
+    {
+        return 'gifsicle';
+    }
+
     /**
      * @return Format[]
      */

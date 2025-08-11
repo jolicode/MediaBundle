@@ -16,6 +16,11 @@ readonly class Mozjpeg extends AbstractPostProcessor implements PostProcessorInt
         'quality' => 80,
     ];
 
+    public function getName(): string
+    {
+        return 'mozjpeg';
+    }
+
     /**
      * @return Format[]
      */

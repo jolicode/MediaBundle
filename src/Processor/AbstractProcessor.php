@@ -20,6 +20,8 @@ abstract readonly class AbstractProcessor extends AbstractProcessCreator impleme
         return \in_array(Format::fromName($outputFormat), $this->getProcessableOutputFormats(), true);
     }
 
+    abstract public function getName(): string;
+
     abstract public function getProcessableInputFormats(): array;
 
     abstract public function getProcessableOutputFormats(): array;

@@ -40,6 +40,11 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
     ) {
     }
 
+    public function getName(): string
+    {
+        return 'cwebp';
+    }
+
     /**
      * @return Format[]
      */

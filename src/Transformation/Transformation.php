@@ -135,6 +135,22 @@ class Transformation
         return $outputFormats;
     }
 
+    /**
+     * @return array<string, string[]>
+     */
+    public function getPostProcessorOptions(string $postProcessorName): array
+    {
+        return $this->variation->getPostProcessorConfiguration($postProcessorName);
+    }
+
+    /**
+     * @return array<string, string[]>
+     */
+    public function getProcessorOptions(string $processorName): array
+    {
+        return $this->variation->getProcessorConfiguration($processorName);
+    }
+
     public function getVariationName(): string
     {
         return $this->variation->getName();

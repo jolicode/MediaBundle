@@ -42,25 +42,8 @@ class JoliMediaBundle extends AbstractBundle
                 ->end()
                 ->append($this->addLibrariesNode())
                 ->append($this->addPreProcessorsNode())
-
-                ->arrayNode('processors')
-                    ->children()
-                        ->append($this->addCwebpProcessorNode())
-                        ->append($this->addGif2webpProcessorNode())
-                        ->append($this->addGifsicleProcessorNode())
-                        ->append($this->addImagickProcessorNode())
-                    ->end()
-                ->end()
-
-                ->arrayNode('post_processors')
-                    ->children()
-                        ->append($this->addGifsiclePostProcessorNode())
-                        ->append($this->addJpegoptimPostProcessorNode())
-                        ->append($this->addMozjpegPostProcessorNode())
-                        ->append($this->addOxipngPostProcessorNode())
-                        ->append($this->addPngquantPostProcessorNode())
-                    ->end()
-                ->end()
+                ->append($this->addProcessorsNode())
+                ->append($this->addPostProcessorsNode())
             ->end()
         ;
     }
@@ -241,9 +224,27 @@ class JoliMediaBundle extends AbstractBundle
                             ->end()
                         ->end()
                     ->end()
+                    ->append($this->addPostProcessorsNode())
                     ->append($this->addPreProcessorsNode())
+                    ->append($this->addProcessorsNode())
                     ->append($this->addVotersNode())
                 ->end()
+            ->end()
+        ;
+    }
+
+    private function addPostProcessorsNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('post_processors');
+        $node = $treeBuilder->getRootNode();
+
+        return $node
+            ->children()
+                ->append($this->addGifsiclePostProcessorNode())
+                ->append($this->addJpegoptimPostProcessorNode())
+                ->append($this->addMozjpegPostProcessorNode())
+                ->append($this->addOxipngPostProcessorNode())
+                ->append($this->addPngquantPostProcessorNode())
             ->end()
         ;
     }
@@ -256,6 +257,21 @@ class JoliMediaBundle extends AbstractBundle
         return $node
             ->scalarPrototype()
         ->end();
+    }
+
+    private function addProcessorsNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('processors');
+        $node = $treeBuilder->getRootNode();
+
+        return $node
+            ->children()
+                ->append($this->addCwebpProcessorNode())
+                ->append($this->addGif2webpProcessorNode())
+                ->append($this->addGifsicleProcessorNode())
+                ->append($this->addImagickProcessorNode())
+            ->end()
+        ;
     }
 
     private function addVotersNode(int $level = 0): NodeDefinition
@@ -912,9 +928,10 @@ class JoliMediaBundle extends AbstractBundle
                 '$name' => $slugger->slug($variationName)->lower()->toString(),
                 '$format' => isset($variationConfig['format']) ? Format::fromName($variationConfig['format']) : null,
                 '$transformerChain' => service($transformerChainServiceId),
-                '$postProcessingOptions' => $variationConfig['post_processors'] ?? [],
                 '$globalPreProcessors' => new ServiceLocatorArgument(new TaggedIteratorArgument('joli_media.pre_processor', indexAttribute: 'name', needsIndexes: true)),
                 '$preProcessors' => new ServiceLocatorArgument(new TaggedIteratorArgument($preProcessServiceTag, indexAttribute: 'name', needsIndexes: true)),
+                '$processorsConfiguration' => array_map(fn ($options) => $options['options'] ?? [], $variationConfig['processors'] ?? []),
+                '$postProcessorsConfiguration' => array_map(fn ($options) => $options['options'] ?? [], $variationConfig['post_processors'] ?? []),
                 '$voters' => array_map(fn($voterServiceId): ReferenceConfigurator => service($voterServiceId), $voterServiceIds),
             ])
             ->tag($variationServiceTag, ['name' => $slugger->slug($variationName)->lower()->toString()])
