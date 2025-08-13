@@ -246,6 +246,7 @@ class JoliMediaBundle extends AbstractBundle
         $node = $treeBuilder->getRootNode();
 
         return $node
+            ->addDefaultsIfNotSet()
             ->children()
                 ->append($this->addGifsiclePostProcessorNode())
                 ->append($this->addJpegoptimPostProcessorNode())
@@ -288,6 +289,7 @@ class JoliMediaBundle extends AbstractBundle
         $node = $treeBuilder->getRootNode();
 
         return $node
+            ->addDefaultsIfNotSet()
             ->children()
                 ->append($this->addCwebpProcessorNode())
                 ->append($this->addGif2webpProcessorNode())
@@ -353,6 +355,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('cwebp');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.cwebp%')
@@ -370,6 +373,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder($name);
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->arrayNode('near_lossless')
                     ->children()
@@ -444,6 +448,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('gif2webp');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.gif2webp%')
@@ -458,6 +463,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder($name);
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->booleanNode('lossy')
                     ->defaultValue(true)
@@ -484,6 +490,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('gifsicle');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.gifsicle%')
@@ -498,6 +505,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder($name);
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->integerNode('optimize')
                     ->defaultValue(3)
@@ -524,6 +532,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('imagine');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->enumNode('driver')
                     ->values(['gd', 'gmagick', 'imagick'])
@@ -540,6 +549,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder($name);
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->integerNode('quality')
                     ->defaultValue(80)
@@ -568,6 +578,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('gifsicle');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.gifsicle%')
@@ -582,6 +593,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder($name);
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->treatFalseLike(['enabled' => false])
             ->children()
                 ->booleanNode('enabled')
@@ -613,6 +625,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('jpegoptim');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.jpegoptim%')
@@ -627,6 +640,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder($name);
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->treatFalseLike(['enabled' => false])
             ->children()
                 ->booleanNode('enabled')
@@ -656,6 +670,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('mozjpeg');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.mozjpeg%')
@@ -670,6 +685,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder($name);
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->treatFalseLike(['enabled' => false])
             ->children()
                 ->booleanNode('enabled')
@@ -699,6 +715,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('oxipng');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.oxipng%')
@@ -713,6 +730,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder($name);
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->treatFalseLike(['enabled' => false])
             ->children()
                 ->booleanNode('enabled')
@@ -746,6 +764,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('pngquant');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.pngquant%')
@@ -760,6 +779,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder($name);
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->treatFalseLike(['enabled' => false])
             ->children()
                 ->booleanNode('enabled')
