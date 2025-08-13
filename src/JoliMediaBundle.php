@@ -295,6 +295,12 @@ class JoliMediaBundle extends AbstractBundle
                 ->append($this->addGif2webpProcessorNode())
                 ->append($this->addGifsicleProcessorNode())
                 ->append($this->addImagineProcessorNode())
+                ->arrayNode('imagick')
+                    ->setDeprecated('jolicode/media-bundle', '0.0.1', 'The "%node%" processor is deprecated, use the "imagine" processor with the "imagick" driver instead.')
+                    ->children()
+                        ->append($this->addImagineProcessorOptionsNode('options'))
+                    ->end()
+                ->end()
             ->end()
         ;
     }
