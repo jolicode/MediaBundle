@@ -45,12 +45,12 @@ class ImgTest extends WebTestCase
         $media = new Media(self::COMPLETELY_STORED_MEDIA, $libraries->getDefault()->getOriginalStorage(), $binary);
         $media->store();
 
-        $converter->convert($media, 'default', 'joli-media-easy-admin');
-        $converter->convert($media, 'default', 'joli-media-easy-admin-webp');
-        $converter->convert($media, 'default', 'joli-media-easy-admin-large');
-        $converter->convert($media, 'default', 'joli-media-easy-admin-large-webp');
-        $converter->convert($media, 'default', 'joli-media-easy-admin-extra-large');
-        $converter->convert($media, 'default', 'joli-media-easy-admin-extra-large-webp');
+        $converter->convert($media, 'default', 'variation-standard');
+        $converter->convert($media, 'default', 'variation-standard-webp');
+        $converter->convert($media, 'default', 'variation-large');
+        $converter->convert($media, 'default', 'variation-large-webp');
+        $converter->convert($media, 'default', 'variation-extra-large');
+        $converter->convert($media, 'default', 'variation-extra-large-webp');
 
         // store the self::PARTIALLY_STORED_MEDIA media but none of its variations
         $binary = new Binary('image/jpeg', Format::JPEG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::JPEG_FIXTURE_PATH));
@@ -67,7 +67,7 @@ class ImgTest extends WebTestCase
         $media = new Media(self::TIFF_MEDIA, $libraries->getDefault()->getOriginalStorage(), $binary);
         $media->store();
 
-        $converter->convert($media, 'default', 'joli-media-easy-admin');
+        $converter->convert($media, 'default', 'variation-standard');
 
         // store the self::BROKEN_FILENAME media but none of its variations
         $binary = new Binary('image/jpeg', Format::JPEG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::JPEG_FIXTURE_PATH));
@@ -124,96 +124,96 @@ class ImgTest extends WebTestCase
             Img::class,
             [
                 'path' => 'mire.png',
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
             ],
-            '<img src="/media/cache/joli-media-easy-admin/mire.png" loading="lazy" decoding="async" alt="Alternative text">',
+            '<img src="/media/cache/variation-standard/mire.png" loading="lazy" decoding="async" alt="Alternative text">',
         ];
         yield 'existing-media' => [
             Img::class,
             [
                 'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
             ],
-            '<img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109">',
+            '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109">',
         ];
         yield 'existing-media-tiff' => [
             Img::class,
             [
                 'path' => self::TIFF_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
             ],
-            '<img src="/media/cache/joli-media-easy-admin/tiff-media.26258f1a.jpeg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109">',
+            '<img src="/media/cache/variation-standard/tiff-media.26258f1a.jpeg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109">',
         ];
         yield 'partial-existing-media' => [
             Img::class,
             [
                 'path' => self::PARTIALLY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
             ],
-            '<img src="/media/cache/joli-media-easy-admin/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text">',
+            '<img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text">',
         ];
         yield 'existing-media-with-skip-auto-dimensions' => [
             Img::class,
             [
                 'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'skipAutoDimensions' => true,
             ],
-            '<img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async">',
+            '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async">',
         ];
         yield 'existing-media-with-class' => [
             Img::class,
             [
                 'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
                 'class' => 'img-class',
             ],
-            '<img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" class="img-class" width="145" height="109">',
+            '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" class="img-class" width="145" height="109">',
         ];
         yield 'existing-media-with-width-height' => [
             Img::class,
             [
                 'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
                 'width' => 200,
                 'height' => 200,
             ],
-            '<img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="200" height="200">',
+            '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="200" height="200">',
         ];
         yield 'existing-media-with-loading-decoding' => [
             Img::class,
             [
                 'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
                 'loading' => false,
                 'decoding' => false,
             ],
-            '<img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" alt="Alternative text" width="145" height="109">',
+            '<img src="/media/cache/variation-standard/circle-pattern.jpg" alt="Alternative text" width="145" height="109">',
         ];
         yield 'existing-media-with-aspect-ratio' => [
             Img::class,
             [
                 'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
                 'style' => 'aspect-ratio: calc(30 / 10)',
             ],
-            '<img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" style="aspect-ratio: calc(30 / 10)" width="145" height="109">',
+            '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" style="aspect-ratio: calc(30 / 10)" width="145" height="109">',
         ];
         yield 'existing-media-cannot-be-read' => [
             Img::class,
             [
                 'path' => self::BROKEN_FILENAME,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
             ],
-            '<img src="/media/cache/joli-media-easy-admin/some%5C%20filename.jpg" loading="lazy" decoding="async">',
+            '<img src="/media/cache/variation-standard/some%5C%20filename.jpg" loading="lazy" decoding="async">',
         ];
 
         // picture tags
@@ -221,99 +221,99 @@ class ImgTest extends WebTestCase
             Picture::class,
             [
                 'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
             ],
-            '<picture><source srcset="/media/cache/joli-media-easy-admin-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109"></picture>',
+            '<picture><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'partial-picture-tag' => [
             Picture::class,
             [
                 'path' => self::PARTIALLY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
             ],
-            '<picture><source srcset="/media/cache/joli-media-easy-admin-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/joli-media-easy-admin/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text"></picture>',
+            '<picture><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text"></picture>',
         ];
         yield 'picture-with-class' => [
             Picture::class,
             [
                 'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
                 'picture:class' => 'picture-class',
                 'img:class' => 'img-class',
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/joli-media-easy-admin-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+            '<picture class="picture-class"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'picture-with-sources' => [
             Picture::class,
             [
                 'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
                 'picture:class' => 'picture-class',
                 'img:class' => 'img-class',
-                'sources' => ['joli-media-easy-admin', 'joli-media-easy-admin-large'],
+                'sources' => ['variation-standard', 'variation-large'],
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/joli-media-easy-admin/circle-pattern.jpg" type="image/jpeg" width="145" height="109"><source srcset="/media/cache/joli-media-easy-admin-large/circle-pattern.jpg" type="image/jpeg" width="800" height="600"><source srcset="/media/cache/joli-media-easy-admin-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/circle-pattern.jpg" type="image/jpeg" width="145" height="109"><source srcset="/media/cache/variation-large/circle-pattern.jpg" type="image/jpeg" width="800" height="600"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'picture-with-sources-and-skipAutoDimensions' => [
             Picture::class,
             [
                 'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
                 'picture:class' => 'picture-class',
                 'img:class' => 'img-class',
-                'sources' => ['joli-media-easy-admin', 'joli-media-easy-admin-large'],
+                'sources' => ['variation-standard', 'variation-large'],
                 'skipAutoDimensions' => true,
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/joli-media-easy-admin/circle-pattern.jpg" type="image/jpeg"><source srcset="/media/cache/joli-media-easy-admin-large/circle-pattern.jpg" type="image/jpeg"><source srcset="/media/cache/joli-media-easy-admin-webp/circle-pattern.d601f6f2.webp" type="image/webp"><img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/circle-pattern.jpg" type="image/jpeg"><source srcset="/media/cache/variation-large/circle-pattern.jpg" type="image/jpeg"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
         ];
         yield 'partial-picture-with-sources' => [
             Picture::class,
             [
                 'path' => self::PARTIALLY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
                 'picture:class' => 'picture-class',
                 'img:class' => 'img-class',
-                'sources' => ['joli-media-easy-admin', 'joli-media-easy-admin-large'],
+                'sources' => ['variation-standard', 'variation-large'],
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/joli-media-easy-admin/partially-stored-media.jpg"><source srcset="/media/cache/joli-media-easy-admin-large/partially-stored-media.jpg"><source srcset="/media/cache/joli-media-easy-admin-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/joli-media-easy-admin/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/partially-stored-media.jpg"><source srcset="/media/cache/variation-large/partially-stored-media.jpg"><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
         ];
         yield 'partial-picture-with-sources-and-skipAutoDimensions' => [
             Picture::class,
             [
                 'path' => self::PARTIALLY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
                 'picture:class' => 'picture-class',
                 'img:class' => 'img-class',
-                'sources' => ['joli-media-easy-admin', 'joli-media-easy-admin-large'],
+                'sources' => ['variation-standard', 'variation-large'],
                 'skipAutoDimensions' => true,
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/joli-media-easy-admin/partially-stored-media.jpg"><source srcset="/media/cache/joli-media-easy-admin-large/partially-stored-media.jpg"><source srcset="/media/cache/joli-media-easy-admin-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/joli-media-easy-admin/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/partially-stored-media.jpg"><source srcset="/media/cache/variation-large/partially-stored-media.jpg"><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
         ];
         yield 'auto-generate-partial-picture-with-sources' => [
             Picture::class,
             [
                 'path' => self::PARTIALLY_STORED_MEDIA,
                 'library' => 'auto_generate',
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
                 'picture:class' => 'picture-class',
                 'img:class' => 'img-class',
-                'sources' => ['joli-media-easy-admin'],
+                'sources' => ['variation-standard'],
             ],
-            '<picture class="picture-class"><source srcset="/media-auto-generate/cache/joli-media-easy-admin/partially-stored-media.jpg" type="image/jpeg" width="145" height="109"><source srcset="/media-auto-generate/cache/joli-media-easy-admin-webp/partially-stored-media.b16d66f4.webp" type="image/webp" width="145" height="109"><img src="/media-auto-generate/cache/joli-media-easy-admin/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+            '<picture class="picture-class"><source srcset="/media-auto-generate/cache/variation-standard/partially-stored-media.jpg" type="image/jpeg" width="145" height="109"><source srcset="/media-auto-generate/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp" type="image/webp" width="145" height="109"><img src="/media-auto-generate/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'picture-with-sources-and-media' => [
             Picture::class,
             [
                 'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
                 'picture:class' => 'picture-class',
                 'img:class' => 'img-class',
@@ -321,25 +321,25 @@ class ImgTest extends WebTestCase
                     'media' => '(width > 1024px)',
                     'sizes' => '1920px',
                     'srcset' => [
-                        '2560w' => 'joli-media-easy-admin-extra-large',
-                        '1920w' => 'joli-media-easy-admin-large',
+                        '2560w' => 'variation-extra-large',
+                        '1920w' => 'variation-large',
                     ],
                 ], [
                     'media' => '(width >= 768px)',
                     'sizes' => '1024px',
                     'srcset' => [
-                        '1600w' => 'joli-media-easy-admin-large',
-                        '1024w' => 'joli-media-easy-admin',
+                        '1600w' => 'variation-large',
+                        '1024w' => 'variation-standard',
                     ],
                 ]],
             ],
-            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/joli-media-easy-admin-extra-large/circle-pattern.jpg 2560w, /media/cache/joli-media-easy-admin-large/circle-pattern.jpg 1920w" type="image/jpeg" width="1800" height="1200"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/joli-media-easy-admin-extra-large-webp/circle-pattern.d601f6f2.webp 2560w, /media/cache/joli-media-easy-admin-large-webp/circle-pattern.d601f6f2.webp 1920w" type="image/webp" width="1800" height="1200"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/joli-media-easy-admin-large/circle-pattern.jpg 1600w, /media/cache/joli-media-easy-admin/circle-pattern.jpg 1024w" type="image/jpeg" width="800" height="600"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/joli-media-easy-admin-large-webp/circle-pattern.d601f6f2.webp 1600w, /media/cache/joli-media-easy-admin-webp/circle-pattern.d601f6f2.webp 1024w" type="image/webp" width="800" height="600"><source srcset="/media/cache/joli-media-easy-admin-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/joli-media-easy-admin/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/circle-pattern.jpg 2560w, /media/cache/variation-large/circle-pattern.jpg 1920w" type="image/jpeg" width="1800" height="1200"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/circle-pattern.d601f6f2.webp 2560w, /media/cache/variation-large-webp/circle-pattern.d601f6f2.webp 1920w" type="image/webp" width="1800" height="1200"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large/circle-pattern.jpg 1600w, /media/cache/variation-standard/circle-pattern.jpg 1024w" type="image/jpeg" width="800" height="600"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/circle-pattern.d601f6f2.webp 1600w, /media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp 1024w" type="image/webp" width="800" height="600"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'partial-picture-with-sources-and-media' => [
             Picture::class,
             [
                 'path' => self::PARTIALLY_STORED_MEDIA,
-                'variation' => 'joli-media-easy-admin',
+                'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
                 'picture:class' => 'picture-class',
                 'img:class' => 'img-class',
@@ -347,19 +347,19 @@ class ImgTest extends WebTestCase
                     'media' => '(width > 1024px)',
                     'sizes' => '1920px',
                     'srcset' => [
-                        '2560w' => 'joli-media-easy-admin-extra-large',
-                        '1920w' => 'joli-media-easy-admin-large',
+                        '2560w' => 'variation-extra-large',
+                        '1920w' => 'variation-large',
                     ],
                 ], [
                     'media' => '(width >= 768px)',
                     'sizes' => '1024px',
                     'srcset' => [
-                        '1600w' => 'joli-media-easy-admin-large',
-                        '1024w' => 'joli-media-easy-admin',
+                        '1600w' => 'variation-large',
+                        '1024w' => 'variation-standard',
                     ],
                 ]],
             ],
-            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/joli-media-easy-admin-extra-large/partially-stored-media.jpg 2560w, /media/cache/joli-media-easy-admin-large/partially-stored-media.jpg 1920w"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/joli-media-easy-admin-extra-large-webp/partially-stored-media.b16d66f4.webp 2560w, /media/cache/joli-media-easy-admin-large-webp/partially-stored-media.b16d66f4.webp 1920w" type="image/webp"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/joli-media-easy-admin-large/partially-stored-media.jpg 1600w, /media/cache/joli-media-easy-admin/partially-stored-media.jpg 1024w"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/joli-media-easy-admin-large-webp/partially-stored-media.b16d66f4.webp 1600w, /media/cache/joli-media-easy-admin-webp/partially-stored-media.b16d66f4.webp 1024w" type="image/webp"><source srcset="/media/cache/joli-media-easy-admin-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/joli-media-easy-admin/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/partially-stored-media.jpg 2560w, /media/cache/variation-large/partially-stored-media.jpg 1920w"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/partially-stored-media.b16d66f4.webp 2560w, /media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1920w" type="image/webp"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large/partially-stored-media.jpg 1600w, /media/cache/variation-standard/partially-stored-media.jpg 1024w"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1600w, /media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp 1024w" type="image/webp"><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
         ];
     }
 

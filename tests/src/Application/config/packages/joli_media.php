@@ -31,7 +31,27 @@ return static function (ContainerConfigurator $container): void {
                 ],
                 'enable_auto_webp' => true,
                 'variations' => [
-                    'joli-media-easy-admin-extra-large' => [
+                    'variation-standard' => [
+                        'transformers' => [
+                            'resize' => [
+                                'width' => 180,
+                                'height' => 109,
+                                'mode' => 'inside',
+                                'allow_upscale' => false,
+                            ],
+                        ],
+                    ],
+                    'variation-large' => [
+                        'transformers' => [
+                            'resize' => [
+                                'width' => 800,
+                                'height' => 600,
+                                'mode' => 'inside',
+                                'allow_upscale' => false,
+                            ],
+                        ],
+                    ],
+                    'variation-extra-large' => [
                         'transformers' => [
                             'resize' => [
                                 'mode' => 'exact',
@@ -60,7 +80,7 @@ return static function (ContainerConfigurator $container): void {
                 ],
                 'enable_auto_webp' => true,
                 'variations' => [
-                    'joli_media_easy_admin' => [
+                    'variation-standard' => [
                         'transformers' => [
                             'resize' => [
                                 'width' => 180,

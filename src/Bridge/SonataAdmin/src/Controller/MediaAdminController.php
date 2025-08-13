@@ -440,7 +440,13 @@ class MediaAdminController extends AbstractController
             $variations = $this->getLibrary()->getVariationContainer()->list();
 
             foreach ($variations as $variation) {
-                if ($variation->canBeAppliedTo($media)) {
+                if (
+                    (
+                        $this->config->isVisible('show_variations_list_admin_variations')
+                        || !str_starts_with($variation->getName(), 'joli-media-easy-admin') && !str_starts_with($variation->getName(), 'joli-media-sonata-admin')
+                    )
+                    && $variation->canBeAppliedTo($media)
+                ) {
                     $media->createVariation($variation);
                 }
             }
