@@ -8,7 +8,7 @@ use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Transformation\Transformation;
 use Psr\Log\LoggerInterface;
 
-readonly class Imagick extends AbstractProcessor implements ProcessorInterface
+readonly class Imagine extends AbstractProcessor implements ProcessorInterface
 {
     /**
      * @var array<string, mixed>
@@ -36,7 +36,7 @@ readonly class Imagick extends AbstractProcessor implements ProcessorInterface
 
     public function getName(): string
     {
-        return 'imagick';
+        return 'imagine';
     }
 
     /**
@@ -62,7 +62,7 @@ readonly class Imagick extends AbstractProcessor implements ProcessorInterface
 
         if ($transformation->hasEffect()) {
             try {
-                $this->logger?->info('Processing image with Imagick', [
+                $this->logger?->info('Processing image with Imagine', [
                     'original size' => $binary->getContentSize(),
                 ]);
                 $image = $this->imagine->load($binary->getContent());
@@ -84,11 +84,11 @@ readonly class Imagick extends AbstractProcessor implements ProcessorInterface
                     $outputFormat,
                     $image->get($outputFormat, $options),
                 );
-                $this->logger?->info('Processed image with Imagick', [
+                $this->logger?->info('Processed image with Imagine', [
                     'processed size' => $binary->getContentSize(),
                 ]);
             } catch (\Exception $e) {
-                $this->logger?->error('Imagick processing failed', ['exception' => $e]);
+                $this->logger?->error('Imagine processing failed', ['exception' => $e]);
 
                 throw $e;
             }

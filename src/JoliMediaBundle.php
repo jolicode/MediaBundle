@@ -5,12 +5,14 @@ namespace JoliCode\MediaBundle;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ReferenceConfigurator;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Metadata\ExifMetadataReader;
-use Imagine\Imagick\Imagine;
+use Imagine\Gd\Imagine as GdImagine;
+use Imagine\Gmagick\Imagine as GmagickImagine;
+use Imagine\Imagick\Imagine as ImagickImagine;
 use JoliCode\MediaBundle\Doctrine\Type\MediaType;
 use JoliCode\MediaBundle\Doctrine\Types;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\PreProcessor\HeifPreProcessor;
-use JoliCode\MediaBundle\Processor\Imagick;
+use JoliCode\MediaBundle\Processor\Imagine;
 use JoliCode\MediaBundle\Transformer\Resize\Mode;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -290,7 +292,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->append($this->addCwebpProcessorNode())
                 ->append($this->addGif2webpProcessorNode())
                 ->append($this->addGifsicleProcessorNode())
-                ->append($this->addImagickProcessorNode())
+                ->append($this->addImagineProcessorNode())
             ->end()
         ;
     }
@@ -305,7 +307,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->append($this->addCwebpProcessorOptionsNode('cwebp'))
                 ->append($this->addGif2webpProcessorOptionsNode('gif2webp'))
                 ->append($this->addGifsicleProcessorOptionsNode('gifsicle'))
-                ->append($this->addImagickProcessorOptionsNode('imagick'))
+                ->append($this->addImagineProcessorOptionsNode('imagine'))
             ->end()
         ;
     }
@@ -517,18 +519,23 @@ class JoliMediaBundle extends AbstractBundle
         ;
     }
 
-    private function addImagickProcessorNode(): NodeDefinition
+    private function addImagineProcessorNode(): NodeDefinition
     {
-        $treeBuilder = new TreeBuilder('imagick');
+        $treeBuilder = new TreeBuilder('imagine');
 
         return $treeBuilder->getRootNode()
             ->children()
-                ->append($this->addImagickProcessorOptionsNode('options'))
+                ->enumNode('driver')
+                    ->values(['gd', 'gmagick', 'imagick'])
+                    ->defaultValue('imagick')
+                    ->info('The Imagine driver to use for image processing. Available options: "gd", "gmagick", "imagick".')
+                ->end()
+                ->append($this->addImagineProcessorOptionsNode('options'))
             ->end()
         ;
     }
 
-    private function addImagickProcessorOptionsNode(string $name): NodeDefinition
+    private function addImagineProcessorOptionsNode(string $name): NodeDefinition
     {
         $treeBuilder = new TreeBuilder($name);
 
@@ -841,7 +848,7 @@ class JoliMediaBundle extends AbstractBundle
             $container->services()
                 ->set(HeifPreProcessor::class, HeifPreProcessor::class)
                 ->args([
-                    '$imagine' => service('.joli_media.imagine.imagick'),
+                    '$imagine' => service('.joli_media.imagine.imagine'),
                     '$logger' => service('logger')->ignoreOnInvalid(),
                 ])
             ;
@@ -889,23 +896,31 @@ class JoliMediaBundle extends AbstractBundle
             $processorContainerService->call('add', ['gifsicle', service('.joli_media.processor.gifsicle')]);
         }
 
-        if (isset($processorsConfig['imagick']) && interface_exists(ImagineInterface::class)) {
+        if (isset($processorsConfig['imagine']) && interface_exists(ImagineInterface::class)) {
             $container->services()
                 ->set('.joli_media.imagine.metadata_reader', ExifMetadataReader::class)
+            ;
 
-                ->set('.joli_media.imagine.imagick', Imagine::class)
+            $imagineDriverClass = match ($processorsConfig['imagine']['driver']) {
+                'gd' => GdImagine::class,
+                'gmagick' => GmagickImagine::class,
+                default => ImagickImagine::class,
+            };
+
+            $container->services()
+                ->set('.joli_media.imagine.imagine', $imagineDriverClass)
                 ->call('setMetadataReader', [service('.joli_media.imagine.metadata_reader')])
             ;
 
             $container->services()
-                ->set('.joli_media.processor.imagick', Imagick::class)
+                ->set('.joli_media.processor.imagine', Imagine::class)
                 ->args([
-                    '$imagine' => service('.joli_media.imagine.imagick'),
-                    '$options' => $processorsConfig['imagick']['options'],
+                    '$imagine' => service('.joli_media.imagine.imagine'),
+                    '$options' => $processorsConfig['imagine']['options'],
                     '$logger' => service('logger')->ignoreOnInvalid(),
                 ])
             ;
-            $processorContainerService->call('add', ['imagick', service('.joli_media.processor.imagick')]);
+            $processorContainerService->call('add', ['imagine', service('.joli_media.processor.imagine')]);
         }
     }
 

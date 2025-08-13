@@ -5,7 +5,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $container): void {
     $container->extension('joli_media', [
         'processors' => [
-            'imagick' => [
+            'imagine' => [
                 'options' => [
                     'jpeg_quality' => 80,
                     'png_quality' => 80,
