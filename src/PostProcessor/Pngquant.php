@@ -16,6 +16,11 @@ readonly class Pngquant extends AbstractPostProcessor implements PostProcessorIn
         'speed' => 5,
     ];
 
+    public function getName(): string
+    {
+        return 'pngquant';
+    }
+
     /**
      * @return Format[]
      */
@@ -28,7 +33,9 @@ readonly class Pngquant extends AbstractPostProcessor implements PostProcessorIn
     {
         $this->checkFormat($binary->getFormat());
 
-        if (false === $this->isEnabled()) {
+        if (false === $this->isEnabled() || isset($postProcessingOptions['enabled']) && false === $postProcessingOptions['enabled']) {
+            $this->logger?->info('Pngquant post-processor is disabled, skipping processing.');
+
             return $binary;
         }
 

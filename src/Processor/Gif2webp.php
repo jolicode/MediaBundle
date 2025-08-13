@@ -29,6 +29,11 @@ readonly class Gif2webp extends AbstractProcessor implements ProcessorInterface
     ) {
     }
 
+    public function getName(): string
+    {
+        return 'gif2webp';
+    }
+
     /**
      * @return Format[]
      */

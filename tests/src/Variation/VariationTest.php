@@ -47,7 +47,7 @@ class VariationTest extends BaseTestCase
             preProcessors: new ServiceLocator([
                 TestPreProcessor::class => fn (): PreProcessorInterface => $this->preProcessor,
             ]),
-            postProcessingOptions: ['quality' => ['80']],
+            postProcessorsConfiguration: ['jpegoptim' => ['options' => ['max_quality' => '80']]],
             voters: [
                 new FormatVoter('jpg'),
                 new MimeTypeVoter('image/jpeg'),
@@ -74,7 +74,7 @@ class VariationTest extends BaseTestCase
 
     public function testGetPostProcessingOptions(): void
     {
-        self::assertEquals(['quality' => ['80']], $this->variation->getPostProcessingOptions());
+        self::assertEquals(['options' => ['max_quality' => '80']], $this->variation->getPostProcessorConfiguration('jpegoptim'));
     }
 
     public function testGetPreProcessors(): void
@@ -91,7 +91,7 @@ class VariationTest extends BaseTestCase
             preProcessors: new ServiceLocator([
                 TestPreProcessor::class => fn (): PreProcessorInterface => $this->preProcessor,
             ]),
-            postProcessingOptions: ['quality' => ['80']],
+            postProcessorsConfiguration: ['jpegoptim' => ['options' => ['max_quality' => '80']]],
             voters: [
                 new FormatVoter('jpg'),
                 new MimeTypeVoter('image/jpeg'),
@@ -142,7 +142,7 @@ class VariationTest extends BaseTestCase
         self::assertEquals('test_variation', $clonedVariation->getName());
         self::assertEquals(Format::PNG, $clonedVariation->getFormat());
         self::assertSame($this->transformerChain, $clonedVariation->getTransformerChain());
-        self::assertEquals(['quality' => ['80']], $clonedVariation->getPostProcessingOptions());
+        self::assertEquals(['options' => ['max_quality' => '80']], $clonedVariation->getPostProcessorConfiguration('jpegoptim'));
         self::assertSame($this->preProcessor, $clonedVariation->getPreProcessors()->current());
     }
 

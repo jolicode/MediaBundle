@@ -16,6 +16,11 @@ readonly class Mozjpeg extends AbstractPostProcessor implements PostProcessorInt
         'quality' => 80,
     ];
 
+    public function getName(): string
+    {
+        return 'mozjpeg';
+    }
+
     /**
      * @return Format[]
      */
@@ -28,7 +33,9 @@ readonly class Mozjpeg extends AbstractPostProcessor implements PostProcessorInt
     {
         $this->checkFormat($binary->getFormat());
 
-        if (false === $this->isEnabled()) {
+        if (false === $this->isEnabled() || isset($postProcessingOptions['enabled']) && false === $postProcessingOptions['enabled']) {
+            $this->logger?->info('Mozjpeg post-processor is disabled, skipping processing.');
+
             return $binary;
         }
 

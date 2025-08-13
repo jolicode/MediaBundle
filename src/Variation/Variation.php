@@ -15,8 +15,9 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class Variation
 {
     /**
-     * @param array<string, string[]> $postProcessingOptions
-     * @param VoterInterface[]        $voters
+     * @param array<string, array<string, string[]>> $processorsConfiguration
+     * @param array<string, array<string, string[]>> $postProcessorsConfiguration
+     * @param VoterInterface[]                       $voters
      */
     public function __construct(
         private readonly string $name,
@@ -25,7 +26,8 @@ class Variation
         private readonly SluggerInterface $slugger = new AsciiSlugger(),
         private readonly ServiceLocator $globalPreProcessors = new ServiceLocator([]),
         private readonly ServiceLocator $preProcessors = new ServiceLocator([]),
-        private readonly array $postProcessingOptions = [],
+        private readonly array $processorsConfiguration = [],
+        private readonly array $postProcessorsConfiguration = [],
         private readonly array $voters = [],
         private ?self $webpAlternativeVariation = null,
     ) {
@@ -51,7 +53,8 @@ class Variation
             $this->slugger,
             $this->globalPreProcessors,
             $this->preProcessors,
-            $this->postProcessingOptions,
+            $this->processorsConfiguration,
+            $this->postProcessorsConfiguration,
             $this->voters,
             $this->webpAlternativeVariation,
         );
@@ -99,9 +102,9 @@ class Variation
     /**
      * @return array<string, string[]>
      */
-    public function getPostProcessingOptions(): array
+    public function getPostProcessorConfiguration(string $postProcessorName): array
     {
-        return $this->postProcessingOptions;
+        return $this->postProcessorsConfiguration[$postProcessorName] ?? [];
     }
 
     /**
@@ -116,6 +119,14 @@ class Variation
         foreach ($this->preProcessors as $id => $service) {
             yield $id => $service;
         }
+    }
+
+    /**
+     * @return array<string, string[]>
+     */
+    public function getProcessorConfiguration(string $processorName): array
+    {
+        return $this->processorsConfiguration[$processorName] ?? [];
     }
 
     public function getSlug(): string

@@ -38,18 +38,27 @@ class JoliMediaSonataAdminBundle extends AbstractBundle
                     ->children()
                         ->booleanNode('show_markdown_code')
                             ->defaultFalse()
+                            ->info('If true, shows the media Markdown code on the media show page.')
                         ->end()
                         ->booleanNode('show_html_code')
                             ->defaultFalse()
+                            ->info('If true, shows the media HTML code on the media show page.')
                         ->end()
                         ->booleanNode('show_variations_action_regenerate')
                             ->defaultFalse()
+                            ->info('If true, shows the action to regenerate variations on the media show page.')
                         ->end()
                         ->booleanNode('show_variations_list')
                             ->defaultTrue()
+                            ->info('If true, shows the list of variations in a dedicated tab on the media show page.')
+                        ->end()
+                        ->booleanNode('show_variations_list_admin_variations')
+                            ->defaultFalse()
+                            ->info('If true, shows the variations defined in by the admin bridge in the variations list tab.')
                         ->end()
                         ->booleanNode('show_variations_stored')
                             ->defaultFalse()
+                            ->info('If true, shows wether a variation is already stored in the media library or not.')
                         ->end()
                     ->end()
                 ->end()
@@ -166,6 +175,7 @@ class JoliMediaSonataAdminBundle extends AbstractBundle
                 $joliMediaDefaultLibrary => [
                     'variations' => [
                         'joli_media_sonata_admin' => [
+                            'enable_auto_webp' => false,
                             'transformers' => [
                                 'resize' => [
                                     'width' => 180,
@@ -176,6 +186,7 @@ class JoliMediaSonataAdminBundle extends AbstractBundle
                             ],
                         ],
                         'joli_media_sonata_admin_large' => [
+                            'enable_auto_webp' => false,
                             'transformers' => [
                                 'resize' => [
                                     'width' => 800,
@@ -186,6 +197,7 @@ class JoliMediaSonataAdminBundle extends AbstractBundle
                             ],
                         ],
                         'joli_media_sonata_admin_small' => [
+                            'enable_auto_webp' => false,
                             'transformers' => [
                                 'thumbnail' => [
                                     'width' => 20,

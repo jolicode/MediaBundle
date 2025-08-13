@@ -12,6 +12,8 @@ interface ProcessorInterface
 
     public function canProcessOutputFormat(string $inputFormat): bool;
 
+    public function getName(): string;
+
     /**
      * @return Format[]
      */

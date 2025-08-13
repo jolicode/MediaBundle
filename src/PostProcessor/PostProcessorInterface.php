@@ -9,6 +9,8 @@ interface PostProcessorInterface
 {
     public function canProcessFormat(string $format): bool;
 
+    public function getName(): string;
+
     /**
      * @return Format[]
      */

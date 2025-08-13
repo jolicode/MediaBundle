@@ -105,11 +105,11 @@ class ProcessorContainer
             $processors[] = $this->get('gifsicle');
         }
 
-        if ($this->has('imagick')
-            && $this->get('imagick')->canProcessInputFormat($inputFormat)
-            && $this->get('imagick')->canProcessOutputFormat($outputFormat)
+        if ($this->has('imagine')
+            && $this->get('imagine')->canProcessInputFormat($inputFormat)
+            && $this->get('imagine')->canProcessOutputFormat($outputFormat)
         ) {
-            $processors[] = $this->get('imagick');
+            $processors[] = $this->get('imagine');
         }
 
         return $processors;

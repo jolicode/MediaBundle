@@ -405,7 +405,8 @@ return static function (ContainerConfigurator $container): void {
             '$format' => abstract_arg('format'),
             '$transformerChain' => abstract_arg('transformerChain'),
             '$slugger' => service(SluggerInterface::class),
-            '$postProcessingOptions' => abstract_arg('post_processing_options'),
+            '$processorsConfiguration' => abstract_arg('processors_configuration'),
+            '$postProcessorsConfiguration' => abstract_arg('post_processors_configuration'),
             '$voters' => abstract_arg('joli_media.voters'),
         ])
 

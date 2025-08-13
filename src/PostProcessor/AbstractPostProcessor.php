@@ -19,6 +19,8 @@ abstract readonly class AbstractPostProcessor extends AbstractProcessCreator imp
     ) {
     }
 
+    abstract public function getName(): string;
+
     abstract public function process(Binary $binary, array $postProcessingOptions = []): Binary;
 
     public function canProcessFormat(string $format): bool

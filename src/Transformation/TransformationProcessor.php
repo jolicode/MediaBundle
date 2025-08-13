@@ -30,7 +30,7 @@ readonly class TransformationProcessor
         $transformation->applyTransformers();
         $binary = $this->runTransformation($transformation);
 
-        return $this->runPostProcessors($binary);
+        return $this->runPostProcessors($transformation, $binary);
     }
 
     private function runTransformation(Transformation $transformation): Binary
@@ -45,7 +45,7 @@ readonly class TransformationProcessor
                     return $processor->process(
                         $transformation->getBinary(),
                         $transformation,
-                        [],
+                        $transformation->getProcessorOptions($processor->getName()),
                         $outputFormat,
                     );
                 } catch (\Exception $e) {
@@ -64,10 +64,13 @@ readonly class TransformationProcessor
         throw new \RuntimeException('No processor worked for this variation');
     }
 
-    private function runPostProcessors(Binary $binary): Binary
+    private function runPostProcessors(Transformation $transformation, Binary $binary): Binary
     {
         foreach ($this->postProcessorContainer->getPostProcessors($binary->getFormat()) as $postProcessor) {
-            $binary = $postProcessor->process($binary, []);
+            $binary = $postProcessor->process(
+                $binary,
+                $transformation->getPostProcessorOptions($postProcessor->getName()),
+            );
         }
 
         return $binary;

@@ -5,12 +5,14 @@ namespace JoliCode\MediaBundle;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ReferenceConfigurator;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Metadata\ExifMetadataReader;
-use Imagine\Imagick\Imagine;
+use Imagine\Gd\Imagine as GdImagine;
+use Imagine\Gmagick\Imagine as GmagickImagine;
+use Imagine\Imagick\Imagine as ImagickImagine;
 use JoliCode\MediaBundle\Doctrine\Type\MediaType;
 use JoliCode\MediaBundle\Doctrine\Types;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\PreProcessor\HeifPreProcessor;
-use JoliCode\MediaBundle\Processor\Imagick;
+use JoliCode\MediaBundle\Processor\Imagine;
 use JoliCode\MediaBundle\Transformer\Resize\Mode;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -42,25 +44,8 @@ class JoliMediaBundle extends AbstractBundle
                 ->end()
                 ->append($this->addLibrariesNode())
                 ->append($this->addPreProcessorsNode())
-
-                ->arrayNode('processors')
-                    ->children()
-                        ->append($this->addCwebpProcessorNode())
-                        ->append($this->addGif2webpProcessorNode())
-                        ->append($this->addGifsicleProcessorNode())
-                        ->append($this->addImagickProcessorNode())
-                    ->end()
-                ->end()
-
-                ->arrayNode('post_processors')
-                    ->children()
-                        ->append($this->addGifsiclePostProcessorNode())
-                        ->append($this->addJpegoptimPostProcessorNode())
-                        ->append($this->addMozjpegPostProcessorNode())
-                        ->append($this->addOxipngPostProcessorNode())
-                        ->append($this->addPngquantPostProcessorNode())
-                    ->end()
-                ->end()
+                ->append($this->addProcessorsNode())
+                ->append($this->addPostProcessorsNode())
             ->end()
         ;
     }
@@ -153,6 +138,8 @@ class JoliMediaBundle extends AbstractBundle
                         ->info('If true, enables automatic generation of WebP variations for the media: the configured variations will all be duplicated in WebP format, in addition to the original format.')
                     ->end()
                     ->append($this->addVariationsNode())
+                    ->append($this->addPostProcessorOptionsNode())
+                    ->append($this->addProcessorOptionsNode())
                 ->end()
             ->end()
         ;
@@ -225,6 +212,9 @@ class JoliMediaBundle extends AbstractBundle
             ->arrayPrototype()
                 ->children()
                     ->scalarNode('format')->end()
+                    ->booleanNode('enable_auto_webp')
+                        ->info('If true and the format config attribute is not set or different from "webp", enables an additionnal webp version of the variation.')
+                    ->end()
                     ->arrayNode('transformers')
                         ->useAttributeAsKey('name')
                         ->arrayPrototype()
@@ -241,9 +231,44 @@ class JoliMediaBundle extends AbstractBundle
                             ->end()
                         ->end()
                     ->end()
+                    ->append($this->addPostProcessorOptionsNode())
                     ->append($this->addPreProcessorsNode())
+                    ->append($this->addProcessorOptionsNode())
                     ->append($this->addVotersNode())
                 ->end()
+            ->end()
+        ;
+    }
+
+    private function addPostProcessorsNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('post_processors');
+        $node = $treeBuilder->getRootNode();
+
+        return $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->append($this->addGifsiclePostProcessorNode())
+                ->append($this->addJpegoptimPostProcessorNode())
+                ->append($this->addMozjpegPostProcessorNode())
+                ->append($this->addOxipngPostProcessorNode())
+                ->append($this->addPngquantPostProcessorNode())
+            ->end()
+        ;
+    }
+
+    private function addPostProcessorOptionsNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('post_processors');
+        $node = $treeBuilder->getRootNode();
+
+        return $node
+            ->children()
+                ->append($this->addGifsiclePostProcessorOptionsNode('gifsicle'))
+                ->append($this->addJpegoptimPostProcessorOptionsNode('jpegoptim'))
+                ->append($this->addMozjpegPostProcessorOptionsNode('mozjpeg'))
+                ->append($this->addOxipngPostProcessorOptionsNode('oxipng'))
+                ->append($this->addPngquantPostProcessorOptionsNode('pngquant'))
             ->end()
         ;
     }
@@ -256,6 +281,43 @@ class JoliMediaBundle extends AbstractBundle
         return $node
             ->scalarPrototype()
         ->end();
+    }
+
+    private function addProcessorsNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('processors');
+        $node = $treeBuilder->getRootNode();
+
+        return $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->append($this->addCwebpProcessorNode())
+                ->append($this->addGif2webpProcessorNode())
+                ->append($this->addGifsicleProcessorNode())
+                ->append($this->addImagineProcessorNode())
+                ->arrayNode('imagick')
+                    ->setDeprecated('jolicode/media-bundle', '0.0.1', 'The "%node%" processor is deprecated, use the "imagine" processor with the "imagick" driver instead.')
+                    ->children()
+                        ->append($this->addImagineProcessorOptionsNode('options'))
+                    ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    private function addProcessorOptionsNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('processors');
+        $node = $treeBuilder->getRootNode();
+
+        return $node
+            ->children()
+                ->append($this->addCwebpProcessorOptionsNode('cwebp'))
+                ->append($this->addGif2webpProcessorOptionsNode('gif2webp'))
+                ->append($this->addGifsicleProcessorOptionsNode('gifsicle'))
+                ->append($this->addImagineProcessorOptionsNode('imagine'))
+            ->end()
+        ;
     }
 
     private function addVotersNode(int $level = 0): NodeDefinition
@@ -299,6 +361,7 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('cwebp');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.cwebp%')
@@ -306,71 +369,79 @@ class JoliMediaBundle extends AbstractBundle
                 ->scalarNode('identify_binary')
                     ->defaultValue('%joli_media.binary.identify%')
                 ->end()
-                ->arrayNode('options')
+                ->append($this->addCwebpProcessorOptionsNode('options'))
+            ->end()
+        ;
+    }
+
+    private function addCwebpProcessorOptionsNode(string $name): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder($name);
+
+        return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('near_lossless')
                     ->children()
-                        ->arrayNode('near_lossless')
-                            ->children()
-                                ->integerNode('quality')
-                                    ->defaultValue(40)
-                                    ->min(0)
-                                    ->max(100)
-                                    ->info('Specify the compression factor for RGB channels between 0 and 100')
-                                ->end()
-                                ->integerNode('method')
-                                    ->defaultValue(6)
-                                    ->min(1)
-                                    ->max(6)
-                                    ->info('Specify the compression method to use. This parameter controls the trade off between encoding speed and the compressed file size and quality')
-                                ->end()
-                                ->arrayNode('metadata')
-                                    ->requiresAtLeastOneElement()
-                                    ->defaultValue(['none'])
-                                    ->enumPrototype()
-                                        ->values(['none', 'all', 'icc', 'exif', 'xmp'])
-                                    ->end()
-                                    ->info('A list of metadata to copy from the input to the output if present')
-                                ->end()
-                                ->integerNode('near_lossless')
-                                    ->defaultValue(0)
-                                    ->min(0)
-                                    ->max(100)
-                                    ->info('Specify the level of near-lossless image preprocessing')
-                                ->end()
-                            ->end()
+                        ->integerNode('quality')
+                            ->defaultValue(40)
+                            ->min(0)
+                            ->max(100)
+                            ->info('Specify the compression factor for RGB channels between 0 and 100')
                         ->end()
-                        ->arrayNode('lossy')
-                            ->children()
-                                ->integerNode('quality')
-                                    ->defaultValue(75)
-                                    ->min(0)
-                                    ->max(100)
-                                    ->info('Specify the compression factor for RGB channels between 0 and 100')
-                                ->end()
-                                ->integerNode('method')
-                                    ->defaultValue(6)
-                                    ->min(1)
-                                    ->max(6)
-                                    ->info('Specify the compression method to use. This parameter controls the trade off between encoding speed and the compressed file size and quality')
-                                ->end()
-                                ->booleanNode('af')
-                                    ->defaultValue(true)
-                                    ->info('Turns auto-filter on. This algorithm will spend additional time optimizing the filtering strength to reach a well-balanced quality')
-                                ->end()
-                                ->arrayNode('metadata')
-                                    ->requiresAtLeastOneElement()
-                                    ->defaultValue(['none'])
-                                    ->enumPrototype()
-                                        ->values(['none', 'all', 'icc', 'exif', 'xmp'])
-                                    ->end()
-                                    ->info('A list of metadata to copy from the input to the output if present')
-                                ->end()
-                                ->integerNode('pass')
-                                    ->defaultValue(10)
-                                    ->min(1)
-                                    ->max(10)
-                                    ->info('Set a maximum number of passes to use during the dichotomy used by options -size or -psnr')
-                                ->end()
+                        ->integerNode('method')
+                            ->defaultValue(6)
+                            ->min(1)
+                            ->max(6)
+                            ->info('Specify the compression method to use. This parameter controls the trade off between encoding speed and the compressed file size and quality')
+                        ->end()
+                        ->arrayNode('metadata')
+                            ->requiresAtLeastOneElement()
+                            ->defaultValue(['none'])
+                            ->enumPrototype()
+                                ->values(['none', 'all', 'icc', 'exif', 'xmp'])
                             ->end()
+                            ->info('A list of metadata to copy from the input to the output if present')
+                        ->end()
+                        ->integerNode('near_lossless')
+                            ->defaultValue(0)
+                            ->min(0)
+                            ->max(100)
+                            ->info('Specify the level of near-lossless image preprocessing')
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('lossy')
+                    ->children()
+                        ->integerNode('quality')
+                            ->defaultValue(75)
+                            ->min(0)
+                            ->max(100)
+                            ->info('Specify the compression factor for RGB channels between 0 and 100')
+                        ->end()
+                        ->integerNode('method')
+                            ->defaultValue(6)
+                            ->min(1)
+                            ->max(6)
+                            ->info('Specify the compression method to use. This parameter controls the trade off between encoding speed and the compressed file size and quality')
+                        ->end()
+                        ->booleanNode('af')
+                            ->defaultValue(true)
+                            ->info('Turns auto-filter on. This algorithm will spend additional time optimizing the filtering strength to reach a well-balanced quality')
+                        ->end()
+                        ->arrayNode('metadata')
+                            ->requiresAtLeastOneElement()
+                            ->defaultValue(['none'])
+                            ->enumPrototype()
+                                ->values(['none', 'all', 'icc', 'exif', 'xmp'])
+                            ->end()
+                            ->info('A list of metadata to copy from the input to the output if present')
+                        ->end()
+                        ->integerNode('pass')
+                            ->defaultValue(10)
+                            ->min(1)
+                            ->max(10)
+                            ->info('Set a maximum number of passes to use during the dichotomy used by options -size or -psnr')
                         ->end()
                     ->end()
                 ->end()
@@ -383,29 +454,38 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('gif2webp');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.gif2webp%')
                 ->end()
-                ->arrayNode('options')
-                    ->children()
-                        ->booleanNode('lossy')
-                            ->defaultValue(true)
-                            ->info('Encode the image using lossy compression')
-                        ->end()
-                        ->booleanNode('min_size')
-                            ->defaultValue(true)
-                            ->info('Encode image to achieve smallest size. This disables key frame insertion and picks the dispose method resulting in the smallest output for each frame')
-                        ->end()
-                        ->arrayNode('metadata')
-                            ->requiresAtLeastOneElement()
-                            ->defaultValue(['none'])
-                            ->enumPrototype()
-                                ->values(['none', 'all', 'icc', 'xmp'])
-                            ->end()
-                            ->info('A list of metadata to copy from the input to the output if present')
-                        ->end()
+                ->append($this->addGif2webpProcessorOptionsNode('options'))
+            ->end()
+        ;
+    }
+
+    private function addGif2webpProcessorOptionsNode(string $name): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder($name);
+
+        return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('lossy')
+                    ->defaultValue(true)
+                    ->info('Encode the image using lossy compression')
+                ->end()
+                ->booleanNode('min_size')
+                    ->defaultValue(true)
+                    ->info('Encode image to achieve smallest size. This disables key frame insertion and picks the dispose method resulting in the smallest output for each frame')
+                ->end()
+                ->arrayNode('metadata')
+                    ->requiresAtLeastOneElement()
+                    ->defaultValue(['none'])
+                    ->enumPrototype()
+                        ->values(['none', 'all', 'icc', 'xmp'])
                     ->end()
+                    ->info('A list of metadata to copy from the input to the output if present')
                 ->end()
             ->end()
         ;
@@ -416,61 +496,84 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('gifsicle');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.gifsicle%')
                 ->end()
-                ->arrayNode('options')
-                    ->children()
-                        ->integerNode('optimize')
-                            ->defaultValue(3)
-                            ->min(1)
-                            ->max(3)
-                            ->info('Attempt to shrink the file sizes of GIF animations. Level determines how much optimization is done; higher levels take longer, but may have better results')
-                        ->end()
-                        ->integerNode('lossy')
-                            ->defaultValue(20)
-                            ->min(0)
-                            ->info('Alter image colors to shrink output file size at the cost of artifacts and noise. Lossiness determines how many artifacts are allowed; higher values can result in smaller file sizes, but cause more artifacts')
-                        ->end()
-                        ->integerNode('colors')
-                            ->defaultValue(256)
-                            ->min(1)
-                            ->info('Reduce the number of colors to N')
-                        ->end()
-                    ->end()
+                ->append($this->addGifsicleProcessorOptionsNode('options'))
+            ->end()
+        ;
+    }
+
+    private function addGifsicleProcessorOptionsNode(string $name): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder($name);
+
+        return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->integerNode('optimize')
+                    ->defaultValue(3)
+                    ->min(1)
+                    ->max(3)
+                    ->info('Attempt to shrink the file sizes of GIF animations. Level determines how much optimization is done; higher levels take longer, but may have better results')
+                ->end()
+                ->integerNode('lossy')
+                    ->defaultValue(20)
+                    ->min(0)
+                    ->info('Alter image colors to shrink output file size at the cost of artifacts and noise. Lossiness determines how many artifacts are allowed; higher values can result in smaller file sizes, but cause more artifacts')
+                ->end()
+                ->integerNode('colors')
+                    ->defaultValue(256)
+                    ->min(1)
+                    ->info('Reduce the number of colors to N')
                 ->end()
             ->end()
         ;
     }
 
-    private function addImagickProcessorNode(): NodeDefinition
+    private function addImagineProcessorNode(): NodeDefinition
     {
-        $treeBuilder = new TreeBuilder('imagick');
+        $treeBuilder = new TreeBuilder('imagine');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
-                ->arrayNode('options')
-                    ->children()
-                        ->integerNode('quality')
-                            ->defaultValue(80)
-                            ->min(0)
-                            ->max(100)
-                            ->info('Sets the default image compression quality')
-                        ->end()
-                        ->integerNode('jpeg_quality')
-                            ->defaultValue(80)
-                            ->min(0)
-                            ->max(100)
-                            ->info('Sets the image compression quality for JPEG images')
-                        ->end()
-                        ->integerNode('png_quality')
-                            ->defaultValue(80)
-                            ->min(0)
-                            ->max(99)
-                            ->info('Sets the image compression quality for PNG images')
-                        ->end()
-                    ->end()
+                ->enumNode('driver')
+                    ->values(['gd', 'gmagick', 'imagick'])
+                    ->defaultValue('imagick')
+                    ->info('The Imagine driver to use for image processing. Available options: "gd", "gmagick", "imagick".')
+                ->end()
+                ->append($this->addImagineProcessorOptionsNode('options'))
+            ->end()
+        ;
+    }
+
+    private function addImagineProcessorOptionsNode(string $name): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder($name);
+
+        return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->integerNode('quality')
+                    ->defaultValue(80)
+                    ->min(0)
+                    ->max(100)
+                    ->info('Sets the default image compression quality')
+                ->end()
+                ->integerNode('jpeg_quality')
+                    ->defaultValue(80)
+                    ->min(0)
+                    ->max(100)
+                    ->info('Sets the image compression quality for JPEG images')
+                ->end()
+                ->integerNode('png_quality')
+                    ->defaultValue(80)
+                    ->min(0)
+                    ->max(99)
+                    ->info('Sets the image compression quality for PNG images')
                 ->end()
             ->end()
         ;
@@ -478,7 +581,49 @@ class JoliMediaBundle extends AbstractBundle
 
     private function addGifsiclePostProcessorNode(): NodeDefinition
     {
-        return $this->addGifsicleProcessorNode();
+        $treeBuilder = new TreeBuilder('gifsicle');
+
+        return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('binary')
+                    ->defaultValue('%joli_media.binary.gifsicle%')
+                ->end()
+                ->append($this->addGifsiclePostProcessorOptionsNode('options'))
+            ->end()
+        ;
+    }
+
+    private function addGifsiclePostProcessorOptionsNode(string $name): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder($name);
+
+        return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
+            ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the gifsicle post-processor')
+                ->end()
+                ->integerNode('optimize')
+                    ->defaultValue(3)
+                    ->min(1)
+                    ->max(3)
+                    ->info('Attempt to shrink the file sizes of GIF animations. Level determines how much optimization is done; higher levels take longer, but may have better results')
+                ->end()
+                ->integerNode('lossy')
+                    ->defaultValue(20)
+                    ->min(0)
+                    ->info('Alter image colors to shrink output file size at the cost of artifacts and noise. Lossiness determines how many artifacts are allowed; higher values can result in smaller file sizes, but cause more artifacts')
+                ->end()
+                ->integerNode('colors')
+                    ->defaultValue(256)
+                    ->min(1)
+                    ->info('Reduce the number of colors to N')
+                ->end()
+            ->end()
+        ;
     }
 
     private function addJpegoptimPostProcessorNode(): NodeDefinition
@@ -486,27 +631,41 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('jpegoptim');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.jpegoptim%')
                 ->end()
-                ->arrayNode('options')
-                    ->children()
-                        ->booleanNode('strip_all')
-                            ->defaultValue(true)
-                            ->info('Strip  all (Comment & Exif) markers from output file')
-                        ->end()
-                        ->booleanNode('progressive')
-                            ->defaultValue(true)
-                            ->info('Force all output files to be progressive')
-                        ->end()
-                        ->integerNode('max_quality')
-                            ->defaultValue(80)
-                            ->min(0)
-                            ->max(100)
-                            ->info('Sets the maximum image quality factor')
-                        ->end()
-                    ->end()
+                ->append($this->addJpegoptimPostProcessorOptionsNode('options'))
+            ->end()
+        ;
+    }
+
+    private function addJpegoptimPostProcessorOptionsNode(string $name): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder($name);
+
+        return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
+            ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the jpegoptim post-processor')
+                ->end()
+                ->booleanNode('strip_all')
+                    ->defaultValue(true)
+                    ->info('Strip  all (Comment & Exif) markers from output file')
+                ->end()
+                ->booleanNode('progressive')
+                    ->defaultValue(true)
+                    ->info('Force all output files to be progressive')
+                ->end()
+                ->integerNode('max_quality')
+                    ->defaultValue(80)
+                    ->min(0)
+                    ->max(100)
+                    ->info('Sets the maximum image quality factor')
                 ->end()
             ->end()
         ;
@@ -517,27 +676,41 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('mozjpeg');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.mozjpeg%')
                 ->end()
-                ->arrayNode('options')
-                    ->children()
-                        ->booleanNode('optimize')
-                            ->defaultValue(false)
-                            ->info('Optimize Huffman table')
-                        ->end()
-                        ->booleanNode('progressive')
-                            ->defaultValue(false)
-                            ->info('Create progressive JPEG file')
-                        ->end()
-                        ->integerNode('quality')
-                            ->defaultValue(80)
-                            ->min(0)
-                            ->max(100)
-                            ->info('Compression quality')
-                        ->end()
-                    ->end()
+                ->append($this->addMozjpegPostProcessorOptionsNode('options'))
+            ->end()
+        ;
+    }
+
+    private function addMozjpegPostProcessorOptionsNode(string $name): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder($name);
+
+        return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
+            ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the mozjpeg post-processor')
+                ->end()
+                ->booleanNode('optimize')
+                    ->defaultValue(false)
+                    ->info('Optimize Huffman table')
+                ->end()
+                ->booleanNode('progressive')
+                    ->defaultValue(false)
+                    ->info('Create progressive JPEG file')
+                ->end()
+                ->integerNode('quality')
+                    ->defaultValue(80)
+                    ->min(0)
+                    ->max(100)
+                    ->info('Compression quality')
                 ->end()
             ->end()
         ;
@@ -548,31 +721,45 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('oxipng');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.oxipng%')
                 ->end()
-                ->arrayNode('options')
-                    ->children()
-                        ->integerNode('optimization')
-                            ->defaultValue(4)
-                            ->min(0)
-                            ->max(6)
-                            ->info('Optimization level. A higher level means slower, but better compression')
-                        ->end()
-                        ->arrayNode('strip')
-                            ->requiresAtLeastOneElement()
-                            ->defaultValue(['all'])
-                            ->enumPrototype()
-                                ->values(['safe', 'all'])
-                            ->end()
-                            ->info('Strip metadata objects')
-                        ->end()
-                        ->booleanNode('zopfli')
-                            ->defaultValue(false)
-                            ->info('Use the slower but better compressing Zopfli algorithm')
-                        ->end()
+                ->append($this->addOxipngPostProcessorOptionsNode('options'))
+            ->end()
+        ;
+    }
+
+    private function addOxipngPostProcessorOptionsNode(string $name): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder($name);
+
+        return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
+            ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the oxipng post-processor')
+                ->end()
+                ->integerNode('optimization')
+                    ->defaultValue(4)
+                    ->min(0)
+                    ->max(6)
+                    ->info('Optimization level. A higher level means slower, but better compression')
+                ->end()
+                ->arrayNode('strip')
+                    ->requiresAtLeastOneElement()
+                    ->defaultValue(['all'])
+                    ->enumPrototype()
+                        ->values(['safe', 'all'])
                     ->end()
+                    ->info('Strip metadata objects')
+                ->end()
+                ->booleanNode('zopfli')
+                    ->defaultValue(false)
+                    ->info('Use the slower but better compressing Zopfli algorithm')
                 ->end()
             ->end()
         ;
@@ -583,23 +770,37 @@ class JoliMediaBundle extends AbstractBundle
         $treeBuilder = new TreeBuilder('pngquant');
 
         return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.pngquant%')
                 ->end()
-                ->arrayNode('options')
-                    ->children()
-                        ->scalarNode('quality')
-                            ->defaultValue('75-85')
-                            ->info("Don't save below min, use fewer colors below max")
-                        ->end()
-                        ->integerNode('speed')
-                            ->defaultValue(4)
-                            ->min(1)
-                            ->max(11)
-                            ->info('Speed/quality trade-off. 1=slow, 4=default, 11=fast & rough')
-                        ->end()
-                    ->end()
+                ->append($this->addPngquantPostProcessorOptionsNode('options'))
+            ->end()
+        ;
+    }
+
+    private function addPngquantPostProcessorOptionsNode(string $name): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder($name);
+
+        return $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
+            ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the pngquant post-processor')
+                ->end()
+                ->scalarNode('quality')
+                    ->defaultValue('75-85')
+                    ->info("Don't save below min, use fewer colors below max")
+                ->end()
+                ->integerNode('speed')
+                    ->defaultValue(4)
+                    ->min(1)
+                    ->max(11)
+                    ->info('Speed/quality trade-off. 1=slow, 4=default, 11=fast & rough')
                 ->end()
             ->end()
         ;
@@ -673,7 +874,7 @@ class JoliMediaBundle extends AbstractBundle
             $container->services()
                 ->set(HeifPreProcessor::class, HeifPreProcessor::class)
                 ->args([
-                    '$imagine' => service('.joli_media.imagine.imagick'),
+                    '$imagine' => service('.joli_media.imagine.imagine'),
                     '$logger' => service('logger')->ignoreOnInvalid(),
                 ])
             ;
@@ -721,23 +922,31 @@ class JoliMediaBundle extends AbstractBundle
             $processorContainerService->call('add', ['gifsicle', service('.joli_media.processor.gifsicle')]);
         }
 
-        if (isset($processorsConfig['imagick']) && interface_exists(ImagineInterface::class)) {
+        if (isset($processorsConfig['imagine']) && interface_exists(ImagineInterface::class)) {
             $container->services()
                 ->set('.joli_media.imagine.metadata_reader', ExifMetadataReader::class)
+            ;
 
-                ->set('.joli_media.imagine.imagick', Imagine::class)
+            $imagineDriverClass = match ($processorsConfig['imagine']['driver']) {
+                'gd' => GdImagine::class,
+                'gmagick' => GmagickImagine::class,
+                default => ImagickImagine::class,
+            };
+
+            $container->services()
+                ->set('.joli_media.imagine.imagine', $imagineDriverClass)
                 ->call('setMetadataReader', [service('.joli_media.imagine.metadata_reader')])
             ;
 
             $container->services()
-                ->set('.joli_media.processor.imagick', Imagick::class)
+                ->set('.joli_media.processor.imagine', Imagine::class)
                 ->args([
-                    '$imagine' => service('.joli_media.imagine.imagick'),
-                    '$options' => $processorsConfig['imagick']['options'],
+                    '$imagine' => service('.joli_media.imagine.imagine'),
+                    '$options' => $processorsConfig['imagine']['options'],
                     '$logger' => service('logger')->ignoreOnInvalid(),
                 ])
             ;
-            $processorContainerService->call('add', ['imagick', service('.joli_media.processor.imagick')]);
+            $processorContainerService->call('add', ['imagine', service('.joli_media.processor.imagine')]);
         }
     }
 
@@ -775,11 +984,17 @@ class JoliMediaBundle extends AbstractBundle
             ]);
 
         foreach ($libraryConfig['variations'] as $variationName => $variationConfig) {
-            $variationServiceId = $this->createVariationService($container, $builder, $libraryName, $variationName, $variationConfig);
+            $variationServiceId = $this->createVariationService($container, $builder, $libraryName, $libraryConfig, $variationName, $variationConfig);
 
-            if ($libraryConfig['enable_auto_webp'] && (!isset($variationConfig['format']) || 'webp' !== $variationConfig['format'])) {
+            if (
+                (
+                    isset($variationConfig['enable_auto_webp']) && $variationConfig['enable_auto_webp']
+                    || !isset($variationConfig['enable_auto_webp']) && $libraryConfig['enable_auto_webp']
+                )
+                && (!isset($variationConfig['format']) || 'webp' !== $variationConfig['format'])
+            ) {
                 $variationConfig['format'] = 'webp';
-                $webpVariationServiceId = $this->createVariationService($container, $builder, $libraryName, $variationName.'.webp', $variationConfig);
+                $webpVariationServiceId = $this->createVariationService($container, $builder, $libraryName, $libraryConfig, $variationName.'.webp', $variationConfig);
                 $container->services()
                     ->get($variationServiceId)
                     ->call('setWebpAlternativeVariation', [service($webpVariationServiceId)])
@@ -861,7 +1076,7 @@ class JoliMediaBundle extends AbstractBundle
         return $transformerServiceId;
     }
 
-    private function createVariationService(ContainerConfigurator $container, ContainerBuilder $builder, string $libraryName, string $variationName, array $variationConfig): string
+    private function createVariationService(ContainerConfigurator $container, ContainerBuilder $builder, string $libraryName, array $libraryConfig, string $variationName, array $variationConfig): string
     {
         $variationServiceId = sprintf(
             '.joli_media.variation.%s.%s',
@@ -912,9 +1127,10 @@ class JoliMediaBundle extends AbstractBundle
                 '$name' => $slugger->slug($variationName)->lower()->toString(),
                 '$format' => isset($variationConfig['format']) ? Format::fromName($variationConfig['format']) : null,
                 '$transformerChain' => service($transformerChainServiceId),
-                '$postProcessingOptions' => $variationConfig['post_processors'] ?? [],
                 '$globalPreProcessors' => new ServiceLocatorArgument(new TaggedIteratorArgument('joli_media.pre_processor', indexAttribute: 'name', needsIndexes: true)),
                 '$preProcessors' => new ServiceLocatorArgument(new TaggedIteratorArgument($preProcessServiceTag, indexAttribute: 'name', needsIndexes: true)),
+                '$processorsConfiguration' => array_replace_recursive($libraryConfig['processors'] ?? [], $variationConfig['processors'] ?? []),
+                '$postProcessorsConfiguration' => array_replace_recursive($libraryConfig['post_processors'] ?? [], $variationConfig['post_processors'] ?? []),
                 '$voters' => array_map(fn($voterServiceId): ReferenceConfigurator => service($voterServiceId), $voterServiceIds),
             ])
             ->tag($variationServiceTag, ['name' => $slugger->slug($variationName)->lower()->toString()])

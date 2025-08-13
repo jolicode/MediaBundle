@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JoliCode\MediaBundle\Tests\Variation;
 
-use Imagine\Imagick\Imagine;
+use Imagine\Imagick\Imagine as ImagineImagine;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Library\Library;
@@ -14,7 +14,7 @@ use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\PostProcessor\PostProcessorContainer;
 use JoliCode\MediaBundle\Processor\Cwebp;
-use JoliCode\MediaBundle\Processor\Imagick;
+use JoliCode\MediaBundle\Processor\Imagine;
 use JoliCode\MediaBundle\Processor\ProcessorContainer;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
@@ -54,7 +54,7 @@ class NoFormatVariationTest extends BaseTestCase
         );
         $processorContainer = new ProcessorContainer();
         $processorContainer->add('cwebp', new Cwebp());
-        $processorContainer->add('imagick', new Imagick(new Imagine()));
+        $processorContainer->add('imagine', new Imagine(new ImagineImagine()));
 
         $transformationProcessor = new TransformationProcessor(
             $processorContainer,
