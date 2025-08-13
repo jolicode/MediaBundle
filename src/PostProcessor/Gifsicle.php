@@ -33,7 +33,9 @@ readonly class Gifsicle extends AbstractPostProcessor implements PostProcessorIn
     {
         $this->checkFormat($binary->getFormat());
 
-        if (false === $this->isEnabled()) {
+        if (false === $this->isEnabled() || isset($postProcessingOptions['enabled']) && false === $postProcessingOptions['enabled']) {
+            $this->logger?->info('Gifsicle post-processor is disabled, skipping processing.');
+
             return $binary;
         }
 
