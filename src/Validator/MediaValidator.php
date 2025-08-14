@@ -72,5 +72,13 @@ class MediaValidator extends ConstraintValidator
                 ->addViolation()
             ;
         }
+
+        if (null !== $constraint->maxPathLength && mb_strlen($media->getPath()) > $constraint->maxPathLength) {
+            $this->context->buildViolation($constraint->maxPathLengthMessage)
+                ->setParameter('{{ limit }}', (string) $constraint->maxPathLength)
+                ->setParameter('{{ value }}', $media->getPath())
+                ->addViolation()
+            ;
+        }
     }
 }

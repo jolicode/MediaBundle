@@ -43,7 +43,7 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $this->assertSelectorExists('a[data-component="media-add"]');
-        $this->assertSelectorCount(4, '.gallery-grid-item');
+        $this->assertSelectorCount(5, '.gallery-grid-item');
     }
 
     public function testDelete(): void

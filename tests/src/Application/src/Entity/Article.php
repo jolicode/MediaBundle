@@ -17,7 +17,7 @@ class Article
     public readonly string $id;
 
     public function __construct(
-        #[ORM\Column(type: Types::MEDIA, nullable: true)]
+        #[ORM\Column(type: Types::MEDIA_LONG, nullable: true)]
         #[MediaDeleteBehavior(strategy: Strategy::SET_NULL)]
         #[Assert\Media]
         public ?Media $media = null,

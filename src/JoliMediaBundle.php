@@ -8,6 +8,7 @@ use Imagine\Image\Metadata\ExifMetadataReader;
 use Imagine\Gd\Imagine as GdImagine;
 use Imagine\Gmagick\Imagine as GmagickImagine;
 use Imagine\Imagick\Imagine as ImagickImagine;
+use JoliCode\MediaBundle\Doctrine\Type\MediaLongType;
 use JoliCode\MediaBundle\Doctrine\Type\MediaType;
 use JoliCode\MediaBundle\Doctrine\Types;
 use JoliCode\MediaBundle\Model\Format;
@@ -33,6 +34,7 @@ class JoliMediaBundle extends AbstractBundle
         // doctrine media type
         $resolverInitializer = fn (): ?object => $this->container->get('joli_media.resolver');
         MediaType::$resolverInitializer = $resolverInitializer;
+        MediaLongType::$resolverInitializer = $resolverInitializer;
     }
 
     public function configure(DefinitionConfigurator $definition): void
@@ -117,6 +119,7 @@ class JoliMediaBundle extends AbstractBundle
                 'dbal' => [
                     'types' => [
                         Types::MEDIA => MediaType::class,
+                        Types::MEDIA_LONG => MediaLongType::class,
                     ],
                 ],
             ]);

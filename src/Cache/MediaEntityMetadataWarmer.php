@@ -37,7 +37,7 @@ readonly class MediaEntityMetadataWarmer implements CacheWarmerInterface
                 $entityMediaFields = [];
 
                 foreach ($classMetadata->getFieldNames() as $fieldName) {
-                    if (Types::MEDIA === $classMetadata->getTypeOfField($fieldName)) {
+                    if (\in_array($classMetadata->getTypeOfField($fieldName), Types::MEDIA_TYPES, true)) {
                         $mediaFields[] = new MediaEntityMetadata(
                             $objectManagerName,
                             $classMetadata->getName(),
@@ -56,7 +56,7 @@ readonly class MediaEntityMetadataWarmer implements CacheWarmerInterface
                         $instance = $attribute->newInstance();
                         $fieldName = $property->getName();
 
-                        if (!$classMetadata->hasField($fieldName) || Types::MEDIA !== $classMetadata->getTypeOfField($fieldName)) {
+                        if (!$classMetadata->hasField($fieldName) || !\in_array($classMetadata->getTypeOfField($fieldName), Types::MEDIA_TYPES, true)) {
                             throw new \RuntimeException(\sprintf('The field "%s" of the entity "%s" is not defined as a media field.', $fieldName, $classMetadata->getName()));
                         }
 

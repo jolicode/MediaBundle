@@ -27,6 +27,7 @@ use League\Flysystem\Config;
 use League\Flysystem\DirectoryListing;
 use League\Flysystem\Filesystem;
 use League\Flysystem\StorageAttributes;
+use League\Flysystem\UnableToRetrieveMetadata;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mime\MimeTypeGuesserInterface;
 use Symfony\Component\Mime\MimeTypesInterface;
@@ -245,7 +246,16 @@ class OriginalStorage
             function (ItemInterface $item) use ($path): string {
                 $item->expiresAfter(120);
 
-                return $this->filesystem->mimeType($this->strategy->getPath($path));
+                try {
+                    $mimeType = $this->filesystem->mimeType($this->strategy->getPath($path));
+                } catch (UnableToRetrieveMetadata) {
+                    // try to guess the mime type from the content
+                    $mimeType = $this->getMimeTypeFormContent(
+                        $this->filesystem->read($this->strategy->getPath($path)),
+                    );
+                }
+
+                return $mimeType ?? 'application/octet-stream';
             },
         );
     }
@@ -470,7 +480,7 @@ class OriginalStorage
         $possibleExtensions = $this->mimeTypes->getExtensions($mimeType);
 
         if ([] === $possibleExtensions) {
-            throw new \InvalidArgumentException(\sprintf('No possible extension found for mime type "%s"', $mimeType));
+            return $mimeType;
         }
 
         return $possibleExtensions[0];
