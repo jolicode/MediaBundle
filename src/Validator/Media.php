@@ -29,6 +29,8 @@ class Media extends Constraint
      */
     public array $allowedTypes = [];
 
+    public ?int $maxPathLength = null;
+
     public string $extensionMessage = 'This file extension is not allowed. Allowed extensions are: {{ extensions }}.';
 
     public string $mimeTypeMessage = 'This mime type is not allowed. Allowed mime types are: {{ mimeTypes }}.';
@@ -36,6 +38,8 @@ class Media extends Constraint
     public string $typeMessage = 'This file type is not allowed. Allowed types are: {{ types }}.';
 
     public string $pathMessage = 'The file path "{{ value }}" is not allowed. Allowed paths must start with one of the following: {{ paths }}.';
+
+    public string $maxPathLengthMessage = 'The file path "{{ value }}" exceeds the maximum length of {{ limit }} characters.';
 
     public string $unresolvedMediaMessage = 'The media "{{ value }}" could not be resolved.';
 
@@ -55,6 +59,8 @@ class Media extends Constraint
         ?string $typeMessage = null,
         ?array $allowedPaths = [],
         ?string $pathMessage = null,
+        ?int $maxPathLength = null,
+        ?string $maxPathLengthMessage = null,
         public ?string $library = null,
         ?string $unresolvedMediaMessage = null,
         ?array $groups = null,
@@ -67,11 +73,13 @@ class Media extends Constraint
         $this->allowedMimeTypes = $allowedMimeTypes ?? $this->allowedMimeTypes;
         $this->allowedTypes = $allowedTypes ?? $this->allowedTypes;
         $this->allowedPaths = $allowedPaths ?? $this->allowedPaths;
+        $this->maxPathLength = $maxPathLength ?? $this->maxPathLength;
 
         $this->extensionMessage = $extensionMessage ?? $this->extensionMessage;
         $this->mimeTypeMessage = $mimeTypeMessage ?? $this->mimeTypeMessage;
         $this->typeMessage = $typeMessage ?? $this->typeMessage;
         $this->pathMessage = $pathMessage ?? $this->pathMessage;
+        $this->maxPathLengthMessage = $maxPathLengthMessage ?? $this->maxPathLengthMessage;
         $this->unresolvedMediaMessage = $unresolvedMediaMessage ?? $this->unresolvedMediaMessage;
     }
 

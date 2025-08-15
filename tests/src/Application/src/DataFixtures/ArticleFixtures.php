@@ -24,6 +24,9 @@ class ArticleFixtures extends Fixture implements DependentFixtureInterface
         $article = new Article($this->getMedia('sub/folder/deep/test.txt'));
         $manager->persist($article);
 
+        $article = new Article($this->getMedia('a-folder-with-a-very-long-name-level-1/a-folder-with-a-very-long-name-level-2/a-folder-with-a-very-long-name-level-3/a-folder-with-a-very-long-name-level-4/a-folder-with-a-very-long-name-level-5/a-folder-with-a-very-long-name-level-6/a-folder-with-a-very-long-name-level-7/a-folder-with-a-very-long-name-level-8/a-folder-with-a-very-long-name-level-9/a-folder-with-a-very-long-name-level-10/test.txt'));
+        $manager->persist($article);
+
         $manager->flush();
     }
 

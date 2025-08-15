@@ -6,27 +6,14 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\StringType;
 use JoliCode\MediaBundle\Doctrine\Types;
 use JoliCode\MediaBundle\Model\Media;
-use JoliCode\MediaBundle\Model\NullMedia;
 use JoliCode\MediaBundle\Resolver\Resolver;
 
 class MediaType extends StringType
 {
+    use MediaTypeTrait;
+
     #[\Deprecated(message: 'use Types::MEDIA instead')]
     public const string NAME = Types::MEDIA;
-
-    /**
-     * @var callable(): Resolver|null
-     */
-    public static $resolverInitializer;
-
-    private static Resolver $resolver;
-
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
-    {
-        $column['length'] ??= 255;
-
-        return parent::getSQLDeclaration($column, $platform);
-    }
 
     /**
      * @param Media|string|null $value
@@ -41,24 +28,20 @@ class MediaType extends StringType
             $value = $value->getPath();
         }
 
-        return parent::convertToDatabaseValue(Resolver::normalizePath($value), $platform);
+        $databaseValue = parent::convertToDatabaseValue(Resolver::normalizePath($value), $platform);
+
+        if (mb_strlen((string) $databaseValue) > 255) {
+            throw new \InvalidArgumentException('This media path exceeds the maximum length of 255 characters. Rather use the ' . Types::class . '::MEDIA_LONG type for longer paths.');
+        }
+
+        return $databaseValue;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?Media
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        if (null === $value) {
-            return null;
-        }
+        $column['length'] ??= 255;
 
-        if (!\is_string($value) && !$value instanceof Media) {
-            throw new \InvalidArgumentException(\sprintf('Expected a string or Media object, got %s.', get_debug_type($value)));
-        }
-
-        try {
-            return $this->getResolver()->resolveMedia($value);
-        } catch (\Exception) {
-            return new NullMedia($value);
-        }
+        return parent::getSQLDeclaration($column, $platform);
     }
 
     public function getName(): string
@@ -69,18 +52,5 @@ class MediaType extends StringType
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;
-    }
-
-    private function getResolver(): Resolver
-    {
-        if (!isset(self::$resolver)) {
-            if (!isset(self::$resolverInitializer)) {
-                throw new \LogicException('Resolver Initializer is not set.');
-            }
-
-            self::$resolver = (self::$resolverInitializer)();
-        }
-
-        return self::$resolver;
     }
 }

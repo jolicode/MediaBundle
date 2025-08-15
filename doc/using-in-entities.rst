@@ -1,7 +1,7 @@
 Using the MediaBundle in Entities
 =================================
 
-The MediaBundle itself does not offer database entities. However, it is designed to be easily integrated into your existing entities, so you can link media to your own entities.
+The MediaBundle itself does not offer database entities. However, it is designed to easily integrate into your existing entities, so you can link media to your own entities.
 
 Adding a Media Property
 -----------------------
@@ -33,6 +33,23 @@ Imagine you have an entity called ``Article`` and you want to link a media objec
         public ?Media $image = null;
     }
 
+The ``JoliCode\MediaBundle\Doctrine\Types::MEDIA`` type defines the field as a media field, using a Doctrine String type that stores the media path. The ``Media`` class is a model that represents a media object, and it can be used to get information about the media, such as its size, mime type, access its variations, and more.
+
+As the ``Types::MEDIA`` type extends ``Doctrine\DBAL\Types``, it is limited to storing the media path as a string. This means that you cannot store long paths in such fields, but are limited to the maximum length of a string in your database. If you need to store longer paths, you can use the ``Types::MEDIA_LONG`` type instead, which is designed to handle longer media paths (it extends Doctrine's TextType)::
+
+    namespace App\Entity;
+
+    use Doctrine\ORM\Mapping as ORM;
+    use JoliCode\MediaBundle\Doctrine\Types as MediaTypes;
+    use JoliCode\MediaBundle\Model\Media;
+
+    #[ORM\Entity]
+    class Article
+    {
+        #[ORM\Column(type: MediaTypes::MEDIA_LONG, nullable: true)]
+        public ?Media $imageWithPotentiallyLongPath = null;
+    }
+
 Validating Media in Entities
 ----------------------------
 
@@ -61,6 +78,8 @@ The ``Media`` constraint offers multiple options to customize the validation pro
             pathMessage: 'The file path "{{ value }}" is not allowed. Allowed paths must start with one of the following: {{ paths }}.',
             allowedTypes: ['image'],
             typeMessage: 'Allowed types are: {{ types }}.',
+            maxPathLength: 255,
+            maxPathLengthMessage: 'The file path "{{ value }}" exceeds the maximum length of {{ limit }} characters.',
         )]
         public ?Media $image = null;
 
