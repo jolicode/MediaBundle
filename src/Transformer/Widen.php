@@ -20,15 +20,15 @@ readonly class Widen extends AbstractTransformer implements TransformerInterface
         $width = $this->width;
 
         if (\is_string($width)) {
-            $width = $this->convertPercentageValue($width, $transformation->width);
+            $width = $this->convertPercentageValue($width, $transformation->targetWidth);
         }
 
-        if (false === $this->allowDownscale && $width <= $transformation->width) {
+        if (false === $this->allowDownscale && $width <= $transformation->targetWidth) {
             return;
         }
 
-        $ratio = $width / $transformation->width;
-        $transformation->height = (int) round($transformation->height * $ratio);
-        $transformation->width = $width;
+        $ratio = $width / $transformation->targetWidth;
+        $transformation->targetHeight = (int) round($transformation->targetHeight * $ratio);
+        $transformation->targetWidth = $width;
     }
 }

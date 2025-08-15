@@ -85,16 +85,16 @@ class TransformerChainTest extends BaseTestCase
         $transformation = new Transformation($binary, $variation);
 
         // Set initial dimensions
-        $transformation->width = 1600;
-        $transformation->height = 1200;
+        $transformation->targetWidth = 1600;
+        $transformation->targetHeight = 1200;
 
         // Apply transformers through the chain
         while ($transformer = $transformation->shiftTransformers()) {
             $transformer->transform($transformation);
         }
 
-        self::assertEquals(1200, $transformation->width);
-        self::assertEquals(900, $transformation->height);
+        self::assertEquals(1200, $transformation->targetWidth);
+        self::assertEquals(900, $transformation->targetHeight);
     }
 
     public function testEmptyChain(): void

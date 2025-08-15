@@ -32,7 +32,7 @@ readonly class TransformationProcessor
 
             if ($transformer->needsBinaryProcessing()) {
                 $binary = $this->runTransformation($transformation);
-                $binary = $transformer->processBinary($binary, $transformation->width, $transformation->height);
+                $binary = $transformer->processBinary($binary, $transformation->targetWidth, $transformation->targetHeight);
                 $transformation = new Transformation(
                     $binary,
                     $transformation->getVariation(),

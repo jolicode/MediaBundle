@@ -20,15 +20,15 @@ readonly class Heighten extends AbstractTransformer implements TransformerInterf
         $height = $this->height;
 
         if (\is_string($height)) {
-            $height = $this->convertPercentageValue($height, $transformation->height);
+            $height = $this->convertPercentageValue($height, $transformation->targetHeight);
         }
 
-        if (false === $this->allowDownscale && $height <= $transformation->height) {
+        if (false === $this->allowDownscale && $height <= $transformation->targetHeight) {
             return;
         }
 
-        $ratio = $height / $transformation->height;
-        $transformation->width = (int) round($transformation->width * $ratio);
-        $transformation->height = $height;
+        $ratio = $height / $transformation->targetHeight;
+        $transformation->targetWidth = (int) round($transformation->targetWidth * $ratio);
+        $transformation->targetHeight = $height;
     }
 }

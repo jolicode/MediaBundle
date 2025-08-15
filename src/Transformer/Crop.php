@@ -28,28 +28,32 @@ readonly class Crop extends AbstractTransformer implements TransformerInterface
         $height = $this->height;
 
         if (\is_string($width)) {
-            $width = $this->convertPercentageValue($width, $transformation->width);
+            $width = $this->convertPercentageValue($width, $transformation->targetWidth);
         }
 
         if (\is_string($height)) {
-            $height = $this->convertPercentageValue($height, $transformation->height);
+            $height = $this->convertPercentageValue($height, $transformation->targetHeight);
         }
 
         if (null === $startX) {
-            $startX = (int) round(($transformation->width - $width) / 2);
+            $startX = (int) round(($transformation->targetWidth - $width) / 2);
         } elseif (\is_string($startX)) {
-            $startX = $this->convertPercentageValue($startX, $transformation->width);
+            $startX = $this->convertPercentageValue($startX, $transformation->targetWidth);
         }
 
         if (null === $startY) {
-            $startY = (int) round(($transformation->height - (int) $height) / 2);
+            $startY = (int) round(($transformation->targetHeight - (int) $height) / 2);
         } elseif (\is_string($startY)) {
-            $startY = $this->convertPercentageValue($startY, $transformation->height);
+            $startY = $this->convertPercentageValue($startY, $transformation->targetHeight);
         }
 
-        if ($startX >= $transformation->width || $startY >= $transformation->height) {
+        if ($startX >= $transformation->targetWidth || $startY >= $transformation->targetHeight) {
+            // the start coordinates are outside the image, so we do not apply the crop
             return;
         }
+
+        $width = min($width, $transformation->targetWidth);
+        $height = min($height, $transformation->targetHeight);
 
         if ($startX < 0) {
             $width += $startX;
@@ -61,14 +65,27 @@ readonly class Crop extends AbstractTransformer implements TransformerInterface
             $startY = 0;
         }
 
-        $width = min($width, $transformation->width - $startX);
-        $height = min($height, $transformation->height - $startY);
+        if ($width <= 0 || $height <= 0) {
+            // the coordinates or dimensions are invalid, so we do not apply the crop
+            return;
+        }
 
-        $transformation->width = $width;
-        $transformation->height = $height;
-        $transformation->cropX = $startX + $transformation->cropX;
-        $transformation->cropY = $startY + $transformation->cropY;
-        $transformation->cropWidth = $width;
-        $transformation->cropHeight = $height;
+        $width = min($width, $transformation->targetWidth - $startX);
+        $height = min($height, $transformation->targetHeight - $startY);
+
+        $currentCropWidth = $transformation->cropWidth ?? $transformation->binaryWidth;
+        $currentCropHeight = $transformation->cropHeight ?? $transformation->binaryHeight;
+        $currentCropX = $transformation->cropX ?? 0;
+        $currentCropY = $transformation->cropY ?? 0;
+
+        $additionalCropX = (int) ($startX / $transformation->targetWidth * $currentCropWidth);
+        $additionalCropY = (int) ($startY / $transformation->targetHeight * $currentCropHeight);
+
+        $transformation->cropX = $currentCropX + $additionalCropX;
+        $transformation->cropY = $currentCropY + $additionalCropY;
+        $transformation->targetWidth = $width;
+        $transformation->targetHeight = $height;
+        $transformation->cropWidth = $currentCropWidth - $additionalCropX;
+        $transformation->cropHeight = $currentCropHeight - $additionalCropY;
     }
 }

@@ -18,34 +18,34 @@ readonly class Resize extends AbstractTransformer implements TransformerInterfac
 
     public function transform(Transformation $transformation): void
     {
-        if (false === $this->allowUpscale && $transformation->width <= $this->width && $transformation->height <= $this->height) {
+        if (false === $this->allowUpscale && $transformation->targetWidth <= $this->width && $transformation->targetHeight <= $this->height) {
             return;
         }
 
-        if (false === $this->allowDownscale && $transformation->width >= $this->width && $transformation->height >= $this->height) {
+        if (false === $this->allowDownscale && $transformation->targetWidth >= $this->width && $transformation->targetHeight >= $this->height) {
             return;
         }
 
         if (Mode::inside === $this->mode) {
-            $xRatio = $this->width / $transformation->width;
-            $yRatio = $this->height / $transformation->height;
+            $xRatio = $this->width / $transformation->targetWidth;
+            $yRatio = $this->height / $transformation->targetHeight;
 
             if ($xRatio < $yRatio) {
                 $width = $this->width;
-                $height = (int) round($transformation->height * $xRatio);
+                $height = (int) round($transformation->targetHeight * $xRatio);
             } else {
-                $width = (int) round($transformation->width * $yRatio);
+                $width = (int) round($transformation->targetWidth * $yRatio);
                 $height = $this->height;
             }
         } elseif (Mode::outside === $this->mode) {
-            $xRatio = $this->width / $transformation->width;
-            $yRatio = $this->height / $transformation->height;
+            $xRatio = $this->width / $transformation->targetWidth;
+            $yRatio = $this->height / $transformation->targetHeight;
 
             if ($xRatio > $yRatio) {
                 $width = $this->width;
-                $height = (int) round($transformation->height * $xRatio);
+                $height = (int) round($transformation->targetHeight * $xRatio);
             } else {
-                $width = (int) round($transformation->width * $yRatio);
+                $width = (int) round($transformation->targetWidth * $yRatio);
                 $height = $this->height;
             }
         } else {
@@ -53,7 +53,7 @@ readonly class Resize extends AbstractTransformer implements TransformerInterfac
             $height = $this->height;
         }
 
-        $transformation->width = $width;
-        $transformation->height = $height;
+        $transformation->targetWidth = $width;
+        $transformation->targetHeight = $height;
     }
 }
