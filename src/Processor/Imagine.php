@@ -64,6 +64,7 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
             try {
                 $this->logger?->info('Processing image with Imagine', [
                     'original size' => $binary->getContentSize(),
+                    'transformation' => $transformation,
                 ]);
                 $image = $this->imagine->load($binary->getContent());
                 $image = $transformation->getAsImagineCallback()($image);

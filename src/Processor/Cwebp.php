@@ -84,6 +84,7 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
         $this->logger?->info('Processing image with Cwebp', [
             'original size' => filesize($temporaryFile),
             'command' => $process->getCommandLine(),
+            'transformation' => $transformation,
         ]);
 
         try {
@@ -111,6 +112,7 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
                     $this->logger?->info('Processing image with Cwebp', [
                         'original size' => filesize($temporaryFile),
                         'command' => $process->getCommandLine(),
+                        'transformation' => $transformation,
                     ]);
                     $process->mustRun();
                 }

@@ -61,6 +61,7 @@ readonly class Gifsicle extends AbstractProcessor implements ProcessorInterface
             [$inputTemporaryFile, '-o', $outputTemporaryFile],
         ));
         $this->logger?->info('Processing image with Gifsicle', [
+            'transformation' => $transformation,
             'original size' => filesize($inputTemporaryFile),
             'command' => $process->getCommandLine(),
         ]);
