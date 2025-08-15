@@ -7,13 +7,18 @@ use Imagine\Image\ImageInterface;
 use Imagine\Image\Point;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Model\Format;
+use JoliCode\MediaBundle\Transformer\TransformerInterface;
 use JoliCode\MediaBundle\Variation\Variation;
 
 class Transformation
 {
-    public ?int $width = null;
+    public ?int $binaryWidth = null;
 
-    public ?int $height = null;
+    public ?int $binaryHeight = null;
+
+    public ?int $targetWidth = null;
+
+    public ?int $targetHeight = null;
 
     public ?int $cropX = null;
 
@@ -23,20 +28,38 @@ class Transformation
 
     public ?int $cropHeight = null;
 
+    /**
+     * @var TransformerInterface[]
+     */
+    public array $transformers = [];
+
+    /**
+     * @param TransformerInterface[] $transformers
+     */
     public function __construct(
         private readonly Binary $binary,
         private readonly Variation $variation,
+        ?int $width = null,
+        ?int $height = null,
+        ?array $transformers = null,
     ) {
-        $dimensions = $this->getInitialDimensions();
-        $this->width = $dimensions['width'];
-        $this->height = $dimensions['height'];
-    }
-
-    public function applyTransformers(): void
-    {
-        foreach ($this->variation->getTransformerChain() as $transformer) {
-            $transformer->transform($this);
+        if (null === $width || null === $height) {
+            $dimensions = $this->getInitialDimensions();
+            $this->targetWidth = $dimensions['width'];
+            $this->targetHeight = $dimensions['height'];
+        } else {
+            $this->targetWidth = $width;
+            $this->targetHeight = $height;
         }
+
+        $this->binaryWidth = $this->targetWidth;
+        $this->binaryHeight = $this->targetHeight;
+
+        if (null === $transformers) {
+            $transformers = $variation->getTransformerChain()->getTransformers();
+        }
+
+        $this->transformers = $transformers;
     }
 
     public function getAlternativeOutputFormat(): ?string
@@ -53,8 +76,8 @@ class Transformation
 
         if ($this->hasChangedDimensions()) {
             $options[] = '-resize';
-            $options[] = $this->width;
-            $options[] = $this->height;
+            $options[] = $this->targetWidth;
+            $options[] = $this->targetHeight;
         }
 
         if ($this->hasCrop()) {
@@ -82,7 +105,7 @@ class Transformation
 
         if ($this->hasChangedDimensions()) {
             $options[] = '--resize';
-            $options[] = \sprintf('%dx%d', $this->width, $this->height);
+            $options[] = \sprintf('%dx%d', $this->targetWidth, $this->targetHeight);
         }
 
         return $options;
@@ -99,7 +122,7 @@ class Transformation
             }
 
             if ($this->hasEffect()) {
-                $image = $image->resize(new Box((int) $this->width, (int) $this->height));
+                $image = $image->resize(new Box((int) $this->targetWidth, (int) $this->targetHeight));
             }
 
             return $image;
@@ -109,6 +132,11 @@ class Transformation
     public function getBinary(): Binary
     {
         return $this->binary;
+    }
+
+    public function shiftTransformers(): ?TransformerInterface
+    {
+        return array_shift($this->transformers);
     }
 
     public function getInputFormat(): string
@@ -151,9 +179,22 @@ class Transformation
         return $this->variation->getProcessorConfiguration($processorName);
     }
 
+    public function getVariation(): Variation
+    {
+        return $this->variation;
+    }
+
     public function getVariationName(): string
     {
         return $this->variation->getName();
+    }
+
+    public function hasChangedDimensions(): bool
+    {
+        return
+            null !== $this->targetWidth
+            && null !== $this->targetHeight
+            && ($this->targetWidth !== $this->binaryWidth || $this->targetHeight !== $this->binaryHeight);
     }
 
     public function hasEffect(): bool
@@ -163,23 +204,15 @@ class Transformation
 
     public function hasExpandedArea(): bool
     {
-        $dimensions = $this->getInitialDimensions();
-
-        return null !== $this->width && null !== $this->height && $this->width * $this->height > $dimensions['width'] * $dimensions['height'];
+        return
+            null !== $this->targetWidth
+            && null !== $this->targetHeight
+            && $this->targetWidth * $this->targetHeight > $this->binaryWidth * $this->binaryHeight;
     }
 
     public function hasReducedArea(): bool
     {
-        $dimensions = $this->getInitialDimensions();
-
-        return null !== $this->width && null !== $this->height && $this->width * $this->height < $dimensions['width'] * $dimensions['height'];
-    }
-
-    public function hasChangedDimensions(): bool
-    {
-        $dimensions = $this->getInitialDimensions();
-
-        return null !== $this->width && null !== $this->height && ($this->width !== $dimensions['width'] || $this->height !== $dimensions['height']);
+        return null !== $this->targetWidth && null !== $this->targetHeight && $this->targetWidth * $this->targetHeight < $this->binaryWidth * $this->binaryHeight;
     }
 
     /**

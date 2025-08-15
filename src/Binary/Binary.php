@@ -15,11 +15,21 @@ class Binary
         private string $format,
         private readonly string $content,
         private readonly ?string $path = null,
+        ?int $width = null,
+        ?int $height = null,
     ) {
         $format = Format::fromName($this->format);
 
         if ($format instanceof Format) {
             $this->format = $format->value;
+        }
+
+        if (null !== $width) {
+            $this->width = $width;
+        }
+
+        if (null !== $height) {
+            $this->height = $height;
         }
     }
 
@@ -77,5 +87,19 @@ class Binary
             'height' => $this->height,
             'width' => $this->width,
         ];
+    }
+
+    public function getPixelWidth(): ?int
+    {
+        $dimensions = $this->getPixelDimensions();
+
+        return $dimensions['width'] ?? null;
+    }
+
+    public function getPixelHeight(): ?int
+    {
+        $dimensions = $this->getPixelDimensions();
+
+        return $dimensions['height'] ?? null;
     }
 }

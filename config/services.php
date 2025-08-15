@@ -34,6 +34,8 @@ use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Storage\Strategy\FolderStorageStrategy;
 use JoliCode\MediaBundle\Storage\Strategy\IdentityStorageStrategy;
 use JoliCode\MediaBundle\Transformation\TransformationProcessor;
+use JoliCode\MediaBundle\Transformer\Crop;
+use JoliCode\MediaBundle\Transformer\Expand;
 use JoliCode\MediaBundle\Transformer\Heighten;
 use JoliCode\MediaBundle\Transformer\Resize;
 use JoliCode\MediaBundle\Transformer\Thumbnail;
@@ -318,6 +320,25 @@ return static function (ContainerConfigurator $container): void {
         ->abstract()
         ->args([
             '$transformers' => abstract_arg('transformers'),
+        ])
+
+        ->set('.joli_media.transformer.crop.abstract', Crop::class)
+        ->abstract()
+        ->args([
+            '$startX' => abstract_arg('start_x'),
+            '$startY' => abstract_arg('start_y'),
+            '$width' => abstract_arg('width'),
+            '$height' => abstract_arg('height'),
+        ])
+
+        ->set('.joli_media.transformer.expand.abstract', Expand::class)
+        ->abstract()
+        ->args([
+            '$width' => abstract_arg('width'),
+            '$height' => abstract_arg('height'),
+            '$positionX' => abstract_arg('position_x'),
+            '$positionY' => abstract_arg('position_y'),
+            '$backgroundColor' => abstract_arg('background_color'),
         ])
 
         ->set('.joli_media.transformer.heighten.abstract', Heighten::class)

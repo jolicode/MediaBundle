@@ -63,6 +63,9 @@ readonly class Gif2webp extends AbstractProcessor implements ProcessorInterface
 
         while (false === $transformed && $gifProcessor = current($gifProcessors)) {
             try {
+                $this->logger?->info(\sprintf('Processing image with %s', $gifProcessor->getName()), [
+                    'transformation' => $transformation,
+                ]);
                 $binary = $gifProcessor->process($binary, $transformation, [], Format::GIF->value);
                 $transformed = true;
             } catch (\Exception $e) {
