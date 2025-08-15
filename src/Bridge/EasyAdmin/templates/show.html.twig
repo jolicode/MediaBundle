@@ -308,6 +308,19 @@
                         {{ media.fileSize|readable_filesize }}
                     </dd>
                 </div>
+                {% if media.fileType == 'image' %}
+                    <div class="data-row">
+                        <dt class="mb-1">{{ 'media.dimensions'|trans }}</dt>
+                        <dd class="d-flex align-items-start">
+                            {% set dimensions = media.binary.pixelDimensions %}
+                            {% if dimensions is not null and dimensions.width is defined %}
+                                {{ dimensions.width }}x{{ dimensions.height }}
+                            {% else %}
+                                <span class="badge badge-secondary">N/A</span>
+                            {% endif %}
+                        </dd>
+                    </div>
+                {% endif %}
             </dl>
         </div>
     </div>
