@@ -7,6 +7,7 @@ use Imagine\Image\ImageInterface;
 use Imagine\Image\Point;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Model\Format;
+use JoliCode\MediaBundle\Transformer\TransformerInterface;
 use JoliCode\MediaBundle\Variation\Variation;
 
 class Transformation
@@ -23,20 +24,35 @@ class Transformation
 
     public ?int $cropHeight = null;
 
+    /**
+     * @var TransformerInterface[]
+     */
+    public array $transformers = [];
+
+    /**
+     * @param TransformerInterface[] $transformers
+     */
     public function __construct(
         private readonly Binary $binary,
         private readonly Variation $variation,
+        ?int $width = null,
+        ?int $height = null,
+        ?array $transformers = null,
     ) {
-        $dimensions = $this->getInitialDimensions();
-        $this->width = $dimensions['width'];
-        $this->height = $dimensions['height'];
-    }
-
-    public function applyTransformers(): void
-    {
-        foreach ($this->variation->getTransformerChain() as $transformer) {
-            $transformer->transform($this);
+        if (null === $width || null === $height) {
+            $dimensions = $this->getInitialDimensions();
+            $this->width = $dimensions['width'];
+            $this->height = $dimensions['height'];
+        } else {
+            $this->width = $width;
+            $this->height = $height;
         }
+
+        if (null === $transformers) {
+            $transformers = $variation->getTransformerChain()->getTransformers();
+        }
+
+        $this->transformers = $transformers;
     }
 
     public function getAlternativeOutputFormat(): ?string
@@ -111,6 +127,11 @@ class Transformation
         return $this->binary;
     }
 
+    public function shiftTransformers(): ?TransformerInterface
+    {
+        return array_shift($this->transformers);
+    }
+
     public function getInputFormat(): string
     {
         return $this->binary->getFormat();
@@ -151,9 +172,21 @@ class Transformation
         return $this->variation->getProcessorConfiguration($processorName);
     }
 
+    public function getVariation(): Variation
+    {
+        return $this->variation;
+    }
+
     public function getVariationName(): string
     {
         return $this->variation->getName();
+    }
+
+    public function hasChangedDimensions(): bool
+    {
+        $dimensions = $this->getInitialDimensions();
+
+        return null !== $this->width && null !== $this->height && ($this->width !== $dimensions['width'] || $this->height !== $dimensions['height']);
     }
 
     public function hasEffect(): bool
@@ -173,13 +206,6 @@ class Transformation
         $dimensions = $this->getInitialDimensions();
 
         return null !== $this->width && null !== $this->height && $this->width * $this->height < $dimensions['width'] * $dimensions['height'];
-    }
-
-    public function hasChangedDimensions(): bool
-    {
-        $dimensions = $this->getInitialDimensions();
-
-        return null !== $this->width && null !== $this->height && ($this->width !== $dimensions['width'] || $this->height !== $dimensions['height']);
     }
 
     /**

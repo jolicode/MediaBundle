@@ -4,22 +4,31 @@ namespace JoliCode\MediaBundle\Transformer;
 
 use JoliCode\MediaBundle\Transformation\Transformation;
 
-readonly class Heighten implements TransformerInterface
+readonly class Heighten extends AbstractTransformer implements TransformerInterface
 {
+    /**
+     * @param int|string $height
+     */
     public function __construct(
-        private int $height,
+        private mixed $height,
         private bool $allowDownscale = true,
     ) {
     }
 
     public function transform(Transformation $transformation): void
     {
-        if (false === $this->allowDownscale && $this->height <= $transformation->height) {
+        $height = $this->height;
+
+        if (\is_string($height)) {
+            $height = $this->convertPercentageValue($height, $transformation->height);
+        }
+
+        if (false === $this->allowDownscale && $height <= $transformation->height) {
             return;
         }
 
-        $ratio = $this->height / $transformation->height;
+        $ratio = $height / $transformation->height;
         $transformation->width = (int) round($transformation->width * $ratio);
-        $transformation->height = $this->height;
+        $transformation->height = $height;
     }
 }

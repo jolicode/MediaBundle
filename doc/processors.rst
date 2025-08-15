@@ -77,7 +77,7 @@ The ``lossy`` configuration preset is the default preset, it offers a good balan
 
 If the ``near_lossless`` preset is used by the processor, it will check that the processing result is not larger than the original image, and that the ratio between the resulting image pixels area and its file size is staisfying. If the processor finds it is necessary, it will fall back to the ``lossy`` preset.
 
-The various confioguration keys are mapped to `the official cwebp options <https://developers.google.com/speed/webp/docs/cwebp>`:
+The various confioguration keys are mapped to `the official cwebp options <https://developers.google.com/speed/webp/docs/cwebp>_`:
 
 - ``quality``: ``-q``
 - ``method``: ``-m``
@@ -89,7 +89,7 @@ The various confioguration keys are mapped to `the official cwebp options <https
 gif2webp processor options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``gif2webp`` processor is used to convert GIF images to WebP format. Its configuration keys are mapped to `the official gif2webp options <https://developers.google.com/speed/webp/docs/gif2webp>`:
+The ``gif2webp`` processor is used to convert GIF images to WebP format. Its configuration keys are mapped to `the official gif2webp options <https://developers.google.com/speed/webp/docs/gif2webp>`_:
 
 - ``lossy``: ``-lossy``
 - ``metadata``: ``-metadata``
@@ -98,7 +98,7 @@ The ``gif2webp`` processor is used to convert GIF images to WebP format. Its con
 gifsicle processor options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``gifsicle`` processor is used to convert GIF images into other GIF files. It supports the following configuration keys, that are mapped to `the official gifsicle options <https://www.lcdf.org/gifsicle/man.html>`:
+The ``gifsicle`` processor is used to convert GIF images into other GIF files. It supports the following configuration keys, that are mapped to `the official gifsicle options <https://www.lcdf.org/gifsicle/man.html>`_:
 
 - ``optimize``: ``--optimize``
 - ``lossy``: ``--lossy``
@@ -107,7 +107,7 @@ The ``gifsicle`` processor is used to convert GIF images into other GIF files. I
 imagine processor options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``imagine`` processor is used to convert GIF, HEIF, JPEG, PNG, TIFF or WEBP images to the GIF, JPEG, PNG or TIFF format using `the Imagine library <https://github.com/php-imagine/Imagine>`. It supports the following configuration keys:
+The ``imagine`` processor is used to convert GIF, HEIF, JPEG, PNG, TIFF or WEBP images to the GIF, JPEG, PNG or TIFF format using `the Imagine library <https://github.com/php-imagine/Imagine>`_. It supports the following configuration keys:
 
 - ``jpeg_quality``: the quality of the JPEG images, from 0 to 100 (default: 80). It is mapped to Imagine's ``jpeg_quality`` option
 - ``png_quality``: the quality of the PNG images, from 0 to 100 (default: 80). It is mapped to Imagine's ``png_compression_level`` and ``png_compression_filter`` options

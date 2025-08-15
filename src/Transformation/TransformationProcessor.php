@@ -27,7 +27,22 @@ readonly class TransformationProcessor
 
     public function process(Transformation $transformation): Binary
     {
-        $transformation->applyTransformers();
+        while ($transformer = $transformation->shiftTransformers()) {
+            $transformer->transform($transformation);
+
+            if ($transformer->needsBinaryProcessing()) {
+                $binary = $this->runTransformation($transformation);
+                $binary = $transformer->processBinary($binary, $transformation->width, $transformation->height);
+                $transformation = new Transformation(
+                    $binary,
+                    $transformation->getVariation(),
+                    $binary->getPixelWidth(),
+                    $binary->getPixelHeight(),
+                    $transformation->transformers,
+                );
+            }
+        }
+
         $binary = $this->runTransformation($transformation);
 
         return $this->runPostProcessors($transformation, $binary);

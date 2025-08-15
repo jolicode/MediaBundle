@@ -89,7 +89,9 @@ class TransformerChainTest extends BaseTestCase
         $transformation->height = 1200;
 
         // Apply transformers through the chain
-        $transformation->applyTransformers();
+        while ($transformer = $transformation->shiftTransformers()) {
+            $transformer->transform($transformation);
+        }
 
         self::assertEquals(1200, $transformation->width);
         self::assertEquals(900, $transformation->height);
