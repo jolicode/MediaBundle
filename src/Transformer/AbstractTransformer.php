@@ -6,14 +6,19 @@ use JoliCode\MediaBundle\Binary\Binary;
 
 abstract readonly class AbstractTransformer implements TransformerInterface
 {
+    public function getBinaryOperation(Binary $binary, ?int $binaryWidth, ?int $binaryHeight): callable
+    {
+        throw new \LogicException('This transformer does not provide binary operations.');
+    }
+
+    public function getBinaryProcessorName(): string
+    {
+        throw new \LogicException('There is no binary processor for this transformer.');
+    }
+
     public function needsBinaryProcessing(): bool
     {
         return false;
-    }
-
-    public function processBinary(Binary $binary, ?int $binaryWidth, ?int $binaryHeight): Binary
-    {
-        return $binary;
     }
 
     protected function isPercentageValue(int|string $value): bool

@@ -339,6 +339,7 @@ return static function (ContainerConfigurator $container): void {
             '$positionX' => abstract_arg('position_x'),
             '$positionY' => abstract_arg('position_y'),
             '$backgroundColor' => abstract_arg('background_color'),
+            '$logger' => service('logger')->ignoreOnInvalid(),
         ])
 
         ->set('.joli_media.transformer.heighten.abstract', Heighten::class)

@@ -7,9 +7,11 @@ use JoliCode\MediaBundle\Transformation\Transformation;
 
 interface TransformerInterface
 {
-    public function needsBinaryProcessing(): bool;
+    public function getBinaryOperation(Binary $binary, ?int $binaryWidth, ?int $binaryHeight): callable;
 
-    public function processBinary(Binary $binary, ?int $binaryWidth, ?int $binaryHeight): Binary;
+    public function getBinaryProcessorName(): string;
+
+    public function needsBinaryProcessing(): bool;
 
     public function transform(Transformation $transformation): void;
 }

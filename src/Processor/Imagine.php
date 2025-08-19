@@ -98,6 +98,13 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
         return $binary;
     }
 
+    public function processBinaryOperation(callable $operation, array $processingOptions = []): Binary
+    {
+        $options = $this->parseOptions($processingOptions);
+
+        return $operation($this->imagine, $options);
+    }
+
     /**
      * @param array<string, mixed> $options
      *

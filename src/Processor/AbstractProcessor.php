@@ -20,6 +20,14 @@ abstract readonly class AbstractProcessor extends AbstractProcessCreator impleme
         return \in_array(Format::fromName($outputFormat), $this->getProcessableOutputFormats(), true);
     }
 
+    /**
+     * @param array<string, mixed> $processingOptions
+     */
+    public function processBinaryOperation(callable $operation, array $processingOptions = []): Binary
+    {
+        throw new \LogicException('The processor does not support processing binary operations.');
+    }
+
     abstract public function getName(): string;
 
     abstract public function getProcessableInputFormats(): array;

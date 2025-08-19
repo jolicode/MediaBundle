@@ -431,7 +431,12 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
             ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the gifsicle post-processor')
+                ->end()
                 ->arrayNode('near_lossless')
                     ->children()
                         ->integerNode('quality')
@@ -521,7 +526,12 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
             ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the gifsicle post-processor')
+                ->end()
                 ->booleanNode('lossy')
                     ->defaultValue(true)
                     ->info('Encode the image using lossy compression')
@@ -563,7 +573,12 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
             ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the gifsicle post-processor')
+                ->end()
                 ->integerNode('optimize')
                     ->defaultValue(3)
                     ->min(1)
@@ -607,7 +622,12 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
             ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the gifsicle post-processor')
+                ->end()
                 ->integerNode('quality')
                     ->defaultValue(80)
                     ->min(0)
@@ -942,7 +962,7 @@ class JoliMediaBundle extends AbstractBundle
     {
         $processorContainerService = $container->services()->get('joli_media.processor_container');
 
-        if (isset($processorsConfig['cwebp'])) {
+        if (isset($processorsConfig['cwebp']) && $processorsConfig['cwebp']['options']['enabled']) {
             $container->services()
                 ->get('.joli_media.processor.cwebp')
                 ->arg('$cwebpBinary', $processorsConfig['cwebp']['binary'])
@@ -953,7 +973,7 @@ class JoliMediaBundle extends AbstractBundle
             $processorContainerService->call('add', ['cwebp', service('.joli_media.processor.cwebp')]);
         }
 
-        if (isset($processorsConfig['gif2webp'])) {
+        if (isset($processorsConfig['gif2webp']) && $processorsConfig['gif2webp']['options']['enabled']) {
             $container->services()
                 ->get('.joli_media.processor.gif2webp')
                 ->arg('$gif2webpBinary', $processorsConfig['gif2webp']['binary'])
@@ -963,7 +983,7 @@ class JoliMediaBundle extends AbstractBundle
             $processorContainerService->call('add', ['gif2webp', service('.joli_media.processor.gif2webp')]);
         }
 
-        if (isset($processorsConfig['gifsicle'])) {
+        if (isset($processorsConfig['gifsicle']) && $processorsConfig['gifsicle']['options']['enabled']) {
             $container->services()
                 ->get('.joli_media.processor.gifsicle')
                 ->arg('$binary', $processorsConfig['gifsicle']['binary'])
@@ -973,7 +993,7 @@ class JoliMediaBundle extends AbstractBundle
             $processorContainerService->call('add', ['gifsicle', service('.joli_media.processor.gifsicle')]);
         }
 
-        if (isset($processorsConfig['imagine']) && interface_exists(ImagineInterface::class)) {
+        if (isset($processorsConfig['imagine']) && $processorsConfig['imagine']['options']['enabled'] && interface_exists(ImagineInterface::class)) {
             $container->services()
                 ->set('.joli_media.imagine.metadata_reader', ExifMetadataReader::class)
             ;
@@ -1102,7 +1122,6 @@ class JoliMediaBundle extends AbstractBundle
                     '$positionX' => $transformerConfig['position_x'] ?? null,
                     '$positionY' => $transformerConfig['position_y'] ?? null,
                     '$backgroundColor' => $transformerConfig['background_color'] ?? null,
-                    '$imagine' => service('.joli_media.imagine.imagine'),
                     '$logger' => service('logger')->ignoreOnInvalid(),
                 ]);
         } elseif ('heighten' === $transformerType) {

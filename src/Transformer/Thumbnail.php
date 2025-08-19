@@ -65,12 +65,15 @@ readonly class Thumbnail extends AbstractTransformer implements TransformerInter
         if ('start' === $this->cropPosition) {
             return 0;
         }
+
         if ('center' === $this->cropPosition || null === $this->cropPosition) {
             return 50;
         }
+
         if ('end' === $this->cropPosition) {
             return 100;
         }
+
         if ($this->isPercentageValue($this->cropPosition)) {
             return $this->convertPercentageValue($this->cropPosition);
         }

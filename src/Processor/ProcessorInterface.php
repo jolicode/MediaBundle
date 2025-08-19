@@ -28,4 +28,9 @@ interface ProcessorInterface
      * @param array<string, mixed> $processingOptions
      */
     public function process(Binary $binary, Transformation $transformation, array $processingOptions = [], ?string $forceOutputFormat = null): Binary;
+
+    /**
+     * @param array<string, mixed> $processingOptions
+     */
+    public function processBinaryOperation(callable $operation, array $processingOptions = []): Binary;
 }
