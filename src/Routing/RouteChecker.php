@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Routing;
 
 use JoliCode\MediaBundle\Library\LibraryContainer;
+use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Resolver\Resolver;
 
 readonly class RouteChecker
@@ -13,22 +14,33 @@ readonly class RouteChecker
     ) {
     }
 
+    /**
+     * @param array{
+     *     library: string,
+     *     variation?: string|null,
+     *     slug: string,
+     * } $params
+     */
     public function check(array $params): bool
     {
-        $libraryName = $params['library'] ?? null;
+        $library = $params['library'];
         $variation = $params['variation'] ?? null;
-        $slug = $params['slug'] ?? null;
+        $slug = $params['slug'];
 
-        if (null === $slug || null === $libraryName || !$this->libraries->has($libraryName)) {
+        if (!$this->libraries->has($library)) {
             return false;
         }
 
-        if (null !== $variation && !$this->libraries->get($libraryName)->getVariationContainer()->has($variation)) {
-            return false;
+        if (null !== $variation) {
+            if (!$this->libraries->get($library)->getVariationContainer()->has($variation)) {
+                return false;
+            }
+
+            return $this->resolver->resolveMediaVariation($slug, $variation, $library) instanceof MediaVariation;
         }
 
         try {
-            $media = $this->resolver->resolve($slug, $libraryName);
+            $media = $this->resolver->resolve($slug, $library);
         } catch (\Exception) {
             return false;
         }
