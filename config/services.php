@@ -28,6 +28,7 @@ use JoliCode\MediaBundle\Processor\Gif2webp;
 use JoliCode\MediaBundle\Processor\Gifsicle as GifsicleProcessor;
 use JoliCode\MediaBundle\Processor\ProcessorContainer;
 use JoliCode\MediaBundle\Resolver\Resolver;
+use JoliCode\MediaBundle\Routing\RouteChecker;
 use JoliCode\MediaBundle\Routing\RouteLoader;
 use JoliCode\MediaBundle\Storage\CacheStorage;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
@@ -269,6 +270,13 @@ return static function (ContainerConfigurator $container): void {
         ->alias(Resolver::class, 'joli_media.resolver')
 
         // routing
+        ->set('joli_media.route_checker', RouteChecker::class)
+        ->args([
+            service('joli_media.library_container'),
+            service('joli_media.resolver'),
+        ])
+        ->tag('routing.condition_service')
+
         ->set('joli_media.route_loader', RouteLoader::class)
         ->args([
             service('joli_media.library_container'),
