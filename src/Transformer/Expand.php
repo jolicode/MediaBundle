@@ -7,6 +7,8 @@ use Imagine\Gmagick\Image as GmagickImage;
 use Imagine\Gmagick\Imagine as GmagickImagine;
 use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
+use Imagine\Image\Palette\Grayscale;
+use Imagine\Image\Palette\RGB;
 use Imagine\Image\Point;
 use Imagine\Imagick\Image as ImagickImage;
 use Imagine\Imagick\Imagine as ImagickImagine;
@@ -64,13 +66,42 @@ readonly class Expand extends AbstractTransformer implements TransformerInterfac
                 $height = $this->convertPercentageValue($height, $binaryHeight);
             }
 
+            if ($width < $binaryWidth || $height < $binaryHeight) {
+                // one of the target dimensions is smaller than the binary dimensions, so we do not apply the expand
+                $this->logger?->info('Shipping the expand transform because the target dimensions are smaller than the binary dimensions.', [
+                    'original width' => $binaryWidth,
+                    'original height' => $binaryHeight,
+                    'target width' => $width,
+                    'target height' => $height,
+                ]);
+
+                return $binary;
+            }
+
             $positionX = $this->convertPositionValue($positionX, $width - $binaryWidth);
             $positionY = $this->convertPositionValue($positionY, $height - $binaryHeight);
             $image = $imagine->load($binary->getContent());
 
             $newSize = new Box($width, $height);
             $newPosition = new Point(max(0, $positionX), max(0, $positionY));
-            $newColor = null !== $this->backgroundColor ? $image->palette()->color($this->backgroundColor) : null;
+            $newColor = null;
+
+            if (null !== $this->backgroundColor) {
+                if ($image->palette() instanceof Grayscale) {
+                    try {
+                        $image->palette()->color($this->backgroundColor);
+                    } catch (\Exception $e) {
+                        $this->logger?->info('Invalid background color for Grayscale palette, switching the image to the RGB palette.', [
+                            'color' => $this->backgroundColor,
+                            'exception' => $e,
+                        ]);
+                        $image->usePalette(new RGB());
+                    }
+                }
+
+                $newColor = $image->palette()->color($this->backgroundColor);
+            }
+
             $canvas = $imagine->create($newSize, $newColor);
             $layers = $image->layers();
             $layers->coalesce();
