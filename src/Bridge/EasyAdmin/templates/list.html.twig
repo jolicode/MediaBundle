@@ -165,14 +165,7 @@
         </div>
         <div class="new-directory-container">
             {{ form_start(create_directory_form, { action: ea_url().setRoute('joli_media_easy_admin_create_directory') }) }}
-                {{ form_widget(create_directory_form.directory, {
-                    attr: {
-                        class: 'form-control',
-                        placeholder: 'directory.placeholder'|trans,
-                        'aria-label': 'directory.placeholder'|trans,
-                    },
-                    required: true,
-                }) }}
+                {{ form_widget(create_directory_form.directory) }}
                 {{ form_widget(create_directory_form.submit) }}
             {{ form_end(create_directory_form) }}
         </div>

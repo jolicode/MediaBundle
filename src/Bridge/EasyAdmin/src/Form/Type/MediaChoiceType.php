@@ -51,6 +51,7 @@ class MediaChoiceType extends AbstractType
         $resolver->setDefaults([
             'folder' => '',
             'library' => null,
+            'translation_domain' => 'JoliMediaEasyAdminBundle',
         ]);
     }
 

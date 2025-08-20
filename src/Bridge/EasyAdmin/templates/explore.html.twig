@@ -94,14 +94,7 @@
 {% block rename_directory_container %}
     <div class="rename-directory-container">
         {{ form_start(rename_directory_form, { action: ea_url().setRoute('joli_media_easy_admin_rename_directory') }) }}
-            {{ form_widget(rename_directory_form.to, {
-                attr: {
-                    class: 'form-control',
-                    placeholder: 'directory.rename.placeholder'|trans,
-                    'aria-label': 'directory.rename.placeholder'|trans,
-                },
-                required: true,
-            }) }}
+            {{ form_widget(rename_directory_form.to) }}
             {{ form_widget(rename_directory_form.from) }}
             {{ form_widget(rename_directory_form.submit) }}
         {{ form_end(rename_directory_form) }}

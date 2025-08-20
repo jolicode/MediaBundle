@@ -20,6 +20,7 @@ class DeleteType extends AbstractType
     {
         $resolver->setDefaults([
             'path' => '',
+            'translation_domain' => 'JoliMediaEasyAdminBundle',
         ]);
     }
 

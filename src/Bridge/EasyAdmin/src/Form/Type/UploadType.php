@@ -7,7 +7,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class UploadType extends AbstractType
 {
@@ -30,6 +32,9 @@ class UploadType extends AbstractType
         $builder
             ->add('path', HiddenType::class, [
                 'required' => true,
+                'constraints' => [
+                    new NotNull(),
+                ],
             ])
             ->add('file', FileType::class, [
                 'required' => true,
@@ -41,5 +46,13 @@ class UploadType extends AbstractType
                 ],
             ])
         ;
+    }
+
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'translation_domain' => 'JoliMediaEasyAdminBundle',
+        ]);
     }
 }
