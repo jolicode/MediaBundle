@@ -66,12 +66,7 @@
 {% block rename_directory_container %}
     <div class="sonata-ba-form rename-directory-container">
         {{ form_start(rename_directory_form, { action: path('joli_media_sonata_admin_rename_directory') }) }}
-            {{ form_widget(rename_directory_form.to, {
-                attr: {
-                    placeholder: 'directory.rename.placeholder'|trans,
-                    'aria-label': 'directory.rename.placeholder'|trans,
-                },
-            }) }}
+            {{ form_widget(rename_directory_form.to) }}
             {{ form_widget(rename_directory_form.from) }}
             {{ form_widget(rename_directory_form.submit) }}
         {{ form_end(rename_directory_form) }}

@@ -26,6 +26,7 @@ class CreateDirectoryType extends AbstractType
             'directory' => '',
             'parentDirectory' => '',
             'intent' => 'explore',
+            'translation_domain' => 'JoliMediaSonataAdminBundle',
         ]);
     }
 
@@ -46,7 +47,6 @@ class CreateDirectoryType extends AbstractType
                     ),
                 ],
                 'required' => true,
-                'translation_domain' => 'JoliMediaSonataAdminBundle',
             ])
             ->add('parentDirectory', HiddenType::class)
             ->add('intent', HiddenType::class, [
@@ -63,7 +63,6 @@ class CreateDirectoryType extends AbstractType
                     'class' => 'btn btn-primary',
                 ],
                 'label' => 'directory.create_this_directory',
-                'translation_domain' => 'JoliMediaSonataAdminBundle',
             ])
         ;
     }

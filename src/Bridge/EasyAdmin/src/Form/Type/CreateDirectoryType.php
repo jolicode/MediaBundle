@@ -26,6 +26,7 @@ class CreateDirectoryType extends AbstractType
             'directory' => '',
             'parentDirectory' => '',
             'intent' => 'explore',
+            'translation_domain' => 'JoliMediaEasyAdminBundle',
         ]);
     }
 
@@ -34,6 +35,10 @@ class CreateDirectoryType extends AbstractType
     {
         $builder
             ->add('directory', TextType::class, [
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'directory.placeholder',
+                ],
                 'constraints' => [
                     new NotBlank(),
                     new Length(
@@ -41,6 +46,7 @@ class CreateDirectoryType extends AbstractType
                         max: 255,
                     ),
                 ],
+                'required' => true,
             ])
             ->add('parentDirectory', HiddenType::class)
             ->add('intent', HiddenType::class, [
@@ -57,7 +63,6 @@ class CreateDirectoryType extends AbstractType
                     'class' => 'btn btn-primary',
                 ],
                 'label' => 'directory.create_this_directory',
-                'translation_domain' => 'JoliMediaEasyAdminBundle',
             ])
         ;
     }

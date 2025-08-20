@@ -127,14 +127,7 @@
 
         <div class="rename-file-container">
             {{ form_start(rename_form, { action: ea_url().setRoute('joli_media_easy_admin_show', { key: file }) }) }}
-                {{ form_widget(rename_form.to, {
-                    attr: {
-                        class: 'form-control',
-                        placeholder: 'media.placeholder'|trans,
-                        'aria-label': 'media.placeholder'|trans,
-                    },
-                    required: true,
-                }) }}
+                {{ form_widget(rename_form.to) }}
                 {{ form_widget(rename_form.submit) }}
             {{ form_end(rename_form) }}
         </div>

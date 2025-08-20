@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -46,8 +47,15 @@ class RenameDirectoryType extends AbstractType
                     'class' => 'btn btn-primary',
                 ],
                 'label' => 'action.rename_directory',
-                'translation_domain' => 'JoliMediaSonataAdminBundle',
             ])
         ;
+    }
+
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'translation_domain' => 'JoliMediaSonataAdminBundle',
+        ]);
     }
 }
