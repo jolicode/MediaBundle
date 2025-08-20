@@ -80,12 +80,14 @@ readonly class Crop extends AbstractTransformer implements TransformerInterface
 
         $additionalCropX = (int) ($startX / $transformation->targetWidth * $currentCropWidth);
         $additionalCropY = (int) ($startY / $transformation->targetHeight * $currentCropHeight);
+        $newCropWidth = (int) ($width / $transformation->targetWidth * $currentCropWidth);
+        $newCropHeight = (int) ($height / $transformation->targetHeight * $currentCropHeight);
 
         $transformation->cropX = $currentCropX + $additionalCropX;
         $transformation->cropY = $currentCropY + $additionalCropY;
         $transformation->targetWidth = $width;
         $transformation->targetHeight = $height;
-        $transformation->cropWidth = $currentCropWidth - $additionalCropX;
-        $transformation->cropHeight = $currentCropHeight - $additionalCropY;
+        $transformation->cropWidth = $newCropWidth;
+        $transformation->cropHeight = $newCropHeight;
     }
 }
