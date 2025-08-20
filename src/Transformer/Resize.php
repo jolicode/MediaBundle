@@ -7,9 +7,13 @@ use JoliCode\MediaBundle\Transformer\Resize\Mode;
 
 readonly class Resize extends AbstractTransformer implements TransformerInterface
 {
+    /**
+     * @param int|string $width
+     * @param int|string $height
+     */
     public function __construct(
-        private int $width,
-        private int $height,
+        private mixed $width,
+        private mixed $height,
         private Mode $mode = Mode::exact,
         private bool $allowDownscale = true,
         private bool $allowUpscale = true,
@@ -18,39 +22,40 @@ readonly class Resize extends AbstractTransformer implements TransformerInterfac
 
     public function transform(Transformation $transformation): void
     {
-        if (false === $this->allowUpscale && $transformation->targetWidth <= $this->width && $transformation->targetHeight <= $this->height) {
+        $width = $this->width;
+        $height = $this->height;
+
+        if (\is_string($width)) {
+            $width = $this->convertPercentageValue($width, $transformation->targetWidth);
+        }
+
+        if (\is_string($height)) {
+            $height = $this->convertPercentageValue($height, $transformation->targetHeight);
+        }
+
+        if (false === $this->allowUpscale && $transformation->targetWidth <= $width && $transformation->targetHeight <= $height) {
             return;
         }
 
-        if (false === $this->allowDownscale && $transformation->targetWidth >= $this->width && $transformation->targetHeight >= $this->height) {
+        if (false === $this->allowDownscale && $transformation->targetWidth >= $width && $transformation->targetHeight >= $height) {
             return;
         }
+
+        $xRatio = $width / $transformation->targetWidth;
+        $yRatio = $height / $transformation->targetHeight;
 
         if (Mode::inside === $this->mode) {
-            $xRatio = $this->width / $transformation->targetWidth;
-            $yRatio = $this->height / $transformation->targetHeight;
-
             if ($xRatio < $yRatio) {
-                $width = $this->width;
                 $height = (int) round($transformation->targetHeight * $xRatio);
             } else {
                 $width = (int) round($transformation->targetWidth * $yRatio);
-                $height = $this->height;
             }
         } elseif (Mode::outside === $this->mode) {
-            $xRatio = $this->width / $transformation->targetWidth;
-            $yRatio = $this->height / $transformation->targetHeight;
-
             if ($xRatio > $yRatio) {
-                $width = $this->width;
                 $height = (int) round($transformation->targetHeight * $xRatio);
             } else {
                 $width = (int) round($transformation->targetWidth * $yRatio);
-                $height = $this->height;
             }
-        } else {
-            $width = $this->width;
-            $height = $this->height;
         }
 
         $transformation->targetWidth = $width;
