@@ -77,7 +77,11 @@ readonly class TransformationProcessor
                         $transformation->getBinary()->getPath() ?? '-',
                         $processor::class,
                         "\n\n" . $e->getMessage(),
-                    ));
+                    ), [
+                        'exception' => $e,
+                        'media' => $transformation->getBinary()->getPath() ?? '-',
+                        'variation' => $transformation->getVariationName(),
+                    ]);
                 }
             }
         }

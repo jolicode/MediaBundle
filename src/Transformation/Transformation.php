@@ -115,6 +115,28 @@ class Transformation
     {
         return function (ImageInterface $image): ImageInterface {
             if ($this->hasCrop()) {
+                if ($this->targetWidth <= $this->cropWidth / 2 && $this->targetHeight <= $this->cropHeight / 2) {
+                    // the transformation properties are computed to be applied in the crop then resize order
+                    // if the image has both to be cropped and resized, we update the transformation values to
+                    // apply first the resize then the crop
+                    $xResizeRatio = $this->targetWidth / $this->cropWidth;
+                    $yResizeRatio = $this->targetHeight / $this->cropHeight;
+
+                    // If the target size is more than double the original size, we resize first
+                    $resizeWidth = ceil($this->binaryWidth * $xResizeRatio);
+                    $resizeHeight = ceil($this->binaryHeight * $yResizeRatio);
+                    $image = $image->resize(new Box((int) $resizeWidth, (int) $resizeHeight));
+
+                    // the crop it to its final shape
+                    $cropX = (int) ($this->cropX * $xResizeRatio);
+                    $cropY = (int) ($this->cropY * $yResizeRatio);
+
+                    return $image->crop(
+                        new Point($cropX, $cropY),
+                        new Box((int) $this->targetWidth, (int) $this->targetHeight),
+                    );
+                }
+
                 $image = $image->crop(
                     new Point((int) $this->cropX, (int) $this->cropY),
                     new Box((int) $this->cropWidth, (int) $this->cropHeight),
