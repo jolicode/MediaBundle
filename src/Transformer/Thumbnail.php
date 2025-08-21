@@ -16,7 +16,7 @@ readonly class Thumbnail extends AbstractTransformer implements TransformerInter
 
     public function transform(Transformation $transformation): void
     {
-        if (false === $this->allowUpscale && ($transformation->targetWidth <= $this->width || $transformation->targetHeight <= $this->height)) {
+        if (false === $this->allowUpscale && ($transformation->targetWidth < $this->width || $transformation->targetHeight < $this->height)) {
             return;
         }
 

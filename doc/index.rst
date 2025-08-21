@@ -34,7 +34,7 @@ Table of contents
 
     - `Installation <installation.rst>`_
     - `Configuration <configuration.rst>`_
-    - `Dependencies an tooling <dependencies-and-tooling.rst>`_
+    - `Dependencies and tooling <dependencies-and-tooling.rst>`_
 
 - Admin bridges
 

@@ -11,7 +11,7 @@ The bundle ships with multiple transformers that aim at allowing for the most co
 Crop
 ~~~~
 
-This transform crops a part of the image based on coordinates. It is useful if you want to extract a specific part of the image.
+This transformer crops a part of the image based on coordinates. It is useful if you want to extract a specific part of the image.
 
 .. code-block:: yaml
 
@@ -39,7 +39,7 @@ Options:
 Expand
 ~~~~~~
 
-This transform expands the image to a specific width and height, by adding a background color to the image. It is useful if you want to add a background color to an image that is smaller than the target size, or if you want to create a specific aspect ratio for the image without cropping or distorteding it.
+This transformer expands the image to a specific width and height, by adding a background color to the image. It is useful if you want to add a background color to an image that is smaller than the target size, or if you want to create a specific aspect ratio for the image without cropping or distorteding it.
 
 .. code-block:: yaml
 
@@ -63,7 +63,7 @@ If the ``width`` or ``height`` is smaller than the original image, the image wil
 Heighten
 ~~~~~~~~
 
-This transform resizes the image to a specific height, keeping the aspect ratio.
+This transformer resizes the image to a specific height, keeping the aspect ratio.
 
 .. code-block:: yaml
 
@@ -79,7 +79,7 @@ Options:
 Resize
 ~~~~~~
 
-This transform resizes the image to a specific width and height. There are several resize modes:
+This transformer resizes the image to a specific width and height. There are several resize modes:
 
 - ``exact``: in this mode, the image is resized to the exact dimensions specified. The aspect ratio is not preserved.
 - ``inside``: in this mode, the image is resized to fit within the dimensions specified. The aspect ratio is preserved.
@@ -102,7 +102,7 @@ Options:
 Thumbnail
 ~~~~~~~~~
 
-This transform resizes the image to a specific width and height and crops it to fit the dimensions exactly. The aspect ratio of the container is not preserved but the aspect ratio of the image content is - cropping will be applied to the image content so it does not look distorted.
+This transformer resizes the image to a specific width and height and crops it to fit the dimensions exactly. The aspect ratio of the container is not preserved but the aspect ratio of the image content is - cropping will be applied to the image content so it does not look distorted.
 
 If the image is smaller than the specified dimensions, it will be upscaled to fit the dimensions only if the ``allow_upscale`` option is set to ``true``. Else, the image will not be modified.
 
@@ -133,7 +133,7 @@ Whith the example above (a ``900x600`` image) and a ``300x300`` thumbnail, the c
 Widen
 ~~~~~
 
-This transform resizes the image to a specific width, keeping the aspect ratio.
+This transformer resizes the image to a specific width, keeping the aspect ratio.
 
 .. code-block:: yaml
 
@@ -189,4 +189,190 @@ If you need to apply the same type of transformation multiple times for a given 
 Example transformer configurations
 ----------------------------------
 
+This section provides some example configurations for the transformers. These examples are illustrated using the following image:
 
+.. figure:: images/example.png
+   :alt: Example image for the transformers
+   :width: 100px
+
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| Transformers sequence                    | Original image                | Generated image                                                  |
++==========================================+===============================+==================================================================+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/crop.png                              |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         crop:                            |                               |                                                                  |
+|             width: 70                    |                               |                                                                  |
+|             height: 40                   |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/crop-position.png                     |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         crop:                            |                               |                                                                  |
+|             width: 50                    |                               |                                                                  |
+|             height: 50                   |                               |                                                                  |
+|             start_x: 50%                 |                               |                                                                  |
+|             start_y: 10%                 |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/expand.png                            |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         expand:                          |                               |                                                                  |
+|             width: 150                   |                               |                                                                  |
+|             height: 200                  |                               |                                                                  |
+|             background_color: '#aaffaa'  |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/crop-then-expand.png                  |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         crop:                            |                               |                                                                  |
+|             width: 60                    |                               |                                                                  |
+|             height: 60                   |                               |                                                                  |
+|         expand:                          |                               |                                                                  |
+|             width: 150                   |                               |                                                                  |
+|             height: 200                  |                               |                                                                  |
+|             background_color: '#ffccff'  |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/crop-then-expand-position.png         |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         crop:                            |                               |                                                                  |
+|             width: 60                    |                               |                                                                  |
+|             height: 60                   |                               |                                                                  |
+|         expand:                          |                               |                                                                  |
+|             width: 200                   |                               |                                                                  |
+|             height: 150                  |                               |                                                                  |
+|             background_color: '#ffccff'  |                               |                                                                  |
+|             position_x: end              |                               |                                                                  |
+|             position_y: end              |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/heighten.png                          |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         heighten:                        |                               |                                                                  |
+|             height: 300                  |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/resize-exact.png                      |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         resize:                          |                               |                                                                  |
+|             width: 90                    |                               |                                                                  |
+|             height: 150                  |                               |                                                                  |
+|             mode: exact                  |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/resize-inside.png                     |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         resize:                          |                               |                                                                  |
+|             width: 90                    |                               |                                                                  |
+|             height: 150                  |                               |                                                                  |
+|             mode: inside                 |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/resize-outside.png                    |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         resize:                          |                               |                                                                  |
+|             width: 90                    |                               |                                                                  |
+|             height: 150                  |                               |                                                                  |
+|             mode: outside                |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/thumbnail-vertical.png                |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         thumbnail:                       |                               |                                                                  |
+|             width: 40                    |                               |                                                                  |
+|             height: 120                  |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/thumbnail-horizontal.png              |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         thumbnail:                       |                               |                                                                  |
+|             width: 120                   |                               |                                                                  |
+|             height: 40                   |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/thumbnail-vertical-position-start.png |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         thumbnail:                       |                               |                                                                  |
+|             width: 40                    |                               |                                                                  |
+|             height: 120                  |                               |                                                                  |
+|             crop_position: start         |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/thumbnail-horizontal-position-end.png |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         thumbnail:                       |                               |                                                                  |
+|             width: 120                   |                               |                                                                  |
+|             height: 40                   |                               |                                                                  |
+|             crop_position: end           |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/widen.png                             |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         widen:                           |                               |                                                                  |
+|             width: 300%                  |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
+| .. code-block:: yaml                     | .. image:: images/example.png | .. image:: images/examples/multiple-chained.png                  |
+|                                          |                               |                                                                  |
+|     transformers:                        |                               |                                                                  |
+|         -                                |                               |                                                                  |
+|             type: crop                   |                               |                                                                  |
+|             width: 60                    |                               |                                                                  |
+|             height: 60                   |                               |                                                                  |
+|         -                                |                               |                                                                  |
+|             type: expand                 |                               |                                                                  |
+|             width: 80                    |                               |                                                                  |
+|             height: 80                   |                               |                                                                  |
+|             background_color: '#ffcccc'  |                               |                                                                  |
+|             position_x: end              |                               |                                                                  |
+|             position_y: end              |                               |                                                                  |
+|         -                                |                               |                                                                  |
+|             type: heighten               |                               |                                                                  |
+|             height: 100                  |                               |                                                                  |
+|         -                                |                               |                                                                  |
+|             type: expand                 |                               |                                                                  |
+|             width: 120                   |                               |                                                                  |
+|             height: 120                  |                               |                                                                  |
+|             background_color: '#ccffcc'  |                               |                                                                  |
+|             position_x: start            |                               |                                                                  |
+|             position_y: end              |                               |                                                                  |
+|         -                                |                               |                                                                  |
+|             type: widen                  |                               |                                                                  |
+|             width: 140                   |                               |                                                                  |
+|         -                                |                               |                                                                  |
+|             type: expand                 |                               |                                                                  |
+|             width: 160                   |                               |                                                                  |
+|             height: 160                  |                               |                                                                  |
+|             background_color: '#ccccff'  |                               |                                                                  |
+|             position_x: start            |                               |                                                                  |
+|             position_y: start            |                               |                                                                  |
+|         -                                |                               |                                                                  |
+|             type: resize                 |                               |                                                                  |
+|             width: 180                   |                               |                                                                  |
+|             height: 180                  |                               |                                                                  |
+|             mode: exact                  |                               |                                                                  |
+|         -                                |                               |                                                                  |
+|             type: expand                 |                               |                                                                  |
+|             width: 200                   |                               |                                                                  |
+|             height: 200                  |                               |                                                                  |
+|             background_color: '#ffff44'  |                               |                                                                  |
+|         -                                |                               |                                                                  |
+|             type: thumbnail              |                               |                                                                  |
+|             width: 100                   |                               |                                                                  |
+|             height: 100                  |                               |                                                                  |
+|                                          |                               |                                                                  |
++------------------------------------------+-------------------------------+------------------------------------------------------------------+
