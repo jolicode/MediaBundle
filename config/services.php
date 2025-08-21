@@ -113,6 +113,7 @@ return static function (ContainerConfigurator $container): void {
             service('joli_media.converter'),
             service('joli_media.library_container'),
             service('joli_media.resolver'),
+            service('logger')->ignoreOnInvalid(),
         ])
         ->call('setContainer', [service('service_container')])
 
