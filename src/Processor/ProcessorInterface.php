@@ -5,6 +5,7 @@ namespace JoliCode\MediaBundle\Processor;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Transformation\Transformation;
+use JoliCode\MediaBundle\Transformer\BinaryOperation\BinaryOperationInterface;
 
 interface ProcessorInterface
 {
@@ -32,5 +33,5 @@ interface ProcessorInterface
     /**
      * @param array<string, mixed> $processingOptions
      */
-    public function processBinaryOperation(callable $operation, array $processingOptions = []): Binary;
+    public function processBinaryOperation(Binary $binary, BinaryOperationInterface $binaryOperation, array $processingOptions = []): Binary;
 }

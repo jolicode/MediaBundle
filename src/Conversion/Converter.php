@@ -85,11 +85,7 @@ readonly class Converter
             }
         }
 
-        $transformation = new Transformation(
-            $binary,
-            $mediaVariation->getVariation(),
-        );
-
+        $transformation = new Transformation($binary, $mediaVariation);
         $mediaVariation->store(
             $this->transformationProcessor->process($transformation),
         );

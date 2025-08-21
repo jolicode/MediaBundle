@@ -4,7 +4,7 @@ namespace JoliCode\MediaBundle\Transformer;
 
 use JoliCode\MediaBundle\Transformation\Transformation;
 
-readonly class Thumbnail extends AbstractTransformer implements TransformerInterface
+readonly class Thumbnail extends AbstractTransformer implements TransformerInterface, WithTransformTransformerInterface
 {
     public function __construct(
         private int $width,
@@ -58,6 +58,7 @@ readonly class Thumbnail extends AbstractTransformer implements TransformerInter
         $transformation->cropY = $currentCropY + $cropY;
         $transformation->cropWidth = $cropWidth;
         $transformation->cropHeight = $cropHeight;
+        $transformation->mustRun = true;
     }
 
     private function getCropPosition(): float

@@ -4,7 +4,7 @@ namespace JoliCode\MediaBundle\Transformer;
 
 use JoliCode\MediaBundle\Transformation\Transformation;
 
-readonly class Widen extends AbstractTransformer implements TransformerInterface
+readonly class Widen extends AbstractTransformer implements TransformerInterface, WithTransformTransformerInterface
 {
     /**
      * @param int|string $width
@@ -30,5 +30,6 @@ readonly class Widen extends AbstractTransformer implements TransformerInterface
         $ratio = $width / $transformation->targetWidth;
         $transformation->targetHeight = (int) round($transformation->targetHeight * $ratio);
         $transformation->targetWidth = $width;
+        $transformation->mustRun = true;
     }
 }

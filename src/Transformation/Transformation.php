@@ -7,6 +7,7 @@ use Imagine\Image\ImageInterface;
 use Imagine\Image\Point;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Model\Format;
+use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Transformer\TransformerInterface;
 use JoliCode\MediaBundle\Variation\Variation;
 
@@ -33,12 +34,14 @@ class Transformation
      */
     public array $transformers = [];
 
+    public bool $mustRun;
+
     /**
      * @param TransformerInterface[] $transformers
      */
     public function __construct(
         private readonly Binary $binary,
-        private readonly Variation $variation,
+        private readonly MediaVariation $mediaVariation,
         ?int $width = null,
         ?int $height = null,
         ?array $transformers = null,
@@ -56,10 +59,11 @@ class Transformation
         $this->binaryHeight = $this->targetHeight;
 
         if (null === $transformers) {
-            $transformers = $variation->getTransformerChain()->getTransformers();
+            $transformers = $mediaVariation->getVariation()->getTransformerChain()->getTransformers();
         }
 
         $this->transformers = $transformers;
+        $this->mustRun = [] !== $this->transformers;
     }
 
     public function getAlternativeOutputFormat(): ?string
@@ -151,6 +155,23 @@ class Transformation
         };
     }
 
+    /**
+     * @return array{binaryWidth: int|null, binaryHeight: int|null, cropX: int|null, cropY: int|null, cropWidth: int|null, cropHeight: int|null, targetWidth: int|null, targetHeight: int|null}
+     */
+    public function getAsMetadata(): array
+    {
+        return [
+            'binaryWidth' => $this->binaryWidth,
+            'binaryHeight' => $this->binaryHeight,
+            'cropX' => $this->cropX,
+            'cropY' => $this->cropY,
+            'cropWidth' => $this->cropWidth,
+            'cropHeight' => $this->cropHeight,
+            'targetWidth' => $this->targetWidth,
+            'targetHeight' => $this->targetHeight,
+        ];
+    }
+
     public function getBinary(): Binary
     {
         return $this->binary;
@@ -166,9 +187,14 @@ class Transformation
         return $this->binary->getFormat();
     }
 
+    public function getMediaVariation(): MediaVariation
+    {
+        return $this->mediaVariation;
+    }
+
     public function getOutputFormat(): string
     {
-        return $this->variation->getFormat()->value ?? $this->binary->getFormat();
+        return $this->getVariation()->getFormat()->value ?? $this->binary->getFormat();
     }
 
     /**
@@ -190,7 +216,7 @@ class Transformation
      */
     public function getPostProcessorOptions(string $postProcessorName): array
     {
-        return $this->variation->getPostProcessorConfiguration($postProcessorName);
+        return $this->getVariation()->getPostProcessorConfiguration($postProcessorName);
     }
 
     /**
@@ -198,17 +224,17 @@ class Transformation
      */
     public function getProcessorOptions(string $processorName): array
     {
-        return $this->variation->getProcessorConfiguration($processorName);
+        return $this->getVariation()->getProcessorConfiguration($processorName);
     }
 
     public function getVariation(): Variation
     {
-        return $this->variation;
+        return $this->mediaVariation->getVariation();
     }
 
     public function getVariationName(): string
     {
-        return $this->variation->getName();
+        return $this->getVariation()->getName();
     }
 
     public function hasChangedDimensions(): bool

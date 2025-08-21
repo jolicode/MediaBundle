@@ -5,7 +5,7 @@ namespace JoliCode\MediaBundle\Transformer;
 use JoliCode\MediaBundle\Transformation\Transformation;
 use JoliCode\MediaBundle\Transformer\Resize\Mode;
 
-readonly class Resize extends AbstractTransformer implements TransformerInterface
+readonly class Resize extends AbstractTransformer implements TransformerInterface, WithTransformTransformerInterface
 {
     /**
      * @param int|string $width
@@ -60,5 +60,6 @@ readonly class Resize extends AbstractTransformer implements TransformerInterfac
 
         $transformation->targetWidth = $width;
         $transformation->targetHeight = $height;
+        $transformation->mustRun = true;
     }
 }

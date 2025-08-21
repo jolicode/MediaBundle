@@ -15,6 +15,8 @@ use JoliCode\MediaBundle\Event\Listener\DeleteMediaEventListener;
 use JoliCode\MediaBundle\Event\Listener\MoveFolderEventListener;
 use JoliCode\MediaBundle\Event\Listener\MoveMediaEventListener;
 use JoliCode\MediaBundle\Event\MediaEvents;
+use JoliCode\MediaBundle\Inspector\DataCollector;
+use JoliCode\MediaBundle\Inspector\TransformationDataHolder;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\PostProcessor\Gifsicle as GifsiclePostProcessor;
@@ -125,6 +127,19 @@ return static function (ContainerConfigurator $container): void {
         ])
         ->public()
         ->alias(Converter::class, 'joli_media.converter')
+
+        // data collector
+        ->set('joli_media.data_collector', DataCollector::class)
+        ->args([
+            '$libraryContainer' => service('joli_media.library_container'),
+            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder'),
+        ])
+        ->tag('data_collector', ['id' => DataCollector::class, 'template' => '@JoliMedia/inspector/data_collector.html.twig'])
+
+        ->set('joli_media.data_collector.transformation_data_holder', TransformationDataHolder::class)
+        ->args([
+            '$stopwatch' => service('debug.stopwatch')->ignoreOnInvalid(),
+        ])
 
         // events
         ->set('joli_media.cache_warmer.media_entity_metadata', MediaEntityMetadataWarmer::class)
@@ -318,9 +333,10 @@ return static function (ContainerConfigurator $container): void {
         // transformation
         ->set('joli_media.transformation_processor', TransformationProcessor::class)
         ->args([
-            service('joli_media.processor_container'),
-            service('joli_media.post_processor_container'),
-            service('logger')->ignoreOnInvalid(),
+            '$processorContainer' => service('joli_media.processor_container'),
+            '$postProcessorContainer' => service('joli_media.post_processor_container'),
+            '$logger' => service('logger')->ignoreOnInvalid(),
+            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder'),
         ])
 
         // transformers

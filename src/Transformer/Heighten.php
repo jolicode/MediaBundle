@@ -4,7 +4,7 @@ namespace JoliCode\MediaBundle\Transformer;
 
 use JoliCode\MediaBundle\Transformation\Transformation;
 
-readonly class Heighten extends AbstractTransformer implements TransformerInterface
+readonly class Heighten extends AbstractTransformer implements TransformerInterface, WithTransformTransformerInterface
 {
     /**
      * @param int|string $height
@@ -30,5 +30,6 @@ readonly class Heighten extends AbstractTransformer implements TransformerInterf
         $ratio = $height / $transformation->targetHeight;
         $transformation->targetWidth = (int) round($transformation->targetWidth * $ratio);
         $transformation->targetHeight = $height;
+        $transformation->mustRun = true;
     }
 }
