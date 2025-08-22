@@ -8,7 +8,6 @@ use JoliCode\MediaBundle\Transformation\Transformation;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Stopwatch\StopwatchEvent;
 
-
 class TransformationDataHolder
 {
     private const string STOPWATCH_KEY = 'JoliMediaBundle';
