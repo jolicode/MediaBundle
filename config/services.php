@@ -133,9 +133,9 @@ return static function (ContainerConfigurator $container): void {
         ->set('joli_media.data_collector', DataCollector::class)
         ->args([
             '$libraryContainer' => service('joli_media.library_container'),
-            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder'),
+            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder')->ignoreOnInvalid(),
         ])
-        ->tag('data_collector', ['id' => DataCollector::class, 'template' => '@JoliMedia/inspector/data_collector.html.twig'])
+        ->tag('data_collector', ['id' => 'joli_media', 'template' => '@JoliMedia/inspector/data_collector.html.twig'])
 
         ->set('joli_media.data_collector.transformation_data_holder', TransformationDataHolder::class)
         ->args([
@@ -495,10 +495,4 @@ return static function (ContainerConfigurator $container): void {
             '$voters' => abstract_arg('voters'),
         ])
     ;
-
-    if ('dev' !== $container->env()) {
-        $container->services()
-            ->remove('joli_media.data_collector.transformation_data_holder')
-        ;
-    }
 };

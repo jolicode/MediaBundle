@@ -12,13 +12,13 @@ class DataCollector extends AbstractDataCollector
 {
     public function __construct(
         private readonly LibraryContainer $libraryContainer,
-        private readonly TransformationDataHolder $transformationDataHolder,
+        private readonly ?TransformationDataHolder $transformationDataHolder = null,
     ) {
     }
 
     public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
     {
-        $transformations = $this->transformationDataHolder->getData();
+        $transformations = $this->transformationDataHolder?->getData() ?? [];
 
         foreach ($transformations as $key => $transformation) {
             if (isset($transformation['steps'])) {
@@ -48,7 +48,7 @@ class DataCollector extends AbstractDataCollector
             ];
         }
 
-        $collectedData['duration'] = $this->transformationDataHolder->getTotalDuration();
+        $collectedData['duration'] = $this->transformationDataHolder?->getTotalDuration() ?? 0;
 
         $this->data = $collectedData;
     }
@@ -59,6 +59,11 @@ class DataCollector extends AbstractDataCollector
     public function getLibraries(): array
     {
         return $this->data['libraries'] ?? [];
+    }
+
+    public function getName(): string
+    {
+        return 'joli_media';
     }
 
     public function getTotalDuration(): float
