@@ -1,7 +1,7 @@
 Transformers
 ============
 
-Transformers represent the successive operations that can be applied to a *media* to create a *variation*.
+Transformers represent the successive operations that can be applied to a *media* to create a `variation <variations.rst>`_.
 
 Available transformers
 ----------------------

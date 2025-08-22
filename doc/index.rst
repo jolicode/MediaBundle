@@ -44,6 +44,7 @@ Table of contents
 - Features
 
     - `Commands <commands.rst>`_
+    - `Debug tooling <debug-tooling.rst>`_
     - `Events <events.rst>`_
     - `Using in entities <using-in-entities.rst>`_
     - `Media deletion behavior <media-deletion-behavior.rst>`_
