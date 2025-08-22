@@ -12,7 +12,6 @@ use JoliCode\MediaBundle\Transformer\Resize;
 use JoliCode\MediaBundle\Transformer\Resize\Mode;
 use JoliCode\MediaBundle\Transformer\TransformerChain;
 use JoliCode\MediaBundle\Transformer\Widen;
-use JoliCode\MediaBundle\Transformer\WithTransformTransformerInterface;
 use JoliCode\MediaBundle\Variation\Variation;
 
 class TransformerChainTest extends BaseTestCase
@@ -94,9 +93,7 @@ class TransformerChainTest extends BaseTestCase
 
         // Apply transformers through the chain
         while ($transformer = $transformation->shiftTransformers()) {
-            if ($transformer instanceof WithTransformTransformerInterface) {
-                $transformer->transform($transformation);
-            }
+            $transformer->transform($transformation);
         }
 
         self::assertEquals(1200, $transformation->targetWidth);

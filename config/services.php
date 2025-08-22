@@ -359,6 +359,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('.joli_media.transformer.expand.abstract', Expand::class)
         ->abstract()
         ->args([
+            '$imagineProcessor' => abstract_arg('imagine_processor'),
             '$width' => abstract_arg('width'),
             '$height' => abstract_arg('height'),
             '$positionX' => abstract_arg('position_x'),

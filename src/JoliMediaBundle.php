@@ -1125,6 +1125,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->parent('.joli_media.transformer.expand.abstract')
                 ->private()
                 ->args([
+                    '$imagineProcessor' => service('.joli_media.processor.imagine'),
                     '$width' => $transformerConfig['width'],
                     '$height' => $transformerConfig['height'],
                     '$positionX' => $transformerConfig['position_x'] ?? null,

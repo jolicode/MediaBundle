@@ -6,8 +6,6 @@ use Imagine\Image\ImagineInterface;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Transformation\Transformation;
-use JoliCode\MediaBundle\Transformer\BinaryOperation\AbstractImagineBinaryOperation;
-use JoliCode\MediaBundle\Transformer\BinaryOperation\BinaryOperationInterface;
 use Psr\Log\LoggerInterface;
 
 readonly class Imagine extends AbstractProcessor implements ProcessorInterface
@@ -100,34 +98,9 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
         return $binary;
     }
 
-    /**
-     * @param array<string, mixed> $processingOptions
-     */
-    public function processBinaryOperation(Binary $binary, BinaryOperationInterface $binaryOperation, array $processingOptions = []): Binary
+    public function getImagine(): ImagineInterface
     {
-        if (!$binaryOperation instanceof AbstractImagineBinaryOperation) {
-            throw new \LogicException(\sprintf('The processor "%s" cannot process "%s" binary operations.', static::class, $binaryOperation::class));
-        }
-
-        $binaryOperation->setImagine($this->imagine);
-        $binaryOperation->setImagineOptions($this->parseOptions($processingOptions));
-
-        try {
-            $this->logger?->info('Processing image with Imagine', [
-                'original size' => $binary->getContentSize(),
-                'binaryOperation' => $binaryOperation,
-            ]);
-            $binary = $binaryOperation->execute($binary);
-            $this->logger?->info('Processed image with Imagine', [
-                'processed size' => $binary->getContentSize(),
-            ]);
-        } catch (\Exception $exception) {
-            $this->logger?->error('Imagine processing failed', ['exception' => $exception]);
-
-            throw $exception;
-        }
-
-        return $binary;
+        return $this->imagine;
     }
 
     /**
@@ -135,7 +108,7 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
      *
      * @return array<string, mixed>
      */
-    private function parseOptions(array $options = []): array
+    public function parseOptions(array $options = []): array
     {
         $options = array_merge(self::DEFAULT_OPTIONS, $this->options, $options);
         $parsedOptions = [];

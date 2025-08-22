@@ -7,9 +7,7 @@ use JoliCode\MediaBundle\Inspector\TransformationDataHolder;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\PostProcessor\PostProcessorContainer;
 use JoliCode\MediaBundle\Processor\ProcessorContainer;
-use JoliCode\MediaBundle\Transformer\BinaryOperation\BinaryOperationInterface;
-use JoliCode\MediaBundle\Transformer\WithOperationTransformerInterface;
-use JoliCode\MediaBundle\Transformer\WithTransformTransformerInterface;
+use JoliCode\MediaBundle\Transformer\NeedsImmediateProcessingTransformerInterface;
 use Psr\Log\LoggerInterface;
 
 readonly class TransformationProcessor
@@ -35,25 +33,13 @@ readonly class TransformationProcessor
         $this->transformationDataHolder?->create($transformation);
 
         while ($transformer = $transformation->shiftTransformers()) {
-            if ($transformer instanceof WithTransformTransformerInterface) {
-                $transformer->transform($transformation);
+            if ($transformer instanceof NeedsImmediateProcessingTransformerInterface) {
+                $transformation->setBinary(
+                    $this->runTransformation($transformation)
+                );
             }
 
-            if ($transformer instanceof WithOperationTransformerInterface) {
-                $binaryOperation = $transformer->getBinaryOperation($transformation->targetWidth, $transformation->targetHeight);
-                $binary = $this->runBinaryOperation(
-                    $transformation,
-                    $binaryOperation,
-                    $this->runTransformation($transformation),
-                );
-                $transformation = new Transformation(
-                    $binary,
-                    $transformation->getMediaVariation(),
-                    $binary->getPixelWidth(),
-                    $binary->getPixelHeight(),
-                    $transformation->transformers,
-                );
-            }
+            $transformer->transform($transformation);
         }
 
         $binary = $this->runTransformation($transformation);
@@ -61,38 +47,12 @@ readonly class TransformationProcessor
         return $this->runPostProcessors($transformation, $binary);
     }
 
-    private function runBinaryOperation(Transformation $transformation, BinaryOperationInterface $binaryOperation, Binary $binary): Binary
-    {
-        $processor = $this->processorContainer->get($binaryOperation->getProcessorName());
-        $processorOptions = $transformation->getProcessorOptions($processor->getName());
-
-        if ($this->logger instanceof LoggerInterface) {
-            $this->logger->info('Running binary operation', [
-                'operation' => $binaryOperation::class,
-                'processor' => $processor->getName(),
-            ]);
-        }
-
-        $binary = $processor->processBinaryOperation($binary, $binaryOperation, $processorOptions);
-
-        $this->transformationDataHolder?->addStep($transformation, \sprintf(
-            'Executed a "%s" binary operation with the "%s" processor',
-            $binaryOperation::class,
-            $processor->getName(),
-        ), [
-            'operation' => $binaryOperation->getMetadata(),
-        ]);
-
-        return $binary;
-    }
-
     private function runTransformation(Transformation $transformation): Binary
     {
-        if (!$transformation->mustRun) {
+        if (!$transformation->mustRun()) {
             return $transformation->getBinary();
         }
 
-        $transformation->mustRun = false;
         $outputFormats = $transformation->getPossibleOutputFormats();
 
         foreach ($outputFormats as $outputFormat) {

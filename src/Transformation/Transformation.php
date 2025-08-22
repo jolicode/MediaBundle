@@ -34,36 +34,12 @@ class Transformation
      */
     public array $transformers = [];
 
-    public bool $mustRun;
-
-    /**
-     * @param TransformerInterface[] $transformers
-     */
     public function __construct(
-        private readonly Binary $binary,
+        private Binary $binary,
         private readonly MediaVariation $mediaVariation,
-        ?int $width = null,
-        ?int $height = null,
-        ?array $transformers = null,
     ) {
-        if (null === $width || null === $height) {
-            $dimensions = $this->getInitialDimensions();
-            $this->targetWidth = $dimensions['width'];
-            $this->targetHeight = $dimensions['height'];
-        } else {
-            $this->targetWidth = $width;
-            $this->targetHeight = $height;
-        }
-
-        $this->binaryWidth = $this->targetWidth;
-        $this->binaryHeight = $this->targetHeight;
-
-        if (null === $transformers) {
-            $transformers = $mediaVariation->getVariation()->getTransformerChain()->getTransformers();
-        }
-
-        $this->transformers = $transformers;
-        $this->mustRun = [] !== $this->transformers;
+        $this->setBinary($binary);
+        $this->transformers = $mediaVariation->getVariation()->getTransformerChain()->getTransformers();
     }
 
     public function getAlternativeOutputFormat(): ?string
@@ -261,6 +237,27 @@ class Transformation
     public function hasReducedArea(): bool
     {
         return null !== $this->targetWidth && null !== $this->targetHeight && $this->targetWidth * $this->targetHeight < $this->binaryWidth * $this->binaryHeight;
+    }
+
+    public function mustRun(): bool
+    {
+        return [] !== $this->transformers || $this->hasEffect() || $this->getOutputFormat() !== $this->getInputFormat();
+    }
+
+    public function setBinary(Binary $binary): void
+    {
+        $this->binary = $binary;
+
+        $dimensions = $this->getInitialDimensions();
+        $this->binaryWidth = $dimensions['width'];
+        $this->binaryHeight = $dimensions['height'];
+        $this->targetWidth = $dimensions['width'];
+        $this->targetHeight = $dimensions['height'];
+
+        $this->cropX = null;
+        $this->cropY = null;
+        $this->cropWidth = null;
+        $this->cropHeight = null;
     }
 
     /**

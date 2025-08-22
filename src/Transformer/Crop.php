@@ -4,7 +4,7 @@ namespace JoliCode\MediaBundle\Transformer;
 
 use JoliCode\MediaBundle\Transformation\Transformation;
 
-readonly class Crop extends AbstractTransformer implements TransformerInterface, WithTransformTransformerInterface
+readonly class Crop extends AbstractTransformer implements TransformerInterface
 {
     /**
      * @param int|string|null $startX
@@ -89,6 +89,5 @@ readonly class Crop extends AbstractTransformer implements TransformerInterface,
         $transformation->targetHeight = $height;
         $transformation->cropWidth = $newCropWidth;
         $transformation->cropHeight = $newCropHeight;
-        $transformation->mustRun = true;
     }
 }
