@@ -6,6 +6,7 @@ use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Exception\VariationNotFoundException;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Resolver\Resolver;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,6 +16,7 @@ class MediaController extends AbstractController
         private readonly Converter $converter,
         private readonly LibraryContainer $libraries,
         private readonly Resolver $resolver,
+        private readonly ?LoggerInterface $logger = null,
     ) {
     }
 
@@ -44,6 +46,16 @@ class MediaController extends AbstractController
     ): Response {
         try {
             $mediaVariation = $this->converter->getMediaVariation($slug, $variation, $library) ?? throw $this->createNotFoundException('File not found');
+
+            if ($mediaVariation->isStored()) {
+                $this->logger?->info(\sprintf(
+                    'Serving the variation "%s" for the media "%s" from the storage "%s". This variation is already stored, which means it should rather be served directly from the storage. Please check your filesystem configuration.',
+                    $variation,
+                    $mediaVariation->getMedia()->getPath(),
+                    $library,
+                ));
+            }
+
             $this->converter->convertMediaVariation($mediaVariation, false);
             $binary = $mediaVariation->getBinary();
         } catch (\InvalidArgumentException|VariationNotFoundException $e) {

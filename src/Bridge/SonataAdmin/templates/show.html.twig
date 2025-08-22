@@ -252,6 +252,19 @@
                                 {{ media.fileSize|readable_filesize }}
                             </td>
                         </tr>
+                        {% if media.fileType == 'image' %}
+                            <tr class="sonata-ba-view-container">
+                                <th>{{ 'media.dimensions'|trans }}</th>
+                                <td>
+                                    {% set dimensions = media.binary.pixelDimensions %}
+                                    {% if dimensions is not null and dimensions.width is defined %}
+                                        {{ dimensions.width }}x{{ dimensions.height }}
+                                    {% else %}
+                                        <span class="label label-warning bg-gray-active">N/A</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>

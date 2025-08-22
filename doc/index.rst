@@ -30,20 +30,40 @@ The bundle is designed to be extensible and can be easily customized to fit your
 Table of contents
 -----------------
 
-- `Installation <installation.rst>`_
-- `Configuration <configuration.rst>`_
-- `EasyAdmin Bridge <bridges/easy-admin.rst>`_
-- `Sonata Admin Bridge <bridges/sonata-admin.rst>`_
-- `Commands <commands.rst>`_
-- `Events <events.rst>`_
-- `Using in entities <using-in-entities.rst>`_
-- `Media deletion behavior <media-deletion-behavior.rst>`_
-- `Post-processors <post-processors.rst>`_
-- `Twig components <twig-components.rst>`_
-- `URL generation <url-generation.rst>`_
-- `Tests and QA tooling <tests-and-qa-tooling.rst>`_
-- `Variations <variations.rst>`_
-- `Variation voters <variation-voters.rst>`_
+- Installation and configuration
+
+    - `Installation <installation.rst>`_
+    - `Configuration <configuration.rst>`_
+    - `Dependencies and tooling <dependencies-and-tooling.rst>`_
+
+- Admin bridges
+
+    - `EasyAdmin Bridge <bridges/easy-admin.rst>`_
+    - `Sonata Admin Bridge <bridges/sonata-admin.rst>`_
+
+- Features
+
+    - `Commands <commands.rst>`_
+    - `Debug tooling <debug-tooling.rst>`_
+    - `Events <events.rst>`_
+    - `Using in entities <using-in-entities.rst>`_
+    - `Media deletion behavior <media-deletion-behavior.rst>`_
+    - `Twig components <twig-components.rst>`_
+    - `URL generation <url-generation.rst>`_
+
+- Internals
+
+    - `Storage <storage.rst>`_
+    - `Processors <processors.rst>`_
+    - `Post-processors <post-processors.rst>`_
+    - `Pre-processors <pre-processors.rst>`_
+    - `Variations <variations.rst>`_
+    - `Transformers <transformers.rst>`_
+    - `Variation voters <variation-voters.rst>`_
+
+- Misc.
+
+    - `Tests and QA tooling <tests-and-qa-tooling.rst>`_
 
 Vocabulary
 ----------

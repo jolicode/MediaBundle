@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace JoliCode\MediaBundle\Tests\Transformer;
 
-use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Model\Format;
+use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
 use JoliCode\MediaBundle\Transformation\Transformation;
 use JoliCode\MediaBundle\Transformer\Resize;
@@ -24,6 +24,8 @@ class TransformerChainTest extends BaseTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->resizeTransformer = new Resize(800, 600, Mode::inside);
         $this->widenTransformer = new Widen(1200);
         $this->chain = new TransformerChain([$this->resizeTransformer, $this->widenTransformer]);
@@ -71,9 +73,9 @@ class TransformerChainTest extends BaseTestCase
 
     public function testTransformersAreAppliedInOrder(): void
     {
-        $content = BaseTestCase::getFixtureBinaryContent(BaseTestCase::PNG_FIXTURE_PATH);
-        $binary = new Binary('image/png', Format::PNG->value, $content);
+        $binary = BaseTestCase::getFixtureBinary(Format::PNG->value);
 
+        $media = new Media('test.png', $this->originalStorage, $binary);
         $variation = new Variation(
             'thumbnail',
             Format::WEBP,
@@ -82,17 +84,20 @@ class TransformerChainTest extends BaseTestCase
                 $this->widenTransformer,
             ]),
         );
-        $transformation = new Transformation($binary, $variation);
+        $mediaVariation = $media->createVariation($variation);
+        $transformation = new Transformation($binary, $mediaVariation);
 
         // Set initial dimensions
-        $transformation->width = 1600;
-        $transformation->height = 1200;
+        $transformation->targetWidth = 1600;
+        $transformation->targetHeight = 1200;
 
         // Apply transformers through the chain
-        $transformation->applyTransformers();
+        while ($transformer = $transformation->shiftTransformers()) {
+            $transformer->transform($transformation);
+        }
 
-        self::assertEquals(1200, $transformation->width);
-        self::assertEquals(900, $transformation->height);
+        self::assertEquals(1200, $transformation->targetWidth);
+        self::assertEquals(900, $transformation->targetHeight);
     }
 
     public function testEmptyChain(): void

@@ -15,6 +15,8 @@ use JoliCode\MediaBundle\Event\Listener\DeleteMediaEventListener;
 use JoliCode\MediaBundle\Event\Listener\MoveFolderEventListener;
 use JoliCode\MediaBundle\Event\Listener\MoveMediaEventListener;
 use JoliCode\MediaBundle\Event\MediaEvents;
+use JoliCode\MediaBundle\Inspector\DataCollector;
+use JoliCode\MediaBundle\Inspector\TransformationDataHolder;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\PostProcessor\Gifsicle as GifsiclePostProcessor;
@@ -28,12 +30,15 @@ use JoliCode\MediaBundle\Processor\Gif2webp;
 use JoliCode\MediaBundle\Processor\Gifsicle as GifsicleProcessor;
 use JoliCode\MediaBundle\Processor\ProcessorContainer;
 use JoliCode\MediaBundle\Resolver\Resolver;
+use JoliCode\MediaBundle\Routing\RouteChecker;
 use JoliCode\MediaBundle\Routing\RouteLoader;
 use JoliCode\MediaBundle\Storage\CacheStorage;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Storage\Strategy\FolderStorageStrategy;
 use JoliCode\MediaBundle\Storage\Strategy\IdentityStorageStrategy;
 use JoliCode\MediaBundle\Transformation\TransformationProcessor;
+use JoliCode\MediaBundle\Transformer\Crop;
+use JoliCode\MediaBundle\Transformer\Expand;
 use JoliCode\MediaBundle\Transformer\Heighten;
 use JoliCode\MediaBundle\Transformer\Resize;
 use JoliCode\MediaBundle\Transformer\Thumbnail;
@@ -108,6 +113,7 @@ return static function (ContainerConfigurator $container): void {
             service('joli_media.converter'),
             service('joli_media.library_container'),
             service('joli_media.resolver'),
+            service('logger')->ignoreOnInvalid(),
         ])
         ->call('setContainer', [service('service_container')])
 
@@ -122,6 +128,19 @@ return static function (ContainerConfigurator $container): void {
         ])
         ->public()
         ->alias(Converter::class, 'joli_media.converter')
+
+        // data collector
+        ->set('joli_media.data_collector', DataCollector::class)
+        ->args([
+            '$libraryContainer' => service('joli_media.library_container'),
+            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder')->ignoreOnInvalid(),
+        ])
+        ->tag('data_collector', ['id' => 'joli_media', 'template' => '@JoliMedia/inspector/data_collector.html.twig'])
+
+        ->set('joli_media.data_collector.transformation_data_holder', TransformationDataHolder::class)
+        ->args([
+            '$stopwatch' => service('debug.stopwatch')->ignoreOnInvalid(),
+        ])
 
         // events
         ->set('joli_media.cache_warmer.media_entity_metadata', MediaEntityMetadataWarmer::class)
@@ -267,6 +286,13 @@ return static function (ContainerConfigurator $container): void {
         ->alias(Resolver::class, 'joli_media.resolver')
 
         // routing
+        ->set('joli_media.route_checker', RouteChecker::class)
+        ->args([
+            service('joli_media.library_container'),
+            service('joli_media.resolver'),
+        ])
+        ->tag('routing.condition_service')
+
         ->set('joli_media.route_loader', RouteLoader::class)
         ->args([
             service('joli_media.library_container'),
@@ -308,9 +334,10 @@ return static function (ContainerConfigurator $container): void {
         // transformation
         ->set('joli_media.transformation_processor', TransformationProcessor::class)
         ->args([
-            service('joli_media.processor_container'),
-            service('joli_media.post_processor_container'),
-            service('logger')->ignoreOnInvalid(),
+            '$processorContainer' => service('joli_media.processor_container'),
+            '$postProcessorContainer' => service('joli_media.post_processor_container'),
+            '$logger' => service('logger')->ignoreOnInvalid(),
+            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder')->ignoreOnInvalid(),
         ])
 
         // transformers
@@ -318,6 +345,27 @@ return static function (ContainerConfigurator $container): void {
         ->abstract()
         ->args([
             '$transformers' => abstract_arg('transformers'),
+        ])
+
+        ->set('.joli_media.transformer.crop.abstract', Crop::class)
+        ->abstract()
+        ->args([
+            '$startX' => abstract_arg('start_x'),
+            '$startY' => abstract_arg('start_y'),
+            '$width' => abstract_arg('width'),
+            '$height' => abstract_arg('height'),
+        ])
+
+        ->set('.joli_media.transformer.expand.abstract', Expand::class)
+        ->abstract()
+        ->args([
+            '$imagineProcessor' => abstract_arg('imagine_processor'),
+            '$width' => abstract_arg('width'),
+            '$height' => abstract_arg('height'),
+            '$positionX' => abstract_arg('position_x'),
+            '$positionY' => abstract_arg('position_y'),
+            '$backgroundColor' => abstract_arg('background_color'),
+            '$logger' => service('logger')->ignoreOnInvalid(),
         ])
 
         ->set('.joli_media.transformer.heighten.abstract', Heighten::class)

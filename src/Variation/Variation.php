@@ -84,14 +84,14 @@ class Variation
         }
 
         if ($outputFormat instanceof Format && !$outputFormat->identical($media->getFormat())) {
-            $variation = new MediaVariation($media, $this->cloneWithOutputFormat($outputFormat));
+            $mediaVariation = new MediaVariation($media, $this->cloneWithOutputFormat($outputFormat));
         } else {
-            $variation = new MediaVariation($media, $this);
+            $mediaVariation = new MediaVariation($media, $this);
         }
 
-        $media->addVariation($variation);
+        $media->addVariation($mediaVariation);
 
-        return $variation;
+        return $mediaVariation;
     }
 
     public function getName(): string

@@ -1,0 +1,335 @@
+{% extends request.isXmlHttpRequest ? '@WebProfiler/Profiler/ajax_layout.html.twig' : '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <style>
+        #collector-content .jolicode-media-bundle .table-fit-content {
+            height: fit-content;
+        }
+        #collector-content .jolicode-media-bundle .table-metadata {
+            box-shadow: none;
+
+            th, td {
+                padding-left: 0;
+            }
+
+            tbody tr:first-of-type th {
+                border-top: none;
+            }
+        }
+        #collector-content .jolicode-media-bundle .cell-right {
+            text-align: right;
+        }
+        #collector-content .jolicode-media-bundle .cell-no-wrap {
+            white-space: nowrap;
+        }
+        #collector-content .jolicode-media-bundle .media-preview {
+            --media-preview-border-color: #e2e8f0;
+            --media-preview-background-primary-color: rgba(0, 0, 0, .098);
+            --media-preview-background-secondary-color: transparent;
+            max-width: 200px;
+            align-items: center;
+            background:
+                linear-gradient(
+                    45deg,
+                    var(--media-preview-background-primary-color) 25%,
+                    var(--media-preview-background-secondary-color) 25%,
+                    var(--media-preview-background-secondary-color) 75%,
+                    var(--media-preview-background-primary-color) 75%,
+                    var(--media-preview-background-primary-color) 0
+                ),
+                linear-gradient(
+                    45deg,
+                    var(--media-preview-background-primary-color) 25%,
+                    var(--media-preview-background-secondary-color) 25%,
+                    var(--media-preview-background-secondary-color) 75%,
+                    var(--media-preview-background-primary-color) 75%,
+                    var(--media-preview-background-primary-color) 0
+                ),
+                white
+            ;
+            background-clip: border-box;
+            background-origin: padding-box;
+            background-position: 0 0, .625rem .625rem;
+            background-size: 1.25rem 1.25rem;
+            border-radius: .25rem;
+            display: flex;
+            justify-content: center;
+            outline: solid var(--media-preview-border-color) .1rem;
+            overflow: hidden;
+            height: 100%;
+
+            img {
+                max-width: 200px;
+            }
+        }
+        #collector-content .jolicode-media-bundle .media-preview-column {
+            width: 200px;
+            max-width: 200px;
+            word-wrap: break-word;
+        }
+        #collector-content .jolicode-media-bundle .toggle-button {
+            margin-left: auto;
+        }
+        #collector-content .jolicode-media-bundle table.sf-toggle-content.sf-toggle-visible {
+            display: table;
+        }
+        #collector-content .jolicode-media-bundle tr.sf-toggle-content.sf-toggle-visible {
+            display: table-row;
+        }
+        #collector-content .jolicode-media-bundle .sf-toggle-on .toggle-button.toggle-button-reversable {
+            transform: rotate(180deg);
+        }
+        #collector-content .jolicode-media-bundle .toggle-button svg {
+            display: block;
+        }
+        #collector-content .jolicode-media-bundle .toggle-button.toggle-button-small svg {
+            width: 18px;
+            height: 18px;
+            margin-bottom: -6px;
+        }
+    </style>
+{% endblock %}
+
+{% block svg %}
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M160 80l352 0c8.8 0 16 7.2 16 16l0 224c0 8.8-7.2 16-16 16l-21.2 0L388.1 178.9c-4.4-6.8-12-10.9-20.1-10.9s-15.7 4.1-20.1 10.9l-52.2 79.8-12.4-16.9c-4.5-6.2-11.7-9.8-19.4-9.8s-14.8 3.6-19.4 9.8L175.6 336 160 336c-8.8 0-16-7.2-16-16l0-224c0-8.8 7.2-16 16-16zM96 96l0 224c0 35.3 28.7 64 64 64l352 0c35.3 0 64-28.7 64-64l0-224c0-35.3-28.7-64-64-64L160 32c-35.3 0-64 28.7-64 64zM48 120c0-13.3-10.7-24-24-24S0 106.7 0 120L0 344c0 75.1 60.9 136 136 136l320 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-320 0c-48.6 0-88-39.4-88-88l0-224zm208 24a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>
+{% endblock svg %}
+
+{% block menu %}
+    <span class="label {{ collector.libraries|length == 0 ? 'disabled' }}">
+        <span class="icon">
+            {{ block('svg') }}
+        </span>
+        <strong>Media</strong>
+        {% if collector.transformations|length %}
+            <span class="count">
+                {{ collector.transformations|length }}
+            </span>
+        {% endif %}
+    </span>
+{% endblock %}
+
+{% block toolbar %}
+    {% if collector.transformations|length %}
+        {% set icon %}
+            {{ block('svg') }}
+            <span class="sf-toolbar-value">{{ collector.transformations|length }}</span>
+        {% endset %}
+
+        {% set text %}
+            <div class="sf-toolbar-info-piece">
+                <b>Transformations executed</b>
+                <span class="sf-toolbar-status">{{ collector.transformations|length }}</span>
+            </div>
+            {% if collector.totalDuration > 0 %}
+                <div class="sf-toolbar-info-piece">
+                    <b>Total duration</b>
+                    <span class="sf-toolbar-status">{{ collector.totalDuration|number_format(2) }} ms</span>
+                </div>
+            {% endif %}
+        {% endset %}
+
+        {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: true }) }}
+    {% endif %}
+{% endblock %}
+
+{% block panel %}
+    <div class="jolicode-media-bundle">
+        <h2>Media</h2>
+
+        {% if collector.totalDuration > 0 %}
+            <div class="metrics">
+                <div class="metric-group">
+                    <div class="metric">
+                        <span class="value">{{ collector.totalDuration|number_format(2) }} ms</span>
+                        <span class="label">Total time</span>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="sf-tabs" style="margin-top: 20px;">
+            <div class="tab {{ collector.transformations is empty ? 'disabled' }}">
+                <h3 class="tab-title">
+                    Transformations
+                    {% if collector.transformations|length > 0 %}
+                        <span class="badge">{{ collector.transformations|length }}</span>
+                    {% endif %}
+                </h3>
+
+                <div class="tab-content">
+                    {% if collector.transformations|length > 0 %}
+                        <table class="table table-striped table-fit-content">
+                            <thead>
+                                <tr>
+                                    <th class="media-preview-column">Media</th>
+                                    <th>Library</th>
+                                    <th>Variation</th>
+                                    <th class="cell-right">Output dimensions</th>
+                                    <th class="cell-right">Duration</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transformation in collector.transformations %}
+                                    {% set transformationId = loop.index %}
+                                    <tr class="sf-toggle"
+                                        data-toggle-selector="#joli-media-{{ transformationId }}"
+                                        data-toggle-initial="{{ collector.transformations|length < 10 ? 'display' }}"
+                                    >
+                                        <td class="media-preview-column">{{ transformation.path }}</td>
+                                        <td>
+                                            <span class="badge">{{ transformation.library }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge">{{ transformation.variation }}</span>
+                                        </td>
+                                        <td class="cell-right cell-no-wrap">
+                                            {% if transformation.width is defined %}
+                                                {{ transformation.width }}x{{ transformation.height }}
+                                            {% else %}
+                                                <span class="badge badge-info">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="cell-right cell-no-wrap">
+                                            {% if transformation.duration is defined %}
+                                                {{ transformation.duration|number_format(2) }} ms
+                                            {% else %}
+                                                <span class="badge badge-info">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-link toggle-button toggle-button-reversable" type="button">
+                                                {{ source('@WebProfiler/Icon/chevron-down.svg') }}
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                    <tr id="joli-media-{{ transformationId }}">
+                                        <td class="media-preview-column">
+                                            {% if transformation.url is defined %}
+                                                {% if transformation.fileType == 'image' %}
+                                                    <div class="media-preview">
+                                                        <a href="{{ transformation.url }}"><img src="{{ transformation.url }}" alt="{{ transformation.path }}" loading="lazy" /></a>
+                                                    </div>
+                                                {% else %}
+                                                    <a href="{{ transformation.url }}" class="btn btn-primary">
+                                                        <i class="fa-solid fa-file"></i> View File
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                        <td colspan="5">
+                                            <div class="transformation-steps">
+                                                <table class="table table-bordered" style="margin: 0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Operation</th>
+                                                            <th class="cell-right">Duration</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for step in transformation.steps %}
+                                                            <tr
+                                                                {% if step.metadata|length > 0 %}
+                                                                    class="sf-toggle"
+                                                                    data-toggle-selector="#joli-media-{{ transformationId }}-step-{{ loop.index }}"
+                                                                    data-toggle-initial=""
+                                                                {% endif %}
+                                                            >
+                                                                <td>
+                                                                    {{ step.operation }}
+                                                                    {% if step.metadata|length > 0 %}
+                                                                        <button class="btn btn-link toggle-button toggle-button-small" type="button">
+                                                                            {{ source('@WebProfiler/Icon/search.svg') }}
+                                                                        </button>
+                                                                        <table
+                                                                            id="joli-media-{{ transformationId }}-step-{{ loop.index }}"
+                                                                            class="table-metadata"
+                                                                        >
+                                                                            <tbody>
+                                                                                {% for key, values in step.metadata %}
+                                                                                    <tr><th colspan="2">{{ key }}</th></tr>
+                                                                                    {% for label in values|keys %}
+                                                                                        <tr>
+                                                                                            <td scope="row">{{ label }}</td>
+                                                                                            <td>{{ profiler_dump(values[label]) }}</td>
+                                                                                        </tr>
+                                                                                    {% endfor %}
+                                                                                {% endfor %}
+                                                                            </tbody>
+                                                                        </table>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td class="cell-right cell-no-wrap">{{ step.duration|number_format(2) }} ms</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="empty">
+                            <p>No transformation has been executed during this request.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="tab {{ collector.libraries is empty ? 'disabled' }}">
+                <h3 class="tab-title">
+                    Media libraries
+                    {% if collector.libraries|length > 0 %}
+                        <span class="badge">{{ collector.libraries|length }}</span>
+                    {% endif %}
+                </h3>
+                <div class="tab-content">
+                    {% if not collector.libraries %}
+                        <div class="empty">
+                            <p>There are no configured media libraries.</p>
+                        </div>
+                    {% else %}
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="key">Name</th>
+                                    <th scope="col">Service</th>
+                                    <th scope="col">Variations</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for library in collector.libraries %}
+                                    <tr>
+                                        <th scope="row">
+                                            {{ library.name }}
+                                            {% if library.isDefault and collector.libraries|length > 1 %}
+                                                <span class="badge">Default</span>
+                                            {% endif %}
+                                        </th>
+                                        <td>{{ library.serviceId }}</td>
+                                        <td>
+                                            {% if library.variations|length > 0 %}
+                                                <ul>
+                                                    {% for variation in library.variations %}
+                                                        <li>{{ variation }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% else %}
+                                                <span class="badge badge-info">No variations</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

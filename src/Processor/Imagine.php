@@ -64,6 +64,7 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
             try {
                 $this->logger?->info('Processing image with Imagine', [
                     'original size' => $binary->getContentSize(),
+                    'transformation' => $transformation,
                 ]);
                 $image = $this->imagine->load($binary->getContent());
                 $image = $transformation->getAsImagineCallback()($image);
@@ -97,12 +98,17 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
         return $binary;
     }
 
+    public function getImagine(): ImagineInterface
+    {
+        return $this->imagine;
+    }
+
     /**
      * @param array<string, mixed> $options
      *
      * @return array<string, mixed>
      */
-    private function parseOptions(array $options = []): array
+    public function parseOptions(array $options = []): array
     {
         $options = array_merge(self::DEFAULT_OPTIONS, $this->options, $options);
         $parsedOptions = [];

@@ -457,10 +457,12 @@ class OriginalStorage
             return new Media($path, $this);
         }
 
-        if (str_starts_with($path, $this->urlPath)) {
+        $urlPath = Resolver::normalizePath($this->urlPath) . '/';
+
+        if (str_starts_with($path, $urlPath)) {
             // in many occasions, the provided path is the full URL path,
             // so we try to remove the URL path prefix
-            $path = substr($path, \strlen($this->urlPath));
+            $path = substr($path, \strlen($urlPath));
 
             if ($this->has($path)) {
                 return new Media($path, $this);
