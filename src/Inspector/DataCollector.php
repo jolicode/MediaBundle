@@ -4,12 +4,10 @@ namespace JoliCode\MediaBundle\Inspector;
 
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use Symfony\Bundle\FrameworkBundle\DataCollector\AbstractDataCollector;
-use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarDumper\Cloner\Data;
 
-#[When('dev')]
 class DataCollector extends AbstractDataCollector
 {
     public function __construct(

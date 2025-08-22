@@ -5,11 +5,10 @@ namespace JoliCode\MediaBundle\Inspector;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Transformation\Transformation;
-use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Stopwatch\StopwatchEvent;
 
-#[When('dev')]
+
 class TransformationDataHolder
 {
     private const string STOPWATCH_KEY = 'JoliMediaBundle';

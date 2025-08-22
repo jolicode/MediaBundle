@@ -337,7 +337,7 @@ return static function (ContainerConfigurator $container): void {
             '$processorContainer' => service('joli_media.processor_container'),
             '$postProcessorContainer' => service('joli_media.post_processor_container'),
             '$logger' => service('logger')->ignoreOnInvalid(),
-            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder'),
+            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder')->ignoreOnInvalid(),
         ])
 
         // transformers
@@ -495,4 +495,10 @@ return static function (ContainerConfigurator $container): void {
             '$voters' => abstract_arg('voters'),
         ])
     ;
+
+    if ('dev' !== $container->env()) {
+        $container->services()
+            ->remove('joli_media.data_collector.transformation_data_holder')
+        ;
+    }
 };
