@@ -42,7 +42,7 @@ In the example above, the ``ApplyWatermarkPreProcessor`` will be applied to the 
 The PreProcessorInterface
 -------------------------
 
-A pre-processor class must implement the ``process`` method of the ``Joli\MediaBundle\PreProcessor\PreProcessorInterface`` interface, in order to manipulate the media. As a normal service, pre-processor can use other services - for example the Imagine library. The following pre-processor shows how to expand the size of an image and add a yellow background to it::
+A pre-processor class must implement the ``process`` method of the ``Joli\MediaBundle\PreProcessor\PreProcessorInterface`` interface, in order to manipulate the media. As a normal service, pre-processor can use other services - for example the Imagine library. The following pre-processor shows how to expand the size of an image and add a yellow background to it (although you will probably prefer to use `the "Expand" transformer<transformers.rst>`_)::
 
     namespace App\Media\PreProcessor;
 

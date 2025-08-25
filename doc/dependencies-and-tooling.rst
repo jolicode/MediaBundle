@@ -1,7 +1,17 @@
 Dependencies and tooling
 ========================
 
-The JoliMediaBundle has a few dependencies and uses some tools to ensure the quality of the code and the media processing. Unlike other Symfony bundles related to media management (for example ``LiipImagineBundle``), it does not require any external library to process media, and does not depend on any specific image processing library. Instead, it directly wraps common image processing software such as `cwebp <https://developers.google.com/speed/webp/docs/cwebp>`_, `gifsicle <https://www.lcdf.org/gifsicle/>`_, `imagemagick <https://imagemagick.org/>`_, `jpegoptim <https://github.com/tjko/jpegoptim>`_, `mozjpeg <https://github.com/mozilla/mozjpeg>`_, `oxipng <https://github.com/shssoichiro/oxipng>`_ and `pngquant <https://pngquant.org/>`_, which are all available on most systems and can be installed using the package manager of your choice (``apt``, ``brew``, etc.).
+The JoliMediaBundle has a few dependencies and uses some tools to ensure the quality of the code and the media processing. Unlike other Symfony bundles related to media management (for example ``LiipImagineBundle``), it does not require any external library to process media, and does not depend on any specific image processing library. Instead, it directly wraps common image processing software such as:
+
+- `cwebp <https://developers.google.com/speed/webp/docs/cwebp>`_
+- `gifsicle <https://www.lcdf.org/gifsicle/>`_
+- `Imagine <https://github.com/php-imagine/Imagine>`_
+- `jpegoptim <https://github.com/tjko/jpegoptim>`_
+- `mozjpeg <https://github.com/mozilla/mozjpeg>`_
+- `oxipng <https://github.com/shssoichiro/oxipng>`_
+- `pngquant <https://pngquant.org/>`_
+
+These tools are all available on most systems and can be installed using the package manager of your choice (``apt``, ``brew``, etc.).
 
 A typical Debian-based system can install the required dependencies using the following commands:
 

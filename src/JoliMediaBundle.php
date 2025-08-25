@@ -8,6 +8,7 @@ use Imagine\Image\Metadata\ExifMetadataReader;
 use Imagine\Gd\Imagine as GdImagine;
 use Imagine\Gmagick\Imagine as GmagickImagine;
 use Imagine\Imagick\Imagine as ImagickImagine;
+use JoliCode\MediaBundle\DependencyInjection\Compiler\CollectorPass;
 use JoliCode\MediaBundle\Doctrine\Type\MediaLongType;
 use JoliCode\MediaBundle\Doctrine\Type\MediaType;
 use JoliCode\MediaBundle\Doctrine\Types;
@@ -35,6 +36,13 @@ class JoliMediaBundle extends AbstractBundle
         $resolverInitializer = fn (): ?object => $this->container->get('joli_media.resolver');
         MediaType::$resolverInitializer = $resolverInitializer;
         MediaLongType::$resolverInitializer = $resolverInitializer;
+    }
+
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new CollectorPass());
     }
 
     public function configure(DefinitionConfigurator $definition): void
@@ -219,17 +227,65 @@ class JoliMediaBundle extends AbstractBundle
                         ->info('If true and the format config attribute is not set or different from "webp", enables an additionnal webp version of the variation.')
                     ->end()
                     ->arrayNode('transformers')
-                        ->useAttributeAsKey('name')
                         ->arrayPrototype()
                             ->children()
-                                ->scalarNode('width')->end()
-                                ->scalarNode('height')->end()
-                                ->scalarNode('mode')->defaultValue(Mode::exact->value)->end()
+                                ->scalarNode('type')
+                                    ->defaultNull()
+                                    ->validate()
+                                        ->ifNotInArray(['crop', 'expand', 'heighten', 'resize', 'thumbnail', 'widen'])
+                                        ->thenInvalid('Invalid transformer type "%s". Valid types are "crop", "expand", "heighten", "resize", "thumbnail", "widen".')
+                                    ->end()
+                                ->end()
                                 ->booleanNode('allow_downscale')
                                     ->defaultTrue()
                                 ->end()
                                 ->booleanNode('allow_upscale')
                                     ->defaultTrue()
+                                ->end()
+                                ->scalarNode('background_color')->end()
+                                ->scalarNode('crop_position')
+                                    ->defaultNull()
+                                    ->validate()
+                                        ->ifTrue(fn ($value): bool => null !== $value && in_array(preg_match('/^\d+%$/', $value), [0, false], true) && !in_array($value, ['start', 'center', 'end']))
+                                        ->thenInvalid('Invalid crop_position value "%s". Valid positions are "start", "center", "end" or a percentage (e.g. "50%%").')
+                                    ->end()
+                                ->end()
+                                ->scalarNode('height')
+                                    ->validate()
+                                        ->ifTrue(fn ($value): bool => null !== $value && !(is_numeric($value) && $value > 0) && in_array(preg_match('/^\d+%$/', (string) $value), [0, false], true))
+                                        ->thenInvalid('Invalid height value "%s".')
+                                    ->end()
+                                ->end()
+                                ->scalarNode('width')
+                                    ->validate()
+                                        ->ifTrue(fn ($value): bool => null !== $value && !(is_numeric($value) && $value > 0) && in_array(preg_match('/^\d+%$/', (string) $value), [0, false], true))
+                                        ->thenInvalid('Invalid width value "%s".')
+                                    ->end()
+                                ->end()
+                                ->scalarNode('mode')->end()
+                                ->scalarNode('position_x')
+                                    ->validate()
+                                        ->ifTrue(fn ($value): bool => null !== $value && !(is_numeric($value) && $value >= 0) && in_array(preg_match('/^\d+%$/', (string) $value), [0, false], true) && !in_array($value, ['start', 'center', 'end']))
+                                        ->thenInvalid('Invalid position_x value "%s". It must be a number, a percentage (e.g. "50%%") or one of "start", "center", "end".')
+                                    ->end()
+                                ->end()
+                                ->scalarNode('position_y')
+                                    ->validate()
+                                        ->ifTrue(fn ($value): bool => null !== $value && !(is_numeric($value) && $value >= 0) && in_array(preg_match('/^\d+%$/', (string) $value), [0, false], true) && !in_array($value, ['start', 'center', 'end']))
+                                        ->thenInvalid('Invalid position_y value "%s". It must be a number, a percentage (e.g. "50%%") or one of "start", "center", "end".')
+                                    ->end()
+                                ->end()
+                                ->scalarNode('start_x')
+                                    ->validate()
+                                        ->ifTrue(fn ($value): bool => null !== $value && !(is_numeric($value) && $value >= 0) && in_array(preg_match('/^\d+%$/', (string) $value), [0, false], true))
+                                        ->thenInvalid('Invalid start_x value "%s". It must be a number or a percentage (e.g. "50%%").')
+                                    ->end()
+                                ->end()
+                                ->scalarNode('start_y')
+                                    ->validate()
+                                        ->ifTrue(fn ($value): bool => null !== $value && !(is_numeric($value) && $value >= 0) && in_array(preg_match('/^\d+%$/', (string) $value), [0, false], true))
+                                        ->thenInvalid('Invalid start_y value "%s". It must be a number or a percentage (e.g. "50%%").')
+                                    ->end()
                                 ->end()
                             ->end()
                         ->end()
@@ -383,7 +439,12 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
             ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the cwebp post-processor')
+                ->end()
                 ->arrayNode('near_lossless')
                     ->children()
                         ->integerNode('quality')
@@ -473,7 +534,12 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
             ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the gif2webp post-processor')
+                ->end()
                 ->booleanNode('lossy')
                     ->defaultValue(true)
                     ->info('Encode the image using lossy compression')
@@ -515,7 +581,12 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
             ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the gifsicle post-processor')
+                ->end()
                 ->integerNode('optimize')
                     ->defaultValue(3)
                     ->min(1)
@@ -559,7 +630,12 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['enabled' => false])
             ->children()
+                ->booleanNode('enabled')
+                    ->defaultTrue()
+                    ->info('Enable the imagine post-processor')
+                ->end()
                 ->integerNode('quality')
                     ->defaultValue(80)
                     ->min(0)
@@ -894,7 +970,7 @@ class JoliMediaBundle extends AbstractBundle
     {
         $processorContainerService = $container->services()->get('joli_media.processor_container');
 
-        if (isset($processorsConfig['cwebp'])) {
+        if (isset($processorsConfig['cwebp']) && $processorsConfig['cwebp']['options']['enabled']) {
             $container->services()
                 ->get('.joli_media.processor.cwebp')
                 ->arg('$cwebpBinary', $processorsConfig['cwebp']['binary'])
@@ -905,7 +981,7 @@ class JoliMediaBundle extends AbstractBundle
             $processorContainerService->call('add', ['cwebp', service('.joli_media.processor.cwebp')]);
         }
 
-        if (isset($processorsConfig['gif2webp'])) {
+        if (isset($processorsConfig['gif2webp']) && $processorsConfig['gif2webp']['options']['enabled']) {
             $container->services()
                 ->get('.joli_media.processor.gif2webp')
                 ->arg('$gif2webpBinary', $processorsConfig['gif2webp']['binary'])
@@ -915,7 +991,7 @@ class JoliMediaBundle extends AbstractBundle
             $processorContainerService->call('add', ['gif2webp', service('.joli_media.processor.gif2webp')]);
         }
 
-        if (isset($processorsConfig['gifsicle'])) {
+        if (isset($processorsConfig['gifsicle']) && $processorsConfig['gifsicle']['options']['enabled']) {
             $container->services()
                 ->get('.joli_media.processor.gifsicle')
                 ->arg('$binary', $processorsConfig['gifsicle']['binary'])
@@ -925,7 +1001,7 @@ class JoliMediaBundle extends AbstractBundle
             $processorContainerService->call('add', ['gifsicle', service('.joli_media.processor.gifsicle')]);
         }
 
-        if (isset($processorsConfig['imagine']) && interface_exists(ImagineInterface::class)) {
+        if (isset($processorsConfig['imagine']) && $processorsConfig['imagine']['options']['enabled'] && interface_exists(ImagineInterface::class)) {
             $container->services()
                 ->set('.joli_media.imagine.metadata_reader', ExifMetadataReader::class)
             ;
@@ -1020,6 +1096,7 @@ class JoliMediaBundle extends AbstractBundle
 
     private function createTransformerService(ContainerConfigurator $container, string $libraryName, string $variationName, string $transformerName, array $transformerConfig): string
     {
+        $transformerType = $transformerConfig['type'] ?? $transformerName;
         $transformerServiceId = sprintf(
             '.joli_media.variation.%s.%s.transformer.%s',
             $libraryName,
@@ -1027,7 +1104,36 @@ class JoliMediaBundle extends AbstractBundle
             $transformerName
         );
 
-        if ('heighten' === $transformerName) {
+        if ('crop' === $transformerType) {
+            $container->services()
+                ->set($transformerServiceId)
+                ->parent('.joli_media.transformer.crop.abstract')
+                ->private()
+                ->args([
+                    '$startX' => $transformerConfig['start_x'] ?? null,
+                    '$startY' => $transformerConfig['start_y'] ?? null,
+                    '$height' => $transformerConfig['height'],
+                    '$width' => $transformerConfig['width'],
+                ]);
+        } elseif ('expand' === $transformerType) {
+            if (!interface_exists(ImagineInterface::class)) {
+                throw new \LogicException('The "Expand" transformer requires the Imagine library to be installed. Please install the "imagine/imagine" package.');
+            }
+
+            $container->services()
+                ->set($transformerServiceId)
+                ->parent('.joli_media.transformer.expand.abstract')
+                ->private()
+                ->args([
+                    '$imagineProcessor' => service('.joli_media.processor.imagine'),
+                    '$width' => $transformerConfig['width'],
+                    '$height' => $transformerConfig['height'],
+                    '$positionX' => $transformerConfig['position_x'] ?? null,
+                    '$positionY' => $transformerConfig['position_y'] ?? null,
+                    '$backgroundColor' => $transformerConfig['background_color'] ?? null,
+                    '$logger' => service('logger')->ignoreOnInvalid(),
+                ]);
+        } elseif ('heighten' === $transformerType) {
             $container->services()
                 ->set($transformerServiceId)
                 ->parent('.joli_media.transformer.heighten.abstract')
@@ -1036,7 +1142,9 @@ class JoliMediaBundle extends AbstractBundle
                     '$height' => $transformerConfig['height'],
                     '$allowDownscale' => $transformerConfig['allow_downscale']
                 ]);
-        } elseif ($transformerName === 'resize') {
+        } elseif ($transformerType === 'resize') {
+            $mode = $transformerConfig['mode'] ?? Mode::exact->value;
+
             $container->services()
                 ->set($transformerServiceId)
                 ->parent('.joli_media.transformer.resize.abstract')
@@ -1044,11 +1152,11 @@ class JoliMediaBundle extends AbstractBundle
                 ->args([
                     '$width' => $transformerConfig['width'],
                     '$height' => $transformerConfig['height'],
-                    '$mode' => Mode::from($transformerConfig['mode']),
+                    '$mode' => Mode::from($mode),
                     '$allowUpscale' => $transformerConfig['allow_upscale'],
                     '$allowDownscale' => $transformerConfig['allow_downscale'],
                 ]);
-        } elseif ('thumbnail' === $transformerName) {
+        } elseif ('thumbnail' === $transformerType) {
             $container->services()
                 ->set($transformerServiceId)
                 ->parent('.joli_media.transformer.thumbnail.abstract')
@@ -1057,8 +1165,9 @@ class JoliMediaBundle extends AbstractBundle
                     '$width' => $transformerConfig['width'],
                     '$height' => $transformerConfig['height'],
                     '$allowUpscale' => $transformerConfig['allow_upscale'],
+                    '$cropPosition' => $transformerConfig['crop_position'] ?? null,
                 ]);
-        } elseif ('widen' === $transformerName) {
+        } elseif ('widen' === $transformerType) {
             $container->services()
                 ->set($transformerServiceId)
                 ->parent('.joli_media.transformer.widen.abstract')
@@ -1070,7 +1179,7 @@ class JoliMediaBundle extends AbstractBundle
         } else {
             throw new \InvalidArgumentException(sprintf(
                 'The transformer "%s" does not exist (referenced in the variation "%s" of the library "%s").',
-                $transformerName,
+                $transformerType,
                 $variationName,
                 $libraryName,
             ));

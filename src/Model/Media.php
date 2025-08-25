@@ -43,6 +43,17 @@ class Media implements StorableInterface
         return $variation->getForMedia($this);
     }
 
+    public function delete(): void
+    {
+        if ($this->isStored()) {
+            $this->storage->delete($this->path);
+        }
+
+        $this->stored = false;
+        $this->binary = null;
+        $this->variations = [];
+    }
+
     public function getBinary(): Binary
     {
         if (!$this->binary instanceof Binary) {

@@ -84,6 +84,7 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
         $this->logger?->info('Processing image with Cwebp', [
             'original size' => filesize($temporaryFile),
             'command' => $process->getCommandLine(),
+            'transformation' => $transformation,
         ]);
 
         try {
@@ -111,6 +112,7 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
                     $this->logger?->info('Processing image with Cwebp', [
                         'original size' => filesize($temporaryFile),
                         'command' => $process->getCommandLine(),
+                        'transformation' => $transformation,
                     ]);
                     $process->mustRun();
                 }
@@ -203,6 +205,7 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
     private function parsePresets(array $options = []): array
     {
         $presets = array_merge(self::DEFAULT_OPTIONS, $this->options, $options);
+        unset($presets['enabled']);
         $parsedOptions = [];
 
         foreach ($presets as $name => $preset) {

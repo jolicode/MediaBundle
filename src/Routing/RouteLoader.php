@@ -22,16 +22,21 @@ readonly class RouteLoader implements RouteLoaderInterface
 
         foreach ($this->libraries->list() as $libraryName => $library) {
             $routeName = 'joli_media_original_' . $libraryName;
-            $routes->add($routeName, new Route(\sprintf(
-                '%s%s',
-                $library->getOriginalStorage()->getUrlPath(),
-                $library->getOriginalStorage()->getStrategy()->getRoutePattern(),
-            ), [
-                '_controller' => [MediaController::class, 'media'],
-                'library' => $libraryName,
-            ], [
-                'slug' => '.+',
-            ]));
+            $routes->add($routeName, new Route(
+                path: \sprintf(
+                    '%s%s',
+                    $library->getOriginalStorage()->getUrlPath(),
+                    $library->getOriginalStorage()->getStrategy()->getRoutePattern(),
+                ),
+                defaults: [
+                    '_controller' => [MediaController::class, 'media'],
+                    'library' => $libraryName,
+                ],
+                requirements: [
+                    'slug' => '.+',
+                ],
+                condition: "service('joli_media.route_checker').check(params)",
+            ));
 
             $defaults = [
                 '_controller' => [MediaController::class, 'variation'],
@@ -43,14 +48,19 @@ readonly class RouteLoader implements RouteLoaderInterface
             }
 
             $routeName = 'joli_media_cache_' . $libraryName;
-            $routes->add($routeName, new Route(\sprintf(
-                '%s%s',
-                $library->getCacheStorage()->getUrlPath(),
-                $library->getCacheStorage()->getStrategy()->getRoutePattern(true),
-            ), $defaults, [
-                'variation' => '[A-z0-9_-]+',
-                'slug' => '.+',
-            ]));
+            $routes->add($routeName, new Route(
+                path: \sprintf(
+                    '%s%s',
+                    $library->getCacheStorage()->getUrlPath(),
+                    $library->getCacheStorage()->getStrategy()->getRoutePattern(true),
+                ),
+                defaults: $defaults,
+                requirements: [
+                    'variation' => '[A-z0-9_-]+',
+                    'slug' => '.+',
+                ],
+                condition: "service('joli_media.route_checker').check(params)",
+            ));
         }
 
         return $routes;
