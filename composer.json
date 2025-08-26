@@ -69,6 +69,7 @@
         "psr-4": {
             "JoliCode\\MediaBundle\\Bridge\\EasyAdmin\\": "src/Bridge/EasyAdmin/src/",
             "JoliCode\\MediaBundle\\Bridge\\SonataAdmin\\": "src/Bridge/SonataAdmin/src/",
+            "JoliCode\\MediaBundle\\Bridge\\": "src/Bridge/src/",
             "JoliCode\\MediaBundle\\": "src/"
         }
     },
