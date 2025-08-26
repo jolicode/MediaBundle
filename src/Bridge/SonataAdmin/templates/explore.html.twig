@@ -34,7 +34,7 @@
 {% block choose_directory_button %}{% endblock %}
 
 {% block delete_directory_button %}
-    {% if current_key != '' %}
+    {% if current_key != '' and joli_media_admin_is_granted('DELETE_DIRECTORY', path: current_key) %}
         {{ form_start(delete_directory_form, { attr: { id: 'delete-directory-form', class: 'inline' } }) }}
             {{ form_widget(delete_directory_form) }}
         {{ form_end(delete_directory_form) }}
@@ -53,9 +53,9 @@
 {% endblock %}
 
 {% block rename_directory_button %}
-    {% if current_key != '' %}
+    {% if current_key != '' and joli_media_admin_is_granted('RENAME_DIRECTORY', path: current_key) %}
         <a
-            class="btn btn-default pr-0"
+            class="btn btn-default navbar-btn pr-0"
             data-component="folder-rename"
         >
             <i class="fas fa-edit"></i> {{ 'action.rename_directory'|trans }}
@@ -98,7 +98,7 @@
             <span class="label bg-purple">{{ media.fileType }}</span>
         </td>
         <td>
-            {{ media.fileSize|readable_filesize }}
+            {{ media.fileSize|joli_media_admin_readable_filesize }}
         </td>
         <td>
             {% set pixelDimensions = media.binary.pixelDimensions %}

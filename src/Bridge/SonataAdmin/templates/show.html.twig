@@ -10,31 +10,33 @@
 {% endblock %}
 
 {% block sonata_admin_content_actions_wrappers %}
-    <div class="navbar-collapse">
-        <div class="nav navbar-right">
-            <a
-                href="{{ path('joli_media_sonata_admin_choose_directory', { key: '' }) }}"
-                data-component="folder-choice"
-                data-folder="{{ media.folderPath }}"
-                data-current-key="{{ path(app.request.attributes.get('_route'), { key: media.path }) }}"
-                class="btn btn-default navbar-btn"
-            >
-                <span>
-                    <i class="fas fa-folder-open"></i> {{ 'action.move_file'|trans }}
-                </span>
-            </a>
-            <a
-                href="#"
-                data-component="media-rename"
-                data-current-key="{{ path(app.request.attributes.get('_route'), { key: media.path }) }}"
-                class="btn btn-default navbar-btn"
-            >
-                <span>
-                    <i class="fas fa-edit"></i> {{ 'action.rename_file'|trans }}
-                </span>
-            </a>
+    {% if joli_media_admin_is_granted('MOVE', path: media.path) %}
+        <div class="navbar-collapse">
+            <div class="nav navbar-right">
+                <a
+                    href="{{ path('joli_media_sonata_admin_choose_directory', { key: '' }) }}"
+                    data-component="folder-choice"
+                    data-folder="{{ media.folderPath }}"
+                    data-current-key="{{ path(app.request.attributes.get('_route'), { key: media.path }) }}"
+                    class="btn btn-default navbar-btn"
+                >
+                    <span>
+                        <i class="fas fa-folder-open"></i> {{ 'action.move_file'|trans }}
+                    </span>
+                </a>
+                <a
+                    href="#"
+                    data-component="media-rename"
+                    data-current-key="{{ path(app.request.attributes.get('_route'), { key: media.path }) }}"
+                    class="btn btn-default navbar-btn"
+                >
+                    <span>
+                        <i class="fas fa-edit"></i> {{ 'action.rename_file'|trans }}
+                    </span>
+                </a>
+            </div>
         </div>
-    </div>
+    {% endif %}
 {% endblock %}
 
 {% block sonata_page_content_nav %}
@@ -140,7 +142,7 @@
                                                         {% endif %}
                                                         <td>
                                                             {% if variation.isStored %}
-                                                                {{ variation.fileSize|readable_filesize }}</td>
+                                                                {{ variation.fileSize|joli_media_admin_readable_filesize }}</td>
                                                             {% else %}
                                                                 <span class="label label-warning bg-gray-active">N/A</span>
                                                             {% endif %}
@@ -166,7 +168,7 @@
                                                                 {{ 'action.copy'|trans }}
                                                             </a>
 
-                                                            {% if config.isVisible('show_variations_action_regenerate') %}
+                                                            {% if config.isVisible('show_variations_action_regenerate') and joli_media_admin_is_granted('REGENERATE_VARIATION', path: media.path, variation: variation.variation.name) %}
                                                                 <a href="{{ path('joli_media_sonata_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}" class="btn btn-sm btn-default clipboard-btn">
                                                                     <i class="fas fa-sync-alt" aria-hidden="true"></i>&nbsp;&nbsp;
                                                                     {{ 'action.regenerate'|trans }}
@@ -249,7 +251,7 @@
                         <tr class="sonata-ba-view-container">
                             <th>{{ 'media.size.label_long'|trans }}</th>
                             <td>
-                                {{ media.fileSize|readable_filesize }}
+                                {{ media.fileSize|joli_media_admin_readable_filesize }}
                             </td>
                         </tr>
                         {% if media.fileType == 'image' %}
@@ -271,10 +273,12 @@
         {% endblock %}
     </div>
 
-    <form method="post" action="{{ path('joli_media_sonata_admin_delete') }}">
-        {{ form_widget(delete_form.path) }}
-        <button type="submit" class="btn btn-danger" onclick="return confirm('{{ 'media.delete.confirm'|trans }}');">
-            <i class="fas fa-trash"></i> {{ 'action.delete_file'|trans }}
-        </button>
-    {{ form_end(delete_form) }}
+    {% if joli_media_admin_is_granted('DELETE', path: media.path) %}
+        <form method="post" action="{{ path('joli_media_sonata_admin_delete') }}">
+            {{ form_widget(delete_form.path) }}
+            <button type="submit" class="btn btn-danger" onclick="return confirm('{{ 'media.delete.confirm'|trans }}');">
+                <i class="fas fa-trash"></i> {{ 'action.delete_file'|trans }}
+            </button>
+        {{ form_end(delete_form) }}
+    {% endif %}
 {% endblock %}
