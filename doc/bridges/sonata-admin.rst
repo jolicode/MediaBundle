@@ -110,3 +110,50 @@ The ``MediaChoiceType`` can be nested into a ``CollectionType``, allowing you to
             ;
         }
     }
+
+
+Restricting access to the Media library controller
+--------------------------------------------------
+
+The Media library controller in the bundle uses Symfony's security voters to control access to its actions. By default, all users are allowed to perform all actions on the media library (provided they can access the admin interface, of course). However, you might want to restrict access to certain actions based on your application's requirements, the user identity or roles, etc. For this purpose, you can create your own security voter - just make sure to add the ``joli_media_admin.security.voter`` alias to your voter service so that it overrides the default voter provided by the bundle.
+
+You can implement your own Voter from scratch or extend the ``JoliCode\MediaBundle\Bridge\Security\Voter\MediaVoter`` class and override its methods to implement your custom access logic::
+
+    namespace App\Security\Voter;
+
+    use JoliCode\MediaBundle\Bridge\Security\Voter\MediaVoter as BaseMediaVoter;
+    use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+    use Symfony\Component\Security\Core\User\UserInterface;
+
+    #[AsAlias(id: 'joli_media_admin.security.voter')]
+    class MediaVoter extends BaseMediaVoter
+    {
+        protected function canDelete(?UserInterface $user, string $libraryName, string $path): bool
+        {
+            if ('john.doe@example.com' === $user?->getUserIdentifier()) {
+                // John Doe can delete any media
+                return true;
+            }
+
+            if ('public-storage' === $libraryName) {
+                // only users with the ROLE_ADMIN role can delete media in the public-storage library
+                return \in_array('ROLE_ADMIN', $user?->getRoles() ?? [], true);
+            }
+
+            // other users cannot delete media in the private folder
+            return !str_starts_with($path, 'private/');
+        }
+    }
+
+
+The ``JoliCode\MediaBundle\Bridge\Security\Voter\MediaVoter`` class provides several methods that you can override to customize access control for different actions, such as ``canList``, ``canUpload``, ``canDelete``, etc. You can implement your own logic based on the user, library name, path, or any other criteria relevant to your application:
+
+- ``canList``: Determine if the user can list media in a specific library and path
+- ``canShow``: Determine if the user can view a specific media item
+- ``canCreateDirectory``: Determine if the user can create a directory in a specific parent folder
+- ``canUpload``: Determine if the user can upload media to a specific path
+- ``canDelete``: Determine if the user can delete a specific media item
+- ``canDeleteDirectory``: Determine if the user can delete a specific directory
+- ``canMove``: Determine if the user can move a media item from one path to another
+- ``canRenameDirectory``: Determine if the user can rename a specific directory
+- ``canRegenerateVariation``: Determine if the user can regenerate a specific variation of a media item
