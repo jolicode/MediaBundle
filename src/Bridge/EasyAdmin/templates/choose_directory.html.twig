@@ -12,17 +12,19 @@
 
 {% block page_content %}
     {% block choose_directory_button %}
-        <a
-            href="{{ ea_url().setRoute('joli_media_easy_admin_move') }}"
-            class="action-move btn btn-primary"
-            data-folder-path="{{ current_key }}"
-            data-bs-toggle="modal"
-            data-bs-target="#modal-move"
-            data-confirmation="{{ 'media.move_modal.content'|trans({ '%directory%': current_key }) }}"
-            formaction="{{ ea_url().setRoute('joli_media_easy_admin_move') }}"
-        >
-            <i class="action-icon fa fa-crosshairs"></i> <span class="action-label">{{ 'action.move_to_this_directory'|trans }}</span>
-        </a>
+        {% if joli_media_admin_is_granted('MOVE', path: current_key) %}
+            <a
+                href="{{ ea_url().setRoute('joli_media_easy_admin_move') }}"
+                class="action-move btn btn-primary"
+                data-folder-path="{{ current_key }}"
+                data-bs-toggle="modal"
+                data-bs-target="#modal-move"
+                data-confirmation="{{ 'media.move_modal.content'|trans({ '%directory%': current_key }) }}"
+                formaction="{{ ea_url().setRoute('joli_media_easy_admin_move') }}"
+            >
+                <i class="action-icon fa fa-crosshairs"></i> <span class="action-label">{{ 'action.move_to_this_directory'|trans }}</span>
+            </a>
+        {% endif %}
     {% endblock %}
 
     {% block body_breadcrumb %}
@@ -77,7 +79,7 @@
                 <span class="badge badge-secondary">{{ 'media.type.%s'|format(media.fileType)|trans(domain: 'JoliMediaEasyAdminBundle') }}</span>
             </td>
             <td data-column="file-size" data-label="name" class="text-left" dir="ltr">
-                {{ media.fileSize|readable_filesize }}
+                {{ media.fileSize|joli_media_admin_readable_filesize }}
             </td>
             <td data-column="dimensions" data-label="name" class="text-left" dir="ltr">
                 {% set pixelDimensions = media.pixelDimensions %}

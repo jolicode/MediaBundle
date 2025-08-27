@@ -4,7 +4,7 @@
 {% block body_class 'ea-detail' %}
 
 {% block content_title %}
-    {{ file|basename }}
+    {{ file|joli_media_admin_basename }}
 {% endblock %}
 
 {% block content_footer_wrapper '' %}
@@ -31,32 +31,36 @@
 {% endblock %}
 
 {% block page_actions %}
-    <a
-        href="{{ ea_url().setRoute('joli_media_easy_admin_choose_directory') }}&routeParams%5Bkey%5D="
-        data-folder="{{ media.folderPath }}"
-        data-bs-toggle="modal"
-        data-bs-target="#modal-folder-choice"
-        class="btn btn-secondary pr-0"
-        data-component="media-move"
-    >
-        <i class="fa fa-folder-tree"></i> {{ 'action.move_file'|trans }}
-    </a>
-    <a
-        class="btn btn-secondary pr-0"
-        data-component="media-rename"
-    >
-        <i class="fa fa-pen-to-square"></i> {{ 'action.rename_file'|trans }}
-    </a>
+    {% if joli_media_admin_is_granted('MOVE', path: media.path) %}
+        <a
+            href="{{ ea_url().setRoute('joli_media_easy_admin_choose_directory') }}&routeParams%5Bkey%5D="
+            data-folder="{{ media.folderPath }}"
+            data-bs-toggle="modal"
+            data-bs-target="#modal-folder-choice"
+            class="btn btn-secondary pr-0"
+            data-component="media-move"
+        >
+            <i class="fa fa-folder-tree"></i> {{ 'action.move_file'|trans }}
+        </a>
+        <a
+            class="btn btn-secondary pr-0"
+            data-component="media-rename"
+        >
+            <i class="fa fa-pen-to-square"></i> {{ 'action.rename_file'|trans }}
+        </a>
+    {% endif %}
 
-    <a
-        href="{{ ea_url().setRoute('joli_media_easy_admin_delete') }}"
-        class="action-delete btn btn-secondary pr-0 text-danger"
-        data-bs-toggle="modal"
-        data-bs-target="#modal-delete"
-        formaction="{{ ea_url().setRoute('joli_media_easy_admin_delete') }}"
-    >
-        <i class="action-icon fa fa-fw fa-trash-o"></i> <span class="action-label">{{ 'action.delete_file'|trans }}</span>
-    </a>
+    {% if joli_media_admin_is_granted('DELETE', path: media.path) %}
+        <a
+            href="{{ ea_url().setRoute('joli_media_easy_admin_delete') }}"
+            class="action-delete btn btn-secondary pr-0 text-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#modal-delete"
+            formaction="{{ ea_url().setRoute('joli_media_easy_admin_delete') }}"
+        >
+            <i class="action-icon fa fa-fw fa-trash-o"></i> <span class="action-label">{{ 'action.delete_file'|trans }}</span>
+        </a>
+    {% endif %}
 
     {{ form_start(move_form, { attr: { id: 'move-form' } }) }}
         {{ form_widget(move_form) }}
@@ -195,7 +199,7 @@
                                             {% endif %}
                                             <td data-column="file-size" data-label="file-size" class="text-left" dir="ltr">
                                                 {% if variation.isStored %}
-                                                    {{ variation.fileSize|readable_filesize }}</td>
+                                                    {{ variation.fileSize|joli_media_admin_readable_filesize }}</td>
                                                 {% else %}
                                                     <span class="badge badge-secondary">N/A</span>
                                                 {% endif %}
@@ -221,7 +225,7 @@
                                                     {{ 'action.copy'|trans }}
                                                 </a>
 
-                                                {% if config.isVisible('show_variations_action_regenerate') %}
+                                                {% if config.isVisible('show_variations_action_regenerate') and joli_media_admin_is_granted('REGENERATE_VARIATION', path: media.path, variation: variation.variation.name) %}
                                                     <a href="{{ ea_url().setRoute('joli_media_easy_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}" class="btn btn-sm btn-default clipboard-btn">
                                                         <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>&nbsp;&nbsp;
                                                         {{ 'action.regenerate'|trans }}
@@ -298,7 +302,7 @@
                 <div class="data-row">
                     <dt class="mb-1">{{ 'media.size.label_long'|trans }}</dt>
                     <dd class="d-flex align-items-start">
-                        {{ media.fileSize|readable_filesize }}
+                        {{ media.fileSize|joli_media_admin_readable_filesize }}
                     </dd>
                 </div>
                 {% if media.fileType == 'image' %}

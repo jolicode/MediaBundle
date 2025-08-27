@@ -88,7 +88,7 @@
                 <span class="badge badge-secondary">{{ 'media.type.%s'|format(media.fileType)|trans }}</span>
             </td>
             <td data-column="file-size" data-label="name" class="text-left" dir="ltr">
-                {{ media.fileSize|readable_filesize }}
+                {{ media.fileSize|joli_media_admin_readable_filesize }}
             </td>
             <td data-column="dimensions" data-label="name" class="text-left" dir="ltr">
                 {% set pixelDimensions = media.pixelDimensions %}

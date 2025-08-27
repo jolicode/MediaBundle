@@ -2,6 +2,7 @@
 
 namespace JoliCode\MediaBundle\Bridge\SonataAdmin\Controller;
 
+use JoliCode\MediaBundle\Bridge\Security\Voter\AdminAction;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Config\Config;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\CreateDirectoryType;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\DeleteDirectoryType;
@@ -31,6 +32,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
@@ -48,12 +50,17 @@ class MediaAdminController extends AbstractController
         private readonly FormFactoryInterface $formFactory,
         private readonly string $sonataAdminLayoutTemplate,
         private readonly string $sonataAdminAjaxTemplate,
+        private readonly ?AuthorizationCheckerInterface $authorizationChecker = null,
     ) {
     }
 
     #[Route(path: '/create-directory', name: 'create_directory', methods: [Request::METHOD_POST])]
     public function createDirectory(Request $request): RedirectResponse
     {
+        $this->denyAccessUnlessGranted(AdminAction::CREATE_DIRECTORY, new AdminAction(
+            libraryName: $this->getLibrary()->getName(),
+        ));
+
         $directory = null;
         $form = $this->createCreateDirectoryForm(null);
         $form->handleRequest($request);
@@ -65,6 +72,12 @@ class MediaAdminController extends AbstractController
         if ($form->isValid()) {
             $parentDirectory = $form->get('parentDirectory')->getData();
             $directory = $form->get('directory')->getData();
+
+            $this->denyAccessUnlessGranted(AdminAction::CREATE_DIRECTORY, new AdminAction(
+                libraryName: $this->getLibrary()->getName(),
+                path: $parentDirectory,
+                to: $directory,
+            ));
 
             if ('' !== $parentDirectory) {
                 $directory = \sprintf('%s/%s', $parentDirectory, $directory);
@@ -125,6 +138,11 @@ class MediaAdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $key = $form->get('path')->getData();
 
+            $this->denyAccessUnlessGranted(AdminAction::DELETE, new AdminAction(
+                libraryName: $this->getLibrary()->getName(),
+                path: Resolver::normalizePath($key),
+            ));
+
             // Remove the media and the cache files
             try {
                 $this->getOriginalStorage()->delete($key);
@@ -172,6 +190,11 @@ class MediaAdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $key = $form->get('path')->getData();
 
+            $this->denyAccessUnlessGranted(AdminAction::DELETE_DIRECTORY, new AdminAction(
+                libraryName: $this->getLibrary()->getName(),
+                path: Resolver::normalizePath($key),
+            ));
+
             try {
                 $this->getOriginalStorage()->deleteDirectory($key);
             } catch (MediaInUseException $e) {
@@ -216,6 +239,10 @@ class MediaAdminController extends AbstractController
         }
 
         $currentKey = Resolver::normalizePath($key);
+        $this->denyAccessUnlessGranted(AdminAction::LIST, new AdminAction(
+            libraryName: $this->getLibrary()->getName(),
+            path: $currentKey,
+        ));
 
         try {
             $trashPath = $this->getOriginalStorage()->getTrashPath();
@@ -275,6 +302,12 @@ class MediaAdminController extends AbstractController
         $from = Resolver::normalizePath($form->get('from')->getData());
         $to = Resolver::normalizePath($form->get('to')->getData() ?? '');
 
+        $this->denyAccessUnlessGranted(AdminAction::MOVE, new AdminAction(
+            libraryName: $this->getLibrary()->getName(),
+            path: $from,
+            to: $to,
+        ));
+
         if ($form->isValid()) {
             try {
                 $target = \sprintf('%s/%s', $to, basename($from));
@@ -313,6 +346,12 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/regenerate/{variation}/{key}', name: 'regenerate_variation', requirements: ['key' => '.+'])]
     public function regenerateVariation(string $key, string $variation): RedirectResponse
     {
+        $this->denyAccessUnlessGranted(AdminAction::REGENERATE_VARIATION, new AdminAction(
+            libraryName: $this->getLibrary()->getName(),
+            path: Resolver::normalizePath($key),
+            variation: $variation,
+        ));
+
         $media = $this->resolver->resolveMedia($key);
         $variation = $this->getLibrary()->getVariation($variation);
         $mediaVariation = $variation->getForMedia($media);
@@ -345,6 +384,12 @@ class MediaAdminController extends AbstractController
 
         $from = Resolver::normalizePath((string) $form->get('from')->getData());
         $to = Resolver::normalizePath($form->get('to')->getData());
+
+        $this->denyAccessUnlessGranted(AdminAction::RENAME_DIRECTORY, new AdminAction(
+            libraryName: $this->getLibrary()->getName(),
+            path: $from,
+            to: $to,
+        ));
 
         if ($form->isValid()) {
             try {
@@ -394,6 +439,11 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/show/{key}', name: 'show', requirements: ['key' => '.+'])]
     public function show(Request $request, string $key): Response
     {
+        $this->denyAccessUnlessGranted(AdminAction::SHOW, new AdminAction(
+            libraryName: $this->getLibrary()->getName(),
+            path: Resolver::normalizePath($key),
+        ));
+
         $media = $this->resolver->resolveMedia($key);
         $key = $media->getPath();
         $renameFileForm = $this->createRenameFileForm($key);
@@ -406,6 +456,11 @@ class MediaAdminController extends AbstractController
             if ($renameFileForm->isValid()) {
                 try {
                     $target = \sprintf('%s/%s', $media->getFolderPath(), $to);
+                    $this->denyAccessUnlessGranted(AdminAction::MOVE, new AdminAction(
+                        libraryName: $this->getLibrary()->getName(),
+                        path: Resolver::normalizePath($key),
+                        to: $target,
+                    ));
                     $this->getOriginalStorage()->move($key, $target);
                     $this->addFlash(
                         'sonata_flash_success',
@@ -468,6 +523,10 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/upload', name: 'upload', methods: ['POST'])]
     public function upload(Request $request): JsonResponse
     {
+        $this->denyAccessUnlessGranted(AdminAction::UPLOAD, new AdminAction(
+            libraryName: $this->getLibrary()->getName(),
+        ));
+
         $form = $this->createUploadForm();
         $form->handleRequest($request);
 
@@ -481,6 +540,11 @@ class MediaAdminController extends AbstractController
             $filename = $uploadedFile->getClientOriginalName();
             $key = \sprintf('%s/%s', $form->get('path')->getData(), $filename);
             $storage = $this->getOriginalStorage();
+
+            $this->denyAccessUnlessGranted(AdminAction::UPLOAD, new AdminAction(
+                libraryName: $this->getLibrary()->getName(),
+                path: Resolver::normalizePath($key),
+            ));
 
             if ($storage->has($key)) {
                 throw new UploadException('This file already exist, please change the name');
@@ -533,6 +597,21 @@ class MediaAdminController extends AbstractController
         return new JsonResponse([
             'error' => $message,
         ], Response::HTTP_BAD_REQUEST);
+    }
+
+    protected function denyAccessUnlessGranted(mixed $attribute, mixed $subject = null, string $message = 'Access Denied.'): void
+    {
+        if (!$this->authorizationChecker instanceof AuthorizationCheckerInterface) {
+            return;
+        }
+
+        if (!$this->authorizationChecker->isGranted($attribute, $subject)) {
+            $e = $this->createAccessDeniedException($message);
+            $e->setAttributes([$attribute]);
+            $e->setSubject($subject);
+
+            throw $e;
+        }
     }
 
     private function getBaseTemplate(): string

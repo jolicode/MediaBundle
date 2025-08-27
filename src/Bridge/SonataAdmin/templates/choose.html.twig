@@ -26,7 +26,7 @@
 {% block add_media_button %}
     <a href="#" data-component="media-add" class="btn btn-primary navbar-btn">
         <span>
-            <i class="fas fa-plus-circle"></i> {{ 'media.add'|trans }}
+            <i class="fas fa-plus-circle"></i> {{ 'media.add'|trans(domain: 'JoliMediaSonataAdminBundle') }}
         </span>
     </a>
 {% endblock %}
@@ -76,7 +76,7 @@
             <span class="label bg-purple">{{ media.fileType }}</span>
         </td>
         <td>
-            {{ media.fileSize|readable_filesize }}
+            {{ media.fileSize|joli_media_admin_readable_filesize }}
         </td>
         <td>
             {% set pixelDimensions = media.pixelDimensions %}

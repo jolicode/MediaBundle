@@ -47,13 +47,17 @@
                     <div class="nav navbar-right">
                         {{ block('delete_directory_button') }}
                         {{ block('rename_directory_button') }}
-                        <a href="#" data-component="folder-create" data-current-key="{{ path(app.request.attributes.get('_route'), { key: current_key }) }}" class="btn btn-default navbar-btn">
-                            <span>
-                                <i class="fas fa-folder-plus"></i> {{ 'directory.create'|trans }}
-                            </span>
-                        </a>
+                        {% if joli_media_admin_is_granted('CREATE_DIRECTORY', path: current_key) %}
+                            <a href="#" data-component="folder-create" data-current-key="{{ path(app.request.attributes.get('_route'), { key: current_key }) }}" class="btn btn-default navbar-btn">
+                                <span>
+                                    <i class="fas fa-folder-plus"></i> {{ 'directory.create'|trans }}
+                                </span>
+                            </a>
+                        {% endif %}
                         {{ block('choose_directory_button') }}
-                        {{ block('add_media_button') }}
+                        {% if joli_media_admin_is_granted('UPLOAD', path: current_key) %}
+                            {{ block('add_media_button') }}
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -126,26 +130,30 @@
                                 </tr>
                             {% endif %}
                             {%- for directory in directories -%}
-                                <tr>
-                                    <td class="sonata-ba-list-field sonata-ba-list-field-string">
-                                        <a class="sonata-link-identifier gallery-list-item" href="{{ path(app.request.attributes.get('_route'), { key: directory }) }}">
-                                            <span class="gallery-list-item__icon"><i class="fas fa-folder"></i></span>
-                                            <span class="gallery-list-item__name">{{ directory|basename }}</span>
-                                        </a>
-                                    </td>
-                                    <td class="sonata-ba-list-field sonata-ba-list-field-string">
-                                        <span class="label label-primary">{{ 'directory.label'|trans }}</span>
-                                    </td>
-                                    <td class="sonata-ba-list-field sonata-ba-list-field-string">
-                                        &nbsp;
-                                    </td>
-                                    <td class="sonata-ba-list-field sonata-ba-list-field-string">
-                                        &nbsp;
-                                    </td>
-                                </tr>
+                                {% if joli_media_admin_is_granted('LIST', path: directory) %}
+                                    <tr>
+                                        <td class="sonata-ba-list-field sonata-ba-list-field-string">
+                                            <a class="sonata-link-identifier gallery-list-item" href="{{ path(app.request.attributes.get('_route'), { key: directory }) }}">
+                                                <span class="gallery-list-item__icon"><i class="fas fa-folder"></i></span>
+                                                <span class="gallery-list-item__name">{{ directory|joli_media_admin_basename }}</span>
+                                            </a>
+                                        </td>
+                                        <td class="sonata-ba-list-field sonata-ba-list-field-string">
+                                            <span class="label label-primary">{{ 'directory.label'|trans }}</span>
+                                        </td>
+                                        <td class="sonata-ba-list-field sonata-ba-list-field-string">
+                                            &nbsp;
+                                        </td>
+                                        <td class="sonata-ba-list-field sonata-ba-list-field-string">
+                                            &nbsp;
+                                        </td>
+                                    </tr>
+                                {% endif %}
                             {%- endfor -%}
                             {% for media in medias -%}
-                                {{ block('media_list_view') }}
+                                {% if joli_media_admin_is_granted('SHOW', path: media.path) %}
+                                    {{ block('media_list_view') }}
+                                {% endif %}
                             {%- endfor %}
                         </tbody>
                     </table>
@@ -163,18 +171,22 @@
                 {%- endif -%}
 
                 {%- for directory in directories -%}
-                    <li class="gallery-grid-item">
-                        <a href="{{ path(app.request.attributes.get('_route'), { key: directory }) }}" class="gallery-grid-item__link">
-                            <span class="gallery-grid-item__icon"><i class="fas fa-folder"></i></span>
-                            <span class="gallery-grid-item__name">{{ directory|basename }}</span>
-                        </a>
-                    </li>
+                    {% if joli_media_admin_is_granted('LIST', path: directory) %}
+                        <li class="gallery-grid-item">
+                            <a href="{{ path(app.request.attributes.get('_route'), { key: directory }) }}" class="gallery-grid-item__link">
+                                <span class="gallery-grid-item__icon"><i class="fas fa-folder"></i></span>
+                                <span class="gallery-grid-item__name">{{ directory|joli_media_admin_basename }}</span>
+                            </a>
+                        </li>
+                    {% endif %}
                 {%- endfor -%}
             </ul>
 
             <ul class="gallery-grid gallery-grid--files">
                 {% for media in medias -%}
-                    {{ block('media_grid_view') }}
+                    {% if joli_media_admin_is_granted('SHOW', path: media.path) %}
+                        {{ block('media_grid_view') }}
+                    {% endif %}
                 {%- endfor %}
             </ul>
         {% endif %}

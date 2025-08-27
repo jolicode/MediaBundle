@@ -13,6 +13,7 @@ final class TypeGuesser implements TypeGuesserInterface
     {
         return match ($fieldDescription->getMappingType()) {
             'media' => new TypeGuess('media', [], Guess::HIGH_CONFIDENCE),
+            'media_long' => new TypeGuess('media', [], Guess::HIGH_CONFIDENCE),
             default => new TypeGuess(FieldDescriptionInterface::TYPE_STRING, [], Guess::LOW_CONFIDENCE),
         };
     }

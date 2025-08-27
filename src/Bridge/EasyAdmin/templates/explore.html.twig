@@ -43,7 +43,7 @@
 {% block choose_directory_button %}{% endblock %}
 
 {% block delete_directory_button %}
-    {% if breadcrumb|length > 1 %}
+    {% if breadcrumb|length > 1 and joli_media_admin_is_granted('DELETE_DIRECTORY', path: current_key) %}
         <a
             href="{{ ea_url().setRoute('joli_media_easy_admin_delete_directory') }}"
             class="action-delete-directory btn btn-secondary text-danger me-sm-3"
@@ -81,7 +81,7 @@
 {% endblock %}
 
 {% block rename_directory_button %}
-    {% if breadcrumb|length > 1 %}
+    {% if breadcrumb|length > 1 and joli_media_admin_is_granted('RENAME_DIRECTORY', path: current_key) %}
         <a
             class="btn btn-secondary pr-0"
             data-component="folder-rename"
@@ -126,7 +126,7 @@
             <span class="badge badge-secondary">{{ 'media.type.%s'|format(media.fileType)|trans }}</span>
         </td>
         <td data-column="file-size" data-label="name" class="text-left" dir="ltr">
-            {{ media.fileSize|readable_filesize }}
+            {{ media.fileSize|joli_media_admin_readable_filesize }}
         </td>
         <td data-column="dimensions" data-label="name" class="text-left" dir="ltr">
             {% set pixelDimensions = media.pixelDimensions %}

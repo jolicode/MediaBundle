@@ -27,14 +27,16 @@
 {% block add_media_button %}{% endblock %}
 
 {% block choose_directory_button %}
-    <a
-        href="{{ path('joli_media_sonata_admin_move') }}"
-        class="btn btn-primary navbar-btn"
-        data-folder-path="{{ current_key }}"
-        data-confirmation="{{ 'media.move_modal.content'|trans({ '%directory%': current_key }) }}"
-    >
-        <i class="action-icon fa fa-crosshairs"></i> <span class="action-label">{{ 'action.move_to_this_directory'|trans }}</span>
-    </a>
+    {% if joli_media_admin_is_granted('MOVE', path: current_key) %}
+        <a
+            href="{{ path('joli_media_sonata_admin_move') }}"
+            class="btn btn-primary navbar-btn"
+            data-folder-path="{{ current_key }}"
+            data-confirmation="{{ 'media.move_modal.content'|trans({ '%directory%': current_key }) }}"
+        >
+            <i class="action-icon fa fa-crosshairs"></i> <span class="action-label">{{ 'action.move_to_this_directory'|trans }}</span>
+        </a>
+    {% endif %}
 {% endblock %}
 
 {% block delete_directory_button %}{% endblock %}
@@ -68,7 +70,7 @@
             <span class="label bg-purple">{{ media.fileType }}</span>
         </td>
         <td>
-            {{ media.fileSize|readable_filesize }}
+            {{ media.fileSize|joli_media_admin_readable_filesize }}
         </td>
         <td>
             {% set pixelDimensions = media.pixelDimensions %}
