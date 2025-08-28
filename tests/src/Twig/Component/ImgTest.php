@@ -309,6 +309,24 @@ class ImgTest extends WebTestCase
             ],
             '<picture class="picture-class"><source srcset="/media-auto-generate/cache/variation-standard/partially-stored-media.jpg" type="image/jpeg" width="145" height="109"><source srcset="/media-auto-generate/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp" type="image/webp" width="145" height="109"><img src="/media-auto-generate/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
+        yield 'picture-with-media-and-string-srcset' => [
+            Picture::class,
+            [
+                'path' => self::COMPLETELY_STORED_MEDIA,
+                'variation' => 'variation-standard',
+                'alt' => 'Alternative text',
+                'picture:class' => 'picture-class',
+                'img:class' => 'img-class',
+                'sources' => [[
+                    'media' => '(min-width: 1024px)',
+                    'srcset' => 'variation-extra-large',
+                ], [
+                    'media' => '(max-width: 1023px)',
+                    'srcset' => 'variation-large',
+                ]],
+            ],
+            '<picture class="picture-class"><source media="(min-width: 1024px)" srcset="/media/cache/variation-extra-large-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="1800" height="1200"><source media="(min-width: 1024px)" srcset="/media/cache/variation-extra-large/circle-pattern.jpg" type="image/jpeg" width="1800" height="1200"><source media="(max-width: 1023px)" srcset="/media/cache/variation-large-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="800" height="600"><source media="(max-width: 1023px)" srcset="/media/cache/variation-large/circle-pattern.jpg" type="image/jpeg" width="800" height="600"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+        ];
         yield 'picture-with-sources-and-media' => [
             Picture::class,
             [
@@ -333,7 +351,7 @@ class ImgTest extends WebTestCase
                     ],
                 ]],
             ],
-            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/circle-pattern.jpg 2560w, /media/cache/variation-large/circle-pattern.jpg 1920w" type="image/jpeg" width="1800" height="1200"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/circle-pattern.d601f6f2.webp 2560w, /media/cache/variation-large-webp/circle-pattern.d601f6f2.webp 1920w" type="image/webp" width="1800" height="1200"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large/circle-pattern.jpg 1600w, /media/cache/variation-standard/circle-pattern.jpg 1024w" type="image/jpeg" width="800" height="600"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/circle-pattern.d601f6f2.webp 1600w, /media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp 1024w" type="image/webp" width="800" height="600"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/circle-pattern.d601f6f2.webp 2560w, /media/cache/variation-large-webp/circle-pattern.d601f6f2.webp 1920w" type="image/webp" width="1800" height="1200"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/circle-pattern.jpg 2560w, /media/cache/variation-large/circle-pattern.jpg 1920w" type="image/jpeg" width="1800" height="1200"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/circle-pattern.d601f6f2.webp 1600w, /media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp 1024w" type="image/webp" width="800" height="600"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large/circle-pattern.jpg 1600w, /media/cache/variation-standard/circle-pattern.jpg 1024w" type="image/jpeg" width="800" height="600"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'partial-picture-with-sources-and-media' => [
             Picture::class,
@@ -359,7 +377,7 @@ class ImgTest extends WebTestCase
                     ],
                 ]],
             ],
-            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/partially-stored-media.jpg 2560w, /media/cache/variation-large/partially-stored-media.jpg 1920w"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/partially-stored-media.b16d66f4.webp 2560w, /media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1920w" type="image/webp"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large/partially-stored-media.jpg 1600w, /media/cache/variation-standard/partially-stored-media.jpg 1024w"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1600w, /media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp 1024w" type="image/webp"><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/partially-stored-media.b16d66f4.webp 2560w, /media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1920w" type="image/webp"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/partially-stored-media.jpg 2560w, /media/cache/variation-large/partially-stored-media.jpg 1920w"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1600w, /media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp 1024w" type="image/webp"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large/partially-stored-media.jpg 1600w, /media/cache/variation-standard/partially-stored-media.jpg 1024w"><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
         ];
     }
 

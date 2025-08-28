@@ -40,12 +40,12 @@ class Source
     }
 
     /**
-     * @param array<string, string>|null $srcset
+     * @param array<string, string>|string|null $srcset
      */
     public function mount(
         Media $media,
         ?string $variation = null,
-        ?array $srcset = null,
+        array|string|null $srcset = null,
         bool $skipAutoDimensions = false,
     ): void {
         $this->media = $media;
@@ -88,6 +88,10 @@ class Source
             throw new \InvalidArgumentException('You must provide either a srcset or a name');
         }
 
+        if (\is_string($srcset)) {
+            $srcset = ['' => $srcset];
+        }
+
         $candidates = [];
         $types = [];
         $webpAlternativeSrcset = [];
@@ -111,7 +115,7 @@ class Source
 
             try {
                 $this->converter->convertIfMustStoreWhenGeneratingUrl($mediaVariation);
-                $candidates[] = \sprintf('%s %s', $mediaVariation->getUrl(), $descriptor);
+                $candidates[] = trim(\sprintf('%s %s', $mediaVariation->getUrl(), $descriptor));
             } catch (\RuntimeException $e) {
                 $this->logger?->warning('Could not generate the variation file', [
                     'exception' => $e,
