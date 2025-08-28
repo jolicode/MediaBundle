@@ -173,6 +173,77 @@ generates the exact same HTML as the previous example, but with two additionnal 
         >
     </picture>
 
+Going a step further, tje ``sources`` attribute can be expressed as a combination of ``media`` and ``srcset`` options. This allows to define responsive images that adapt to different screen sizes and resolutions. See the following example:
+
+.. code-block:: html+twig
+
+    <twig:joli:Picture
+        path="example-image.png"
+        variation="variation_name"
+        alt="Alternative text"
+        picture:class="picture-class"
+        img:class="image-class"
+        sources="{{ [
+            {
+                media: '(min-width: 1024px)',
+                srcset: 'variation-extra-large',
+            }, {
+                media: '(max-width: 1023px)',
+                srcset: 'variation-large',
+            }
+        ] }}"
+    />
+
+The above code generates the following HTML:
+
+.. code-block:: html
+
+    <picture class="picture-class">
+        <source
+            media="(min-width: 1024px)"
+            srcset="/path/to/cache/variation-extra-large-webp/example-image.d601f6f2.webp"
+            type="image/webp"
+            width="2560"
+            height="2560"
+        >
+        <source
+            media="(min-width: 1024px)"
+            srcset="/path/to/cache/variation-extra-large/example-image.png"
+            type="image/png"
+            width="2560"
+            height="2560"
+        >
+        <source
+            media="(max-width: 1023px)"
+            srcset="/path/to/cache/variation-large-webp/example-image.d601f6f2.webp"
+            type="image/webp"
+            width="1920"
+            height="1920"
+        >
+        <source
+            media="(max-width: 1023px)"
+            srcset="/path/to/cache/variation-large/example-image.png"
+            type="image/png"
+            width="1920"
+            height="1920"
+        >
+        <source
+            srcset="/path/to/cache/variation-name-webp/example-image.d601f6f2.webp"
+            type="image/webp"
+            width="200"
+            height="200"
+        >
+        <img
+            src="/path/to/cache/variation-name/example-image.png"
+            class="image-class"
+            alt="Alternative text"
+            width="200"
+            height="200"
+            loading="lazy
+            decoding="async"
+        >
+    </picture>
+
 The HTML ``<img>`` and ``picture`` tags expose a lot of options to customize the output: ``srcset``, ``sizes``, ``type``, ``media``, ``class``, ``style``, etc. The ``joli:Picture`` twig component offers ways to customize all these options to match your requirements. See the example below:
 
 .. code-block:: html+twig
@@ -212,17 +283,6 @@ This will generate the following HTML:
             media="(width > 1024px)"
             sizes="1920px"
             srcset="
-                /media/cache/variation-large/example-image.png 1920w,
-                /media/cache/variation-extra-large/example-image.png 2560w
-            "
-            type="image/png"
-            width="1920"
-            height="1280"
-        >
-        <source
-            media="(width > 1024px)"
-            sizes="1920px"
-            srcset="
                 /media/cache/variation-large-webp/example-image.b79a8399.webp 1920w,
                 /media/cache/variation-extra-large-webp/example-image.b79a8399.webp 2560w
             "
@@ -231,15 +291,15 @@ This will generate the following HTML:
             height="1280"
         >
         <source
-            media="(width > 768px)"
-            sizes="1024px"
+            media="(width > 1024px)"
+            sizes="1920px"
             srcset="
-                /media/cache/variation-small/example-image.png 1024w,
-                /media/cache/variation-large/example-image.png 1600w
+                /media/cache/variation-large/example-image.png 1920w,
+                /media/cache/variation-extra-large/example-image.png 2560w
             "
             type="image/png"
-            width="1024"
-            height="683"
+            width="1920"
+            height="1280"
         >
         <source
             media="(width > 768px)"
@@ -249,6 +309,17 @@ This will generate the following HTML:
                 /media/cache/variation-large-webp/example-image.b79a8399.webp 1600w
             "
             type="image/webp"
+            width="1024"
+            height="683"
+        >
+        <source
+            media="(width > 768px)"
+            sizes="1024px"
+            srcset="
+                /media/cache/variation-small/example-image.png 1024w,
+                /media/cache/variation-large/example-image.png 1600w
+            "
+            type="image/png"
             width="1024"
             height="683"
         >
