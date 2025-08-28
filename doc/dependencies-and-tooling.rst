@@ -31,10 +31,10 @@ Some tools are not available in the default repositories, so you will need to in
 .. code-block:: bash
 
     cd /tmp \
-        && wget -O libwebp-1.5.0-linux-x86-64.tar.gz https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.5.0-linux-x86-64.tar.gz \
-        && tar xzvf libwebp-1.5.0-linux-x86-64.tar.gz \
-        && cp libwebp-1.5.0-linux-x86-64/bin/cwebp /usr/local/bin/cwebp \
-        && cp libwebp-1.5.0-linux-x86-64/bin/gif2webp /usr/local/bin/gif2webp
+        && wget -O libwebp-1.6.0-linux-x86-64.tar.gz https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.6.0-linux-x86-64.tar.gz \
+        && tar xzvf libwebp-1.6.0-linux-x86-64.tar.gz \
+        && cp libwebp-1.6.0-linux-x86-64/bin/cwebp /usr/local/bin/cwebp \
+        && cp libwebp-1.6.0-linux-x86-64/bin/gif2webp /usr/local/bin/gif2webp
 
     cd /tmp \
         && wget -O mozjpeg.tar.gz https://github.com/mozilla/mozjpeg/archive/refs/tags/v4.1.1.tar.gz \

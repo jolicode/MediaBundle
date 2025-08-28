@@ -1,4 +1,12 @@
 {%- props mediaAttr = null, sizes = null -%}
+{%- if this.webpAlternativeSrcset|length > 0 -%}
+    <twig:joli:Source
+        media="{{ this.media }}"
+        mediaAttr="{{ mediaAttr }}"
+        sizes="{{ sizes }}"
+        srcset="{{ this.webpAlternativeSrcset }}"
+    />
+{%- endif -%}
 <source
     {% if mediaAttr is not null %}media="{{ mediaAttr|raw }}"{% endif %}
     {% if sizes is not null %}sizes="{{ sizes }}"{% endif %}
@@ -13,11 +21,3 @@
         height="{{ this.height }}"
     {% endif %}
 />
-{%- if this.webpAlternativeSrcset|length > 0 -%}
-    <twig:joli:Source
-        media="{{ this.media }}"
-        mediaAttr="{{ mediaAttr }}"
-        sizes="{{ sizes }}"
-        srcset="{{ this.webpAlternativeSrcset }}"
-    />
-{%- endif -%}
