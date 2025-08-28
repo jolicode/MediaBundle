@@ -1,5 +1,5 @@
 {% props alt = null, skipAutoDimensions = false, library = null, sources = { }, variation = null %}
-{% if this.allowAppendWebpAlternativeSource %}
+{% if this.isMediaProcessable and (this.hasSources or this.appendWebpAlternativeSource) %}
     <picture {{ attributes.nested('picture') }}>
         {% for source in sources %}
             {% if source is iterable %}

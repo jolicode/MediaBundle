@@ -18,7 +18,11 @@ class Picture
 
     public Media $media;
 
-    public bool $allowAppendWebpAlternativeSource = false;
+    public bool $appendWebpAlternativeSource = false;
+
+    public bool $hasSources = false;
+
+    public bool $isMediaProcessable = false;
 
     public function __construct(
         private readonly Resolver $resolver,
@@ -60,12 +64,14 @@ class Picture
             }
         }
 
-        $this->allowAppendWebpAlternativeSource = [] !== $sources
-            || (null !== $variation) && ($media
+        $this->hasSources = [] !== $sources;
+        $this->appendWebpAlternativeSource = (null !== $variation)
+            && ($media
                 ->getLibrary()
                 ->getVariation($variation)
                 ->getWebpAlternativeVariation() instanceof Variation
             );
+        $this->isMediaProcessable = $this->resolver->isMediaProcessable($media);
 
         $this->media = $media;
     }
