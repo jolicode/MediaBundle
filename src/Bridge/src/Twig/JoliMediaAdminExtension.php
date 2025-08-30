@@ -27,7 +27,7 @@ class JoliMediaAdminExtension extends AbstractExtension
     }
 
     #[\Override]
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('joli_media_admin_is_granted', $this->isGranted(...)),
