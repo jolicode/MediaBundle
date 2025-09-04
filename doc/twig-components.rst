@@ -173,7 +173,7 @@ generates the exact same HTML as the previous example, but with two additionnal 
         >
     </picture>
 
-Going a step further, tje ``sources`` attribute can be expressed as a combination of ``media`` and ``srcset`` options. This allows to define responsive images that adapt to different screen sizes and resolutions. See the following example:
+Going a step further, the ``sources`` attribute can be expressed as a combination of ``media`` and ``srcset`` options. This allows to define responsive images that adapt to different screen sizes and resolutions. See the following example:
 
 .. code-block:: html+twig
 
