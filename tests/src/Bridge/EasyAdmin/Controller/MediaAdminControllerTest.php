@@ -125,8 +125,10 @@ class MediaAdminControllerTest extends WebTestCase
 
         $this->assertResponseFormatSame('json');
         $this->assertResponseIsSuccessful();
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertIsString($responseContent);
 
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode($responseContent, true);
         $this->assertArrayHasKey('files', $response);
         $this->assertCount(1, $response['files']);
 
