@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 class MediaAdminControllerTest extends WebTestCase
@@ -94,6 +95,54 @@ class MediaAdminControllerTest extends WebTestCase
         /** @var Page $page */
         $page = $this->pageRepository->findOneBy(['title' => 'Page 1']);
         $this->assertSame('default.pdf', $page->getMediaDefault()->getPath());
+    }
+
+    public function testUploadAtRoot(): void
+    {
+        // test upload at the root of the media library
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_explore');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('form[name="upload"]');
+        $form = $crawler->filter('form[name="upload"]')->form();
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'upload-test');
+        copy(__DIR__ . '/../../../../fixtures/circle-pattern.png', $tmpFile);
+
+        $phpValues = $form->getPhpValues();
+        unset($phpValues['upload']['path']);
+
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues, [
+            'upload' => [
+                'file' => new UploadedFile(
+                    $tmpFile,
+                    'circle-pattern.png',
+                    'image/png',
+                    null,
+                    true,
+                ),
+            ],
+        ]);
+
+        $this->assertResponseFormatSame('json');
+        $this->assertResponseIsSuccessful();
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertIsString($responseContent);
+
+        $response = json_decode($responseContent, true);
+        $this->assertArrayHasKey('files', $response);
+        $this->assertCount(1, $response['files']);
+
+        $this->assertArrayHasKey('name', $response['files'][0]);
+        $this->assertArrayHasKey('url', $response['files'][0]);
+        $this->assertArrayHasKey('size', $response['files'][0]);
+        $this->assertArrayHasKey('type', $response['files'][0]);
+        $this->assertArrayHasKey('thumbnailUrl', $response['files'][0]);
+
+        $this->assertSame('circle-pattern.png', $response['files'][0]['name']);
+        $this->assertSame('/media/original/circle-pattern.png', $response['files'][0]['url']);
+        $this->assertSame(62563, $response['files'][0]['size']);
+        $this->assertSame('image/png', $response['files'][0]['type']);
+        $this->assertSame('/media/cache/joli-media-easy-admin/circle-pattern.png', $response['files'][0]['thumbnailUrl']);
     }
 
     protected static function getKernelClass(): string
