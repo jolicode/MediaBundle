@@ -60,7 +60,11 @@ class MediaPropertyAccessor
     {
         return $this->cache->get(
             \sprintf('joli_media_property_%s_%s_lastModified', $this->libraryName, Resolver::normalizePath($path)),
-            fn (ItemInterface $item): int => $this->filesystem->lastModified($path),
+            function (ItemInterface $item) use ($path): int {
+                $item->expiresAfter(24 * 60 * 60); // every day, check if the file has been modified
+
+                return $this->filesystem->lastModified($path);
+            },
         );
     }
 

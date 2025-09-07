@@ -65,7 +65,11 @@ class MediaVariationPropertyAccessor
                 $variation->getName(),
                 Resolver::normalizePath($path),
             ),
-            fn (ItemInterface $item): int => $this->filesystem->lastModified($this->strategy->getPath($path, $variation)),
+            function (ItemInterface $item) use ($path, $variation): int {
+                $item->expiresAfter(24 * 60 * 60); // every day, check if the variation file has been modified
+
+                return $this->filesystem->lastModified($this->strategy->getPath($path, $variation));
+            },
         );
     }
 
