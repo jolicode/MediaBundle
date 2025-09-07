@@ -1034,6 +1034,22 @@ class JoliMediaBundle extends AbstractBundle
         $libraryServiceId = '.joli_media.library.'.$libraryName;
         $originalStorageServiceId = $libraryServiceId.'.storage.original';
         $cacheStorageServiceId = $libraryServiceId.'.storage.cache';
+        $mediaPropertyAccessorServiceId = $libraryServiceId.'.media_property_accessor';
+        $mediaVariationPropertyAccessorServiceId = $libraryServiceId.'.media_variation_property_accessor';
+        $container->services()
+            ->set($mediaPropertyAccessorServiceId)
+            ->parent('.joli_media.media_property_accessor.abstract')
+            ->arg('$libraryName', $libraryName)
+            ->arg('$filesystem', service($libraryConfig['original']['flysystem']))
+        ;
+        $container->services()
+            ->set($mediaVariationPropertyAccessorServiceId)
+            ->parent('.joli_media.media_variation_property_accessor.abstract')
+            ->arg('$libraryName', $libraryName)
+            ->arg('$filesystem', service($libraryConfig['cache']['flysystem']))
+            ->arg('$strategy', service(sprintf('.joli_media.storage.strategy.%s', $libraryConfig['cache']['url_generator']['strategy'])))
+        ;
+
         $container->services()
             ->set($originalStorageServiceId)
             ->parent('.joli_media.storage.original.abstract')
@@ -1042,6 +1058,7 @@ class JoliMediaBundle extends AbstractBundle
             ->arg('$urlPath', $libraryConfig['original']['url_generator']['path'])
             ->arg('$enableServeUsingPhp', $libraryConfig['original']['enable_serve_using_php'])
             ->arg('$trashPath', $libraryConfig['original']['trash_path'])
+            ->arg('$mediaPropertyAccessor', service($mediaPropertyAccessorServiceId))
         ;
         $container->services()
             ->set($cacheStorageServiceId)
@@ -1050,6 +1067,7 @@ class JoliMediaBundle extends AbstractBundle
             ->arg('$strategy', service(sprintf('.joli_media.storage.strategy.%s', $libraryConfig['cache']['url_generator']['strategy'])))
             ->arg('$urlPath', $libraryConfig['cache']['url_generator']['path'])
             ->arg('$mustStoreWhenGeneratingUrl', $libraryConfig['cache']['must_store_when_generating_url'])
+            ->arg('$mediaVariationPropertyAccessor', service($mediaVariationPropertyAccessorServiceId))
         ;
 
         // variations

@@ -110,3 +110,10 @@ However, there are cases where you might want to serve the original media files 
 .. tip::
 
     Remember that, by doing to, every request to an original media file will go through the Symfony application, which can have a significant impact on performance. It is therefore recommended to use this option only when necessary, and to ensure that the web server is properly configured to serve the media files directly whenever possible.
+
+Media Property Accessor
+-----------------------
+
+To optimize media property access (such as mime type, format, file size, and dimensions), the bundle provides a `MediaPropertyAccessor` service. This service caches property values for each media file, using the storage library name, media path, and last modification date as cache keys. This greatly improves performance when listing large media directories, as properties are not recalculated or reloaded from disk for each access.
+
+You can use this service directly or rely on the storage service, which delegates property access to the accessor.

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JoliCode\MediaBundle\Tests;
 
 use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Binary\MimeTypeGuesser;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
@@ -14,6 +15,8 @@ use JoliCode\MediaBundle\Processor\Cwebp;
 use JoliCode\MediaBundle\Processor\ProcessorContainer;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Storage\CacheStorage;
+use JoliCode\MediaBundle\Storage\MediaPropertyAccessor;
+use JoliCode\MediaBundle\Storage\MediaVariationPropertyAccessor;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Storage\Strategy\FolderStorageStrategy;
 use JoliCode\MediaBundle\Transformation\TransformationProcessor;
@@ -25,6 +28,7 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Mime\FileBinaryMimeTypeGuesser;
 use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -92,11 +96,13 @@ class BaseTestCase extends TestCase
         $this->originalFilesystem = $this->createFilesystem();
         $this->cacheFilesystem = $this->createFilesystem();
         $this->originalStorage = $this->createOriginalStorage(
+            'default',
             $this->originalFilesystem,
             '/media',
             $this->urlGenerator,
         );
         $this->cacheStorage = $this->createCacheStorage(
+            'default',
             $this->cacheFilesystem,
             '/cache',
             $this->urlGenerator,
@@ -118,8 +124,18 @@ class BaseTestCase extends TestCase
             $this->variationContainer
         );
 
-        $this->customOriginalStorage = $this->createOriginalStorage($this->createFilesystem(), '/custom/media-1', $this->urlGenerator);
-        $customCacheStorage = $this->createCacheStorage($this->createFilesystem(), '/custom/cache-1', $this->urlGenerator);
+        $this->customOriginalStorage = $this->createOriginalStorage(
+            'custom',
+            $this->createFilesystem(),
+            '/custom/media-1',
+            $this->urlGenerator,
+        );
+        $customCacheStorage = $this->createCacheStorage(
+            'custom',
+            $this->createFilesystem(),
+            '/custom/cache-1',
+            $this->urlGenerator,
+        );
         $variationContainer = $this->createVariationContainer($customCacheStorage);
         $customLibrary = new Library(
             'custom',
@@ -180,12 +196,11 @@ class BaseTestCase extends TestCase
     }
 
     protected function createOriginalStorage(
+        string $libraryName,
         Filesystem $filesystem,
         string $urlPath,
         UrlGeneratorInterface $urlGenerator,
     ): OriginalStorage {
-        $mimeTypes = new MimeTypes();
-
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $cache = $this->createMock(CacheInterface::class);
         $cache->method('get')->willReturnCallback(function (string $key, callable $callback) {
@@ -193,6 +208,16 @@ class BaseTestCase extends TestCase
 
             return $callback($item);
         });
+        $mimeTypeGuesser = new MimeTypeGuesser(
+            new MimeTypes(),
+            new FileBinaryMimeTypeGuesser()
+        );
+        $mediaPropertyAccessor = new MediaPropertyAccessor(
+            $libraryName,
+            $filesystem,
+            $mimeTypeGuesser,
+            $cache,
+        );
 
         return new OriginalStorage(
             new FolderStorageStrategy(),
@@ -201,25 +226,45 @@ class BaseTestCase extends TestCase
             false,
             '.trash',
             $urlGenerator,
-            $mimeTypes,
-            $mimeTypes,
-            $cache,
+            $mimeTypeGuesser,
             $eventDispatcher,
+            $mediaPropertyAccessor,
         );
     }
 
     protected function createCacheStorage(
+        string $libraryName,
         Filesystem $filesystem,
         string $urlPath,
         UrlGeneratorInterface $urlGenerator,
     ): CacheStorage {
+        $cache = $this->createMock(CacheInterface::class);
+        $cache->method('get')->willReturnCallback(function (string $key, callable $callback) {
+            $item = $this->createMock(ItemInterface::class);
+
+            return $callback($item);
+        });
+        $mimeTypeGuesser = new MimeTypeGuesser(
+            new MimeTypes(),
+            new FileBinaryMimeTypeGuesser()
+        );
+        $strategy = new FolderStorageStrategy();
+        $mediaVariationPropertyAccessor = new MediaVariationPropertyAccessor(
+            $libraryName,
+            $strategy,
+            $filesystem,
+            $mimeTypeGuesser,
+            $cache,
+        );
+
         return new CacheStorage(
-            new FolderStorageStrategy(),
+            $strategy,
             $filesystem,
             $urlPath,
             false,
             $urlGenerator,
-            new MimeTypes(),
+            $mimeTypeGuesser,
+            $mediaVariationPropertyAccessor,
         );
     }
 
