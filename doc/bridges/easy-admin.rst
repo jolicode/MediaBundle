@@ -3,6 +3,12 @@ EasyAdmin Integration
 
 The ``JoliMediaBundle`` provides seamless integration with EasyAdmin, enabling you to manage media directly within your EasyAdmin interface. This integration includes features such as a media library, media browser, and media preview capabilities.
 
+.. image:: images/bridges/easyadmin/grid-view.png
+   :alt: The EasyAdmin media library grid view
+
+.. image:: images/bridges/easyadmin/list-view.png
+   :alt: The EasyAdmin media library list view
+
 Enabling the EasyAdmin Integration
 ----------------------------------
 
