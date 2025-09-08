@@ -57,7 +57,11 @@ readonly class Resolver
 
     public static function normalizePath(string $path): string
     {
-        return (string) preg_replace('/\/\/+/u', '/', trim($path, '/'));
+        return (string) preg_replace(
+            ['/\/\/+/u', '/^(\.\/)+/u', '/\/(\.\/)+/u'],
+            ['/', '', '/'],
+            trim($path, '/'),
+        );
     }
 
     public function resolveMedia(Media|string $path, ?string $libraryName = null): Media
