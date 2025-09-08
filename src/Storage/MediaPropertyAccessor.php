@@ -98,7 +98,7 @@ class MediaPropertyAccessor
      */
     private function guessPixelDimensions(string $path): array|false
     {
-        if (!str_starts_with($this->guessMimeType($path), 'image/')) {
+        if (!str_starts_with($this->getMimeType($path), 'image/')) {
             return false;
         }
 

@@ -4,6 +4,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use JoliCode\MediaBundle\Binary\MimeTypeGuesser;
 use JoliCode\MediaBundle\Cache\MediaEntityMetadataWarmer;
+use JoliCode\MediaBundle\Cache\MediaPropertyAccessorCache;
 use JoliCode\MediaBundle\Command\AuditCommand;
 use JoliCode\MediaBundle\Command\BatchConvertCommand;
 use JoliCode\MediaBundle\Command\Cache\PruneCommand;
@@ -60,6 +61,8 @@ use JoliCode\MediaBundle\Variation\Voter\FolderVoter;
 use JoliCode\MediaBundle\Variation\Voter\FormatVoter;
 use JoliCode\MediaBundle\Variation\Voter\MimeTypeVoter;
 use JoliCode\MediaBundle\Variation\Voter\OneOfVoter;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mime\FileBinaryMimeTypeGuesser;
 use Symfony\Component\Mime\MimeTypesInterface;
@@ -294,13 +297,20 @@ return static function (ContainerConfigurator $container): void {
         ->alias(Resolver::class, 'joli_media.resolver')
 
         // property accessor
+        ->set('joli_media.media_property_accessor_array_cache', ArrayAdapter::class)
+        ->set('joli_media.media_property_accessor_cache', ChainAdapter::class)
+        ->arg('$adapters', [
+            service('joli_media.media_property_accessor_array_cache'),
+            service(CacheInterface::class),
+        ])
+
         ->set('.joli_media.media_property_accessor.abstract', MediaPropertyAccessor::class)
         ->abstract()
         ->args([
             '$libraryName' => abstract_arg('library_name'),
             '$filesystem' => abstract_arg('filesystem'),
             '$mimeTypeGuesser' => service('joli_media.mime_type_guesser'),
-            '$cache' => service(CacheInterface::class),
+            '$cache' => service('joli_media.media_property_accessor_cache'),
         ])
         ->set('.joli_media.media_variation_property_accessor.abstract', MediaVariationPropertyAccessor::class)
         ->abstract()
@@ -309,7 +319,7 @@ return static function (ContainerConfigurator $container): void {
             '$strategy' => abstract_arg('storage_strategy'),
             '$filesystem' => abstract_arg('filesystem'),
             '$mimeTypeGuesser' => service('joli_media.mime_type_guesser'),
-            '$cache' => service(CacheInterface::class),
+            '$cache' => service('joli_media.media_property_accessor_cache'),
         ])
 
         // routing
