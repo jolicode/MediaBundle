@@ -31,6 +31,7 @@ class CacheStorage
     public function delete(string $path, Variation $variation): void
     {
         $this->deleteFile($this->strategy->getPath($path, $variation));
+        $this->mediaVariationPropertyAccessor->clearCache($path, $variation);
     }
 
     public function deleteDirectory(string $path, Variation $variation): void
@@ -85,6 +86,19 @@ class CacheStorage
     public function getLibrary(): Library
     {
         return $this->library;
+    }
+
+    public function getMediaVariationPropertyAccessor(): MediaVariationPropertyAccessor
+    {
+        return $this->mediaVariationPropertyAccessor;
+    }
+
+    /**
+     * @return false|array{height: int, width: int}
+     */
+    public function getPixelDimensions(string $path, Variation $variation): array|false
+    {
+        return $this->mediaVariationPropertyAccessor->getPixelDimensions($path, $variation);
     }
 
     public function getStrategy(): StorageStrategyInterface

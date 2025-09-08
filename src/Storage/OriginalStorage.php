@@ -104,7 +104,8 @@ class OriginalStorage
             Config::OPTION_VISIBILITY => 'public',
             Config::OPTION_DIRECTORY_VISIBILITY => 'public',
         ]);
-
+        $this->mediaPropertyAccessor->clearCache($path);
+        $this->getLibrary()->deleteAllVariations($path);
         $media = new Media($path, $this, $binary);
 
         if ($this->dispatcher->hasListeners(MediaEvents::POST_CREATE_MEDIA)) {
@@ -144,11 +145,13 @@ class OriginalStorage
 
             // if no exception was thrown, perform the deletion
             $this->filesystem->delete($trashPath);
+            $this->mediaPropertyAccessor->clearCache($path);
             $this->library->deleteAllVariations(substr($trashPath, \strlen($trashDirectory) + 1));
             $this->filesystem->deleteDirectory($trashDirectory);
         } else {
             // if no event listeners, just delete the file and its variations
             $this->filesystem->delete($path);
+            $this->mediaPropertyAccessor->clearCache($path);
             $this->library->deleteAllVariations($path);
         }
     }
@@ -191,7 +194,9 @@ class OriginalStorage
             // if no exception was thrown, perform the deletion
             foreach ($this->listMedias($trashPath, recursive: true) as $media) {
                 $this->delete($media->getPath());
-                $this->library->deleteAllVariations(substr($media->getPath(), \strlen($trashDirectory) + 1));
+                $realPath = substr($media->getPath(), \strlen($trashDirectory) + 1);
+                $this->mediaPropertyAccessor->clearCache($realPath);
+                $this->library->deleteAllVariations($realPath);
             }
 
             $this->filesystem->deleteDirectory($trashDirectory);
@@ -256,6 +261,11 @@ class OriginalStorage
     public function getLibrary(): Library
     {
         return $this->library;
+    }
+
+    public function getMediaPropertyAccessor(): MediaPropertyAccessor
+    {
+        return $this->mediaPropertyAccessor;
     }
 
     public function getStrategy(): StorageStrategyInterface
@@ -376,6 +386,9 @@ class OriginalStorage
                 throw $e;
             }
         }
+
+        $this->mediaPropertyAccessor->clearCache($from);
+        $this->getLibrary()->deleteAllVariations($from);
     }
 
     public function moveFolder(string $from, string $to): void
@@ -402,6 +415,13 @@ class OriginalStorage
             try {
                 $event = new PostMoveFolderEvent($this, $from, $to);
                 $this->dispatcher->dispatch($event, MediaEvents::POST_MOVE_FOLDER);
+
+                // if no exception was thrown, cleanup metadata and variations for all moved medias
+                foreach ($this->listMedias($to, recursive: true) as $media) {
+                    $realPath = \sprintf('%s/%s', $from, substr($media->getPath(), \strlen($to) + 1));
+                    $this->mediaPropertyAccessor->clearCache($realPath);
+                    $this->library->deleteAllVariations($realPath);
+                }
             } catch (\Throwable $e) {
                 // if an exception is thrown, we rollback the move
                 $this->filesystem->move($to, $from);

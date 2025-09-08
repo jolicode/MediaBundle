@@ -19,7 +19,17 @@ class MediaVariationPropertyAccessor
         private readonly Filesystem $filesystem,
         private readonly MimeTypeGuesser $mimeTypeGuesser,
         private readonly CacheInterface $cache,
+        private readonly int $expiresAfter = 3600 * 24,
     ) {
+    }
+
+    public function clearCache(string $path, Variation $variation): void
+    {
+        $this->cache->delete($this->getCacheKey($path, $variation, 'filesize'));
+        $this->cache->delete($this->getCacheKey($path, $variation, 'format'));
+        $this->cache->delete($this->getCacheKey($path, $variation, 'mime_type'));
+        $this->cache->delete($this->getCacheKey($path, $variation, 'pixel_dimensions'));
+        $this->cache->delete($this->getLastModifiedCacheKey($path, $variation));
     }
 
     public function getMimeType(string $path, Variation $variation): string
@@ -32,16 +42,17 @@ class MediaVariationPropertyAccessor
 
     public function getFormat(string $path, Variation $variation): string
     {
-        $mimeType = $this->getMimeType($path, $variation);
-
-        return $this->mimeTypeGuesser->getPossibleExtension($mimeType);
+        return $this->cache->get(
+            $this->getCacheKey($path, $variation, 'format'),
+            fn (ItemInterface $item): string => $this->guessFormat($path, $variation),
+        );
     }
 
     public function getFileSize(string $path, Variation $variation): int
     {
         return $this->cache->get(
             $this->getCacheKey($path, $variation, 'filesize'),
-            fn (ItemInterface $item): int => $this->filesystem->fileSize($this->strategy->getPath($path, $variation))
+            fn (ItemInterface $item): int => $this->guessFilesize($path, $variation)
         );
     }
 
@@ -59,16 +70,15 @@ class MediaVariationPropertyAccessor
     public function getLastModified(string $path, Variation $variation): int
     {
         return $this->cache->get(
-            \sprintf(
-                'joli_media_property_%s_%s_%s_lastModified',
-                $this->libraryName,
-                $variation->getName(),
-                Resolver::normalizePath($path),
-            ),
+            $this->getLastModifiedCacheKey($path, $variation),
             function (ItemInterface $item) use ($path, $variation): int {
-                $item->expiresAfter(24 * 60 * 60); // every day, check if the variation file has been modified
+                $item->expiresAfter($this->expiresAfter);
 
-                return $this->filesystem->lastModified($this->strategy->getPath($path, $variation));
+                try {
+                    return $this->filesystem->lastModified($this->strategy->getPath($path, $variation));
+                } catch (UnableToRetrieveMetadata) {
+                    return time();
+                }
             },
         );
     }
@@ -85,6 +95,32 @@ class MediaVariationPropertyAccessor
         );
     }
 
+    private function getLastModifiedCacheKey(string $path, Variation $variation): string
+    {
+        return \sprintf(
+            'joli_media_property_%s_%s_%s_lastModified',
+            $this->libraryName,
+            $variation->getName(),
+            Resolver::normalizePath($path),
+        );
+    }
+
+    private function guessFilesize(string $path, Variation $variation): int
+    {
+        try {
+            return $this->filesystem->fileSize($this->strategy->getPath($path, $variation));
+        } catch (UnableToRetrieveMetadata) {
+            return 0;
+        }
+    }
+
+    private function guessFormat(string $path, Variation $variation): string
+    {
+        $mimeType = $this->getMimeType($path, $variation);
+
+        return $this->mimeTypeGuesser->getPossibleExtension($mimeType);
+    }
+
     private function guessMimeType(string $path, Variation $variation): string
     {
         $path = $this->strategy->getPath($path, $variation);
@@ -92,6 +128,10 @@ class MediaVariationPropertyAccessor
         try {
             $mimeType = $this->filesystem->mimeType($path);
         } catch (UnableToRetrieveMetadata) {
+            if (!$this->filesystem->has($path)) {
+                return 'application/octet-stream';
+            }
+
             // try to guess the mime type from the content
             $mimeType = $this->mimeTypeGuesser->guessMimeTypeFromContent(
                 $this->filesystem->read($path),
@@ -112,6 +152,11 @@ class MediaVariationPropertyAccessor
 
         $temporaryFile = tempnam(sys_get_temp_dir(), 'image');
         $path = $this->strategy->getPath($path, $variation);
+
+        if (!$this->filesystem->has($path)) {
+            return false;
+        }
+
         file_put_contents($temporaryFile, $this->filesystem->read($path));
         $imageSize = getimagesize($temporaryFile);
         unlink($temporaryFile);

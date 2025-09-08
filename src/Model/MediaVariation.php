@@ -63,6 +63,14 @@ class MediaVariation implements StorableInterface
         return $this->getStorage()->getMimeType($this->media->getPath(), $this->variation);
     }
 
+    /**
+     * @return false|array{height: int, width: int}
+     */
+    public function getPixelDimensions(): array|false
+    {
+        return $this->getStorage()->getPixelDimensions($this->media->getPath(), $this->variation);
+    }
+
     public function getStorage(): CacheStorage
     {
         return $this->media->getLibrary()->getCacheStorage();
