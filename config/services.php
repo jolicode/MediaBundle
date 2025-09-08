@@ -4,7 +4,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use JoliCode\MediaBundle\Binary\MimeTypeGuesser;
 use JoliCode\MediaBundle\Cache\MediaEntityMetadataWarmer;
-use JoliCode\MediaBundle\Cache\MediaPropertyAccessorCache;
 use JoliCode\MediaBundle\Command\AuditCommand;
 use JoliCode\MediaBundle\Command\BatchConvertCommand;
 use JoliCode\MediaBundle\Command\Cache\PruneCommand;
