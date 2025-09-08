@@ -206,7 +206,7 @@
                                             </td>
                                             <td data-column="dimensions" data-label="dimensions" class="text-left" dir="ltr">
                                                 {% if variation.isStored %}
-                                                    {% set dimensions = variation.binary.pixelDimensions %}
+                                                    {% set dimensions = variation.pixelDimensions %}
                                                     {% if dimensions is not null and dimensions.width is defined %}
                                                         {{ dimensions.width }}x{{ dimensions.height }}
                                                     {% else %}
@@ -309,7 +309,7 @@
                     <div class="data-row">
                         <dt class="mb-1">{{ 'media.dimensions'|trans }}</dt>
                         <dd class="d-flex align-items-start">
-                            {% set dimensions = media.binary.pixelDimensions %}
+                            {% set dimensions = media.pixelDimensions %}
                             {% if dimensions is not null and dimensions.width is defined %}
                                 {{ dimensions.width }}x{{ dimensions.height }}
                             {% else %}

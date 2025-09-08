@@ -149,7 +149,7 @@
                                                         </td>
                                                         <td>
                                                             {% if variation.isStored %}
-                                                                {% set dimensions = variation.binary.pixelDimensions %}
+                                                                {% set dimensions = variation.pixelDimensions %}
                                                                 {% if dimensions is not null and dimensions.width is defined %}
                                                                     {{ dimensions.width }}x{{ dimensions.height }}
                                                                 {% else %}
@@ -258,7 +258,7 @@
                             <tr class="sonata-ba-view-container">
                                 <th>{{ 'media.dimensions'|trans }}</th>
                                 <td>
-                                    {% set dimensions = media.binary.pixelDimensions %}
+                                    {% set dimensions = media.pixelDimensions %}
                                     {% if dimensions is not null and dimensions.width is defined %}
                                         {{ dimensions.width }}x{{ dimensions.height }}
                                     {% else %}
