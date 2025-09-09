@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Storage;
 
 use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Binary\MimeTypeGuesser;
 use JoliCode\MediaBundle\Event\MediaEvents;
 use JoliCode\MediaBundle\Event\PostCreateFolderEvent;
 use JoliCode\MediaBundle\Event\PostCreateMediaEvent;
@@ -27,13 +28,8 @@ use League\Flysystem\Config;
 use League\Flysystem\DirectoryListing;
 use League\Flysystem\Filesystem;
 use League\Flysystem\StorageAttributes;
-use League\Flysystem\UnableToRetrieveMetadata;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Mime\MimeTypeGuesserInterface;
-use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 class OriginalStorage
 {
@@ -46,10 +42,9 @@ class OriginalStorage
         private readonly bool $enableServeUsingPhp,
         private readonly string $trashPath,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly MimeTypeGuesserInterface $mimeTypeGuesser,
-        private readonly MimeTypesInterface $mimeTypes,
-        private readonly CacheInterface $cache,
+        private readonly MimeTypeGuesser $mimeTypeGuesser,
         private readonly EventDispatcherInterface $dispatcher,
+        private readonly MediaPropertyAccessor $mediaPropertyAccessor,
     ) {
     }
 
@@ -84,17 +79,13 @@ class OriginalStorage
 
     public function createMedia(string $path, string $content): Media
     {
-        $mimeType = $this->getMimeTypeFormContent($content);
-
-        if (null === $mimeType) {
-            throw new \RuntimeException('Unable to guess the mime type');
-        }
-
-        $format = $this->getExtension($mimeType);
+        $mimeType = $this->mimeTypeGuesser->guessMimeTypeFromContent($content);
+        $format = $this->mimeTypeGuesser->getPossibleExtension($mimeType);
         $binary = new Binary(
             $mimeType,
             $format,
             $content,
+            $path,
         );
 
         return $this->createMediaFromBinary($path, $binary);
@@ -113,7 +104,8 @@ class OriginalStorage
             Config::OPTION_VISIBILITY => 'public',
             Config::OPTION_DIRECTORY_VISIBILITY => 'public',
         ]);
-
+        $this->mediaPropertyAccessor->clearCache($path);
+        $this->getLibrary()->deleteAllVariations($path);
         $media = new Media($path, $this, $binary);
 
         if ($this->dispatcher->hasListeners(MediaEvents::POST_CREATE_MEDIA)) {
@@ -153,11 +145,13 @@ class OriginalStorage
 
             // if no exception was thrown, perform the deletion
             $this->filesystem->delete($trashPath);
+            $this->mediaPropertyAccessor->clearCache($path);
             $this->library->deleteAllVariations(substr($trashPath, \strlen($trashDirectory) + 1));
             $this->filesystem->deleteDirectory($trashDirectory);
         } else {
             // if no event listeners, just delete the file and its variations
             $this->filesystem->delete($path);
+            $this->mediaPropertyAccessor->clearCache($path);
             $this->library->deleteAllVariations($path);
         }
     }
@@ -200,7 +194,9 @@ class OriginalStorage
             // if no exception was thrown, perform the deletion
             foreach ($this->listMedias($trashPath, recursive: true) as $media) {
                 $this->delete($media->getPath());
-                $this->library->deleteAllVariations(substr($media->getPath(), \strlen($trashDirectory) + 1));
+                $realPath = substr($media->getPath(), \strlen($trashDirectory) + 1);
+                $this->mediaPropertyAccessor->clearCache($realPath);
+                $this->library->deleteAllVariations($realPath);
             }
 
             $this->filesystem->deleteDirectory($trashDirectory);
@@ -219,7 +215,7 @@ class OriginalStorage
     {
         $path = $this->strategy->getPath($path);
         $mimeType = $this->getMimeType($path);
-        $format = $this->getExtension($mimeType);
+        $format = $this->mimeTypeGuesser->getPossibleExtension($mimeType);
 
         return new Binary(
             $mimeType,
@@ -231,33 +227,22 @@ class OriginalStorage
 
     public function getFileSize(string $path): int
     {
-        return $this->filesystem->filesize($this->strategy->getPath($path));
+        return $this->mediaPropertyAccessor->getFileSize($path);
+    }
+
+    public function getFilesystem(): Filesystem
+    {
+        return $this->filesystem;
     }
 
     public function getFormat(string $path): string
     {
-        return $this->getExtension($this->getMimeType($path));
+        return $this->mediaPropertyAccessor->getFormat($path);
     }
 
     public function getMimeType(string $path): string
     {
-        return $this->cache->get(
-            \sprintf('joli_media_mime_type_%s_%s', $this->library->getName(), Resolver::normalizePath($path)),
-            function (ItemInterface $item) use ($path): string {
-                $item->expiresAfter(120);
-
-                try {
-                    $mimeType = $this->filesystem->mimeType($this->strategy->getPath($path));
-                } catch (UnableToRetrieveMetadata) {
-                    // try to guess the mime type from the content
-                    $mimeType = $this->getMimeTypeFormContent(
-                        $this->filesystem->read($this->strategy->getPath($path)),
-                    );
-                }
-
-                return $mimeType ?? 'application/octet-stream';
-            },
-        );
+        return $this->mediaPropertyAccessor->getMimeType($path);
     }
 
     /**
@@ -265,29 +250,22 @@ class OriginalStorage
      */
     public function getPixelDimensions(string $path): array|false
     {
-        /**
-         * @return false|array{height: int, width: int}
-         */
-        $cacheGetter = function (ItemInterface $item) use ($path): array|false {
-            $item->expiresAfter(120);
-
-            return $this->get($path)->getPixelDimensions();
-        };
-
-        return $this->cache->get(
-            \sprintf('joli_media_pixel_dimensions_%s_%s', $this->library->getName(), $path),
-            $cacheGetter,
-        );
+        return $this->mediaPropertyAccessor->getPixelDimensions($path);
     }
 
     public function getLastModified(string $path): int
     {
-        return $this->filesystem->lastModified($this->strategy->getPath($path));
+        return $this->mediaPropertyAccessor->getLastModified($path);
     }
 
     public function getLibrary(): Library
     {
         return $this->library;
+    }
+
+    public function getMediaPropertyAccessor(): MediaPropertyAccessor
+    {
+        return $this->mediaPropertyAccessor;
     }
 
     public function getStrategy(): StorageStrategyInterface
@@ -408,6 +386,9 @@ class OriginalStorage
                 throw $e;
             }
         }
+
+        $this->mediaPropertyAccessor->clearCache($from);
+        $this->getLibrary()->deleteAllVariations($from);
     }
 
     public function moveFolder(string $from, string $to): void
@@ -434,6 +415,13 @@ class OriginalStorage
             try {
                 $event = new PostMoveFolderEvent($this, $from, $to);
                 $this->dispatcher->dispatch($event, MediaEvents::POST_MOVE_FOLDER);
+
+                // if no exception was thrown, cleanup metadata and variations for all moved medias
+                foreach ($this->listMedias($to, recursive: true) as $media) {
+                    $realPath = \sprintf('%s/%s', $from, substr($media->getPath(), \strlen($to) + 1));
+                    $this->mediaPropertyAccessor->clearCache($realPath);
+                    $this->library->deleteAllVariations($realPath);
+                }
             } catch (\Throwable $e) {
                 // if an exception is thrown, we rollback the move
                 $this->filesystem->move($to, $from);
@@ -475,27 +463,6 @@ class OriginalStorage
     public function setLibrary(Library $library): void
     {
         $this->library = $library;
-    }
-
-    private function getExtension(string $mimeType): string
-    {
-        $possibleExtensions = $this->mimeTypes->getExtensions($mimeType);
-
-        if ([] === $possibleExtensions) {
-            return $mimeType;
-        }
-
-        return $possibleExtensions[0];
-    }
-
-    private function getMimeTypeFormContent(string $content): ?string
-    {
-        $temporaryFile = tempnam(sys_get_temp_dir(), 'media');
-        file_put_contents($temporaryFile, $content);
-        $mimeType = $this->mimeTypeGuesser->guessMimeType($temporaryFile);
-        unlink($temporaryFile);
-
-        return $mimeType;
     }
 
     private function getRouteName(): string

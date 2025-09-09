@@ -35,8 +35,8 @@ class LibraryContainerTest extends BaseTestCase
             ],
         ]);
 
-        $defaultOriginalStorage = $this->createOriginalStorage($this->createFilesystem(), '/media-1', $urlGenerator);
-        $defaultCacheStorage = $this->createCacheStorage($this->createFilesystem(), '/cache-1', $urlGenerator);
+        $defaultOriginalStorage = $this->createOriginalStorage('default', $this->createFilesystem(), '/media-1', $urlGenerator);
+        $defaultCacheStorage = $this->createCacheStorage('default', $this->createFilesystem(), '/cache-1', $urlGenerator);
         $defaultVariationContainer = new VariationContainer(new ServiceLocator([]), $defaultCacheStorage);
         $this->defaultLibrary = new Library(
             'default',
@@ -45,8 +45,8 @@ class LibraryContainerTest extends BaseTestCase
             $defaultVariationContainer,
         );
 
-        $customOriginalStorage = $this->createOriginalStorage($this->createFilesystem(), '/media-2', $urlGenerator);
-        $customCacheStorage = $this->createCacheStorage($this->createFilesystem(), '/cache-2', $urlGenerator);
+        $customOriginalStorage = $this->createOriginalStorage('custom', $this->createFilesystem(), '/media-2', $urlGenerator);
+        $customCacheStorage = $this->createCacheStorage('custom', $this->createFilesystem(), '/cache-2', $urlGenerator);
         $customVariationContainer = new VariationContainer(new ServiceLocator([]), $customCacheStorage);
         $this->customLibrary = new Library(
             'custom',

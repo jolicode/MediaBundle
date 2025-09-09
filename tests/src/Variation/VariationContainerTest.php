@@ -22,6 +22,7 @@ class VariationContainerTest extends BaseTestCase
         ]);
         $this->cacheFilesystem = $this->createFilesystem();
         $this->cacheStorage = $this->createCacheStorage(
+            'default',
             $this->cacheFilesystem,
             '/cache',
             $this->urlGenerator,

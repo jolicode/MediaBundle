@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Storage;
 
 use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Binary\MimeTypeGuesser;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Storage\Strategy\StorageStrategyInterface;
@@ -10,7 +11,6 @@ use JoliCode\MediaBundle\Variation\Variation;
 use League\Flysystem\Config;
 use League\Flysystem\Filesystem;
 use League\Flysystem\StorageAttributes;
-use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CacheStorage
@@ -23,13 +23,15 @@ class CacheStorage
         private readonly string $urlPath,
         private readonly bool $mustStoreWhenGeneratingUrl,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly MimeTypesInterface $mimeTypes,
+        private readonly MimeTypeGuesser $mimeTypeGuesser,
+        private readonly MediaVariationPropertyAccessor $mediaVariationPropertyAccessor,
     ) {
     }
 
     public function delete(string $path, Variation $variation): void
     {
         $this->deleteFile($this->strategy->getPath($path, $variation));
+        $this->mediaVariationPropertyAccessor->clearCache($path, $variation);
     }
 
     public function deleteDirectory(string $path, Variation $variation): void
@@ -49,9 +51,9 @@ class CacheStorage
 
     public function get(string $path, Variation $variation): Binary
     {
+        $mimeType = $this->getMimeType($path, $variation);
+        $format = $this->mimeTypeGuesser->getPossibleExtension($mimeType);
         $path = $this->strategy->getPath($path, $variation);
-        $mimeType = $this->filesystem->mimeType($path);
-        $format = $this->getExtension($mimeType);
 
         return new Binary(
             $mimeType,
@@ -63,17 +65,17 @@ class CacheStorage
 
     public function getFileSize(string $path, Variation $variation): int
     {
-        return $this->filesystem->filesize($this->strategy->getPath($path, $variation));
+        return $this->mediaVariationPropertyAccessor->getFileSize($path, $variation);
     }
 
     public function getFormat(string $path, Variation $variation): string
     {
-        return $this->getExtension($this->getMimeType($path, $variation));
+        return $this->mediaVariationPropertyAccessor->getFormat($path, $variation);
     }
 
     public function getMimeType(string $path, Variation $variation): string
     {
-        return $this->filesystem->mimeType($this->strategy->getPath($path, $variation));
+        return $this->mediaVariationPropertyAccessor->getMimeType($path, $variation);
     }
 
     public function getPath(string $path, Variation $variation): string
@@ -84,6 +86,19 @@ class CacheStorage
     public function getLibrary(): Library
     {
         return $this->library;
+    }
+
+    public function getMediaVariationPropertyAccessor(): MediaVariationPropertyAccessor
+    {
+        return $this->mediaVariationPropertyAccessor;
+    }
+
+    /**
+     * @return false|array{height: int, width: int}
+     */
+    public function getPixelDimensions(string $path, Variation $variation): array|false
+    {
+        return $this->mediaVariationPropertyAccessor->getPixelDimensions($path, $variation);
     }
 
     public function getStrategy(): StorageStrategyInterface
@@ -203,17 +218,6 @@ class CacheStorage
     public function mustStoreWhenGeneratingUrl(MediaVariation $mediaVariation): bool
     {
         return !$mediaVariation->isStored() && $this->mustStoreWhenGeneratingUrl;
-    }
-
-    private function getExtension(string $mimeType): string
-    {
-        $possibleExtensions = $this->mimeTypes->getExtensions($mimeType);
-
-        if ([] === $possibleExtensions) {
-            throw new \InvalidArgumentException(\sprintf('No possible extension found for mime type "%s"', $mimeType));
-        }
-
-        return $possibleExtensions[0];
     }
 
     private function getRouteName(): string

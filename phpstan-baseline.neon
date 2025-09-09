@@ -1,7 +1,12 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Method JoliCode\\MediaBundle\\Storage\\OriginalStorage\:\:getPixelDimensions\(\) should return array\{height\: int, width\: int\}\|false but returns array\{height\: int, width\: int\}\|bool\.$#'
+			message: '#^Method JoliCode\\MediaBundle\\Storage\\MediaPropertyAccessor\:\:getPixelDimensions\(\) should return array\{height\: int, width\: int\}\|false but returns array\{height\: int, width\: int\}\|bool\.$#'
 			identifier: return.type
 			count: 1
-			path: src/Storage/OriginalStorage.php
+			path: src/Storage/MediaPropertyAccessor.php
+		-
+			message: '#^Method JoliCode\\MediaBundle\\Storage\\MediaVariationPropertyAccessor\:\:getPixelDimensions\(\) should return array\{height\: int, width\: int\}\|false but returns array\{height\: int, width\: int\}\|bool\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Storage/MediaVariationPropertyAccessor.php

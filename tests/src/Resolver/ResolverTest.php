@@ -9,7 +9,9 @@ use JoliCode\MediaBundle\Exception\MediaNotFoundException;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
+use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ResolverTest extends BaseTestCase
 {
@@ -25,6 +27,32 @@ class ResolverTest extends BaseTestCase
 
         $media = new Media('test.png', $this->originalStorage, new Binary('image/png', Format::PNG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::PNG_FIXTURE_PATH)));
         self::assertTrue($this->resolver->isMediaProcessable($media));
+    }
+
+    #[DataProvider('providePathNormalizationCases')]
+    public function testPathNormalization(string $input, string $expected): void
+    {
+        self::assertSame($expected, Resolver::normalizePath($input), 'Failed for input: ' . $input);
+    }
+
+    public static function providePathNormalizationCases(): \Generator
+    {
+        yield ['/foo/bar', 'foo/bar'];
+        yield ['//foo//bar//', 'foo/bar'];
+        yield ['foo/bar', 'foo/bar'];
+        yield ['foo//bar', 'foo/bar'];
+        yield ['foo/bar/', 'foo/bar'];
+        yield ['foo/bar//', 'foo/bar'];
+        yield ['./foo/bar', 'foo/bar'];
+        yield ['.///foo/bar', 'foo/bar'];
+        yield ['.foo/bar', '.foo/bar'];
+        yield ['/./foo/bar', 'foo/bar'];
+        yield ['/./foo/./bar', 'foo/bar'];
+        yield ['/./foo/./././bar', 'foo/bar'];
+        yield ['/./foo././././.bar', 'foo./.bar'];
+        yield ['/./foo././//./.bar', 'foo./.bar'];
+        yield ['./././foo/bar', 'foo/bar'];
+        yield ['', ''];
     }
 
     public function testResolveMedia(): void

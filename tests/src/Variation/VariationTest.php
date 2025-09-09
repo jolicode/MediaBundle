@@ -34,7 +34,7 @@ class VariationTest extends BaseTestCase
                 'cache' => '/cache',
             ],
         ]);
-        $originalStorage = $this->createOriginalStorage($this->createFilesystem(), '/media', $this->urlGenerator);
+        $originalStorage = $this->createOriginalStorage('default', $this->createFilesystem(), '/media', $this->urlGenerator);
         $this->preProcessor = new TestPreProcessor();
         $this->transformerChain = new TransformerChain([
             new Resize(800, 600, Mode::inside),

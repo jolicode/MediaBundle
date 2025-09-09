@@ -24,6 +24,9 @@ class MediaTypeTest extends BaseTestCase
             ['foo//bar', 'foo/bar'],
             ['foo/bar/', 'foo/bar'],
             ['foo/bar//', 'foo/bar'],
+            ['./foo/bar', 'foo/bar'],
+            ['/./foo/bar', 'foo/bar'],
+            ['./././foo/bar', 'foo/bar'],
             ['', ''],
         ];
 
