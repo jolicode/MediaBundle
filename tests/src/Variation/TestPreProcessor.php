@@ -4,8 +4,8 @@ namespace JoliCode\MediaBundle\Tests\Variation;
 
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Model\Format;
+use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\PreProcessor\PreProcessorInterface;
-use JoliCode\MediaBundle\Variation\Variation;
 
 class TestPreProcessor implements PreProcessorInterface
 {
@@ -18,7 +18,7 @@ class TestPreProcessor implements PreProcessorInterface
         return $this->defaultOutputFormat;
     }
 
-    public function process(Binary $binary, Variation $variation): Binary
+    public function process(Binary $binary, MediaVariation $mediaVariation): Binary
     {
         return $binary;
     }

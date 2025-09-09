@@ -4,6 +4,7 @@ Dependencies and tooling
 The JoliMediaBundle has a few dependencies and uses some tools to ensure the quality of the code and the media processing. Unlike other Symfony bundles related to media management (for example ``LiipImagineBundle``), it does not require any external library to process media, and does not depend on any specific image processing library. Instead, it directly wraps common image processing software such as:
 
 - `cwebp <https://developers.google.com/speed/webp/docs/cwebp>`_
+- `exiftool <https://exiftool.org/>`_
 - `gifsicle <https://www.lcdf.org/gifsicle/>`_
 - `Imagine <https://github.com/php-imagine/Imagine>`_
 - `jpegoptim <https://github.com/tjko/jpegoptim>`_
@@ -23,6 +24,7 @@ A typical Debian-based system can install the required dependencies using the fo
         gifsicle \
         imagemagick \
         jpegoptim \
+        libimage-exiftool-perl \
         libmagickcore-dev \
         pngquant
 

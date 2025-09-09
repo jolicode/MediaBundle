@@ -22,9 +22,8 @@ class TransformationDataHolder
     ) {
     }
 
-    public function complete(Transformation $transformation, Binary $binary): void
+    public function complete(MediaVariation $mediaVariation, Binary $binary): void
     {
-        $mediaVariation = $transformation->getMediaVariation();
         $key = $this->getKey($mediaVariation);
         $this->data[$key]['url'] = $mediaVariation->getUrl();
         $this->data[$key]['duration'] = $this->getStopWatchEvent()?->getDuration();
@@ -41,9 +40,8 @@ class TransformationDataHolder
         $this->stopwatch?->stop(self::STOPWATCH_KEY);
     }
 
-    public function create(Transformation $transformation): void
+    public function create(MediaVariation $mediaVariation): void
     {
-        $mediaVariation = $transformation->getMediaVariation();
         $media = $mediaVariation->getMedia();
         $key = $this->getKey($mediaVariation);
         $this->stopwatch?->openSection();
@@ -55,6 +53,20 @@ class TransformationDataHolder
             'variation' => $mediaVariation->getVariation()->getName(),
             'fileType' => $media->getFileType(),
             'steps' => [],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $metadata
+     */
+    public function addPreProcessorStep(MediaVariation $mediaVariation, string $description, array $metadata = []): void
+    {
+        $this->getStopWatchEvent()?->lap();
+
+        $this->data[$this->getKey($mediaVariation)]['steps'][] = [
+            'operation' => $description,
+            'duration' => $this->getStopWatchEvent()?->getLastPeriod()?->getDuration(),
+            'metadata' => $this->parsePreProcessorMetadata($metadata),
         ];
     }
 
@@ -176,5 +188,27 @@ class TransformationDataHolder
         }
 
         return array_filter($output);
+    }
+
+    /**
+     * @param array<string, mixed> $metadata
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    private function parsePreProcessorMetadata(array $metadata): array
+    {
+        $output = [];
+
+        foreach ($metadata as $key => $value) {
+            if (\is_array($value) && [] === $value) {
+                continue;
+            }
+
+            $output[ucfirst($key)] = $value;
+        }
+
+        return [] === $output ? [] : [
+            'Pre-processor properties' => $output,
+        ];
     }
 }
