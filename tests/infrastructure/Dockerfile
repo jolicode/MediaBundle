@@ -48,16 +48,17 @@ RUN apt-get update \
         gifsicle \
         imagemagick \
         jpegoptim \
+        libimage-exiftool-perl \
         libmagickcore-dev \
         pngquant \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
 RUN cd /tmp \
-    && wget -O libwebp-1.5.0-linux-x86-64.tar.gz https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.5.0-linux-x86-64.tar.gz \
-    && tar xzvf libwebp-1.5.0-linux-x86-64.tar.gz \
-    && cp libwebp-1.5.0-linux-x86-64/bin/cwebp /usr/local/bin/cwebp \
-    && cp libwebp-1.5.0-linux-x86-64/bin/gif2webp /usr/local/bin/gif2webp
+    && wget -O libwebp-1.6.0-linux-x86-64.tar.gz https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.6.0-linux-x86-64.tar.gz \
+    && tar xzvf libwebp-1.6.0-linux-x86-64.tar.gz \
+    && cp libwebp-1.6.0-linux-x86-64/bin/cwebp /usr/local/bin/cwebp \
+    && cp libwebp-1.6.0-linux-x86-64/bin/gif2webp /usr/local/bin/gif2webp
 
 RUN cd /tmp \
     && wget -O mozjpeg.tar.gz https://github.com/mozilla/mozjpeg/archive/refs/tags/v4.1.1.tar.gz \
@@ -68,9 +69,9 @@ RUN cd /tmp \
     && make install
 
 RUN cd /tmp \
-    && wget -O oxipng-8.0.0-x86_64-unknown-linux-musl.tar.gz https://github.com/shssoichiro/oxipng/releases/download/v8.0.0/oxipng-8.0.0-x86_64-unknown-linux-musl.tar.gz \
-    && tar xzvf oxipng-8.0.0-x86_64-unknown-linux-musl.tar.gz \
-    && cp oxipng-8.0.0-x86_64-unknown-linux-musl/oxipng /usr/local/bin/oxipng
+    && wget -O oxipng-9.1.5-x86_64-unknown-linux-musl.tar.gz https://github.com/shssoichiro/oxipng/releases/download/v9.1.5/oxipng-9.1.5-x86_64-unknown-linux-musl.tar.gz \
+    && tar xzvf oxipng-9.1.5-x86_64-unknown-linux-musl.tar.gz \
+    && cp oxipng-9.1.5-x86_64-unknown-linux-musl/oxipng /usr/local/bin/oxipng
 
 # Fake user to maps with the one on the host
 ARG USER_ID

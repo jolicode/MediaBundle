@@ -24,6 +24,10 @@ class TransformationDataHolder
 
     public function complete(MediaVariation $mediaVariation, Binary $binary): void
     {
+        if (true !== $this->stopwatch?->isStarted(self::STOPWATCH_KEY)) {
+            return;
+        }
+
         $key = $this->getKey($mediaVariation);
         $this->data[$key]['url'] = $mediaVariation->getUrl();
         $this->data[$key]['duration'] = $this->getStopWatchEvent()?->getDuration();
@@ -37,11 +41,15 @@ class TransformationDataHolder
             }
         }
 
-        $this->stopwatch?->stop(self::STOPWATCH_KEY);
+        $this->stopwatch->stop(self::STOPWATCH_KEY);
     }
 
     public function create(MediaVariation $mediaVariation): void
     {
+        if (true === $this->stopwatch?->isStarted(self::STOPWATCH_KEY)) {
+            return;
+        }
+
         $media = $mediaVariation->getMedia();
         $key = $this->getKey($mediaVariation);
         $this->stopwatch?->openSection();
@@ -53,6 +61,20 @@ class TransformationDataHolder
             'variation' => $mediaVariation->getVariation()->getName(),
             'fileType' => $media->getFileType(),
             'steps' => [],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $metadata
+     */
+    public function addPostProcessorStep(MediaVariation $mediaVariation, string $description, array $metadata = []): void
+    {
+        $this->getStopWatchEvent()?->lap();
+
+        $this->data[$this->getKey($mediaVariation)]['steps'][] = [
+            'operation' => $description,
+            'duration' => $this->getStopWatchEvent()?->getLastPeriod()?->getDuration(),
+            'metadata' => $this->parsePostProcessorMetadata($metadata),
         ];
     }
 
@@ -129,7 +151,11 @@ class TransformationDataHolder
 
     private function getStopWatchEvent(): ?StopwatchEvent
     {
-        return $this->stopwatch?->getEvent(self::STOPWATCH_KEY);
+        if (true !== $this->stopwatch?->isStarted(self::STOPWATCH_KEY)) {
+            return null;
+        }
+
+        return $this->stopwatch->getEvent(self::STOPWATCH_KEY);
     }
 
     /**
@@ -145,10 +171,6 @@ class TransformationDataHolder
             if (\is_array($value) && [] === $value) {
                 unset($metadata[$key]);
             }
-        }
-
-        if (isset($metadata['postProcessorOptions'])) {
-            $output['Post-processor options'] = $metadata['postProcessorOptions'];
         }
 
         if (isset($metadata['processorOptions'])) {
@@ -209,6 +231,28 @@ class TransformationDataHolder
 
         return [] === $output ? [] : [
             'Pre-processor properties' => $output,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $metadata
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    private function parsePostProcessorMetadata(array $metadata): array
+    {
+        $output = [];
+
+        foreach ($metadata as $key => $value) {
+            if (\is_array($value) && [] === $value) {
+                continue;
+            }
+
+            $output[ucfirst($key)] = $value;
+        }
+
+        return [] === $output ? [] : [
+            'Post-processor options' => $output,
         ];
     }
 }

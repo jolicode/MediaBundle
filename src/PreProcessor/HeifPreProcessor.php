@@ -6,7 +6,6 @@ use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Point;
 use JoliCode\MediaBundle\Binary\Binary;
-use JoliCode\MediaBundle\Inspector\TransformationDataHolder;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use Psr\Log\LoggerInterface;
@@ -15,7 +14,6 @@ readonly class HeifPreProcessor extends AbstractPreProcessor implements PreProce
 {
     public function __construct(
         private ImagineInterface $imagine,
-        private ?TransformationDataHolder $transformationDataHolder = null,
         private ?LoggerInterface $logger = null,
     ) {
     }
@@ -38,12 +36,7 @@ readonly class HeifPreProcessor extends AbstractPreProcessor implements PreProce
             new Box($width, $height),
         );
         $canvas->paste($image, new Point(0, 0));
-
         $this->logger?->info('Pre-processed HEIF binary');
-        $this->transformationDataHolder?->addPreProcessorStep($mediaVariation, \sprintf(
-            'Executed the "%s" pre-processor',
-            self::class,
-        ));
 
         return new Binary(
             'image/jpeg',

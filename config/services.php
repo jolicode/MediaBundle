@@ -131,7 +131,6 @@ return static function (ContainerConfigurator $container): void {
             '$libraries' => service('joli_media.library_container'),
             '$resolver' => service('joli_media.resolver'),
             '$transformationProcessor' => service('joli_media.transformation_processor'),
-            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder')->ignoreOnInvalid(),
             '$logger' => service('logger')->ignoreOnInvalid(),
         ])
         ->public()
@@ -229,7 +228,6 @@ return static function (ContainerConfigurator $container): void {
         ->set(ExifRemovalPreProcessor::class, ExifRemovalPreProcessor::class)
         ->args([
             '$exiftoolBinary' => param('joli_media.binary.exiftool'),
-            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder')->ignoreOnInvalid(),
             '$logger' => service('logger')->ignoreOnInvalid(),
         ])
         ->tag('joli_media.pre_processor', ['name' => ExifRemovalPreProcessor::class])
@@ -237,7 +235,6 @@ return static function (ContainerConfigurator $container): void {
         ->set(HeifPreProcessor::class, HeifPreProcessor::class)
         ->args([
             '$imagine' => abstract_arg('.joli_media.imagine.imagine'),
-            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder')->ignoreOnInvalid(),
             '$logger' => service('logger')->ignoreOnInvalid(),
         ])
         ->tag('joli_media.pre_processor', ['name' => HeifPreProcessor::class])
