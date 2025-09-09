@@ -112,8 +112,25 @@ A pre-processor class must implement the ``process`` method of the ``Joli\MediaB
 Built-in pre-processors
 -----------------------
 
+Heif pre-processor
+~~~~~~~~~~~~~~~~~~
+
 The bundle provides the ``HeifPreProcessor`` pre-processor, which is used to convert HEIF images to JPEG or PNG format. This pre-processor is automatically registered and does not need to be configured in the ``joli_media`` configuration.
 
 HEIF (High Efficiency Image File Format) is a modern image format that is not supported by all browsers and tools, but it is gaining traction due to its efficient compression and high quality. However, many web browsers do not support HEIF images, which can lead to compatibility issues when displaying images on the web. Iphone users can encounter this issue when they take photos in HEIF format, which available on iOS devices since iOS 11.
 
 Therefore, the ``HeifPreProcessor`` will automatically convert HEIF images to JPEG format, so that they can be used in variations and displayed in the browser.
+
+Exif removal pre-processor
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The bundle provides the ``ExifRemovalPreProcessor`` pre-processor, which is used to remove EXIF metadata from images. This pre-processor is not registered by default, and must be added to the ``pre_processors`` configuration of the ``joli_media`` configuration, e.g.:
+
+.. code-block:: yaml
+
+    joli_media:
+        pre_processors:
+            - JoliCode\MediaBundle\PreProcessor\ExifRemovalPreProcessor
+            # - ...
+
+This pre-processor uses the `exiftool <https://exiftool.org/>`_ command line tool to remove EXIF metadata from images. It supports JPEG and TIFF images. exiftool must be installed on the server where the application is running, and its path must be configured in the ``JOLI_MEDIA_EXIFTOOL_BINARY`` environment variable or the ``joli_media.binary.exiftool`` configuration parameter (by default, it is set to ``/usr/local/bin/exiftool``).
