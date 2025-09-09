@@ -2,6 +2,7 @@
 
 namespace JoliCode\MediaBundle\Conversion;
 
+use JoliCode\MediaBundle\Inspector\TransformationDataHolder;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
@@ -17,6 +18,7 @@ readonly class Converter
         private LibraryContainer $libraries,
         private Resolver $resolver,
         private TransformationProcessor $transformationProcessor,
+        private ?TransformationDataHolder $transformationDataHolder = null,
         private ?LoggerInterface $logger = null,
     ) {
     }
@@ -68,11 +70,12 @@ readonly class Converter
             return;
         }
 
+        $this->transformationDataHolder?->create($mediaVariation);
         $binary = $mediaVariation->getMedia()->getBinary();
 
         foreach ($mediaVariation->getVariation()->getPreProcessors() as $preProcessor) {
             try {
-                $binary = $preProcessor->process($binary, $mediaVariation->getVariation());
+                $binary = $preProcessor->process($binary, $mediaVariation);
             } catch (\Exception $e) {
                 $this->logger?->error(\sprintf(
                     'Error while processing pre-processor "%s" for media "%s": %s',
@@ -86,9 +89,9 @@ readonly class Converter
         }
 
         $transformation = new Transformation($binary, $mediaVariation);
-        $mediaVariation->store(
-            $this->transformationProcessor->process($transformation),
-        );
+        $binary = $this->transformationProcessor->process($transformation);
+        $mediaVariation->store($binary);
+        $this->transformationDataHolder?->complete($mediaVariation, $binary);
     }
 
     public function convertIfMustStoreWhenGeneratingUrl(MediaVariation $mediaVariation): void

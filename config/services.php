@@ -25,6 +25,8 @@ use JoliCode\MediaBundle\PostProcessor\Mozjpeg;
 use JoliCode\MediaBundle\PostProcessor\Oxipng;
 use JoliCode\MediaBundle\PostProcessor\Pngquant;
 use JoliCode\MediaBundle\PostProcessor\PostProcessorContainer;
+use JoliCode\MediaBundle\PreProcessor\ExifRemovalPreProcessor;
+use JoliCode\MediaBundle\PreProcessor\HeifPreProcessor;
 use JoliCode\MediaBundle\Processor\Cwebp;
 use JoliCode\MediaBundle\Processor\Gif2webp;
 use JoliCode\MediaBundle\Processor\Gifsicle as GifsicleProcessor;
@@ -124,6 +126,7 @@ return static function (ContainerConfigurator $container): void {
             '$libraries' => service('joli_media.library_container'),
             '$resolver' => service('joli_media.resolver'),
             '$transformationProcessor' => service('joli_media.transformation_processor'),
+            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder')->ignoreOnInvalid(),
             '$logger' => service('logger')->ignoreOnInvalid(),
         ])
         ->public()
@@ -211,6 +214,23 @@ return static function (ContainerConfigurator $container): void {
 
         // mime types
         ->set('joli_media.mime_type_guesser', FileBinaryMimeTypeGuesser::class)
+
+        // pre processors
+        ->set(ExifRemovalPreProcessor::class, ExifRemovalPreProcessor::class)
+        ->args([
+            '$exiftoolBinary' => param('joli_media.binary.exiftool'),
+            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder')->ignoreOnInvalid(),
+            '$logger' => service('logger')->ignoreOnInvalid(),
+        ])
+        ->tag('joli_media.pre_processor', ['name' => ExifRemovalPreProcessor::class])
+
+        ->set(HeifPreProcessor::class, HeifPreProcessor::class)
+        ->args([
+            '$imagine' => abstract_arg('.joli_media.imagine.imagine'),
+            '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder')->ignoreOnInvalid(),
+            '$logger' => service('logger')->ignoreOnInvalid(),
+        ])
+        ->tag('joli_media.pre_processor', ['name' => HeifPreProcessor::class])
 
         // processors
         ->set('.joli_media.processor.cwebp', Cwebp::class)

@@ -19,7 +19,9 @@ class HeifPreProcessorTest extends BaseTestCase
             $imagine,
         );
         $heifBinary = $this->getFixtureBinary(Format::HEIF->value);
-        $binary = $heifPreProcessor->process($heifBinary, $this->variation);
+        $media = new Media('test.heif', $this->originalStorage, $heifBinary);
+        $mediaVariation = $media->createVariation($this->variation);
+        $binary = $heifPreProcessor->process($heifBinary, $mediaVariation);
 
         self::assertEquals('image/jpeg', $binary->getMimeType());
         self::assertEquals('jpeg', $binary->getFormat());

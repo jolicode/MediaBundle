@@ -30,8 +30,6 @@ readonly class TransformationProcessor
 
     public function process(Transformation $transformation): Binary
     {
-        $this->transformationDataHolder?->create($transformation);
-
         while ($transformer = $transformation->shiftTransformers()) {
             if ($transformer instanceof NeedsImmediateProcessingTransformerInterface) {
                 $transformation->setBinary(
@@ -120,8 +118,6 @@ readonly class TransformationProcessor
                 'postProcessorOptions' => $postProcessorOptions,
             ]);
         }
-
-        $this->transformationDataHolder?->complete($transformation, $binary);
 
         return $binary;
     }

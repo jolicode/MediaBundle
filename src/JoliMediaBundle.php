@@ -65,6 +65,7 @@ class JoliMediaBundle extends AbstractBundle
         $container->import('../config/services.php');
 
         $builder->setParameter('env(JOLI_MEDIA_CWEBP_BINARY)', '/usr/local/bin/cwebp');
+        $builder->setParameter('env(JOLI_MEDIA_EXIFTOOL_BINARY)', '/usr/local/bin/exiftool');
         $builder->setParameter('env(JOLI_MEDIA_GIF2WEBP_BINARY)', '/usr/local/bin/gif2webp');
         $builder->setParameter('env(JOLI_MEDIA_GIFSICLE_BINARY)', '/usr/local/bin/gifsicle');
         $builder->setParameter('env(JOLI_MEDIA_IDENTIFY_BINARY)', '/usr/local/bin/identify');
@@ -74,6 +75,7 @@ class JoliMediaBundle extends AbstractBundle
         $builder->setParameter('env(JOLI_MEDIA_PNGQUANT_BINARY)', '/usr/local/bin/pngquant');
 
         $builder->setParameter('joli_media.binary.cwebp', '%env(JOLI_MEDIA_CWEBP_BINARY)%');
+        $builder->setParameter('joli_media.binary.exiftool', '%env(JOLI_MEDIA_EXIFTOOL_BINARY)%');
         $builder->setParameter('joli_media.binary.gif2webp', '%env(JOLI_MEDIA_GIF2WEBP_BINARY)%');
         $builder->setParameter('joli_media.binary.gifsicle', '%env(JOLI_MEDIA_GIFSICLE_BINARY)%');
         $builder->setParameter('joli_media.binary.identify', '%env(JOLI_MEDIA_IDENTIFY_BINARY)%');
@@ -951,17 +953,8 @@ class JoliMediaBundle extends AbstractBundle
             }
 
             $container->services()
-                ->set(HeifPreProcessor::class, HeifPreProcessor::class)
-                ->args([
-                    '$imagine' => service('.joli_media.imagine.imagine'),
-                    '$logger' => service('logger')->ignoreOnInvalid(),
-                ])
-            ;
-        }
-
-        foreach ($preProcessorsConfig as $preProcessorServiceId) {
-            $container->services()->get($preProcessorServiceId)
-                ->tag('joli_media.pre_processor', ['name' => $preProcessorServiceId])
+                ->get(HeifPreProcessor::class)
+                ->arg('$imagine', service('.joli_media.imagine.imagine'))
             ;
         }
     }
