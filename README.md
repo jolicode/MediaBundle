@@ -1,9 +1,18 @@
 # JoliMediaBundle
 
-This bundle provides a set of tools to manage media in Symfony applications.
+This bundle provides a tools to manage media in Symfony applications and embed a full-featured media library in your admin.
 
-> [!CAUTION]
-> This bundle is currently in beta and is not yet ready for production use. It is under active development and may change significantly in the future. Please use it with caution and report any issues you encounter.
+- processors to transform media (crop / resize / etc.)
+- [EasyAdmin](https://symfony.com/bundles/EasyAdminBundle/current/index.html) and [SonataAdmin](https://symfony.com/bundles/SonataAdminBundle/current/index.html) integrations
+- processors to transform media (crop / resize / etc.)
+- fine-tuned post-processors to optimize the size and quality of media variations
+- CLI commands to manage your media libraries from the command line
+- Twig components to display media using HTML best practices
+- events to allow hooking into the media processing pipeline
+- an integration with Doctrine entities, so you can easily link media with your entities
+- debug toolbar and profiler panel to monitor media processing in your application
+
+![The MediaBundle provides integrations with Easyadmin and Sonata Admin](doc/images/bridges/easyadmin/grid-view.png)
 
 ## Installation
 
@@ -16,32 +25,6 @@ composer require jolicode/media-bundle
 ## Documentation
 
 Read the detailed [documentation of the bundle](doc/index.rst).
-
-## Dependencies
-
-The library relies on multiple media conversion tools, you will need to install them as well:
-
- * cwebp
- * gif2webp
- * gifsicle
- * identify (from ImageMagick)
- * Imagine
-
-Optionally, you can install the following tools to allow for more media post-processing (optimization):
-
- * gifsicle
- * jpegoptim
- * mozjpeg
- * optipng
- * pngquant
-
-## Configuration
-
-The configuration defines several parameters to configure the media management:
-
- * storages, which are the different media storage locations
- * variations, which are the formats that media can be converted to
- * processors and post-processors, which are the tools used to convert, resize, crop and optimize media files
 
 ## License
 
