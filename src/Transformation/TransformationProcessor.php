@@ -30,6 +30,10 @@ readonly class TransformationProcessor
 
     public function process(Transformation $transformation): Binary
     {
+        $this->transformationDataHolder?->create($transformation->getMediaVariation());
+
+        $this->runPreProcessors($transformation);
+
         while ($transformer = $transformation->shiftTransformers()) {
             if ($transformer instanceof NeedsImmediateProcessingTransformerInterface) {
                 $transformation->setBinary(
@@ -41,8 +45,11 @@ readonly class TransformationProcessor
         }
 
         $binary = $this->runTransformation($transformation);
+        $binary = $this->runPostProcessors($transformation, $binary);
 
-        return $this->runPostProcessors($transformation, $binary);
+        $this->transformationDataHolder?->complete($transformation->getMediaVariation(), $binary);
+
+        return $binary;
     }
 
     private function runTransformation(Transformation $transformation): Binary
@@ -111,14 +118,43 @@ readonly class TransformationProcessor
                 $binary,
                 $postProcessorOptions,
             );
-            $this->transformationDataHolder?->addStep($transformation, \sprintf(
+            $this->transformationDataHolder?->addPostProcessorStep($transformation->getMediaVariation(), \sprintf(
                 'Executed the "%s" post-processor',
                 $postProcessor->getName(),
-            ), [
-                'postProcessorOptions' => $postProcessorOptions,
-            ]);
+            ), $postProcessorOptions);
         }
 
         return $binary;
+    }
+
+    private function runPreProcessors(Transformation $transformation): void
+    {
+        $mediaVariation = $transformation->getMediaVariation();
+
+        foreach ($mediaVariation->getVariation()->getPreProcessors() as $preProcessor) {
+            $metadata = [];
+
+            try {
+                $transformation->setBinary($preProcessor->process(
+                    $transformation->getBinary(),
+                    $mediaVariation,
+                ));
+            } catch (\Exception $e) {
+                $this->logger?->error(\sprintf(
+                    'Error while processing pre-processor "%s" for media "%s": %s',
+                    $preProcessor::class,
+                    $mediaVariation->getMedia()->getPath(),
+                    $e->getMessage(),
+                ));
+                $metadata['exception'] = $e->getMessage();
+
+                return;
+            } finally {
+                $this->transformationDataHolder?->addPreProcessorStep($mediaVariation, \sprintf(
+                    'Executed the "%s" pre-processor',
+                    $preProcessor::class,
+                ), $metadata);
+            }
+        }
     }
 }

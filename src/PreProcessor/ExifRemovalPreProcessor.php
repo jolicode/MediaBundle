@@ -3,7 +3,6 @@
 namespace JoliCode\MediaBundle\PreProcessor;
 
 use JoliCode\MediaBundle\Binary\Binary;
-use JoliCode\MediaBundle\Inspector\TransformationDataHolder;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use Psr\Log\LoggerInterface;
@@ -12,7 +11,6 @@ readonly class ExifRemovalPreProcessor extends AbstractPreProcessor implements P
 {
     public function __construct(
         private ?string $exiftoolBinary = '/usr/local/bin/exiftool',
-        private ?TransformationDataHolder $transformationDataHolder = null,
         private ?LoggerInterface $logger = null,
     ) {
     }
@@ -32,26 +30,15 @@ readonly class ExifRemovalPreProcessor extends AbstractPreProcessor implements P
             '-overwrite_original',
             $temporaryFile,
         ]);
-        $originalSize = filesize($temporaryFile);
-        $commandLine = $process->getCommandLine();
         $this->logger?->info('Removing EXIF metadata', [
-            'original size' => $originalSize,
-            'command' => $commandLine,
+            'original size' => filesize($temporaryFile),
+            'command' => $process->getCommandLine(),
         ]);
 
         try {
             $process->mustRun();
-            $resultingSize = filesize($temporaryFile);
             $this->logger?->info('Removed EXIF metadata', [
-                'processed size' => $resultingSize,
-            ]);
-            $this->transformationDataHolder?->addPreProcessorStep($mediaVariation, \sprintf(
-                'Executed the "%s" pre-processor',
-                self::class,
-            ), [
-                'command' => $commandLine,
-                'original size' => $originalSize,
-                'processed size' => $resultingSize,
+                'processed size' => filesize($temporaryFile),
             ]);
 
             return new Binary(
@@ -62,7 +49,7 @@ readonly class ExifRemovalPreProcessor extends AbstractPreProcessor implements P
         } catch (\Exception $exception) {
             $this->logger?->error('EXIF removal failed', ['exception' => $exception]);
 
-            return $binary;
+            throw $exception;
         } finally {
             unlink($temporaryFile);
         }
