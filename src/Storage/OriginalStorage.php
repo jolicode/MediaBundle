@@ -100,12 +100,12 @@ class OriginalStorage
             $this->dispatcher->dispatch($event, MediaEvents::PRE_CREATE_MEDIA);
         }
 
+        $this->getLibrary()->deleteAllVariations($path);
         $this->filesystem->write($path, $binary->getContent(), [
             Config::OPTION_VISIBILITY => 'public',
             Config::OPTION_DIRECTORY_VISIBILITY => 'public',
         ]);
         $this->mediaPropertyAccessor->clearCache($path);
-        $this->getLibrary()->deleteAllVariations($path);
         $media = new Media($path, $this, $binary);
 
         if ($this->dispatcher->hasListeners(MediaEvents::POST_CREATE_MEDIA)) {
