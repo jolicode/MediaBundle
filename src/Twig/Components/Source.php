@@ -85,7 +85,7 @@ class Source
         }
 
         if (null === $srcset) {
-            throw new \InvalidArgumentException('You must provide either a srcset or a name');
+            throw new \InvalidArgumentException('You must provide either a srcset or a variation name');
         }
 
         if (\is_string($srcset)) {

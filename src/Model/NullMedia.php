@@ -9,8 +9,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class NullMedia extends Media
 {
-    private readonly string $path;
-
     /**
      * NullMedia is a placeholder for a media that does not exist or cannot be resolved.
      * It throws exceptions on all operations to indicate that it is not a valid media.
@@ -19,8 +17,13 @@ class NullMedia extends Media
      */
     public function __construct(
         Media|string $path,
+        OriginalStorage $storage,
     ) {
-        $this->path = $path instanceof Media ? $path->getPath() : $path;
+        parent::__construct(
+            $path instanceof Media ? $path->getPath() : $path,
+            $storage,
+            null,
+        );
     }
 
     public function addVariation(MediaVariation $variation): void
@@ -36,11 +39,6 @@ class NullMedia extends Media
     public function getBinary(): Binary
     {
         throw new \LogicException('Cannot get binary from a NullMedia');
-    }
-
-    public function getFilename(): string
-    {
-        return basename($this->path);
     }
 
     public function getFileSize(): int
@@ -66,11 +64,6 @@ class NullMedia extends Media
     public function getLastModified(): \DateTime
     {
         throw new \LogicException('Cannot get last modified date from a NullMedia');
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
     }
 
     public function getPixelDimensions(): array|false

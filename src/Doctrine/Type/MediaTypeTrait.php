@@ -4,7 +4,6 @@ namespace JoliCode\MediaBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use JoliCode\MediaBundle\Model\Media;
-use JoliCode\MediaBundle\Model\NullMedia;
 use JoliCode\MediaBundle\Resolver\Resolver;
 
 trait MediaTypeTrait
@@ -29,7 +28,7 @@ trait MediaTypeTrait
         try {
             return $this->getResolver()->resolveMedia($value);
         } catch (\Exception) {
-            return new NullMedia($value);
+            return $this->getResolver()->createUnresolvedMedia($value);
         }
     }
 

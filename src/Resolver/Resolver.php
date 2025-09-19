@@ -7,6 +7,7 @@ use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
+use JoliCode\MediaBundle\Model\NullMedia;
 use JoliCode\MediaBundle\Processor\ProcessorContainer;
 use JoliCode\MediaBundle\Variation\Variation;
 
@@ -16,6 +17,21 @@ readonly class Resolver
         private LibraryContainer $libraries,
         private ProcessorContainer $processorContainer,
     ) {
+    }
+
+    public function createUnresolvedMedia(Media|string $path, ?string $libraryName = null): NullMedia
+    {
+        if ($path instanceof Media) {
+            if (null !== $libraryName && $libraryName !== $path->getLibrary()->getName()) {
+                throw new \InvalidArgumentException(\sprintf('The media "%s" is stored in the library "%s", not in "%s"', $path->getPath(), $path->getLibrary()->getName(), $libraryName));
+            }
+
+            return new NullMedia($path->getPath(), $path->getLibrary()->getOriginalStorage());
+        }
+
+        $library = null === $libraryName ? $this->libraries->getDefault() : $this->libraries->get($libraryName);
+
+        return new NullMedia($path, $library->getOriginalStorage());
     }
 
     public function guessMediaVariationFormat(Media|string $media, Variation|string $variation, ?string $libraryName = null): ?string
@@ -52,7 +68,7 @@ readonly class Resolver
 
     public function isMediaProcessable(Media $media): bool
     {
-        return $this->processorContainer->canProcessInputFormat($media->getFormat());
+        return !$media instanceof NullMedia && $this->processorContainer->canProcessInputFormat($media->getFormat());
     }
 
     public static function normalizePath(string $path): string
