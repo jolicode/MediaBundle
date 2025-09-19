@@ -36,7 +36,13 @@ readonly class RouteChecker
                 return false;
             }
 
-            return $this->resolver->resolveMediaVariation($slug, $variation, $library) instanceof MediaVariation;
+            try {
+                $mediaVariation = $this->resolver->resolveMediaVariation($slug, $variation, $library);
+            } catch (\Exception) {
+                return false;
+            }
+
+            return $mediaVariation instanceof MediaVariation;
         }
 
         try {
