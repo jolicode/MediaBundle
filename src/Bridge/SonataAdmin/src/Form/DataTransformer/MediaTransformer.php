@@ -3,7 +3,6 @@
 namespace JoliCode\MediaBundle\Bridge\SonataAdmin\Form\DataTransformer;
 
 use JoliCode\MediaBundle\Model\Media;
-use JoliCode\MediaBundle\Model\NullMedia;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -24,7 +23,7 @@ readonly class MediaTransformer implements DataTransformerInterface
         try {
             return $this->resolver->resolveMedia($path);
         } catch (\Exception) {
-            return new NullMedia($path);
+            return $this->resolver->createUnresolvedMedia($path);
         }
     }
 

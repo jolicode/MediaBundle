@@ -62,7 +62,7 @@ class MediaChoiceType extends AbstractType
             try {
                 $view->vars['media'] = $this->resolver->resolveMedia($view->vars['value'], $options['library']);
             } catch (MediaNotFoundException) {
-                $view->vars['media'] = new NullMedia($view->vars['value']);
+                $view->vars['media'] = $this->resolver->createUnresolvedMedia($view->vars['value']);
             }
 
             $storage = $this->libraries->get($options['library'])->getOriginalStorage();

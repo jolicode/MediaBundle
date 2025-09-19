@@ -143,14 +143,27 @@ class Img
         }
 
         if (!$media->isStored()) {
-            throw $this->createNonResolvedException($path, $library, $variation);
+            $this->logger?->warning(\sprintf(
+                'The media "%s" could not be resolved%s%s',
+                $path,
+                null !== $library ? \sprintf(' in the library "%s"', $library) : '',
+                null !== $variation ? \sprintf(' with variation "%s"', $variation) : '',
+            ));
+
+            return;
         }
 
         $this->path = $media->getUrl();
         $binary = $media->getBinary();
 
         if (!str_starts_with($binary->getMimeType(), 'image/')) {
-            throw new \RuntimeException(\sprintf('The media "%s"%s is not an image', $path, null !== $library ? \sprintf(' in the library "%s"', $library) : ''));
+            $this->logger?->warning(\sprintf(
+                'The media "%s"%s is not an image',
+                $path,
+                null !== $library ? \sprintf(' in the library "%s"', $library) : '',
+            ));
+
+            return;
         }
 
         if (!$skipAutoDimensions) {
@@ -161,18 +174,5 @@ class Img
                 $this->height = $dimensions['height'];
             }
         }
-    }
-
-    private function createNonResolvedException(
-        string $path,
-        ?string $library = null,
-        ?string $variation = null,
-    ): \RuntimeException {
-        return new \RuntimeException(\sprintf(
-            'The media "%s" could not be resolved%s%s',
-            $path,
-            null !== $library ? \sprintf(' in the library "%s"', $library) : '',
-            null !== $variation ? \sprintf(' with variation "%s"', $variation) : '',
-        ));
     }
 }
