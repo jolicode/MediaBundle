@@ -85,6 +85,156 @@ generates:
         decoding="async"
     >
 
+Alternatively, you can also manually set the ``width`` and/or ``height`` attributes. If one of these attributes is set, ``skipAutoDimensions`` is automatically considered as ``true``:
+
+.. code-block:: html+twig
+
+    <twig:joli:Img
+        path="example-image.png"
+        variation="variation_name"
+        alt="Alternative text"
+        width="100"
+    />
+
+generates:
+
+.. code-block:: html
+
+    <img
+        src="/path/to/cache/variation-name/example-image.png"
+        alt="Alternative text"
+        width="100"
+        loading="lazy"
+        decoding="async"
+    >
+
+If the provided image is a high pixels density image, you may wish the twig component to generate a srcset attribute with an additional pixel density descriptor. Consider the following conditions:
+
+- the original image ``high-density-image.png`` has ``1600x1600`` pixel dimensions
+- the variation ``variation_name`` is defined to resize the image to ``200x200`` pixels and it is defined with a ``pixel_ratios`` option set to ``[1,2]``
+
+The following code:
+
+.. code-block:: html+twig
+
+    <twig:joli:Img
+        path="high-density-image.png"
+        alt="Alternative text"
+        variation="variation_name"
+    />
+
+generates:
+
+.. code-block:: html
+
+    <img
+        src="/path/to/cache/variation-name/high-density-image.png"
+        alt="Alternative text"
+        width="200"
+        height="200"
+        loading="lazy"
+        decoding="async"
+    >
+
+So does the following code:
+
+.. code-block:: html+twig
+
+    <twig:joli:Img
+        path="high-density-image.png"
+        alt="Alternative text"
+        variation="{{ ['variation_name'] }}"
+    />
+
+You need to explicitly ask for the additional pixel density descriptor by providing an array of variation names to the ``variation`` attribute:
+
+.. code-block:: html+twig
+
+    <twig:joli:Img
+        path="high-density-image.png"
+        alt="Alternative text"
+        variation="{{ ['variation_name', 'variation_name_2x'] }}"
+    />
+
+generates:
+
+.. code-block:: html
+
+    <img
+        src="/path/to/cache/variation-name/high-density-image.png"
+        srcset="
+            /path/to/cache/variation-name/high-density-image.png 200w,
+            /path/to/cache/variation-name@2x/high-density-image.png 400w
+        "
+        sizes="200px"
+        alt="Alternative text"
+        width="200"
+        height="200"
+        loading="lazy"
+        decoding="async"
+
+The ``srcset`` and ``sizes`` attributes can be used to provide multiple image sources for different screen sizes and resolutions. The ``srcset`` attribute is a comma-separated list of image URLs and their corresponding pixel widths, while the ``sizes`` attribute specifies the intended display size of the image in different viewport conditions. In the example above, you can see that the ``srcset`` attribute contains two entries: one for the normal density (1x, ie. a 200px image displayed in a 200px box) and one for the high density (2x, ie. a 400px image displayed in a 200px box). The ``sizes`` attribute is set to ``200px``, which means that the image will be displayed at 200 pixels wide on all screen sizes. Of course, you can override the ``sizes`` attribute by providing a custom value (which can include media queries):
+
+.. code-block:: html+twig
+
+    <twig:joli:Img
+        path="high-density-image.png"
+        alt="Alternative text"
+        variation="{{ ['variation_name', 'variation_name_2x'] }}"
+        sizes="600px"
+    />
+
+generates:
+
+.. code-block:: html
+
+    <img
+        src="/path/to/cache/variation-name/high-density-image.png"
+        srcset="
+            /path/to/cache/variation-name/high-density-image.png 200w,
+            /path/to/cache/variation-name@2x/high-density-image.png 400w
+        "
+        sizes="600px"
+        alt="Alternative text"
+        width="200"
+        height="200"
+        loading="lazy"
+        decoding="async"
+    >
+
+More complex ``sizes`` attributes can also be defined, for example:
+
+.. code-block:: html+twig
+
+    <twig:joli:Img
+        path="high-density-image.png"
+        alt="Alternative text"
+        variation="{{ ['variation_name', 'variation_name_2x'] }}"
+        sizes="(50em <= width <= 60em) 50em, (30em <= width < 50em) 30em, (width < 30em) 20em"
+    />
+
+which generates:
+
+.. code-block:: html
+
+    <img
+        src="/path/to/cache/variation-name/high-density-image.png"
+        srcset="
+            /path/to/cache/variation-name/high-density-image.png 200w,
+            /path/to/cache/variation-name@2x/high-density-image.png 400w
+        "
+        sizes="(50em <= width <= 60em) 50em, (30em <= width < 50em) 30em, (width < 30em) 20em"
+        alt="Alternative text"
+        width="200"
+        height="200"
+        loading="lazy"
+        decoding="async"
+    >
+
+.. tip::
+
+    It may happen that you wish to use high pixel density images for variations that do not actually resize the image. For example, you may have a variation that only applies a watermark to the image, or changes its format to ``webp`` but you still want to provide a high pixel density version of that variation. In this case, you can define the variation with a ``pixel_ratios`` option set to ``[1,2]`` and add a resize operation with a ``50%`` scale to the variation processing chain.
+
 <picture> tag
 -------------
 

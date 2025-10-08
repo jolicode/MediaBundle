@@ -39,6 +39,7 @@ A library is defined by a name and contains the multiple information:
 
 - ``variations`` that can be created from the original media. See the `Variation configuration <variations.rst>`_ section for more information
 - ``enable_auto_webp`` is a boolean (default: ``false``) that enables the automatic generation of WebP variations for the media. When enabled, the configured variations in the ``variations`` above node will be duplicated in WebP format, in addition to the original format.
+- ``pixel_ratios``: an array of pixel ratios (default: ``[1]``) that will be applied by default to all variations. For example, if you define a variation named ``thumbnail`` with a width of ``100px``, and the pixel ratios ``[1, 2]``, two variations will be generated: ``thumbnail`` (100px width) and ``thumbnail@2x`` (200px width). You can override this configuration on each variation.
 
 Processors configuration
 ------------------------
@@ -58,29 +59,29 @@ Here is an example minimal configuration that defines one library and one variat
 .. code-block:: yaml
 
     joli_media:
-        default_library:      default
+        default_library: default
         libraries:
             default:
                 original:
-                    flysystem:               default.original.storage
+                    flysystem: default.original.storage
                     url_generator:
-                        path:                /media/original/
+                        path: /media/original/
                 cache:
-                    flysystem:               default.cache.storage
+                    flysystem: default.cache.storage
                     url_generator:
-                        path:                /media/cache/
+                        path: /media/cache/
                     must_store_when_generating_url: false
                 variations:
                     product:
                         transformers:
                             resize:
-                                width:   200
-                                height:  200
-                                mode:    inside
-                                allow_downscale:      true
-                                allow_upscale:        true
+                                width: 200
+                                height: 200
+                                mode: inside
+                                allow_downscale: true
+                                allow_upscale: true
 
-To confgure the bundle to your needs, you can explore the following configuration sections:
+To configure the bundle to your needs, you can explore the following configuration sections:
 
 - `Post-processors configuration <post-processors.rst>`_
 - `Processors configuration <processors.rst>`_

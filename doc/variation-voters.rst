@@ -1,7 +1,7 @@
 Variation voters
 ================
 
-There are cases where you want to restrict the media that are eligible to be converted using a given variation. For example, you could want to restrict the use of a certain variation to the files located in a specific directory, or to the files that are larger than a minimal size.
+There are cases where you want to restrict the media that are eligible to be converted using a given `variation <variations.rst>`_. For example, you could want to restrict the use of a certain variation to the files located in a specific directory, or to the files that are larger than a minimal size.
 
 The MediaBundle provides a way to define *voters* that can be used to restrict the media that can be converted using a given variation. A voter is a service that implements the ``Joli\MediaBundle\Variation\Voter\VoterInterface`` interface. This interface defines a single method, ``vote(Media $media)``, that should return a boolean indicating whether the voter supports the given media.
 
@@ -13,18 +13,17 @@ For example:
 
     joli_media:
         libraries:
-            default:
-                cache:
-                    variations:
-                        profile_picture:
-                            transformers:
-                                thumbnail:
-                                    width: 64
-                                    height: 64
-                            voters:
-                                -
-                                    type: folder
-                                    path: user/profile_pictures
+            example_library:
+                variations:
+                    profile_picture:
+                        transformers:
+                            thumbnail:
+                                width: 64
+                                height: 64
+                        voters:
+                            -
+                                type: folder
+                                path: user/profile_pictures
 
 The above configuration defines a variation named ``profile_picture`` that will only be applied to the media located in the ``user/profile_pictures`` directory.
 
@@ -95,44 +94,43 @@ For example:
 
     joli_media:
         libraries:
-            default:
-                cache:
-                    variations:
-                        profile_picture:
-                            transformers:
-                                thumbnail:
-                                    width: 64
-                                    height: 64
-                            voters:
-                                -
-                                    type: format
-                                    format: jpg
-                                -
-                                    type: oneOf
-                                    voters:
-                                        -
-                                            type: mimeType
-                                            mime_type: image/png
-                                        -
-                                            type: allOf
-                                            voters:
-                                                -
-                                                    type: folder
-                                                    path: uploaded-files/user-profile-pictures
-                                                -
-                                                    type: filesize
-                                                    max: 100000
-                                                    min: 5000
-                                        -
-                                            type: allOf
-                                            voters:
-                                                -
-                                                    type: folder
-                                                    path: archive/user-profile
-                                                -
-                                                    type: filesize
-                                                    max: 2000000
-                                                    min: 100000
+            example_library:
+                variations:
+                    profile_picture:
+                        transformers:
+                            thumbnail:
+                                width: 64
+                                height: 64
+                        voters:
+                            -
+                                type: format
+                                format: jpg
+                            -
+                                type: oneOf
+                                voters:
+                                    -
+                                        type: mimeType
+                                        mime_type: image/png
+                                    -
+                                        type: allOf
+                                        voters:
+                                            -
+                                                type: folder
+                                                path: uploaded-files/user-profile-pictures
+                                            -
+                                                type: filesize
+                                                max: 100000
+                                                min: 5000
+                                    -
+                                        type: allOf
+                                        voters:
+                                            -
+                                                type: folder
+                                                path: archive/user-profile
+                                            -
+                                                type: filesize
+                                                max: 2000000
+                                                min: 100000
 
 With the above configuration, the ``profile_picture`` variation will be applied to the media that are in the ``jpg`` format and that are either in the ``image/png`` MIME type or that are in the ``uploaded-files/user-profile-pictures`` directory and have a size between 5KB and 100KB, or that are in the ``archive/user-profile`` directory and have a size between 100KB and 2MB.
 
