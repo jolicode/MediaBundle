@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Model;
 
 use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Storage\CacheStorage;
 use JoliCode\MediaBundle\Variation\Variation;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -53,6 +54,11 @@ class MediaVariation implements StorableInterface
         return $this->getStorage()->getFormat($this->media->getPath(), $this->variation);
     }
 
+    public function getLibrary(): Library
+    {
+        return $this->media->getLibrary();
+    }
+
     public function getMedia(): Media
     {
         return $this->media;
@@ -73,7 +79,7 @@ class MediaVariation implements StorableInterface
 
     public function getStorage(): CacheStorage
     {
-        return $this->media->getLibrary()->getCacheStorage();
+        return $this->getLibrary()->getCacheStorage();
     }
 
     public function getStoragePath(): string
