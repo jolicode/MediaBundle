@@ -30,6 +30,13 @@ class Img
 
     public ?string $webpAlternativeSource = null;
 
+    /**
+     * @var array<int, string> key is the width, value is the URL
+     */
+    public array $srcset = [];
+
+    public ?string $sizes = null;
+
     public function __construct(
         private readonly Converter $converter,
         private readonly Resolver $resolver,
@@ -38,15 +45,30 @@ class Img
     ) {
     }
 
+    /**
+     * @param string|string[]|null $variation
+     */
     public function mount(
         ?Media $media = null,
         ?string $path = null,
         ?string $library = null,
-        ?string $variation = null,
+        string|array|null $variation = null,
         ?string $class = null,
+        ?string $sizes = null,
+        ?string $width = null,
+        ?string $height = null,
         bool $skipAutoDimensions = false,
         bool $allowAppendWebpAlternativeSource = false,
     ): void {
+        if (null === $variation) {
+            $srcset = [];
+        } elseif (\is_array($variation)) {
+            $srcset = $variation;
+            $variation = ([] !== $srcset) ? $srcset[0] : null;
+        } else {
+            $srcset = [$variation];
+        }
+
         if ($media instanceof Media) {
             if (null !== $path) {
                 throw new \InvalidArgumentException('You must provide either a media or a path, not both');
@@ -131,16 +153,10 @@ class Img
                     'exception' => $e,
                     'media' => $media,
                 ]);
-            } finally {
-                if (!$media->isStored()) {
-                    // the media variation is not stored yet, simply output the template
-                    // the media variation will be generated on the fly
-                    $this->path = $media->getUrl();
-
-                    return;
-                }
             }
         }
+
+        $this->path = $media->getUrl();
 
         if (!$media->isStored()) {
             $this->logger?->warning(\sprintf(
@@ -149,30 +165,89 @@ class Img
                 null !== $library ? \sprintf(' in the library "%s"', $library) : '',
                 null !== $variation ? \sprintf(' with variation "%s"', $variation) : '',
             ));
+        } else {
+            $binary = $media->getBinary();
 
-            return;
+            if (!str_starts_with($binary->getMimeType(), 'image/')) {
+                $this->logger?->warning(\sprintf(
+                    'The media "%s"%s is not an image',
+                    $path,
+                    null !== $library ? \sprintf(' in the library "%s"', $library) : '',
+                ));
+
+                return;
+            }
         }
 
-        $this->path = $media->getUrl();
-        $binary = $media->getBinary();
-
-        if (!str_starts_with($binary->getMimeType(), 'image/')) {
-            $this->logger?->warning(\sprintf(
-                'The media "%s"%s is not an image',
-                $path,
-                null !== $library ? \sprintf(' in the library "%s"', $library) : '',
-            ));
-
-            return;
-        }
-
-        if (!$skipAutoDimensions) {
+        if (null !== $width || null !== $height) {
+            $this->width = null !== $width ? (int) $width : null;
+            $this->height = null !== $height ? (int) $height : null;
+        } elseif ($media->isStored() && !$skipAutoDimensions) {
             $dimensions = $binary->getPixelDimensions();
 
             if (false !== $dimensions) {
                 $this->width = $dimensions['width'];
                 $this->height = $dimensions['height'];
             }
+        }
+
+        if (\count($srcset) > 1) {
+            $library = $this->media->getLibrary()->getName();
+
+            foreach ($srcset as $variationName) {
+                $variationMedia = $this->resolver->resolveMediaVariation($path, $variationName, $library);
+
+                if (!$variationMedia instanceof MediaVariation) {
+                    $this->logger?->warning(\sprintf(
+                        'The media variation "%s" for media "%s" could not be resolved in the library "%s"',
+                        $variationName,
+                        $path,
+                        $library,
+                    ));
+
+                    continue;
+                }
+
+                try {
+                    $this->converter->convertMediaVariation($variationMedia, false);
+                } catch (\RuntimeException $e) {
+                    $this->logger?->warning('Could not generate the variation file', [
+                        'exception' => $e,
+                        'media' => $variationMedia,
+                    ]);
+                }
+
+                if (!$variationMedia->isStored()) {
+                    continue;
+                }
+
+                $binary = $variationMedia->getBinary();
+                $dimensions = $binary->getPixelDimensions();
+
+                if (false !== $dimensions) {
+                    $this->srcset[$dimensions['width']] = $variationMedia->getUrl();
+                }
+            }
+        }
+
+        ksort($this->srcset, \SORT_NUMERIC);
+
+        if (\count($this->srcset) > 1) {
+            if (null === $sizes) {
+                // if no sizes are provided, assume the image will be displayed at its original width
+                if (null !== $this->width) {
+                    $this->sizes = $this->width . 'px';
+                } else {
+                    $minWidth = min(array_keys($this->srcset));
+                    $this->sizes = $minWidth . 'px';
+                }
+            } else {
+                $this->sizes = $sizes;
+            }
+        } else {
+            // only one variation, simply output its URL
+            $this->srcset = [];
+            $this->sizes = $sizes;
         }
     }
 }

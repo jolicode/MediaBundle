@@ -10,7 +10,6 @@ use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Tests\Application\Kernel;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
 use JoliCode\MediaBundle\Twig\Components\Img;
-use JoliCode\MediaBundle\Twig\Components\Picture;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -27,6 +26,8 @@ class ImgTest extends WebTestCase
     private const TIFF_MEDIA = 'tiff-media.tiff';
 
     private const BROKEN_FILENAME = 'some\ filename.jpg';
+
+    private const NON_EXISTING_FILENAME = 'some\ filename\ that\ does\ not\ exist.jpg';
 
     public static function setUpBeforeClass(): void
     {
@@ -119,7 +120,6 @@ class ImgTest extends WebTestCase
 
     public static function provideComponentsData(): \Generator
     {
-        // img tags
         yield 'unresolved-media' => [
             Img::class,
             [
@@ -137,6 +137,24 @@ class ImgTest extends WebTestCase
                 'alt' => 'Alternative text',
             ],
             '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109">',
+        ];
+        yield 'existing-media-srcset' => [
+            Img::class,
+            [
+                'path' => self::COMPLETELY_STORED_MEDIA,
+                'variation' => ['variation-standard'],
+                'alt' => 'Alternative text',
+            ],
+            '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109">',
+        ];
+        yield 'existing-media-srcset-multiple' => [
+            Img::class,
+            [
+                'path' => self::COMPLETELY_STORED_MEDIA,
+                'variation' => ['variation-standard', 'variation-large', 'variation-extra-large'],
+                'alt' => 'Alternative text',
+            ],
+            '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" srcset="/media/cache/variation-standard/circle-pattern.jpg 145w, /media/cache/variation-large/circle-pattern.jpg 800w, /media/cache/variation-extra-large/circle-pattern.jpg 1800w" sizes="145px" width="145" height="109">',
         ];
         yield 'existing-media-tiff' => [
             Img::class,
@@ -156,6 +174,24 @@ class ImgTest extends WebTestCase
             ],
             '<img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text">',
         ];
+        yield 'partial-existing-media-srcset' => [
+            Img::class,
+            [
+                'path' => self::PARTIALLY_STORED_MEDIA,
+                'variation' => ['variation-standard'],
+                'alt' => 'Alternative text',
+            ],
+            '<img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text">',
+        ];
+        yield 'partial-existing-media-srcset-multiple' => [
+            Img::class,
+            [
+                'path' => self::PARTIALLY_STORED_MEDIA,
+                'variation' => ['variation-standard', 'variation-large', 'variation-extra-large'],
+                'alt' => 'Alternative text',
+            ],
+            '<img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text" srcset="/media/cache/variation-standard/partially-stored-media.jpg 145w, /media/cache/variation-large/partially-stored-media.jpg 800w, /media/cache/variation-extra-large/partially-stored-media.jpg 1800w" sizes="145px">',
+        ];
         yield 'existing-media-with-skip-auto-dimensions' => [
             Img::class,
             [
@@ -174,6 +210,16 @@ class ImgTest extends WebTestCase
                 'class' => 'img-class',
             ],
             '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" class="img-class" width="145" height="109">',
+        ];
+        yield 'existing-media-with-width' => [
+            Img::class,
+            [
+                'path' => self::COMPLETELY_STORED_MEDIA,
+                'variation' => 'variation-standard',
+                'alt' => 'Alternative text',
+                'width' => 200,
+            ],
+            '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="200">',
         ];
         yield 'existing-media-with-width-height' => [
             Img::class,
@@ -207,7 +253,7 @@ class ImgTest extends WebTestCase
             ],
             '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" style="aspect-ratio: calc(30 / 10)" width="145" height="109">',
         ];
-        yield 'existing-media-cannot-be-read' => [
+        yield 'existing-media-variation-cannot-be-read' => [
             Img::class,
             [
                 'path' => self::BROKEN_FILENAME,
@@ -215,169 +261,45 @@ class ImgTest extends WebTestCase
             ],
             '<img src="/media/cache/variation-standard/some%5C%20filename.jpg" loading="lazy" decoding="async">',
         ];
-
-        // picture tags
-        yield 'picture-tag' => [
-            Picture::class,
+        yield 'existing-media-variation-cannot-be-read-srcset' => [
+            Img::class,
             [
-                'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'variation-standard',
-                'alt' => 'Alternative text',
+                'path' => self::BROKEN_FILENAME,
+                'variation' => ['variation-standard'],
             ],
-            '<picture><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109"></picture>',
+            '<img src="/media/cache/variation-standard/some%5C%20filename.jpg" loading="lazy" decoding="async">',
         ];
-        yield 'partial-picture-tag' => [
-            Picture::class,
+        yield 'existing-media-variation-cannot-be-read-srcset-multiple' => [
+            Img::class,
             [
-                'path' => self::PARTIALLY_STORED_MEDIA,
-                'variation' => 'variation-standard',
-                'alt' => 'Alternative text',
+                'path' => self::BROKEN_FILENAME,
+                'variation' => ['variation-standard', 'variation-large', 'variation-extra-large'],
             ],
-            '<picture><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text"></picture>',
+            '<img src="/media/cache/variation-standard/some%5C%20filename.jpg" loading="lazy" decoding="async" srcset="/media/cache/variation-standard/some%5C%20filename.jpg 145w, /media/cache/variation-large/some%5C%20filename.jpg 800w, /media/cache/variation-extra-large/some%5C%20filename.jpg 1800w" sizes="145px">',
         ];
-        yield 'picture-with-class' => [
-            Picture::class,
+        yield 'non-existing-media-variation' => [
+            Img::class,
             [
-                'path' => self::COMPLETELY_STORED_MEDIA,
+                'path' => self::NON_EXISTING_FILENAME,
                 'variation' => 'variation-standard',
-                'alt' => 'Alternative text',
-                'picture:class' => 'picture-class',
-                'img:class' => 'img-class',
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+            '<img src="/media/cache/variation-standard/some%5C%20filename%5C%20that%5C%20does%5C%20not%5C%20exist.jpg" loading="lazy" decoding="async">',
         ];
-        yield 'picture-with-sources' => [
-            Picture::class,
+        yield 'non-existing-media-srcset' => [
+            Img::class,
             [
-                'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'variation-standard',
-                'alt' => 'Alternative text',
-                'picture:class' => 'picture-class',
-                'img:class' => 'img-class',
-                'sources' => ['variation-standard', 'variation-large'],
+                'path' => self::NON_EXISTING_FILENAME,
+                'variation' => ['variation-standard'],
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/circle-pattern.jpg" type="image/jpeg" width="145" height="109"><source srcset="/media/cache/variation-large/circle-pattern.jpg" type="image/jpeg" width="800" height="600"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+            '<img src="/media/cache/variation-standard/some%5C%20filename%5C%20that%5C%20does%5C%20not%5C%20exist.jpg" loading="lazy" decoding="async">',
         ];
-        yield 'picture-with-sources-and-skipAutoDimensions' => [
-            Picture::class,
+        yield 'non-existing-media-srcset-multiple' => [
+            Img::class,
             [
-                'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'variation-standard',
-                'alt' => 'Alternative text',
-                'picture:class' => 'picture-class',
-                'img:class' => 'img-class',
-                'sources' => ['variation-standard', 'variation-large'],
-                'skipAutoDimensions' => true,
+                'path' => self::NON_EXISTING_FILENAME,
+                'variation' => ['variation-standard', 'variation-large', 'variation-extra-large'],
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/circle-pattern.jpg" type="image/jpeg"><source srcset="/media/cache/variation-large/circle-pattern.jpg" type="image/jpeg"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
-        ];
-        yield 'partial-picture-with-sources' => [
-            Picture::class,
-            [
-                'path' => self::PARTIALLY_STORED_MEDIA,
-                'variation' => 'variation-standard',
-                'alt' => 'Alternative text',
-                'picture:class' => 'picture-class',
-                'img:class' => 'img-class',
-                'sources' => ['variation-standard', 'variation-large'],
-            ],
-            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/partially-stored-media.jpg"><source srcset="/media/cache/variation-large/partially-stored-media.jpg"><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
-        ];
-        yield 'partial-picture-with-sources-and-skipAutoDimensions' => [
-            Picture::class,
-            [
-                'path' => self::PARTIALLY_STORED_MEDIA,
-                'variation' => 'variation-standard',
-                'alt' => 'Alternative text',
-                'picture:class' => 'picture-class',
-                'img:class' => 'img-class',
-                'sources' => ['variation-standard', 'variation-large'],
-                'skipAutoDimensions' => true,
-            ],
-            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/partially-stored-media.jpg"><source srcset="/media/cache/variation-large/partially-stored-media.jpg"><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
-        ];
-        yield 'auto-generate-partial-picture-with-sources' => [
-            Picture::class,
-            [
-                'path' => self::PARTIALLY_STORED_MEDIA,
-                'library' => 'auto_generate',
-                'variation' => 'variation-standard',
-                'alt' => 'Alternative text',
-                'picture:class' => 'picture-class',
-                'img:class' => 'img-class',
-                'sources' => ['variation-standard'],
-            ],
-            '<picture class="picture-class"><source srcset="/media-auto-generate/cache/variation-standard/partially-stored-media.jpg" type="image/jpeg" width="145" height="109"><source srcset="/media-auto-generate/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp" type="image/webp" width="145" height="109"><img src="/media-auto-generate/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
-        ];
-        yield 'picture-with-media-and-string-srcset' => [
-            Picture::class,
-            [
-                'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'variation-standard',
-                'alt' => 'Alternative text',
-                'picture:class' => 'picture-class',
-                'img:class' => 'img-class',
-                'sources' => [[
-                    'media' => '(min-width: 1024px)',
-                    'srcset' => 'variation-extra-large',
-                ], [
-                    'media' => '(max-width: 1023px)',
-                    'srcset' => 'variation-large',
-                ]],
-            ],
-            '<picture class="picture-class"><source media="(min-width: 1024px)" srcset="/media/cache/variation-extra-large-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="1800" height="1200"><source media="(min-width: 1024px)" srcset="/media/cache/variation-extra-large/circle-pattern.jpg" type="image/jpeg" width="1800" height="1200"><source media="(max-width: 1023px)" srcset="/media/cache/variation-large-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="800" height="600"><source media="(max-width: 1023px)" srcset="/media/cache/variation-large/circle-pattern.jpg" type="image/jpeg" width="800" height="600"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
-        ];
-        yield 'picture-with-sources-and-media' => [
-            Picture::class,
-            [
-                'path' => self::COMPLETELY_STORED_MEDIA,
-                'variation' => 'variation-standard',
-                'alt' => 'Alternative text',
-                'picture:class' => 'picture-class',
-                'img:class' => 'img-class',
-                'sources' => [[
-                    'media' => '(width > 1024px)',
-                    'sizes' => '1920px',
-                    'srcset' => [
-                        '2560w' => 'variation-extra-large',
-                        '1920w' => 'variation-large',
-                    ],
-                ], [
-                    'media' => '(width >= 768px)',
-                    'sizes' => '1024px',
-                    'srcset' => [
-                        '1600w' => 'variation-large',
-                        '1024w' => 'variation-standard',
-                    ],
-                ]],
-            ],
-            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/circle-pattern.d601f6f2.webp 2560w, /media/cache/variation-large-webp/circle-pattern.d601f6f2.webp 1920w" type="image/webp" width="1800" height="1200"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/circle-pattern.jpg 2560w, /media/cache/variation-large/circle-pattern.jpg 1920w" type="image/jpeg" width="1800" height="1200"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/circle-pattern.d601f6f2.webp 1600w, /media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp 1024w" type="image/webp" width="800" height="600"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large/circle-pattern.jpg 1600w, /media/cache/variation-standard/circle-pattern.jpg 1024w" type="image/jpeg" width="800" height="600"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
-        ];
-        yield 'partial-picture-with-sources-and-media' => [
-            Picture::class,
-            [
-                'path' => self::PARTIALLY_STORED_MEDIA,
-                'variation' => 'variation-standard',
-                'alt' => 'Alternative text',
-                'picture:class' => 'picture-class',
-                'img:class' => 'img-class',
-                'sources' => [[
-                    'media' => '(width > 1024px)',
-                    'sizes' => '1920px',
-                    'srcset' => [
-                        '2560w' => 'variation-extra-large',
-                        '1920w' => 'variation-large',
-                    ],
-                ], [
-                    'media' => '(width >= 768px)',
-                    'sizes' => '1024px',
-                    'srcset' => [
-                        '1600w' => 'variation-large',
-                        '1024w' => 'variation-standard',
-                    ],
-                ]],
-            ],
-            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/partially-stored-media.b16d66f4.webp 2560w, /media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1920w" type="image/webp"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/partially-stored-media.jpg 2560w, /media/cache/variation-large/partially-stored-media.jpg 1920w"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1600w, /media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp 1024w" type="image/webp"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large/partially-stored-media.jpg 1600w, /media/cache/variation-standard/partially-stored-media.jpg 1024w"><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<img src="/media/cache/variation-standard/some%5C%20filename%5C%20that%5C%20does%5C%20not%5C%20exist.jpg" loading="lazy" decoding="async">',
         ];
     }
 

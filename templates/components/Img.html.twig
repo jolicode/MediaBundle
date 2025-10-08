@@ -9,6 +9,17 @@
     src="{{ this.path }}"
     {{- attributes.defaults({ loading: 'lazy', decoding: 'async' }) }}
     {{- attributes.nested('img') }}
+    {% if this.srcset is not empty -%}
+        srcset="
+            {%- for width, srcset in this.srcset %}
+                {{- (loop.first ? '' : ', ') -}}
+                {{- srcset }} {{ width }}w
+            {%- endfor -%}
+        "
+    {% endif %}
+    {% if this.sizes is not null -%}
+        sizes="{{ this.sizes }}"
+    {% endif %}
     {% if this.class is not null -%}
         class="{{ this.class }}"
     {% endif %}
