@@ -56,8 +56,8 @@ class Transformation
 
         if ($this->hasChangedDimensions()) {
             $options[] = '-resize';
-            $options[] = $this->targetWidth;
-            $options[] = $this->targetHeight;
+            $options[] = $this->multiply((int) $this->targetWidth);
+            $options[] = $this->multiply((int) $this->targetHeight);
         }
 
         if ($this->hasCrop()) {
@@ -85,7 +85,7 @@ class Transformation
 
         if ($this->hasChangedDimensions()) {
             $options[] = '--resize';
-            $options[] = \sprintf('%dx%d', $this->targetWidth, $this->targetHeight);
+            $options[] = \sprintf('%dx%d', $this->multiply((int) $this->targetWidth), $this->multiply((int) $this->targetHeight));
         }
 
         return $options;
@@ -94,13 +94,16 @@ class Transformation
     public function getAsImagineCallback(): callable
     {
         return function (ImageInterface $image): ImageInterface {
+            $targetWidth = null !== $this->targetWidth ? $this->multiply($this->targetWidth) : null;
+            $targetHeight = null !== $this->targetHeight ? $this->multiply($this->targetHeight) : null;
+
             if ($this->hasCrop()) {
-                if ($this->targetWidth <= $this->cropWidth / 2 && $this->targetHeight <= $this->cropHeight / 2) {
+                if ($targetWidth <= $this->cropWidth / 2 && $targetHeight <= $this->cropHeight / 2) {
                     // the transformation properties are computed to be applied in the crop then resize order
                     // if the image has both to be cropped and resized, we update the transformation values to
                     // apply first the resize then the crop
-                    $xResizeRatio = $this->targetWidth / $this->cropWidth;
-                    $yResizeRatio = $this->targetHeight / $this->cropHeight;
+                    $xResizeRatio = $targetWidth / $this->cropWidth;
+                    $yResizeRatio = $targetHeight / $this->cropHeight;
 
                     // If the target size is more than double the original size, we resize first
                     $resizeWidth = ceil($this->binaryWidth * $xResizeRatio);
@@ -113,7 +116,7 @@ class Transformation
 
                     return $image->crop(
                         new Point($cropX, $cropY),
-                        new Box((int) $this->targetWidth, (int) $this->targetHeight),
+                        new Box((int) $targetWidth, (int) $targetHeight),
                     );
                 }
 
@@ -124,7 +127,7 @@ class Transformation
             }
 
             if ($this->hasEffect()) {
-                $image = $image->resize(new Box((int) $this->targetWidth, (int) $this->targetHeight));
+                $image = $image->resize(new Box((int) $targetWidth, (int) $targetHeight));
             }
 
             return $image;
@@ -143,8 +146,8 @@ class Transformation
             'cropY' => $this->cropY,
             'cropWidth' => $this->cropWidth,
             'cropHeight' => $this->cropHeight,
-            'targetWidth' => $this->targetWidth,
-            'targetHeight' => $this->targetHeight,
+            'targetWidth' => null !== $this->targetWidth ? $this->multiply($this->targetWidth) : null,
+            'targetHeight' => null !== $this->targetHeight ? $this->multiply($this->targetHeight) : null,
         ];
     }
 
@@ -166,6 +169,11 @@ class Transformation
     public function getMediaVariation(): MediaVariation
     {
         return $this->mediaVariation;
+    }
+
+    public function getMultiplier(): float
+    {
+        return $this->mediaVariation->getVariation()->getMultiplier();
     }
 
     public function getOutputFormat(): string
@@ -218,7 +226,7 @@ class Transformation
         return
             null !== $this->targetWidth
             && null !== $this->targetHeight
-            && ($this->targetWidth !== $this->binaryWidth || $this->targetHeight !== $this->binaryHeight);
+            && ($this->multiply($this->targetWidth) !== $this->binaryWidth || $this->multiply($this->targetHeight) !== $this->binaryHeight);
     }
 
     public function hasEffect(): bool
@@ -231,12 +239,15 @@ class Transformation
         return
             null !== $this->targetWidth
             && null !== $this->targetHeight
-            && $this->targetWidth * $this->targetHeight > $this->binaryWidth * $this->binaryHeight;
+            && $this->multiply($this->targetWidth) * $this->multiply($this->targetHeight) > $this->binaryWidth * $this->binaryHeight;
     }
 
     public function hasReducedArea(): bool
     {
-        return null !== $this->targetWidth && null !== $this->targetHeight && $this->targetWidth * $this->targetHeight < $this->binaryWidth * $this->binaryHeight;
+        return
+            null !== $this->targetWidth
+            && null !== $this->targetHeight
+            && $this->multiply($this->targetWidth) * $this->multiply($this->targetHeight) < $this->binaryWidth * $this->binaryHeight;
     }
 
     public function mustRun(): bool
@@ -258,6 +269,11 @@ class Transformation
         $this->cropY = null;
         $this->cropWidth = null;
         $this->cropHeight = null;
+    }
+
+    public function multiply(int $value): int
+    {
+        return (int) round($value * $this->getMultiplier());
     }
 
     /**
