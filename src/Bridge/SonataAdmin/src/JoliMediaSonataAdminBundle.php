@@ -176,6 +176,7 @@ class JoliMediaSonataAdminBundle extends AbstractBundle
                     'variations' => [
                         'joli_media_sonata_admin' => [
                             'enable_auto_webp' => false,
+                            'pixel_ratios' => [1],
                             'transformers' => [
                                 'resize' => [
                                     'width' => 180,
@@ -187,6 +188,7 @@ class JoliMediaSonataAdminBundle extends AbstractBundle
                         ],
                         'joli_media_sonata_admin_large' => [
                             'enable_auto_webp' => false,
+                            'pixel_ratios' => [1],
                             'transformers' => [
                                 'resize' => [
                                     'width' => 800,
@@ -198,6 +200,7 @@ class JoliMediaSonataAdminBundle extends AbstractBundle
                         ],
                         'joli_media_sonata_admin_small' => [
                             'enable_auto_webp' => false,
+                            'pixel_ratios' => [1],
                             'transformers' => [
                                 'thumbnail' => [
                                     'width' => 20,

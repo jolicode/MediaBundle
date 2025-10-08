@@ -111,6 +111,7 @@ class JoliMediaEasyAdminBundle extends AbstractBundle
                     'variations' => [
                         'joli_media_easy_admin' => [
                             'enable_auto_webp' => false,
+                            'pixel_ratios' => [1],
                             'transformers' => [
                                 'resize' => [
                                     'width' => 180,
@@ -122,6 +123,7 @@ class JoliMediaEasyAdminBundle extends AbstractBundle
                         ],
                         'joli_media_easy_admin_large' => [
                             'enable_auto_webp' => false,
+                            'pixel_ratios' => [1],
                             'transformers' => [
                                 'resize' => [
                                     'width' => 800,
@@ -133,6 +135,7 @@ class JoliMediaEasyAdminBundle extends AbstractBundle
                         ],
                         'joli_media_easy_admin_small' => [
                             'enable_auto_webp' => false,
+                            'pixel_ratios' => [1],
                             'transformers' => [
                                 'thumbnail' => [
                                     'width' => 20,
