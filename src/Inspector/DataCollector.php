@@ -40,10 +40,49 @@ class DataCollector extends AbstractDataCollector
         ];
 
         foreach ($this->libraryContainer->list() as $library) {
+            $variations = [];
+
+            foreach ($library->getVariationContainer()->list() as $variation) {
+                $transformers = [];
+
+                foreach ($variation->getTransformerChain()->getTransformers() as $transformer) {
+                    $class = new \ReflectionClass($transformer);
+                    $properties = [
+                        'type' => $this->cloneVar($class->getShortName()),
+                    ];
+                    $reflect = new \ReflectionClass($transformer);
+                    $props = $reflect->getProperties();
+
+                    foreach ($props as $prop) {
+                        if (\in_array(
+                            $prop->getName(),
+                            ['width', 'height', 'startX', 'startY', 'mode', 'positionX', 'positionY', 'allowDownscale', 'allowUpscale', 'backgroundColor', 'cropPosition'],
+                        ) && null !== $prop->getValue($transformer)) {
+                            if ('mode' === $prop->getName()) {
+                                $properties[$prop->getName()] = $this->cloneVar($prop->getValue($transformer)->value);
+
+                                continue;
+                            }
+
+                            $properties[$prop->getName()] = $this->cloneVar($prop->getValue($transformer));
+                        }
+                    }
+
+                    $transformers[] = $properties;
+                }
+
+                $variations[] = [
+                    'name' => $variation->getName(),
+                    'format' => $variation->getFormat()?->name,
+                    'multiplier' => $variation->getMultiplier(),
+                    'transformers' => $transformers,
+                ];
+            }
+
             $collectedData['libraries'][$library->getName()] = [
                 'name' => $library->getName(),
                 'serviceId' => \sprintf('.joli_media.library.%s', $library->getName()),
-                'variations' => $library->getVariationContainer()->getNames(),
+                'variations' => $variations,
                 'isDefault' => $library->getName() === $this->libraryContainer->getDefaultName(),
             ];
         }
