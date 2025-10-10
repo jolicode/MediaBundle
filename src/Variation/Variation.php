@@ -30,6 +30,7 @@ class Variation
         private readonly array $postProcessorsConfiguration = [],
         private readonly array $voters = [],
         private ?self $webpAlternativeVariation = null,
+        private readonly float $multiplier = 1.0,
     ) {
     }
 
@@ -92,6 +93,11 @@ class Variation
         $media->addVariation($mediaVariation);
 
         return $mediaVariation;
+    }
+
+    public function getMultiplier(): float
+    {
+        return $this->multiplier;
     }
 
     public function getName(): string

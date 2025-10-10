@@ -1,0 +1,33 @@
+<td
+    class="sf-toggle"
+    data-toggle-selector="#joli-media-{{ libraryName }}-variation-{{ variationName }}-transformer-{{ index }}"
+    data-toggle-initial=""
+>
+    {{ transformer.type }}
+    {% if transformer.width is defined or transformer.height is defined %}
+        (
+        {{- transformer.width is defined ? transformer.width : '' -}}
+        {%- if transformer.width is defined and transformer.height is defined %}x{% endif %}
+        {{- transformer.height is defined ? transformer.height : '' -}}
+        )
+    {% endif %}
+    <button class="btn btn-link toggle-button toggle-button-small" type="button">
+        {{ source('@WebProfiler/Icon/search.svg') }}
+    </button>
+
+    <table
+        id="joli-media-{{ libraryName }}-variation-{{ variationName }}-transformer-{{ index }}"
+        class="table-metadata"
+    >
+        <tbody>
+            {% for key, value in transformer %}
+                {% if key != 'type' %}
+                    <tr>
+                        <td scope="row">{{ key }}</td>
+                        <td>{{ profiler_dump(value) }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</td>

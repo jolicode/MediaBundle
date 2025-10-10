@@ -294,39 +294,55 @@
                             <p>There are no configured media libraries.</p>
                         </div>
                     {% else %}
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="key">Name</th>
-                                    <th scope="col">Service</th>
-                                    <th scope="col">Variations</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for library in collector.libraries %}
-                                    <tr>
-                                        <th scope="row">
-                                            {{ library.name }}
-                                            {% if library.isDefault and collector.libraries|length > 1 %}
-                                                <span class="badge">Default</span>
-                                            {% endif %}
-                                        </th>
-                                        <td>{{ library.serviceId }}</td>
-                                        <td>
-                                            {% if library.variations|length > 0 %}
-                                                <ul>
-                                                    {% for variation in library.variations %}
-                                                        <li>{{ variation }}</li>
-                                                    {% endfor %}
-                                                </ul>
-                                            {% else %}
-                                                <span class="badge badge-info">No variations</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                        {% for library in collector.libraries %}
+                            <h4>{{ library.name }} {% if library.isDefault %}<span class="badge">Default library</span>{% endif %}</h4>
+                            <p>Service ID: <code>{{ library.serviceId }}</code></p>
+                            {% if library.variations|length == 0 %}
+                                <div class="empty">
+                                    <p>This library has no variations.</p>
+                                </div>
+                            {% else %}
+                                <h5>Variations</h5>
+
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="key">Name</th>
+                                            <th scope="col">Format</th>
+                                            <th scope="col">Multiplier</th>
+                                            <th scope="col">Transformers</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for variation in library.variations %}
+                                            <tr>
+                                                <th{% if variation.transformers|length > 1 %} rowspan="{{ variation.transformers|length }}"{% endif %} scope="row" style="width: 50%">{{ variation.name }}</th>
+                                                <td{% if variation.transformers|length > 1 %} rowspan="{{ variation.transformers|length }}"{% endif %}>
+                                                    {% if variation.format %}<span class="badge badge-info">{{ variation.format }}</span>{% endif %}
+                                                </td>
+                                                <td{% if variation.transformers|length > 1 %} rowspan="{{ variation.transformers|length }}"{% endif %} class="cell-right">
+                                                    {% if variation.multiplier is defined and variation.multiplier != 1 -%}
+                                                        <span class="badge badge-info">x{{ variation.multiplier }}</span>
+                                                    {%- endif %}
+                                                </td>
+                                                {% if variation.transformers|length > 0 %}
+                                                    {{ include('@JoliMedia/inspector/_transformer_detail.html.twig', { transformer: variation.transformers[0], libraryName: library.name, variationName: variation.name, index: 0 }) }}
+                                                {% else %}
+                                                    <td><span class="badge badge-info">No transformers</span></td>
+                                                {% endif %}
+                                            </tr>
+
+                                            {% for transformer in variation.transformers|slice(1) %}
+                                                <tr>
+                                                    {{ include('@JoliMedia/inspector/_transformer_detail.html.twig', { transformer: transformer, libraryName: library.name, variationName: variation.name, index: loop.index }) }}
+                                                </tr>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                            <hr />
+                        {% endfor %}
                     {% endif %}
                 </div>
             </div>

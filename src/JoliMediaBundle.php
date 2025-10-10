@@ -150,6 +150,7 @@ class JoliMediaBundle extends AbstractBundle
                         ->defaultFalse()
                         ->info('If true, enables automatic generation of WebP variations for the media: the configured variations will all be duplicated in WebP format, in addition to the original format.')
                     ->end()
+                    ->append($this->addPixelRatiosNode())
                     ->append($this->addVariationsNode())
                     ->append($this->addPostProcessorOptionsNode())
                     ->append($this->addProcessorOptionsNode())
@@ -222,12 +223,14 @@ class JoliMediaBundle extends AbstractBundle
     {
         $treeBuilder = new TreeBuilder('variations');
         return $treeBuilder->getRootNode()
+            ->useAttributeAsKey('name')
             ->arrayPrototype()
                 ->children()
                     ->scalarNode('format')->end()
                     ->booleanNode('enable_auto_webp')
                         ->info('If true and the format config attribute is not set or different from "webp", enables an additionnal webp version of the variation.')
                     ->end()
+                    ->append($this->addPixelRatiosNode())
                     ->arrayNode('transformers')
                         ->arrayPrototype()
                             ->children()
@@ -297,6 +300,25 @@ class JoliMediaBundle extends AbstractBundle
                     ->append($this->addProcessorOptionsNode())
                     ->append($this->addVotersNode())
                 ->end()
+            ->end()
+        ;
+    }
+
+    private function addPixelRatiosNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('pixel_ratios');
+
+        return $treeBuilder->getRootNode()
+            ->floatPrototype()->end()
+            ->defaultValue([])
+            ->info('List of pixel ratios to generate variations for. The value 1 must be included in the list.')
+            ->validate()
+                ->ifTrue(fn ($v): bool => !in_array(1, $v, true))
+                ->thenInvalid('The pixel_ratios array must contain the value 1.')
+            ->end()
+            ->validate()
+                ->ifTrue(fn ($v): bool => count($v) !== count(array_unique($v)))
+                ->thenInvalid('The pixel_ratios array cannot contain duplicate values.')
             ->end()
         ;
     }
@@ -1074,21 +1096,34 @@ class JoliMediaBundle extends AbstractBundle
             ]);
 
         foreach ($libraryConfig['variations'] as $variationName => $variationConfig) {
-            $variationServiceId = $this->createVariationService($container, $builder, $libraryName, $libraryConfig, $variationName, $variationConfig);
+            $addWebpVariation = (
+                !isset($variationConfig['format'])
+                || 'webp' !== $variationConfig['format']
+            ) && (
+                isset($variationConfig['enable_auto_webp']) && $variationConfig['enable_auto_webp']
+                || !isset($variationConfig['enable_auto_webp']) && $libraryConfig['enable_auto_webp']
+            );
+            $pixelRatios = count($variationConfig['pixel_ratios']) > 0 ? $variationConfig['pixel_ratios'] : (count($libraryConfig['pixel_ratios']) > 0 ? $libraryConfig['pixel_ratios'] : [1]);
 
-            if (
-                (
-                    isset($variationConfig['enable_auto_webp']) && $variationConfig['enable_auto_webp']
-                    || !isset($variationConfig['enable_auto_webp']) && $libraryConfig['enable_auto_webp']
-                )
-                && (!isset($variationConfig['format']) || 'webp' !== $variationConfig['format'])
-            ) {
-                $variationConfig['format'] = 'webp';
-                $webpVariationServiceId = $this->createVariationService($container, $builder, $libraryName, $libraryConfig, $variationName.'.webp', $variationConfig);
-                $container->services()
-                    ->get($variationServiceId)
-                    ->call('setWebpAlternativeVariation', [service($webpVariationServiceId)])
-                ;
+            foreach ($pixelRatios as $pixelRatio) {
+                $ratioVariationName = $variationName;
+                $ratioVariationConfig = $variationConfig;
+
+                if (1.0 !== (float) $pixelRatio) {
+                    $ratioVariationName .= '@'.$pixelRatio.'x';
+                }
+
+                $ratioVariationConfig['pixel_ratio'] = $pixelRatio;
+                $variationServiceId = $this->createVariationService($container, $builder, $libraryName, $libraryConfig, $ratioVariationName, $ratioVariationConfig);
+
+                if ($addWebpVariation) {
+                    $ratioVariationConfig['format'] = 'webp';
+                    $webpVariationServiceId = $this->createVariationService($container, $builder, $libraryName, $libraryConfig, $ratioVariationName.'.webp', $ratioVariationConfig);
+                    $container->services()
+                        ->get($variationServiceId)
+                        ->call('setWebpAlternativeVariation', [service($webpVariationServiceId)])
+                    ;
+                }
             }
         }
 
@@ -1153,7 +1188,7 @@ class JoliMediaBundle extends AbstractBundle
                     '$height' => $transformerConfig['height'],
                     '$allowDownscale' => $transformerConfig['allow_downscale']
                 ]);
-        } elseif ($transformerType === 'resize') {
+        } elseif ('resize' === $transformerType) {
             $mode = $transformerConfig['mode'] ?? Mode::exact->value;
 
             $container->services()
@@ -1255,6 +1290,7 @@ class JoliMediaBundle extends AbstractBundle
                 '$processorsConfiguration' => array_replace_recursive($libraryConfig['processors'] ?? [], $variationConfig['processors'] ?? []),
                 '$postProcessorsConfiguration' => array_replace_recursive($libraryConfig['post_processors'] ?? [], $variationConfig['post_processors'] ?? []),
                 '$voters' => array_map(fn($voterServiceId): ReferenceConfigurator => service($voterServiceId), $voterServiceIds),
+                '$multiplier' => $variationConfig['pixel_ratio'],
             ])
             ->tag($variationServiceTag, ['name' => $slugger->slug($variationName)->lower()->toString()])
         ;

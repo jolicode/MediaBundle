@@ -209,6 +209,10 @@ class CacheStorage
             $mediaVariation->getMedia()->getPath(),
             $mediaVariation->getVariation(),
         );
+        $this->mediaVariationPropertyAccessor->clearCache(
+            $mediaVariation->getMedia()->getPath(),
+            $mediaVariation->getVariation(),
+        );
         $this->filesystem->write($path, $mediaVariation->getBinary()->getContent(), [
             Config::OPTION_VISIBILITY => 'public',
             Config::OPTION_DIRECTORY_VISIBILITY => 'public',

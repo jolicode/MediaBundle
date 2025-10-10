@@ -80,7 +80,7 @@ readonly class Converter
     public function convertIfMustStoreWhenGeneratingUrl(MediaVariation $mediaVariation): void
     {
         if ($mediaVariation->getStorage()->mustStoreWhenGeneratingUrl($mediaVariation)) {
-            $this->convertMediaVariation($mediaVariation);
+            $this->convertMediaVariation($mediaVariation, false);
         }
     }
 

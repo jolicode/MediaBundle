@@ -509,6 +509,7 @@ return static function (ContainerConfigurator $container): void {
             '$processorsConfiguration' => abstract_arg('processors_configuration'),
             '$postProcessorsConfiguration' => abstract_arg('post_processors_configuration'),
             '$voters' => abstract_arg('joli_media.voters'),
+            '$multiplier' => abstract_arg('multiplier'),
         ])
 
         // voter

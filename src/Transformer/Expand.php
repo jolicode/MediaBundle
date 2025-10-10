@@ -66,12 +66,12 @@ readonly class Expand extends AbstractTransformer implements TransformerInterfac
         $positionX = $this->positionX;
         $positionY = $this->positionY;
 
-        if (\is_string($width)) {
-            $width = $this->convertPercentageValue($width, $binaryWidth);
-        }
+        $width = \is_string($width) ? $this->convertPercentageValue($width, $binaryWidth) : $transformation->multiply($width);
 
         if (\is_string($height)) {
             $height = $this->convertPercentageValue($height, $binaryHeight);
+        } else {
+            $height = $transformation->multiply($height);
         }
 
         if ($width < $binaryWidth || $height < $binaryHeight) {
@@ -84,6 +84,14 @@ readonly class Expand extends AbstractTransformer implements TransformerInterfac
             ]);
 
             return;
+        }
+
+        if (\is_int($positionX)) {
+            $positionX = $transformation->multiply($positionX);
+        }
+
+        if (\is_int($positionY)) {
+            $positionY = $transformation->multiply($positionY);
         }
 
         $positionX = $this->convertPositionValue($positionX, $width - $binaryWidth);
