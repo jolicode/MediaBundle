@@ -15,7 +15,7 @@ The main processors configuration is defined in the ``processors`` key of the ``
 
 .. tip::
 
-    Read the documentation page about `dependencies and tooling <dependencies-and-tooling.rst>`_ to learn how to install these tools on your system.
+    Read the documentation page about `dependencies and tooling <../getting-started/dependencies-and-tooling.rst>`_ to learn how to install these tools on your system.
 
 Default configuration
 ~~~~~~~~~~~~~~~~~~~~~

@@ -23,7 +23,7 @@ First, it resizes the images in order to generate a new, non distorded image, ab
 
 The heighten transformer will then ensure that the image is 600 pixels tall, upscaling it if required.
 
-This detailed transformation plan is actually processed in only one step, when possible (ie., The image is not resized **then** heightened, but resized and heightened in one go). The `debug tooling <debug-tooling.rst>`_ offered by the bundle can provide information about the processing steps that have actually been performed.
+This detailed transformation plan is actually processed in only one step, when possible (ie., The image is not resized **then** heightened, but resized and heightened in one go). The `debug tooling <../misc-features/debug-tooling.rst>`_ offered by the bundle can provide information about the processing steps that have actually been performed.
 
 Configuration options
 ---------------------
@@ -59,7 +59,7 @@ This is an array of integers that defines the pixel ratios for which the variati
 
 For example, if you define a variation named "``thumbnail``" and set this option to ``[1, 2]``, it will duplicate the variation for pixel ratios 2x, in addition to the 1x version. Two variations will be available: "``thumbnail``" (for the 1x version) and "``thumbnail@2x``" (for the 2x version). You'll be able to explicitely request either variation. If the ``enable_auto_webp`` option is also enabled, the WebP versions will also be generated, resulting in four variations: "``thumbnail``", "``thumbnail@2x``", "``thumbnail_webp``" and "``thumbnail_webp@2x``".
 
-If you use the `twig:joli:Img <twig-components.rst>`_ or  `twig:joli:Picture <twig-components.rst>`_ component with this ``thumbnail`` variation, the generated HTML markup will include all the derivated variations, so that the correct pixel-ratio version is used by devices with higher pixel-density screens.
+If you use the `twig:joli:Img <../misc-features/twig-components.rst>`_ or  `twig:joli:Picture <../misc-features/twig-components.rst>`_ component with this ``thumbnail`` variation, the generated HTML markup will include all the derivated variations, so that the correct pixel-ratio version is used by devices with higher pixel-density screens.
 
 If ``pixel_ratios`` is not defined in a variation, the value of the ``pixel_ratios`` option defined in the library configuration is used instead.
 
@@ -117,8 +117,8 @@ Here is a full example of a variation configuration:
 
 Here are some explanations about this configuration:
 
-- ``enable_auto_webp: true``: this will generate the variation in WebP format, in addition to the original format. In other words, you can either explicitely request the ``profile_picture_webp`` variation, which will generate the image in WebP format. If you use the `twig:joli:Picture <twig-components.rst>`_ component, the WebP version will be automatically used by browsers that support it.
-- ``pixel_ratios: [1, 2, 3]``: this will generate the variation for pixel ratios 2x and 3x in addition to the 1x version. In other words, you can explicitely request the ``profile_picture@2x`` and ``profile_picture@3x`` variations. If you use the `twig:joli:Picture <twig-components.rst>`_ component, the correct pixel-ratio version will be automatically used by browsers that support it.
+- ``enable_auto_webp: true``: this will generate the variation in WebP format, in addition to the original format. In other words, you can either explicitely request the ``profile_picture_webp`` variation, which will generate the image in WebP format. If you use the `twig:joli:Picture <../misc-features/twig-components.rst>`_ component, the WebP version will be automatically used by browsers that support it.
+- ``pixel_ratios: [1, 2, 3]``: this will generate the variation for pixel ratios 2x and 3x in addition to the 1x version. In other words, you can explicitely request the ``profile_picture@2x`` and ``profile_picture@3x`` variations. If you use the `twig:joli:Picture <../misc-features/twig-components.rst>`_ component, the correct pixel-ratio version will be automatically used by browsers that support it.
 - ``post_processors``: this will optimize the JPEG images using jpegoptim with a maximum quality of 60.
 - ``processors``: this will ensure that, if the Imagine processor is used, it will use a JPEG quality of 99.
 - ``transformers``: this will crop the images to fit within a 100x100 box at 1x scale (so, the 2x and 3x versions will respectively generate 200x200 and 300x300 images).

@@ -51,4 +51,4 @@ Some tools are not available in the default repositories, so you will need to in
         && tar xzvf oxipng-9.1.5-x86_64-unknown-linux-musl.tar.gz \
         && cp oxipng-9.1.5-x86_64-unknown-linux-musl/oxipng /usr/local/bin/oxipng
 
-Once the dependencies are installed, make sure to `configure the bundle <configuration.rst#processors-configuration>`_ to use them.
+Once the dependencies are installed, make sure to `configure the bundle <../getting-started/configuration.rst#processors-configuration>`_ to use them.

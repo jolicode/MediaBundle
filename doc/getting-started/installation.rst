@@ -16,8 +16,8 @@ To install the JoliMediaBundle, you need to follow these steps:
         JoliCode\MediaBundle\JoliMediaBundle::class => ['all' => true],
     ];
 
-3. Install the `software dependencies <dependencies-and-tooling.rst>`_
-4. Configure the bundle according to your needs. You can find the configuration options `in the Configuration section <configuration.rst>`_ of the documentation.
+3. Install the `software dependencies <../getting-started/dependencies-and-tooling.rst>`_
+4. Configure the bundle according to your needs. You can find the configuration options `in the Configuration section <../getting-started/configuration.rst>`_ of the documentation.
 
 Additionally, define the routes for the media library in your routing configuration:
 

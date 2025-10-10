@@ -18,7 +18,7 @@ While there are many other image optimization tools available, these are the one
 
 .. tip::
 
-    Read the documentation page about `dependencies and tooling <dependencies-and-tooling.rst>`_ to learn how to install these tools on your system.
+    Read the documentation page about `dependencies and tooling <../getting-started/dependencies-and-tooling.rst>`_ to learn how to install these tools on your system.
 
 Each post-processor has a ``binary`` key that defines the path to the binary to use, and an ``options`` key that defines the options to use when executing the binary. The default settings provide a good balance between quality and performance to make sure that the media is optimized while keeping a good quality.
 

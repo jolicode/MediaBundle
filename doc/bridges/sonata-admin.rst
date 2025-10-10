@@ -50,7 +50,7 @@ The ``upload`` section of the configuration allows you to control the media uplo
 
 - ``max_files``: Sets the maximum number of files that can be uploaded at once.
 - ``max_file_size``: Sets the maximum file size for uploads (in megabytes).
-- ``accepted_files``: Specifies the MIME types of files that can be uploaded. You can use wildcards like `image/*` or specific types like `application/pdf`.
+- ``accepted_files``: Specifies the MIME types of files that can be uploaded. You can use wildcards like ``image/*`` or specific types like ``application/pdf``.
 
 The ``visibility`` section of the configuration allows you to control the visibility of various features in the Sonata admin media interface:
 

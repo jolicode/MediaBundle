@@ -32,38 +32,38 @@ Table of contents
 
 - Installation and configuration
 
-    - `Installation <installation.rst>`_
-    - `Configuration <configuration.rst>`_
-    - `Dependencies and tooling <dependencies-and-tooling.rst>`_
+  - `Installation <getting-started/installation.rst>`_
+  - `Configuration <getting-started/configuration.rst>`_
+  - `Dependencies and tooling <getting-started/dependencies-and-tooling.rst>`_
 
 - Admin bridges
 
-    - `EasyAdmin Bridge <bridges/easy-admin.rst>`_
-    - `Sonata Admin Bridge <bridges/sonata-admin.rst>`_
+  - `EasyAdmin Bridge <bridges/easy-admin.rst>`_
+  - `Sonata Admin Bridge <bridges/sonata-admin.rst>`_
 
 - Features
 
-    - `Commands <commands.rst>`_
-    - `Debug tooling <debug-tooling.rst>`_
-    - `Events <events.rst>`_
-    - `Using in entities <using-in-entities.rst>`_
-    - `Media deletion behavior <media-deletion-behavior.rst>`_
-    - `Twig components <twig-components.rst>`_
-    - `URL generation <url-generation.rst>`_
+  - `Commands <misc-features/commands.rst>`_
+  - `Debug tooling <misc-features/debug-tooling.rst>`_
+  - `Events <misc-features/events.rst>`_
+  - `Using in entities <misc-features/using-in-entities.rst>`_
+  - `Media deletion behavior <misc-features/media-deletion-behavior.rst>`_
+  - `Twig components <misc-features/twig-components.rst>`_
+  - `URL generation <misc-features/url-generation.rst>`_
 
-- Internals
+- Variations
 
-    - `Storage <storage.rst>`_
-    - `Processors <processors.rst>`_
-    - `Post-processors <post-processors.rst>`_
-    - `Pre-processors <pre-processors.rst>`_
-    - `Variations <variations.rst>`_
-    - `Transformers <transformers.rst>`_
-    - `Variation voters <variation-voters.rst>`_
+  - `Processors <variations/processors.rst>`_
+  - `Post-processors <variations/post-processors.rst>`_
+  - `Pre-processors <variations/pre-processors.rst>`_
+  - `Variations <variations/variations.rst>`_
+  - `Transformers <variations/transformers.rst>`_
+  - `Variation voters <variations/variation-voters.rst>`_
 
 - Misc.
 
-    - `Tests and QA tooling <tests-and-qa-tooling.rst>`_
+  - `Storage <storage/storage.rst>`_
+  - `Tests and QA tooling <tests-and-qa-tooling.rst>`_
 
 Vocabulary
 ----------
