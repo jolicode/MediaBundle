@@ -527,7 +527,7 @@ will generate the following HTML:
 
 If the list of the variation names provided in the ``srcset`` attribute resolve to multiple different mime types, then the component will throw an exception. This is to ensure that the ``<source>`` tag is valid and that the browser can choose the best source depending on the device's screen size, resolution, and other factors. You can fix such cases by using multiple ``twig:joli:Source`` components, one for each mime type.
 
-If you prefer to output the complete HTML by hand and only let the bundle generate media URLs, have a look at `the Twig filters provided by the bundle to generate URLs <url-generation#twig-extension>`_.
+If you prefer to output the complete HTML by hand and only let the bundle generate media URLs, have a look at `the Twig filters provided by the bundle to generate URLs <url-generation.rst#twig-extension>`_.
 
 When are media variation files generated?
 -----------------------------------------

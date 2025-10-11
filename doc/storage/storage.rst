@@ -114,7 +114,7 @@ However, there are cases where you might want to serve the original media files 
 Media Property Accessor
 -----------------------
 
-To optimize media property access (such as mime type, format, file size, and dimensions), the bundle provides a `MediaPropertyAccessor` service. This service caches property values for each media file, using the storage library name, media path, and last modification date as cache keys. This greatly improves performance when listing large media directories, as properties are not recalculated or reloaded from disk for each access.
+To optimize media property access (such as mime type, format, file size, and dimensions), the bundle provides a ``MediaPropertyAccessor`` service. This service caches property values for each media file, using the storage library name, media path, and last modification date as cache keys. This greatly improves performance when listing large media directories, as properties are not recalculated or reloaded from disk for each access.
 
 These cached properties are stored with no expiration time, meaning they remain in the cache until the media file is modified or deleted. If a media file is updated, the last modification date changes, causing the cache key to change and prompting a recalculation of properties on the next access.
 

@@ -15,7 +15,7 @@ The ``libraries`` configuration defines where and how the media files are stored
 
 .. tip::
 
-    Read more about how the JoliMediaBundle stores media files in the `Storage documentation <storage.rst>`_.
+    Read more about how the JoliMediaBundle stores media files in the `Storage documentation <../storage/storage.rst>`_.
 
 Each library can have its own configuration for the original media and the cache media, as well as the variations that can be created from the original media.
 
@@ -37,19 +37,19 @@ A library is defined by a name and contains the multiple information:
   - the ``flysystem`` key contains the id of a Flysystem service that addresses the location where cache media are stored.
   - its ``url_generator``: the configuration of the way URLs should be generated for the media variations
 
-- ``variations`` that can be created from the original media. See the `Variation configuration <variations.rst>`_ section for more information
+- ``variations`` that can be created from the original media. See the `Variation configuration <../variations/variations.rst>`_ section for more information
 - ``enable_auto_webp`` is a boolean (default: ``false``) that enables the automatic generation of WebP variations for the media. When enabled, the configured variations in the ``variations`` above node will be duplicated in WebP format, in addition to the original format.
 - ``pixel_ratios``: an array of pixel ratios (default: ``[1]``) that will be applied by default to all variations. For example, if you define a variation named ``thumbnail`` with a width of ``100px``, and the pixel ratios ``[1, 2]``, two variations will be generated: ``thumbnail`` (100px width) and ``thumbnail@2x`` (200px width). You can override this configuration on each variation.
 
 Processors configuration
 ------------------------
 
-Processors are responsible to apply transformations to the media files. Read the `Processors documentation <processors.rst>`_ to learn more about how to configure them.
+Processors are responsible to apply transformations to the media files. Read the `Processors documentation <../variations/processors.rst>`_ to learn more about how to configure them.
 
 Post-processors configuration
 -----------------------------
 
-Post-processors can be used to optimize the media after the transformation. Read the `Post-processors documentation <post-processors.rst>`_ to learn more about how to configure them.
+Post-processors can be used to optimize the media after the transformation. Read the `Post-processors documentation <../variations/post-processors.rst>`_ to learn more about how to configure them.
 
 Example minimal configuration
 -----------------------------
@@ -83,6 +83,6 @@ Here is an example minimal configuration that defines one library and one variat
 
 To configure the bundle to your needs, you can explore the following configuration sections:
 
-- `Post-processors configuration <post-processors.rst>`_
-- `Processors configuration <processors.rst>`_
-- `Variations configuration <variations.rst>`_
+- `Post-processors configuration <../variations/post-processors.rst>`_
+- `Processors configuration <../variations/processors.rst>`_
+- `Variations configuration <../variations/variations.rst>`_

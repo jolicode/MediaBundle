@@ -81,7 +81,7 @@ The command supports the following options:
 joli:media:batch-convert
 ------------------------
 
-This command can be used to bulk-generate media variations. It is useful when you have a lot of media to generate, or when you want to regenerate all the media variations (after, for example, changing the `variations configuration <variations>`_).
+This command can be used to bulk-generate media variations. It is useful when you have a lot of media to generate, or when you want to regenerate all the media variations (after, for example, changing the `variations configuration <../variations/variations>`_).
 
 .. code-block:: terminal
 
