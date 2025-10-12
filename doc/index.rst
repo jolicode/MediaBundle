@@ -22,7 +22,7 @@ It proposes multiple features:
 🤓 Goals and approach
 --------------------
 
-The JoliMediaBundle aims to provide numerous facilities to manage media in Symfony applications, bu using the best tools available, and following best practices. It is built on top of the [Flysystem](https://flysystem.thephpleague.com/) library to provide an abstraction layer for file storage, and multiple media processing libraries to handle media transformations and optimizations.
+The JoliMediaBundle aims to provide numerous facilities to manage media in Symfony applications, by using the best tools available, and following best practices. It is built on top of the [Flysystem](https://flysystem.thephpleague.com/) library to provide an abstraction layer for file storage, and multiple media processing libraries to handle media transformations and optimizations.
 
 The project seeks to provide:
 
