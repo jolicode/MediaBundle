@@ -3,7 +3,7 @@ Configuring the Media Deletion Behavior
 
 When you delete a media object, you may want to control how the deletion affects the entities of your project that reference it.
 
-For example, you may have already `configured some of your entities to target media files <using-in-entities.rst>`_ managed by the bundle, and you may wish to prevent the deletion of media files used by your entities. The ``JoliCode\MediaBundle`` provides a way to configure the deletion behavior of media fields in your entities.
+For example, you may have already `configured some of your entities to target media files <using-in-doctrine-entities.rst>`_ managed by the bundle, and you may wish to prevent the deletion of media files used by your entities. The ``JoliCode\MediaBundle`` provides a way to configure the deletion behavior of media fields in your entities.
 
 The ``DeleteMediaEventListener`` class provided by the ``JoliCode\MediaBundle`` is responsible for handling the deletion of media objects in your application. It listens to the ``PreDeleteMediaEvent`` and ensures that media deletion behavior is applied according to the configuration in your entities.
 

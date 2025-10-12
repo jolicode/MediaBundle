@@ -10,63 +10,40 @@ It proposes multiple features:
 - processors to transform media (crop / resize / etc.)
 - post processors to optimize the media size
 - Twig components to output ``<img>`` and ``<picture>`` tags
-- command line tools to generate media variations
-
-Goals and utilities
--------------------
-
-The JoliMediaBundle aims to provide numerous facilities to manage media in Symfony applications:
-
-- `CLI commands <commands.rst>`_ to generate media variations that are high quality yet lightweight
-- a `concise yet precise configuration <configuration.rst>`_ to define how media should be stored and processed
-- a set of fine-tuned `post-processors <post-processors.rst>`_ to optimize media variations
+- `CLI commands <commands.rst>`_ to generate ad inspect media variations that are high quality yet lightweight
 - `Twig components <twig-components.rst>`_ to display media using best practices
 - the ability to generate `URLs for media <url-generation.rst>`_ and their `variations <variations.rst>`_
 - `events <events.rst>`_ to allow you to hook into the media processing pipeline
 - an `integration with Doctrine entities <using-in-entities.rst>`_ is provided, so you can easily manage media in your entities
 
+.. image:: ../images/bridges/easyadmin/grid-view.png
+   :alt: The EasyAdmin media library grid view
+
+🤓 Goals and approach
+--------------------
+
+The JoliMediaBundle aims to provide numerous facilities to manage media in Symfony applications, bu using the best tools available, and following best practices. It is built on top of the [Flysystem](https://flysystem.thephpleague.com/) library to provide an abstraction layer for file storage, and multiple media processing libraries to handle media transformations and optimizations.
+
+The project seeks to provide:
+
+- a complete set of featrures to manage media in Symfony applications
+- a standard Symfony approach, using services, dependency injection, configuration, and events. The bundle cn be installed in an existing Symfony app, without imposing a specific architecture.
+- the best tools available to handle media transformations and optimizations
+- tools to output media using best practices, such as responsive images with the ``<picture>`` tag, lazy loading, and more
+
 The bundle is designed to be extensible and can be easily customized to fit your needs, and fast to minimize the impact on your application's performance.
 
-Table of contents
------------------
+The bundle does not aim to provide a complete Digital Asset Management (DAM) solution, but rather to be a flexible and easy-to-use media management library that can be integrated into your Symfony applications. If you need a full DAM solution, you might want to consider other tools that are specifically designed for that purpose.
 
-- Installation and configuration
+🤔 Why another media bundle?
+---------------------------
 
-  - `Installation <getting-started/installation.rst>`_
-  - `Configuration <getting-started/configuration.rst>`_
-  - `Dependencies and tooling <getting-started/dependencies-and-tooling.rst>`_
+There are multiple ways of managing media files in Symfony applications, and several bundles already exist to provide such features. However, most of them are either unmaintained, too complex, or do not follow best practices. Most of the time, managing media files in Symfony applications requires a lot of custom code to assemble multiple libraries, and we end up with a solution that is hard to maintain and does not follow best practices.
 
-- Admin bridges
+The JoliMediaBundle aims to fill this gap by providing a modern, flexible, and easy-to-use solution to manage media in Symfony applications.
 
-  - `EasyAdmin Bridge <bridges/easy-admin.rst>`_
-  - `Sonata Admin Bridge <bridges/sonata-admin.rst>`_
-
-- Features
-
-  - `Commands <misc-features/commands.rst>`_
-  - `Debug tooling <misc-features/debug-tooling.rst>`_
-  - `Events <misc-features/events.rst>`_
-  - `Using in entities <misc-features/using-in-entities.rst>`_
-  - `Media deletion behavior <misc-features/media-deletion-behavior.rst>`_
-  - `Twig components <misc-features/twig-components.rst>`_
-  - `URL generation <misc-features/url-generation.rst>`_
-
-- Variations
-
-  - `Processors <variations/processors.rst>`_
-  - `Post-processors <variations/post-processors.rst>`_
-  - `Pre-processors <variations/pre-processors.rst>`_
-  - `Variations <variations/variations.rst>`_
-  - `Transformers <variations/transformers.rst>`_
-  - `Variation voters <variations/variation-voters.rst>`_
-
-- Misc.
-
-  - `Storage <storage/storage.rst>`_
-  - `Tests and QA tooling <tests-and-qa-tooling.rst>`_
-
-Vocabulary
-----------
+🗣️ Vocabulary
+-------------
 
 The library uses multiple terms that are defined below.
 
