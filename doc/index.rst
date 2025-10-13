@@ -10,11 +10,11 @@ It proposes multiple features:
 - processors to transform media (crop / resize / etc.)
 - post processors to optimize the media size
 - Twig components to output ``<img>`` and ``<picture>`` tags
-- `CLI commands <commands.rst>`_ to generate ad inspect media variations that are high quality yet lightweight
-- `Twig components <twig-components.rst>`_ to display media using best practices
-- the ability to generate `URLs for media <url-generation.rst>`_ and their `variations <variations.rst>`_
-- `events <events.rst>`_ to allow you to hook into the media processing pipeline
-- an `integration with Doctrine entities <using-in-entities.rst>`_ is provided, so you can easily manage media in your entities
+- `CLI commands <misc-features/commands.rst>`_ to generate ad inspect media variations that are high quality yet lightweight
+- `Twig components <misc-features/twig-components.rst>`_ to display media using best practices
+- the ability to generate `URLs for media <misc-features/url-generation.rst>`_ and their `variations <variations/variations.rst>`_
+- `events <misc-features/events.rst>`_ to allow you to hook into the media processing pipeline
+- an `integration with Doctrine entities <misc-features/using-in-doctrine-entities.rst>`_ is provided, so you can easily manage media in your entities
 
 .. image:: ../images/bridges/easyadmin/grid-view.png
    :alt: The EasyAdmin media library grid view
