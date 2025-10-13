@@ -1,5 +1,5 @@
-Using the MediaBundle in Entities
-=================================
+Using the MediaBundle in Doctrine Entities
+==========================================
 
 The MediaBundle itself does not offer database entities. However, it is designed to easily integrate into your existing entities, so you can link media to your own entities.
 
