@@ -1,7 +1,7 @@
 Media Storage
 =============
 
-The JoliMedia bundle does not directly implement a media storage system. Instead, it heavily relies on the `Flystsytem <https://flysystem.thephpleague.com/>`_ library to provide a flexible and extensible storage system.
+The JoliMedia bundle does not directly implement a media storage system. Instead, it heavily relies on the `Flysystem <https://flysystem.thephpleague.com/>`_ library to provide a flexible and extensible storage system.
 
 In the jargon of the ``JoliMediaBundle``, a "Library" describes a collection of Media: how the original media, as added by users or the data source, and the "variations", which are transformed (i.e. reduced in size, or with graphical filters) versions of the original files, are stored.
 

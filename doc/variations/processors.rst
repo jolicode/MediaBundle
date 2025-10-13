@@ -77,7 +77,7 @@ The ``lossy`` configuration preset is the default preset, it offers a good balan
 
 If the ``near_lossless`` preset is used by the processor, it will check that the processing result is not larger than the original image, and that the ratio between the resulting image pixels area and its file size is staisfying. If the processor finds it is necessary, it will fall back to the ``lossy`` preset.
 
-The various confioguration keys are mapped to `the official cwebp options <https://developers.google.com/speed/webp/docs/cwebp>_`:
+The various configuration keys are mapped to `the official cwebp options <https://developers.google.com/speed/webp/docs/cwebp>`_:
 
 - ``quality``: ``-q``
 - ``method``: ``-m``
