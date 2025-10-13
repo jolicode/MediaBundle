@@ -29,11 +29,7 @@ The ``PreResolveMediaEvent`` is triggered before a media object is resolved. Thi
 Using Events in Your Application
 --------------------------------
 
-To listen to these events, you can create an event subscriber or listener in your application. For example:
-
-### Example: Listening to ``PostDeleteMediaEvent``
-
-Add an event listener on the ``joli.media.pre_delete_media`` event (or the ``MediaEvents::PRE_DELETE_MEDIA`` constant)::
+To listen to these events, you can create an event subscriber or listener in your application. For example, here is an event listener on the ``joli.media.pre_delete_media`` event (or the ``MediaEvents::PRE_DELETE_MEDIA`` constant)::
 
     namespace App\EventListener;
 

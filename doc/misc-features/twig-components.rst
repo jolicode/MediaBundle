@@ -3,8 +3,8 @@ Twig components
 
 The bundle provides a set of Twig components to display media in your templates using HTML best practices.
 
-<img> tag
----------
+``<img>`` tag
+-------------
 
 The ``img`` tag is the most common way to display images in HTML. The bundle provides a Twig component to generate the ``img`` tag with the correct ``src`` attribute depending on the media and the variation you want to display.
 
@@ -235,8 +235,8 @@ which generates:
 
     It may happen that you wish to use high pixel density images for variations that do not actually resize the image. For example, you may have a variation that only applies a watermark to the image, or changes its format to ``webp`` but you still want to provide a high pixel density version of that variation. In this case, you can define the variation with a ``pixel_ratios`` option set to ``[1,2]`` and add a resize operation with a ``50%`` scale to the variation processing chain.
 
-<picture> tag
--------------
+``<picture>`` tag
+-----------------
 
 The ``picture`` tag is used to provide multiple sources for an image, allowing the browser to choose the best one depending on the device's screen size, resolution, and other factors. The bundle provides a Twig component to generate the ``picture`` tag with the correct ``srcset`` attribute depending on the media and the variations you want to display.
 
@@ -490,8 +490,8 @@ This will generate the following HTML:
         >
     </picture>
 
-<source> tag
-------------
+``<source>`` tag
+----------------
 
 Would you need even more control over the ``<picture>`` tag, you can use the ``joli:Source`` component. This component generates a ``<source>`` tag with the correct ``srcset`` attribute, depending on the media and the variations you want to display.
 
