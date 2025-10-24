@@ -1,5 +1,5 @@
 <h1 align="center">
-  <a href="https://github.com/jolicode/MediaBundle"><img src="https://jolicode.com/media/original/oss/headers/media-bundle.png" alt="JoliMediaBundle"></a>
+  <a href="https://github.com/jolicode/MediaBundle"><img src="https://jolicode.com/media/original/oss/headers/joli-media-bundle.png" alt="JoliMediaBundle"></a>
   <br />
   JoliMediaBundle – Media management for Symfony
   <br />
