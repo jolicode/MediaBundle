@@ -220,15 +220,15 @@
                                                 <a href="{{ variation.url }}" id="media-{{ variation.variation.name }}-url"><code class="long-text-break">{{ variation.url }}</code></a>
                                             </td>
                                             <td data-column="actions" data-label="actions" class="text-left" dir="ltr">
-                                                <a href="{{ variation.url }}" class="btn btn-sm btn-default clipboard-btn" data-clipboard-target="#media-{{ variation.variation.name }}-url">
-                                                    <i class="fa-regular fa-clone" aria-hidden="true"></i>&nbsp;&nbsp;
-                                                    {{ 'action.copy'|trans }}
+                                                <a href="{{ variation.url }}" class="btn btn-sm btn-default btn-secondary clipboard-btn" data-clipboard-target="#media-{{ variation.variation.name }}-url">
+                                                    <i class="fa-regular fa-clone" aria-hidden="true"></i>
+                                                    <span class="btn-label">{{ 'action.copy'|trans }}</span>
                                                 </a>
 
                                                 {% if config.isVisible('show_variations_action_regenerate') and joli_media_admin_is_granted('REGENERATE_VARIATION', path: media.path, variation: variation.variation.name) %}
-                                                    <a href="{{ ea_url().setRoute('joli_media_easy_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}" class="btn btn-sm btn-default clipboard-btn">
-                                                        <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>&nbsp;&nbsp;
-                                                        {{ 'action.regenerate'|trans }}
+                                                    <a href="{{ ea_url().setRoute('joli_media_easy_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}" class="btn btn-sm btn-secondary clipboard-btn">
+                                                        <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
+                                                        <span class="btn-label">{{ 'action.regenerate'|trans }}</span>
                                                     </a>
                                                 {% endif %}
                                             </td>
@@ -263,7 +263,8 @@
                     <dd class="d-flex jm-box">
                         <a href="{{ media.url }}" id="media-url" class="flex-fill"><code class="long-text-break">{{ media.url }}</code></a>
                         <button class="btn btn-primary btn-sm clipboard-btn" data-clipboard-target="#media-url">
-                            <i class="fa-regular fa-clone"></i> {{ 'action.copy'|trans }}
+                            <i class="fa-regular fa-clone"></i>
+                            <span class="btn-label">{{ 'action.copy'|trans }}</span>
                         </button>
                     </dd>
                 </div>
@@ -275,7 +276,8 @@
                                 {{- include('@JoliMediaEasyAdmin/_as_markdown.html.twig')|escape -}}
                             </code></pre>
                             <button class="btn btn-primary btn-sm clipboard-btn" data-clipboard-target="#media-markdown-code">
-                                <i class="fa-regular fa-clone"></i> {{ 'action.copy'|trans }}
+                                <i class="fa-regular fa-clone"></i>
+                                <span class="btn-label">{{ 'action.copy'|trans }}</span>
                             </button>
                         </dd>
                     </div>
@@ -288,7 +290,8 @@
                                 {{- include('@JoliMediaEasyAdmin/_as_html.html.twig')|escape -}}
                             </code></pre>
                             <button class="btn btn-primary btn-sm clipboard-btn" data-clipboard-target="#media-html-code">
-                                <i class="fa-regular fa-clone"></i> {{ 'action.copy'|trans }}
+                                <i class="fa-regular fa-clone"></i>
+                                <span class="btn-label">{{ 'action.copy'|trans }}</span>
                             </button>
                         </dd>
                     </div>

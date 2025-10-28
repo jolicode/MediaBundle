@@ -4,16 +4,16 @@ const configureClipboard = () => {
     copy.forEach((element) => {
         element.addEventListener('click', (event) => {
             event.preventDefault();
-            navigator.clipboard.writeText(document.querySelector(event.target.dataset.clipboardTarget).innerText).then(() => {
+            const button = event.target.closest('[data-clipboard-target]');
+            navigator.clipboard.writeText(document.querySelector(button.dataset.clipboardTarget).innerText).then(() => {
             // clipboard successfully set
-            event.target.classList.add('is-copied');
+            button.classList.add('is-copied');
             setTimeout(() => {
-                event.target.classList.remove('is-copied');
+                button.classList.remove('is-copied');
             }, 2000);
             });
         });
     });
 };
-
 
 export default configureClipboard;
