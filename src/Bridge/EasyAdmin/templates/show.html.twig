@@ -40,25 +40,31 @@
             class="btn btn-secondary pr-0"
             data-component="media-move"
         >
-            <i class="fa fa-folder-tree"></i> {{ 'action.move_file'|trans }}
+            <span class="icon btn-icon"><i class="fa fa-folder-tree"></i></span>
+            <span class="btn-label">{{ 'action.move_file'|trans }}</span>
         </a>
         <a
             class="btn btn-secondary pr-0"
             data-component="media-rename"
+            role="button"
+            tabindex="0"
         >
-            <i class="fa fa-pen-to-square"></i> {{ 'action.rename_file'|trans }}
+            <span class="icon btn-icon"><i class="fa fa-pen-to-square"></i></span>
+            <span class="btn-label">{{ 'action.rename_file'|trans }}</span>
         </a>
     {% endif %}
 
     {% if joli_media_admin_is_granted('DELETE', path: media.path) %}
         <a
             href="{{ ea_url().setRoute('joli_media_easy_admin_delete') }}"
-            class="action-delete btn btn-secondary pr-0 text-danger"
+            class="action-delete btn btn-danger pr-0"
+            data-action-name="delete"
             data-bs-toggle="modal"
             data-bs-target="#modal-delete"
             formaction="{{ ea_url().setRoute('joli_media_easy_admin_delete') }}"
         >
-            <i class="action-icon fa fa-fw fa-trash-o"></i> <span class="action-label">{{ 'action.delete_file'|trans }}</span>
+            <span class="icon btn-icon"><i class="action-icon fa fa-fw fa-trash-o"></i></span>
+            <span class="btn-label action-label">{{ 'action.delete_file'|trans }}</span>
         </a>
     {% endif %}
 
@@ -112,13 +118,13 @@
                     <p>{{ 'delete_modal.content'|trans(domain: 'EasyAdminBundle') }}</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
-                        <span class="btn-label">{{ 'action.cancel'|trans(domain: 'EasyAdminBundle') }}</span>
-                    </button>
+                    <twig:ea:Button type="button" data-bs-dismiss="modal">
+                        {{ 'action.cancel'|trans(domain: 'EasyAdminBundle') }}
+                    </twig:ea:Button>
 
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-danger" id="modal-delete-button" form="delete-form">
-                        <span class="btn-label">{{ 'action.delete'|trans(domain: 'EasyAdminBundle') }}</span>
-                    </button>
+                    <twig:ea:Button type="button" variant="danger" data-bs-dismiss="modal" id="modal-delete-button" form="delete-form">
+                        {{ 'action.delete'|trans(domain: 'EasyAdminBundle') }}
+                    </twig:ea:Button>
                 </div>
             </div>
         </div>
@@ -262,7 +268,12 @@
                     <dt>{{ 'media.url.label_long'|trans }}</dt>
                     <dd class="d-flex jm-box">
                         <a href="{{ media.url }}" id="media-url" class="flex-fill"><code class="long-text-break">{{ media.url }}</code></a>
-                        <button class="btn btn-primary btn-sm clipboard-btn" data-clipboard-target="#media-url">
+                        <button
+                            class="btn btn-primary btn-sm clipboard-btn"
+                            data-clipboard-target="#media-url"
+                            role="button"
+                            tabindex="0"
+                        >
                             <i class="fa-regular fa-clone"></i>
                             <span class="btn-label">{{ 'action.copy'|trans }}</span>
                         </button>
@@ -275,7 +286,12 @@
                             <pre class="flex-fill mb-0"><code id="media-markdown-code" class="long-text-break">
                                 {{- include('@JoliMediaEasyAdmin/_as_markdown.html.twig')|escape -}}
                             </code></pre>
-                            <button class="btn btn-primary btn-sm clipboard-btn" data-clipboard-target="#media-markdown-code">
+                            <button
+                                class="btn btn-primary btn-sm clipboard-btn"
+                                data-clipboard-target="#media-markdown-code"
+                                role="button"
+                                tabindex="0"
+                            >
                                 <i class="fa-regular fa-clone"></i>
                                 <span class="btn-label">{{ 'action.copy'|trans }}</span>
                             </button>
@@ -289,7 +305,12 @@
                             <pre class="flex-fill mb-0"><code id="media-html-code" class="long-text-break">
                                 {{- include('@JoliMediaEasyAdmin/_as_html.html.twig')|escape -}}
                             </code></pre>
-                            <button class="btn btn-primary btn-sm clipboard-btn" data-clipboard-target="#media-html-code">
+                            <button
+                                class="btn btn-primary btn-sm clipboard-btn"
+                                data-clipboard-target="#media-html-code"
+                                role="button"
+                                tabindex="0"
+                            >
                                 <i class="fa-regular fa-clone"></i>
                                 <span class="btn-label">{{ 'action.copy'|trans }}</span>
                             </button>

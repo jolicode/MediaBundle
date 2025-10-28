@@ -90,7 +90,7 @@ const configureFolderSelector = () => {
     folderSelector.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
-        openFolderChoiceModal(event.target);
+        openFolderChoiceModal(event.currentTarget);
     });
 };
 

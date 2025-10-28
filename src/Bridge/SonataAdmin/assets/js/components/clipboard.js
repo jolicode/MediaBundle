@@ -4,7 +4,7 @@ const configureClipboard = () => {
     copy.forEach((element) => {
         element.addEventListener('click', (event) => {
             event.preventDefault();
-            const button = event.target.closest('[data-clipboard-target]');
+            const button = event.currentTarget;
             navigator.clipboard.writeText(document.querySelector(button.dataset.clipboardTarget).innerText).then(() => {
             // clipboard successfully set
             button.classList.add('is-copied');

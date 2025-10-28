@@ -148,8 +148,11 @@
                                     <a
                                         class="btn btn-secondary me-sm-2"
                                         data-component="folder-create"
+                                        role="button"
+                                        tabindex="0"
                                     >
-                                        <i class="fa-solid fa-folder-plus"></i> {{ 'directory.create'|trans }}
+                                        <span class="icon btn-icon"><i class="fa-solid fa-folder-plus"></i></span>
+                                        <span class="btn-label">{{ 'directory.create'|trans }}</span>
                                     </a>
                                 {% endif %}
                             {% endblock %}
