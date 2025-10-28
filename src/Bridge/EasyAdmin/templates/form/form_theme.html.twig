@@ -8,7 +8,7 @@
             {% if media is not empty %}
                 {{ include('@JoliMediaEasyAdmin/_preview.html.twig', { className: 'media-preview' }) }}
             {% else %}
-                {{ include('@EasyAdmin/label/null.html.twig') }}
+                {{ include('@EasyAdmin/label/empty.html.twig') }}
             {% endif %}
         </span>
         <span class="media-choice__actions">
@@ -18,12 +18,12 @@
                     data-folder="{{ folder }}"
                     data-bs-toggle="modal"
                     data-bs-target="#modal-media-choice_{{ id }}"
-                    class="btn btn-link joli-media-choice-edit"
+                    class="btn btn-link btn-sm joli-media-choice-edit"
                 >
                     <i class="fas fa-plus"></i> {{ 'action.choose_a_file'|trans(domain: 'JoliMediaEasyAdminBundle') }}
                 </a>
                 <button
-                    class="btn btn-link text-danger hide-when-empty joli-media-choice-delete"
+                    class="btn btn-link btn-sm ms-2 text-danger hide-when-empty joli-media-choice-delete"
                 >
                     <i class="fas fa-minus-circle"></i> {{ 'action.remove'|trans(domain: 'JoliMediaEasyAdminBundle') }}
                 </button>
