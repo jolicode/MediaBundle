@@ -27,7 +27,7 @@
   margin-top: 1rem;
   color: var(--jm-dropzone-color);
   background-color: var(--jm-color-gray-100);
-  border: dashed 1px var(--jm-dropdzone-border-color);
+  border: dashed 1px var(--jm-dropzone-border-color);
   border-radius: 4px;
   z-index: 100;
 }

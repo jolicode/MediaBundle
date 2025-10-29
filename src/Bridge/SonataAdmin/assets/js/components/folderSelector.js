@@ -35,7 +35,7 @@ const FolderSelector = class {
     event.preventDefault();
     event.stopPropagation();
 
-        if (target.dataset.folderPath === undefined) {
+    if (target.dataset.folderPath === undefined) {
       // this is not a selectable media
       this.fetchFolder(target.attributes.href.value).then(this.configureModal);
       return;

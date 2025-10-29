@@ -32,28 +32,47 @@ document.addEventListener('DOMContentLoaded', () => {
     return activeTool;
   };
 
+  document.addEventListener('keyup', (event) => {
+    if (event.key !== 'Enter') {
+      return;
+    }
+
+    const component = event.target.closest('[data-component]');
+
+    if (!component) {
+      return;
+    }
+
+    component.click();
+  });
 
   document.addEventListener('click', (event) => {
-    if (event.target.matches('[data-component=folder-create]')) {
+    const component = event.target.closest('[data-component]');
+
+    if (!component) {
+      return;
+    }
+
+    if (component.matches('[data-component=folder-create]')) {
       event.preventDefault();
       event.stopPropagation();
-      const folderCreateForm = switchTool(event.target, 'new-directory');
+      const folderCreateForm = switchTool(component, 'new-directory');
       folderCreateForm.querySelector('input[type=text]').focus();
     }
 
-    if (event.target.matches('[data-component=folder-rename]')) {
+    if (component.matches('[data-component=folder-rename]')) {
       event.preventDefault();
       event.stopPropagation();
 
-      const folderRenameForm = switchTool(event.target, 'rename-directory');
+      const folderRenameForm = switchTool(component, 'rename-directory');
       folderRenameForm.querySelector('input[type=text]').focus();
     }
 
-    if (event.target.matches('[data-component=media-add]')) {
+    if (component.matches('[data-component=media-add]')) {
       event.preventDefault();
       event.stopPropagation();
 
-      const dropzone = switchTool(event.target, 'dropzone');
+      const dropzone = switchTool(component, 'dropzone');
 
       if (!dropzone.classList.contains('dropzone-initialized')) {
         dropzoneInstance = addDropzone(dropzone.querySelector('[data-component=dropzone]'));
@@ -65,11 +84,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    if (event.target.matches('[data-component=media-rename]')) {
+    if (component.matches('[data-component=media-rename]')) {
       event.preventDefault();
       event.stopPropagation();
 
-      const headerTools = event.target.closest('.joli-media-header-tools');
+      const headerTools = component.closest('.joli-media-header-tools');
       const fileRenameForm = headerTools.querySelector('.rename-file-container');
 
       fileRenameForm.classList.toggle('rename-active');
