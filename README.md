@@ -37,6 +37,7 @@ Read the detailed [documentation of the bundle](https://mediabundle.jolicode.com
 
 This software is published under the [MIT License](LICENSE.md).
 
+<br><br>
 <div align="center">
-<a href="https://jolicode.com/"><img src="https://jolicode.com/media/original/oss/footer-github.png?v2" alt="JoliCode is sponsoring this project"></a>
+<a href="https://jolicode.com/"><img src="https://jolicode.com/media/original/oss/footer-github.png?v3" alt="JoliCode is sponsoring this project"></a>
 </div>
