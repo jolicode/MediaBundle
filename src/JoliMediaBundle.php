@@ -979,6 +979,13 @@ class JoliMediaBundle extends AbstractBundle
                 ->arg('$imagine', service('.joli_media.imagine.imagine'))
             ;
         }
+
+        foreach ($preProcessorsConfig as $preProcessorClass) {
+            $container->services()
+                ->get($preProcessorClass)
+                ->tag('joli_media.pre_processor', ['name' => $preProcessorClass])
+            ;
+        }
     }
 
     private function createProcessorServices(ContainerConfigurator $container, array $processorsConfig): void
