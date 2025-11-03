@@ -46,8 +46,7 @@ class ConvertCommand extends Command
                 'variation',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Pass a specific variation name to generate cache for',
-                null
+                'Pass a specific variation name to generate cache for'
             )
             ->addOption(
                 'force',

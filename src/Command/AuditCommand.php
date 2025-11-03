@@ -34,15 +34,13 @@ class AuditCommand extends Command
                 'path',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Pass a specific path name to generate cache for. All the media files under this path will be converted',
-                null
+                'Pass a specific path name to generate cache for. All the media files under this path will be converted'
             )
             ->addOption(
                 'library',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Pass a specific library to generate cache for',
-                null
+                'Pass a specific library to generate cache for'
             )
             ->addOption(
                 'detail',
@@ -187,7 +185,7 @@ class PathStatistic
             Helper::formatMemory($this->size),
             $this->variationsSize > 0 ? Helper::formatMemory($this->variationsSize) : '-',
             ...array_map(
-                function ($variationName): string {
+                function (string $variationName): string {
                     if (!isset($this->variationsSizes[$variationName])) {
                         return '❌';
                     }

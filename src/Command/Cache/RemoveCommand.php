@@ -32,22 +32,19 @@ class RemoveCommand extends Command
                 'path',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Pass a specific path name to remove cache from. All the cache files associated with media under this path will be removed',
-                null
+                'Pass a specific path name to remove cache from. All the cache files associated with media under this path will be removed'
             )
             ->addOption(
                 'library',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Pass a specific library to remove cache from',
-                null
+                'Pass a specific library to remove cache from'
             )
             ->addOption(
                 'variation',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Pass a specific variation name to remove cache from',
-                null
+                'Pass a specific variation name to remove cache from'
             )
             ->addOption(
                 'force',

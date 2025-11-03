@@ -38,7 +38,7 @@ abstract readonly class AbstractPostProcessor extends AbstractProcessCreator imp
     protected function checkFormat(string $format): void
     {
         if (!$this->canProcessFormat($format)) {
-            throw new \InvalidArgumentException(\sprintf('The post-processor "%s" cannot process "%s" files. Available formats are: %s', static::class, $format, implode(', ', array_map(fn ($value) => $value->value, $this->getProcessableFormats()))));
+            throw new \InvalidArgumentException(\sprintf('The post-processor "%s" cannot process "%s" files. Available formats are: %s', static::class, $format, implode(', ', array_map(fn (Format $value) => $value->value, $this->getProcessableFormats()))));
         }
     }
 
