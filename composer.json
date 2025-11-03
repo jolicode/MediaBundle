@@ -47,7 +47,7 @@
     "require-dev": {
         "ext-imagick": "*",
         "doctrine/doctrine-fixtures-bundle": "^4.1",
-        "easycorp/easyadmin-bundle": "^4.0",
+        "easycorp/easyadmin-bundle": "^4.26",
         "imagine/imagine": "^1.5",
         "league/flysystem-bundle": "^3.4",
         "league/flysystem-memory": "^3.0",

@@ -100,7 +100,7 @@ function phpunit(?string $phpVersion = null, #[AsRawTokens] array $rawTokens = [
         }
     }
 
-    docker_run('composer install -n --prefer-dist --optimize-autoloader', null, $phpVersion);
+    docker_run('composer update -n --prefer-dist --optimize-autoloader', null, $phpVersion);
 
     return docker_exit_code('vendor/bin/phpunit tests/src' . implode(' ', $filteredTokens), null, $phpVersion);
 }
