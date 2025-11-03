@@ -2,7 +2,6 @@
 
 namespace JoliCode\MediaBundle;
 
-use Symfony\Component\DependencyInjection\Loader\Configurator\ReferenceConfigurator;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Metadata\ExifMetadataReader;
 use Imagine\Gd\Imagine as GdImagine;
@@ -979,6 +978,13 @@ class JoliMediaBundle extends AbstractBundle
                 ->arg('$imagine', service('.joli_media.imagine.imagine'))
             ;
         }
+
+        foreach ($preProcessorsConfig as $preProcessorClass) {
+            $container->services()
+                ->get($preProcessorClass)
+                ->tag('joli_media.pre_processor', ['name' => $preProcessorClass])
+            ;
+        }
     }
 
     private function createProcessorServices(ContainerConfigurator $container, array $processorsConfig): void
@@ -1258,7 +1264,7 @@ class JoliMediaBundle extends AbstractBundle
         $container->services()->set($transformerChainServiceId)
             ->parent('.joli_media.transformer.transformer_chain.abstract')
             ->private()
-            ->arg('$transformers', array_map(fn($transformerId): ReferenceConfigurator => service($transformerId), $transformerIds))
+            ->arg('$transformers', array_map(service(...), $transformerIds))
         ;
 
         $voterServiceIds = [];
@@ -1289,7 +1295,7 @@ class JoliMediaBundle extends AbstractBundle
                 '$preProcessors' => new ServiceLocatorArgument(new TaggedIteratorArgument($preProcessServiceTag, indexAttribute: 'name', needsIndexes: true)),
                 '$processorsConfiguration' => array_replace_recursive($libraryConfig['processors'] ?? [], $variationConfig['processors'] ?? []),
                 '$postProcessorsConfiguration' => array_replace_recursive($libraryConfig['post_processors'] ?? [], $variationConfig['post_processors'] ?? []),
-                '$voters' => array_map(fn($voterServiceId): ReferenceConfigurator => service($voterServiceId), $voterServiceIds),
+                '$voters' => array_map(service(...), $voterServiceIds),
                 '$multiplier' => $variationConfig['pixel_ratio'],
             ])
             ->tag($variationServiceTag, ['name' => $slugger->slug($variationName)->lower()->toString()])
@@ -1312,7 +1318,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->parent('.joli_media.variation_voter.all_of.abstract')
                 ->private()
                 ->args([
-                    '$voters' => array_map(fn($subVoterServiceId): ReferenceConfigurator => service($subVoterServiceId), $subVoterServiceIds),
+                    '$voters' => array_map(service(...), $subVoterServiceIds),
                 ])
             ;
         } elseif ('filesize' === $voterConfig['type']) {
@@ -1376,7 +1382,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->parent('.joli_media.variation_voter.one_of.abstract')
                 ->private()
                 ->args([
-                    '$voters' => array_map(fn($subVoterServiceId): ReferenceConfigurator => service($subVoterServiceId), $subVoterServiceIds),
+                    '$voters' => array_map(service(...), $subVoterServiceIds),
                 ])
             ;
         } else {

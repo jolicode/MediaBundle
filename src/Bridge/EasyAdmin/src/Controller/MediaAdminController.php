@@ -64,7 +64,7 @@ class MediaAdminController extends AbstractController
         ));
 
         $directory = null;
-        $form = $this->createCreateDirectoryForm(null, null);
+        $form = $this->createCreateDirectoryForm();
         $form->handleRequest($request);
 
         if (!$form->isSubmitted()) {
@@ -136,7 +136,7 @@ class MediaAdminController extends AbstractController
     public function delete(Request $request): RedirectResponse
     {
         $key = null;
-        $form = $this->createDeleteForm(null);
+        $form = $this->createDeleteForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -192,7 +192,7 @@ class MediaAdminController extends AbstractController
     public function deleteDirectory(Request $request): RedirectResponse
     {
         $key = null;
-        $form = $this->createDeleteDirectoryForm(null);
+        $form = $this->createDeleteDirectoryForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -316,7 +316,7 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/move', name: 'move', methods: [Request::METHOD_POST])]
     public function move(Request $request): RedirectResponse
     {
-        $form = $this->createMoveFileForm(null);
+        $form = $this->createMoveFileForm();
         $form->handleRequest($request);
 
         if (!$form->isSubmitted()) {
@@ -407,7 +407,7 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/rename-directory', name: 'rename_directory', methods: [Request::METHOD_POST])]
     public function renameDirectory(Request $request): RedirectResponse
     {
-        $form = $this->createRenameDirectoryForm(null);
+        $form = $this->createRenameDirectoryForm();
         $form->handleRequest($request);
 
         if (!$form->isSubmitted()) {

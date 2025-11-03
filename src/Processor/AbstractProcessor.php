@@ -34,7 +34,7 @@ abstract readonly class AbstractProcessor extends AbstractProcessCreator impleme
     protected function checkOutputFormat(string $outputFormat): void
     {
         if (!$this->canProcessOutputFormat($outputFormat)) {
-            throw new \InvalidArgumentException(\sprintf('The processor "%s" cannot process "%s" files. Available formats are: %s', static::class, $outputFormat, implode(', ', array_map(fn ($value) => $value->value, $this->getProcessableOutputFormats()))));
+            throw new \InvalidArgumentException(\sprintf('The processor "%s" cannot process "%s" files. Available formats are: %s', static::class, $outputFormat, implode(', ', array_map(fn (Format $value) => $value->value, $this->getProcessableOutputFormats()))));
         }
     }
 

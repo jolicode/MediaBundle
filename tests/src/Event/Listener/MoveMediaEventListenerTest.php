@@ -89,18 +89,6 @@ class MoveMediaEventListenerTest extends WebTestCase
         ];
     }
 
-    public static function provideMediaMovePaths(): \Generator
-    {
-        $input = self::provideFromPaths();
-        $output = self::provideToPaths();
-
-        foreach ($input as $from) {
-            foreach ($output as $to) {
-                yield [$from, $to];
-            }
-        }
-    }
-
     #[DataProvider('provideMediaMovePaths')]
     public function testMediaMove(string $from, string $to): void
     {
@@ -138,6 +126,18 @@ class MoveMediaEventListenerTest extends WebTestCase
         $pages = $this->pageRepository->findBy(['mediaDefault' => $fixedFrom]);
         $this->assertCount(0, $articles, \sprintf('No Article should use the media at old path %s.', $fixedFrom));
         $this->assertCount(0, $pages, \sprintf('No Page should use the media at old path %s.', $fixedFrom));
+    }
+
+    public static function provideMediaMovePaths(): \Generator
+    {
+        $input = self::provideFromPaths();
+        $output = self::provideToPaths();
+
+        foreach ($input as $from) {
+            foreach ($output as $to) {
+                yield [$from, $to];
+            }
+        }
     }
 
     protected static function getKernelClass(): string

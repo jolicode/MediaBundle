@@ -35,22 +35,19 @@ class BatchConvertCommand extends Command
                 'path',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Pass a specific path name to generate cache for. All the media files under this path will be converted',
-                null
+                'Pass a specific path name to generate cache for. All the media files under this path will be converted'
             )
             ->addOption(
                 'library',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Pass a specific library to generate cache for',
-                null
+                'Pass a specific library to generate cache for'
             )
             ->addOption(
                 'variation',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Pass a specific variation name to generate cache for',
-                null
+                'Pass a specific variation name to generate cache for'
             )
             ->addOption(
                 'parallelization',

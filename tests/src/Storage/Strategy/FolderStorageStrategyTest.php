@@ -22,7 +22,7 @@ class FolderStorageStrategyTest extends TestCase
     public function testGetFilePathWithoutVariation(): void
     {
         self::assertEquals('', $this->strategy->getFilePath(''));
-        self::assertEquals('', $this->strategy->getFilePath(null));
+        self::assertEquals('', $this->strategy->getFilePath());
         self::assertEquals('test.jpg', $this->strategy->getFilePath('test.jpg'));
         self::assertEquals('path/to/test.jpg', $this->strategy->getFilePath('path/to/test.jpg'));
     }

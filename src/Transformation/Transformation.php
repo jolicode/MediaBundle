@@ -292,6 +292,6 @@ class Transformation
 
     private function hasCrop(): bool
     {
-        return null !== $this->cropX && null !== $this->cropY && null !== $this->cropWidth && null !== $this->cropHeight;
+        return !\in_array(null, [$this->cropX, $this->cropY, $this->cropWidth, $this->cropHeight], true);
     }
 }

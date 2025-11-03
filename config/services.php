@@ -230,14 +230,12 @@ return static function (ContainerConfigurator $container): void {
             '$exiftoolBinary' => param('joli_media.binary.exiftool'),
             '$logger' => service('logger')->ignoreOnInvalid(),
         ])
-        ->tag('joli_media.pre_processor', ['name' => ExifRemovalPreProcessor::class])
 
         ->set(HeifPreProcessor::class, HeifPreProcessor::class)
         ->args([
             '$imagine' => abstract_arg('.joli_media.imagine.imagine'),
             '$logger' => service('logger')->ignoreOnInvalid(),
         ])
-        ->tag('joli_media.pre_processor', ['name' => HeifPreProcessor::class])
 
         // processors
         ->set('.joli_media.processor.cwebp', Cwebp::class)

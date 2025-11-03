@@ -138,30 +138,6 @@ class MoveFolderEventListenerTest extends WebTestCase
         ];
     }
 
-    public static function provideMediaMoveSuccessPaths(): \Generator
-    {
-        $input = self::provideFromPaths();
-        $output = self::provideToPaths();
-
-        foreach ($input as $from) {
-            foreach ($output as $to) {
-                yield [$from, $to];
-            }
-        }
-    }
-
-    public static function provideMediaMoveFailPaths(): \Generator
-    {
-        $input = self::provideFromPaths();
-        $output = self::provideForbiddenToPaths();
-
-        foreach ($input as $from) {
-            foreach ($output as $to) {
-                yield [$from, $to];
-            }
-        }
-    }
-
     #[DataProvider('provideMediaMoveSuccessPaths')]
     public function testFolderMove(string $from, string $to): void
     {
@@ -201,6 +177,18 @@ class MoveFolderEventListenerTest extends WebTestCase
         $this->assertCount(0, $pages, \sprintf('No Page should use the media at old path %s.', $fixedFrom));
     }
 
+    public static function provideMediaMoveSuccessPaths(): \Generator
+    {
+        $input = self::provideFromPaths();
+        $output = self::provideToPaths();
+
+        foreach ($input as $from) {
+            foreach ($output as $to) {
+                yield [$from, $to];
+            }
+        }
+    }
+
     #[DataProvider('provideMediaMoveFailPaths')]
     public function testFolderForbiddenMove(string $from, string $to): void
     {
@@ -238,6 +226,18 @@ class MoveFolderEventListenerTest extends WebTestCase
                     $this->assertInstanceOf(Media::class, $media, 'Article media should be an instance of the Media class.');
                     $this->assertSame($fixedFrom . '/test.txt', $media->getPath(), 'Page mediaDefault should not have been updated.');
                 }
+            }
+        }
+    }
+
+    public static function provideMediaMoveFailPaths(): \Generator
+    {
+        $input = self::provideFromPaths();
+        $output = self::provideForbiddenToPaths();
+
+        foreach ($input as $from) {
+            foreach ($output as $to) {
+                yield [$from, $to];
             }
         }
     }

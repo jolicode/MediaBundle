@@ -71,7 +71,7 @@ readonly class MediaEntityMetadataWarmer implements CacheWarmerInterface
         }
 
         $this->cache->delete(self::MEDIA_FIELDS_CACHE_KEY);
-        $this->cache->get(self::MEDIA_FIELDS_CACHE_KEY, fn () => $mediaFields);
+        $this->cache->get(self::MEDIA_FIELDS_CACHE_KEY, fn (): array => $mediaFields);
 
         $this->cache->delete(self::MEDIA_DELETE_BEHAVIORS_CACHE_KEY);
         $this->cache->get(self::MEDIA_DELETE_BEHAVIORS_CACHE_KEY, fn (): array => $mediaDeleteBehaviors);

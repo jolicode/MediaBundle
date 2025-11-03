@@ -34,22 +34,19 @@ class PruneCommand extends Command
                 'path',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Pass a specific path name to check. All the files under this path will be checked and, if not associated with any media from the original storage, removed',
-                null
+                'Pass a specific path name to check. All the files under this path will be checked and, if not associated with any media from the original storage, removed'
             )
             ->addOption(
                 'library',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Pass a specific library to check',
-                null
+                'Pass a specific library to check'
             )
             ->addOption(
                 'variation',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Pass a specific variation name to check',
-                null
+                'Pass a specific variation name to check'
             )
             ->addOption(
                 'force',

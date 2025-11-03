@@ -22,7 +22,6 @@ class NullMedia extends Media
         parent::__construct(
             $path instanceof Media ? $path->getPath() : $path,
             $storage,
-            null,
         );
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\Config\RectorConfig;
 use Rector\Doctrine\Set\DoctrineSetList;
+use Rector\Symfony\Configs\Rector\Closure\FromServicePublicToDefaultsPublicRector;
 use Rector\Symfony\Configs\Rector\Closure\ServiceTagsToDefaultsAutoconfigureRector;
 use Rector\Symfony\Set\SymfonySetList;
 use Rector\Symfony\Set\TwigSetList;
@@ -25,7 +26,6 @@ return RectorConfig::configure()
         codingStyle: true,
         earlyReturn: false,
         naming: false,
-        strictBooleans: true,
         typeDeclarations: true,
     )
     ->withSets([
@@ -40,5 +40,6 @@ return RectorConfig::configure()
     ])
     ->withSkip([
         ServiceTagsToDefaultsAutoconfigureRector::class,
+        FromServicePublicToDefaultsPublicRector::class,
     ])
 ;

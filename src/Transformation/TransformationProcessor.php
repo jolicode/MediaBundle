@@ -42,6 +42,15 @@ readonly class TransformationProcessor
             }
 
             $transformer->transform($transformation);
+
+            if ($transformer instanceof NeedsImmediateProcessingTransformerInterface) {
+                $this->transformationDataHolder?->addStep($transformation, \sprintf(
+                    'Executed the "%s" transformer',
+                    $transformer::class
+                ), [
+                    'transformation' => $transformer->getAsMetadata(),
+                ]);
+            }
         }
 
         $binary = $this->runTransformation($transformation);

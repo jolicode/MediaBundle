@@ -58,7 +58,7 @@ class MediaValidator extends ConstraintValidator
             ;
         }
 
-        if ([] !== $constraint->allowedPaths && [] === array_filter($constraint->allowedPaths, fn ($prefix): bool => str_starts_with($media->getPath(), $prefix))) {
+        if ([] !== $constraint->allowedPaths && [] === array_filter($constraint->allowedPaths, fn (string $prefix): bool => str_starts_with($media->getPath(), $prefix))) {
             $this->context->buildViolation($constraint->pathMessage)
                 ->setParameter('{{ paths }}', implode(', ', $constraint->allowedPaths))
                 ->setParameter('{{ value }}', $media->getPath())
