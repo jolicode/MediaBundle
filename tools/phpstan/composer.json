@@ -2,8 +2,8 @@
     "type": "project",
     "require": {
         "phpstan/extension-installer": "^1.4.3",
-        "phpstan/phpstan": "^2.1.14",
-        "phpstan/phpstan-symfony": "^2.0.4"
+        "phpstan/phpstan": "^2.1.31",
+        "phpstan/phpstan-symfony": "^2.0.8"
     },
     "config": {
         "allow-plugins": {
