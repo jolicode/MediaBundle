@@ -36,6 +36,20 @@ readonly class Expand extends AbstractTransformer implements TransformerInterfac
     ) {
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function getAsMetadata(): array
+    {
+        return [
+            'targetWidth' => $this->width,
+            'targetHeight' => $this->height,
+            'expandPositionX' => $this->positionX,
+            'expandPositionY' => $this->positionY,
+            'backgroundColor' => $this->backgroundColor,
+        ];
+    }
+
     public function transform(Transformation $transformation): void
     {
         $imagine = $this->imagineProcessor->getImagine();

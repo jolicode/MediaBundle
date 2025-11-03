@@ -12,6 +12,20 @@ class TransformationDataHolder
 {
     private const string STOPWATCH_KEY = 'JoliMediaBundle';
 
+    private const TRANSFORMATION_PROPERTIES = [
+        'binaryWidth' => 'Binary width (before the transformation)',
+        'binaryHeight' => 'Binary height (before the transformation)',
+        'cropWidth' => 'Crop area width',
+        'cropHeight' => 'Crop area height',
+        'cropX' => 'Crop area left position',
+        'cropY' => 'Crop area top position',
+        'targetWidth' => 'Target width (after the transformation)',
+        'targetHeight' => 'Target height (after the transformation)',
+        'expandPositionX' => 'Left position of the expanded media',
+        'expandPositionY' => 'Top position of the expanded media',
+        'backgroundColor' => 'Background color',
+    ];
+
     /**
      * @var array<string, mixed>
      */
@@ -34,6 +48,7 @@ class TransformationDataHolder
 
         if ('image' === $this->data[$key]['fileType']) {
             $pixelDimensions = $binary->getPixelDimensions();
+            $this->data[$key]['outputFileSize'] = $binary->getContentSize();
 
             if (false !== $pixelDimensions) {
                 $this->data[$key]['width'] = $pixelDimensions['width'];
@@ -60,6 +75,7 @@ class TransformationDataHolder
             'path' => $media->getPath(),
             'variation' => $mediaVariation->getVariation()->getName(),
             'fileType' => $media->getFileType(),
+            'fileSize' => $media->getFileSize(),
             'steps' => [],
         ];
     }
@@ -185,28 +201,27 @@ class TransformationDataHolder
         }
 
         if (isset($metadata['transformation'])) {
-            $output['Transformation properties'] = array_filter([
-                'Binary width (before the transformation)' => $metadata['transformation']['binaryWidth'] ?? null,
-                'Binary height (before the transformation)' => $metadata['transformation']['binaryHeight'] ?? null,
-                'Crop area width' => $metadata['transformation']['cropWidth'] ?? null,
-                'Crop area height' => $metadata['transformation']['cropHeight'] ?? null,
-                'Crop area left position' => $metadata['transformation']['cropX'] ?? null,
-                'Crop area top position' => $metadata['transformation']['cropY'] ?? null,
-                'Target width (after the transformation)' => $metadata['transformation']['targetWidth'] ?? null,
-                'Target height (after the transformation)' => $metadata['transformation']['targetHeight'] ?? null,
-            ]);
+            $output['Transformation properties'] = $this->getNamesProperties(
+                $metadata['transformation'],
+            );
         }
 
-        if (isset($metadata['operation'])) {
-            $output['Operation properties'] = array_filter([
-                'Binary width (before the transformation)' => $metadata['operation']['binaryWidth'] ?? null,
-                'Binary height (before the transformation)' => $metadata['operation']['binaryHeight'] ?? null,
-                'Left position of the expanded media' => $metadata['operation']['expandPositionX'] ?? null,
-                'Top position of the expanded media' => $metadata['operation']['expandPositionY'] ?? null,
-                'Background color' => $metadata['operation']['backgroundColor'] ?? null,
-                'Target width (after the transformation)' => $metadata['operation']['targetWidth'] ?? null,
-                'Target height (after the transformation)' => $metadata['operation']['targetHeight'] ?? null,
-            ]);
+        return array_filter($output);
+    }
+
+    /**
+     * @param array<string, mixed> $properties
+     *
+     * @return array<string, mixed>
+     */
+    private function getNamesProperties(array $properties): array
+    {
+        $output = [];
+
+        foreach ($properties as $key => $value) {
+            if (isset(self::TRANSFORMATION_PROPERTIES[$key])) {
+                $output[self::TRANSFORMATION_PROPERTIES[$key]] = $value;
+            }
         }
 
         return array_filter($output);

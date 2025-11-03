@@ -167,6 +167,7 @@
                                     <th>Library</th>
                                     <th>Variation</th>
                                     <th class="cell-right">Output dimensions</th>
+                                    <th class="cell-right">Output file size</th>
                                     <th class="cell-right">Duration</th>
                                     <th>&nbsp;</th>
                                 </tr>
@@ -188,6 +189,21 @@
                                         <td class="cell-right cell-no-wrap">
                                             {% if transformation.width is defined %}
                                                 {{ transformation.width }}x{{ transformation.height }}
+                                            {% else %}
+                                                <span class="badge badge-info">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="cell-right cell-no-wrap">
+                                            {% if transformation.outputFileSize is defined %}
+                                                {{ transformation.outputFileSize|number_format(0) }} bytes
+                                                {% if transformation.fileSize is defined %}
+                                                    <br />
+                                                    {% set ratio = (transformation.outputFileSize / transformation.fileSize) * 100 - 100 %}
+                                                    <span
+                                                        class="badge {{ ratio < 0 ? 'badge-success' : 'badge-warning' }}"
+                                                        title="original: {{ transformation.fileSize|number_format(0) }} bytes"
+                                                    >{{ ratio > 0 ? '+' : '' }}{{ ratio|number_format(2) }}%</span>
+                                                {% endif %}
                                             {% else %}
                                                 <span class="badge badge-info">N/A</span>
                                             {% endif %}
