@@ -40,6 +40,8 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class BaseTestCase extends TestCase
 {
+    public const string AVIF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.avif';
+
     public const string JPEG_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.jpeg';
 
     public const string GIF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.gif';
@@ -50,11 +52,16 @@ class BaseTestCase extends TestCase
 
     public const string TIFF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.tiff';
 
+    public const string WEBP_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.webp';
+
     public const array FIXTURE_BINARIES = [
+        'avif' => self::AVIF_FIXTURE_PATH,
         'gif' => self::GIF_FIXTURE_PATH,
         'heif' => self::HEIF_FIXTURE_PATH,
         'jpeg' => self::JPEG_FIXTURE_PATH,
         'png' => self::PNG_FIXTURE_PATH,
+        'tiff' => self::TIFF_FIXTURE_PATH,
+        'webp' => self::WEBP_FIXTURE_PATH,
     ];
 
     protected CacheStorage $cacheStorage;

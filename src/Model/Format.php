@@ -4,6 +4,7 @@ namespace JoliCode\MediaBundle\Model;
 
 enum Format: string
 {
+    case AVIF = 'avif';
     case GIF = 'gif';
     case HEIF = 'heif';
     case JPEG = 'jpeg';
@@ -45,6 +46,7 @@ enum Format: string
     public function getPossibleExtensions(): array
     {
         return match ($this) {
+            self::AVIF => ['avif'],
             self::GIF => ['gif'],
             self::HEIF => ['heic', 'heif'],
             self::JPEG => ['jpg', 'jpeg'],
@@ -57,6 +59,7 @@ enum Format: string
     public function getMimeType(): string
     {
         return match ($this) {
+            self::AVIF => 'image/avif',
             self::GIF => 'image/gif',
             self::HEIF => 'image/heif',
             self::JPEG => 'image/jpeg',

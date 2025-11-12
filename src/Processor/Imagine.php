@@ -44,7 +44,7 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
      */
     public function getProcessableInputFormats(): array
     {
-        return [Format::GIF, Format::HEIF, Format::JPEG, Format::PNG, Format::TIFF, Format::WEBP];
+        return [Format::AVIF, Format::GIF, Format::HEIF, Format::JPEG, Format::PNG, Format::TIFF, Format::WEBP];
     }
 
     /**
@@ -52,7 +52,7 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
      */
     public function getProcessableOutputFormats(): array
     {
-        return [Format::GIF, Format::JPEG, Format::PNG, Format::WEBP];
+        return [Format::AVIF, Format::GIF, Format::JPEG, Format::PNG, Format::WEBP];
     }
 
     public function process(Binary $binary, Transformation $transformation, array $processingOptions = [], ?string $forceOutputFormat = null): Binary
