@@ -1,6 +1,6 @@
 # hadolint global ignore=DL3008
 
-FROM debian:bookworm-20250407-slim AS joli-media
+FROM debian:trixie-20251103-slim AS joli-media
 
 LABEL org.opencontainers.image.source=https://github.com/jolicode/joli-media-bundle-tests
 
@@ -13,7 +13,7 @@ RUN apt-get update \
         gnupg \
     && curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb \
     && dpkg -i /tmp/debsuryorg-archive-keyring.deb \
-    && echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php bookworm main" > /etc/apt/sources.list.d/sury.list \
+    && echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php trixie main" > /etc/apt/sources.list.d/sury.list \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
@@ -48,6 +48,8 @@ RUN apt-get update \
         gifsicle \
         imagemagick \
         jpegoptim \
+        libheif-plugins-all \
+        libheif1 \
         libimage-exiftool-perl \
         libmagickcore-dev \
         pngquant \
@@ -88,7 +90,7 @@ RUN adduser app sudo \
     && phpenmod app-builder
 
 # Composer
-COPY --from=composer/composer:2.8.8 /usr/bin/composer /usr/bin/composer
+COPY --from=composer/composer:2.8.12 /usr/bin/composer /usr/bin/composer
 RUN mkdir -p "/home/app/.composer/cache" \
     && chown app: /home/app/.composer -R
 

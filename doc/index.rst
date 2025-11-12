@@ -5,7 +5,7 @@ The JoliMediaBundle provides a set of tools to manage media in Symfony applicati
 
 It proposes multiple features:
 
-- `EasyAdmin <https://symfony.com/bundles/EasyAdminBundle/current/index.html>`_ and `SonataAdmin <https://symfony.com/bundles/SonataAdminBundle/current/index.html>`_ integrations
+- `EasyAdmin <bridges/easy-admin.rst>`_ and `SonataAdmin <bridges/sonata-admin.rst>`_ integrations
 - abstract media storage
 - processors to transform media (crop / resize / etc.)
 - post processors to optimize the media size
@@ -22,7 +22,7 @@ It proposes multiple features:
 🤓 Goals and approach
 --------------------
 
-The JoliMediaBundle aims to provide numerous facilities to manage media in Symfony applications, by using the best tools available, and following best practices. It is built on top of the [Flysystem](https://flysystem.thephpleague.com/) library to provide an abstraction layer for file storage, and multiple media processing libraries to handle media transformations and optimizations.
+The JoliMediaBundle aims to provide numerous facilities to manage media in Symfony applications, by using the best tools available, and following best practices. It is built on top of the `Flysystem <https://flysystem.thephpleague.com/>`_ library to provide an abstraction layer for file storage, and multiple media processing libraries to handle media transformations and optimizations.
 
 The project seeks to provide:
 

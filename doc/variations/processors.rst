@@ -11,7 +11,7 @@ The main processors configuration is defined in the ``processors`` key of the ``
 - ``cwebp``: the processor to convert images to WebP format
 - ``gif2webp``: the processor to convert GIF images to WebP format
 - ``gifsicle``: the processor to convert GIF images into other GIF files
-- ``imagimagineick``: the processor to convert images using the Imagine library
+- ``imagine``: the processor to convert images using the Imagine library
 
 .. tip::
 
@@ -69,9 +69,9 @@ The ``imagine`` processor does not use a binary, it uses the Imagine library to 
 cwebp processor options
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``gif2webp`` processor is used to convert JPEG, PNG, TIFF or WEBP images to WebP format. It supports two presets: ``near_lossless`` and ``lossy``.
+The ``cwebp`` processor is used to convert JPEG, PNG, TIFF or WEBP images to WebP format. It supports two presets: ``near_lossless`` and ``lossy``.
 
-The ``near_lossless`` configuration preset is used for images that you want to convert to WebP with minimal quality loss. Under the hood, the bundle never uses the ``near_lossless`` preset for JPEG or TIFF images or for imahgs that contain more than 20000 colors.
+The ``near_lossless`` configuration preset is used for images that you want to convert to WebP with minimal quality loss. Under the hood, the bundle never uses the ``near_lossless`` preset for JPEG or TIFF images or for images that contain more than 20000 colors.
 
 The ``lossy`` configuration preset is the default preset, it offers a good balance between quality and file size for most images.
 
@@ -89,7 +89,7 @@ The various configuration keys are mapped to `the official cwebp options <https:
 gif2webp processor options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``gif2webp`` processor is used to convert GIF images to WebP format. Its configuration keys are mapped to `the official gif2webp options <https://developers.google.com/speed/webp/docs/gif2webp>`_:
+The ``gif2webp`` processor is used to convert (animated) GIF images to WebP format. Its configuration keys are mapped to `the official gif2webp options <https://developers.google.com/speed/webp/docs/gif2webp>`_:
 
 - ``lossy``: ``-lossy``
 - ``metadata``: ``-metadata``
@@ -107,11 +107,15 @@ The ``gifsicle`` processor is used to convert GIF images into other GIF files. I
 imagine processor options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``imagine`` processor is used to convert GIF, HEIF, JPEG, PNG, TIFF or WEBP images to the GIF, JPEG, PNG or TIFF format using `the Imagine library <https://github.com/php-imagine/Imagine>`_. It supports the following configuration keys:
+The ``imagine`` processor is used to convert AVIF, GIF, HEIF, JPEG, PNG, TIFF or WEBP images to the AVIF, GIF, JPEG, PNG or TIFF format using `the Imagine library <https://github.com/php-imagine/Imagine>`_. It supports the following configuration keys:
 
 - ``jpeg_quality``: the quality of the JPEG images, from 0 to 100 (default: 80). It is mapped to Imagine's ``jpeg_quality`` option
 - ``png_quality``: the quality of the PNG images, from 0 to 100 (default: 80). It is mapped to Imagine's ``png_compression_level`` and ``png_compression_filter`` options
 - ``quality``: the quality of the images, from 0 to 100 (default: 80). It is mapped to Imagine's ``quality`` option
+
+.. note::
+
+    The AVIF support is still a bit limited in Imagine. In particular, it does not work with animated AVIF images. As a consequence, converting an animated GIF to AVIF will only keep the first frame of the GIF image.
 
 Customizing processor options for a library or a variation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -41,6 +41,13 @@ readonly class Resize extends AbstractTransformer implements TransformerInterfac
             return;
         }
 
+        if (Mode::exact === $this->mode) {
+            $transformation->targetWidth = $width;
+            $transformation->targetHeight = $height;
+
+            return;
+        }
+
         $xRatio = $width / $transformation->targetWidth;
         $yRatio = $height / $transformation->targetHeight;
 

@@ -19,6 +19,7 @@ use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Exception\MediaInUseException;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
+use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use League\Flysystem\PathTraversalDetected;
@@ -383,18 +384,28 @@ class MediaAdminController extends AbstractController
         ));
 
         $media = $this->resolver->resolveMedia($key);
-        $variation = $this->getLibrary()->getVariation($variation);
-        $mediaVariation = $variation->getForMedia($media);
-        $this->converter->convertMediaVariation($mediaVariation);
+        $mediaVariation = $this->resolver->resolveMediaVariation($media, $variation, $this->getLibrary()->getName());
 
-        $this->addFlash(
-            'success',
-            $this->translator->trans(
-                'variation.regenerated_success',
-                ['%variation%' => $variation->getName(), '%media%' => $media->getPath()],
-                'JoliMediaEasyAdminBundle'
-            )
-        );
+        if (!$mediaVariation instanceof MediaVariation) {
+            $this->addFlash(
+                'danger',
+                $this->translator->trans(
+                    'variation.regenerated_failure',
+                    ['%variation%' => $variation, '%media%' => $media->getPath()],
+                    'JoliMediaEasyAdminBundle'
+                )
+            );
+        } else {
+            $this->converter->convertMediaVariation($mediaVariation);
+            $this->addFlash(
+                'success',
+                $this->translator->trans(
+                    'variation.regenerated_success',
+                    ['%variation%' => $variation, '%media%' => $media->getPath()],
+                    'JoliMediaEasyAdminBundle'
+                )
+            );
+        }
 
         return $this->redirect($this->adminUrlGenerator
             ->setRoute('joli_media_easy_admin_show', [
@@ -544,7 +555,7 @@ class MediaAdminController extends AbstractController
                 }
 
                 if ($variation->canBeAppliedTo($media)) {
-                    $media->createVariation($variation);
+                    $this->resolver->resolveMediaVariation($media, $variation, $this->getLibrary()->getName());
                 }
             }
         }

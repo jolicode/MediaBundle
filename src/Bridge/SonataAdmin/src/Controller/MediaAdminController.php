@@ -16,6 +16,7 @@ use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Exception\MediaInUseException;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
+use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use League\Flysystem\PathTraversalDetected;
@@ -353,18 +354,28 @@ class MediaAdminController extends AbstractController
         ));
 
         $media = $this->resolver->resolveMedia($key);
-        $variation = $this->getLibrary()->getVariation($variation);
-        $mediaVariation = $variation->getForMedia($media);
-        $this->converter->convertMediaVariation($mediaVariation);
+        $mediaVariation = $this->resolver->resolveMediaVariation($media, $variation, $this->getLibrary()->getName());
 
-        $this->addFlash(
-            'sonata_flash_success',
-            $this->translator->trans(
-                'variation.regenerated_success',
-                ['%variation%' => $variation->getName(), '%media%' => $media->getPath()],
-                'JoliMediaSonataAdminBundle'
-            )
-        );
+        if (!$mediaVariation instanceof MediaVariation) {
+            $this->addFlash(
+                'sonata_flash_error',
+                $this->translator->trans(
+                    'variation.regenerated_failure',
+                    ['%variation%' => $variation, '%media%' => $media->getPath()],
+                    'JoliMediaSonataAdminBundle'
+                )
+            );
+        } else {
+            $this->converter->convertMediaVariation($mediaVariation);
+            $this->addFlash(
+                'sonata_flash_success',
+                $this->translator->trans(
+                    'variation.regenerated_success',
+                    ['%variation%' => $variation, '%media%' => $media->getPath()],
+                    'JoliMediaSonataAdminBundle'
+                )
+            );
+        }
 
         return $this->redirectToRoute('joli_media_sonata_admin_show', [
             'key' => $key,
@@ -503,7 +514,7 @@ class MediaAdminController extends AbstractController
                 }
 
                 if ($variation->canBeAppliedTo($media)) {
-                    $media->createVariation($variation);
+                    $this->resolver->resolveMediaVariation($media, $variation, $this->getLibrary()->getName());
                 }
             }
         }

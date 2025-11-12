@@ -101,6 +101,7 @@ root: 'Root'
 variation:
     label: 'Variation'
     label_plural: 'Variations'
+    regenerated_failure: 'Failed to regenerate the variation "%variation%" for the media "%media%"'
     regenerated_success: 'Variation "%variation%" regenerated successfully for the media "%media%"'
     stored: 'Stored?'
 view:

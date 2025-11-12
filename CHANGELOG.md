@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.1] - 2025-11-12
+
+### Added
+
+- Support for AVIF and HEIF image formats
+
+### Fixed
+
+- Fixed the URL of variations displayed in the admin bridges when the image format has an alternative format defined (e.g., tiff or heic to jpeg)
+
 ## [0.1.0] - 2025-11-03
 
 This is the initial release of the bundle.
@@ -18,3 +28,4 @@ This is the initial release of the bundle.
 - debug toolbar and profiler panel to monitor media processing in your application
 
 [0.1.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.1.0
+[0.1.1]: https://github.com/jolicode/mediabundle/releases/tag/v0.1.1
