@@ -24,9 +24,15 @@ A typical Debian-based system can install the required dependencies using the fo
         gifsicle \
         imagemagick \
         jpegoptim \
+        libheif1 \
+        libheif-plugins-all \
         libimage-exiftool-perl \
         libmagickcore-dev \
         pngquant
+
+.. note::
+
+    The ``libheif1`` and ``libheif-plugins-all`` packages are required to handle AVIF and HEIF images with ImageMagick. Depending on your system, the versions provided by the package manager might be outdated and not (fully) support these formats. In this case, you will need to compile ImageMagick from source with HEIF support.
 
 Some tools are not available in the default repositories, so you will need to install them manually. The following commands will install all such tools:
 
