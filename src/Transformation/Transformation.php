@@ -259,16 +259,20 @@ class Transformation
     {
         $this->binary = $binary;
 
-        $dimensions = $this->getInitialDimensions();
-        $this->binaryWidth = $dimensions['width'];
-        $this->binaryHeight = $dimensions['height'];
-        $this->targetWidth = $dimensions['width'];
-        $this->targetHeight = $dimensions['height'];
+        try {
+            $dimensions = $this->getInitialDimensions();
+            $this->binaryWidth = $dimensions['width'];
+            $this->binaryHeight = $dimensions['height'];
+            $this->targetWidth = $dimensions['width'];
+            $this->targetHeight = $dimensions['height'];
 
-        $this->cropX = null;
-        $this->cropY = null;
-        $this->cropWidth = null;
-        $this->cropHeight = null;
+            $this->cropX = null;
+            $this->cropY = null;
+            $this->cropWidth = null;
+            $this->cropHeight = null;
+        } catch (\Exception) {
+            // Unable to get dimensions, leave properties as null
+        }
     }
 
     public function multiply(int $value): int
