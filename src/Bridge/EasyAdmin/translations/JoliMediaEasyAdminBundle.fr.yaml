@@ -103,9 +103,10 @@ preview:
     unavailable: 'Aperçu non disponible.'
 root: 'Racine'
 variation:
-    label: 'Variante'
-    label_plural: 'Variantes'
-    regenerated_success: 'La variante "%variation%" a été régénérée avec succès pour le média "%media%"'
+    label: 'Variation'
+    label_plural: 'Variations'
+    regenerated_failure: 'Échec de la régénération de la variation "%variation%" pour le média "%media%"'
+    regenerated_success: 'La variation "%variation%" a été régénérée avec succès pour le média "%media%"'
     stored: 'Stockée ?'
 view:
     grid: 'Vue grille'
