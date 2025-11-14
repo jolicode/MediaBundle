@@ -87,9 +87,9 @@ class MediaVariationPropertyAccessor
     {
         return \sprintf(
             'joli_media_property_%s_%s_%s_%s_%s',
-            $this->libraryName,
-            $variation->getName(),
-            Resolver::normalizePath($path),
+            CacheKeySanitizer::sanitize($this->libraryName),
+            CacheKeySanitizer::sanitize($variation->getName()),
+            CacheKeySanitizer::sanitize(Resolver::normalizePath($path)),
             $this->getLastModified($path, $variation),
             $property,
         );
@@ -99,9 +99,9 @@ class MediaVariationPropertyAccessor
     {
         return \sprintf(
             'joli_media_property_%s_%s_%s_lastModified',
-            $this->libraryName,
-            $variation->getName(),
-            Resolver::normalizePath($path),
+            CacheKeySanitizer::sanitize($this->libraryName),
+            CacheKeySanitizer::sanitize($variation->getName()),
+            CacheKeySanitizer::sanitize(Resolver::normalizePath($path)),
         );
     }
 
