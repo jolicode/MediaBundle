@@ -1,5 +1,9 @@
 # Changelog
 
+## Not released yet
+
+* Add support for Symfony 8.0
+
 ## [0.1.1] - 2025-11-12
 
 ### Added
