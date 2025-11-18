@@ -113,7 +113,7 @@ function migrate(): void
     docker_compose_run('bin/console doctrine:migration:migrate -n --allow-no-migration --all-or-nothing');
 }
 
-#[AsTask(namespace: 'db', description: 'Generate new migrate database schema')]
+#[AsTask(namespace: 'app:db', description: 'Generate new migrate database schema')]
 function make_migration(): void
 {
     docker_compose_run('bin/console make:migration');

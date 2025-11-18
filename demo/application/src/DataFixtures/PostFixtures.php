@@ -33,7 +33,7 @@ class PostFixtures extends Fixture implements DependentFixtureInterface
             $media = $this->resolver->resolve('articles/circle-pattern.' . $extension);
             $paragraphs = [];
 
-            for ($i = 0; $i < 5; ++$i) {
+            for ($j = 0; $j < 5; ++$j) {
                 $paragraphs[] = $this->faker->paragraph();
             }
 
