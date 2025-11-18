@@ -9,7 +9,7 @@ parameters:
         - .castor.stub.php
     scanDirectories:
         - application/vendor
-    tmpDir: ../tools/phpstan/var/demo
+    tmpDir: tools/phpstan/var/demo
     inferPrivatePropertyTypeFromConstructor: true
 
     ignoreErrors:

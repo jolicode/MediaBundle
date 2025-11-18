@@ -7,12 +7,7 @@ $finder = PhpCsFixer\Finder::create()
     ->append([
         __FILE__,
     ])
-    ->notPath([
-        'demo',
-        'src/Bridge/EasyAdmin/src/JoliMediaEasyAdminBundle.php',
-        'src/Bridge/SonataAdmin/src/JoliMediaSonataAdminBundle.php',
-        'src/JoliMediaBundle.php',
-    ])
+    ->notPath([])
 ;
 
 return (new PhpCsFixer\Config())

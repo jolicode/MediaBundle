@@ -1,12 +1,12 @@
 {
     "type": "project",
     "require": {
-        "friendsofphp/php-cs-fixer": "^3.89.2"
+        "rector/rector": "^2.2.8"
     },
     "config": {
         "bump-after-update": true,
         "platform": {
-            "php": "8.2"
+            "php": "8.4"
         },
         "sort-packages": true
     }

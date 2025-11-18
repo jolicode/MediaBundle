@@ -69,7 +69,6 @@ function phpstan(bool $baseline = false): int
     return max(
         docker_exit_code(\sprintf($command, 'phpstan.neon'), workDir: '/home/app'),
         docker_exit_code(\sprintf($command, 'phpstan-castor.neon'), workDir: '/home/app'),
-        docker_exit_code(\sprintf($command, 'demo/phpstan.neon'), workDir: '/home/app'),
     );
 }
 

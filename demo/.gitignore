@@ -1,3 +1,9 @@
 .castor.stub.php
 infrastructure/docker/docker-compose.override.yml
 infrastructure/docker/services/router/certs/*.pem
+
+# QA tools
+.php-cs-fixer.cache
+.phpunit.cache
+phpunit.xml
+.twig-cs-fixer.cache

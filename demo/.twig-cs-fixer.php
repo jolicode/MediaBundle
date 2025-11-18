@@ -9,9 +9,7 @@ $ruleset->overrideRule(new TwigCsFixer\Rules\Punctuation\PunctuationSpacingRule(
 
 $finder = new TwigCsFixer\File\Finder();
 $finder
-    ->in('templates')
-    ->in('src/Bridge/EasyAdmin/templates')
-    ->in('src/Bridge/SonataAdmin/templates')
+    ->in('application/templates')
 ;
 
 $config = new TwigCsFixer\Config\Config();

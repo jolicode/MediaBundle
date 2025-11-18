@@ -11,11 +11,12 @@ use Rector\Symfony\Set\SymfonySetList;
 use Rector\Symfony\Set\TwigSetList;
 
 return RectorConfig::configure()
-    ->withCache('./tools/rector/var/cache/bundle', FileCacheStorage::class)
+    ->withCache('../tools/rector/var/cache', FileCacheStorage::class)
     ->withPaths([
         __DIR__ . '/config',
+        __DIR__ . '/migrations',
+        __DIR__ . '/public',
         __DIR__ . '/src',
-        __DIR__ . '/tests/src',
     ])
     ->withImportNames(importShortClasses: false, removeUnusedImports: true)
     ->withParallel(120, 4, 16)

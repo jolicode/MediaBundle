@@ -35,9 +35,6 @@ jobs:
       - name: Install dependencies
         run: castor backend:install
 
-      - name: Build and start the demo infrastructure
-        run: cd demo && castor start
-
       - name: Install qa tools
         run: castor qa:install
 

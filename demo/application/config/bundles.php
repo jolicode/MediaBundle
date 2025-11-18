@@ -1,29 +1,55 @@
 <?php
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
+use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
+use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\JoliMediaEasyAdminBundle;
+use JoliCode\MediaBundle\Bridge\SonataAdmin\JoliMediaSonataAdminBundle;
+use JoliCode\MediaBundle\JoliMediaBundle;
+use Knp\Bundle\MenuBundle\KnpMenuBundle;
+use Sonata\AdminBundle\SonataAdminBundle;
+use Sonata\BlockBundle\SonataBlockBundle;
+use Sonata\Doctrine\Bridge\Symfony\SonataDoctrineBundle;
+use Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle;
+use Sonata\Exporter\Bridge\Symfony\SonataExporterBundle;
+use Sonata\Form\Bridge\Symfony\SonataFormBundle;
+use Sonata\Twig\Bridge\Symfony\SonataTwigBundle;
+use Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle;
+use Symfony\Bundle\DebugBundle\DebugBundle;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\MakerBundle\MakerBundle;
+use Symfony\Bundle\SecurityBundle\SecurityBundle;
+use Symfony\Bundle\TwigBundle\TwigBundle;
+use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
+use Symfony\UX\StimulusBundle\StimulusBundle;
+use Symfony\UX\TwigComponent\TwigComponentBundle;
+use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
+
 return [
-    Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
-    Symfony\Bundle\TwigBundle\TwigBundle::class => ['all' => true],
-    Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => ['all' => true],
-    Symfony\UX\TwigComponent\TwigComponentBundle::class => ['all' => true],
-    Symfony\Bundle\SecurityBundle\SecurityBundle::class => ['all' => true],
-    Doctrine\Bundle\DoctrineBundle\DoctrineBundle::class => ['all' => true],
-    EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle::class => ['all' => true],
-    JoliCode\MediaBundle\JoliMediaBundle::class => ['all' => true],
-    JoliCode\MediaBundle\Bridge\EasyAdmin\JoliMediaEasyAdminBundle::class => ['all' => true],
-    JoliCode\MediaBundle\Bridge\SonataAdmin\JoliMediaSonataAdminBundle::class => ['all' => true],
-    Knp\Bundle\MenuBundle\KnpMenuBundle::class => ['all' => true],
-    Sonata\Form\Bridge\Symfony\SonataFormBundle::class => ['all' => true],
-    Sonata\BlockBundle\SonataBlockBundle::class => ['all' => true],
-    Sonata\Doctrine\Bridge\Symfony\SonataDoctrineBundle::class => ['all' => true],
-    Sonata\Exporter\Bridge\Symfony\SonataExporterBundle::class => ['all' => true],
-    Symfony\UX\StimulusBundle\StimulusBundle::class => ['all' => true],
-    Sonata\Twig\Bridge\Symfony\SonataTwigBundle::class => ['all' => true],
-    Sonata\AdminBundle\SonataAdminBundle::class => ['all' => true],
-    Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle::class => ['all' => true],
-    Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true],
-    Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
-    Symfony\Bundle\DebugBundle\DebugBundle::class => ['dev' => true],
-    Symfony\Bundle\WebProfilerBundle\WebProfilerBundle::class => ['dev' => true, 'test' => true],
-    Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle::class => ['all' => true],
-    Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle::class => ['all' => true],
+    FrameworkBundle::class => ['all' => true],
+    TwigBundle::class => ['all' => true],
+    TwigExtraBundle::class => ['all' => true],
+    TwigComponentBundle::class => ['all' => true],
+    SecurityBundle::class => ['all' => true],
+    DoctrineBundle::class => ['all' => true],
+    EasyAdminBundle::class => ['all' => true],
+    JoliMediaBundle::class => ['all' => true],
+    JoliMediaEasyAdminBundle::class => ['all' => true],
+    JoliMediaSonataAdminBundle::class => ['all' => true],
+    KnpMenuBundle::class => ['all' => true],
+    SonataFormBundle::class => ['all' => true],
+    SonataBlockBundle::class => ['all' => true],
+    SonataDoctrineBundle::class => ['all' => true],
+    SonataExporterBundle::class => ['all' => true],
+    StimulusBundle::class => ['all' => true],
+    SonataTwigBundle::class => ['all' => true],
+    SonataAdminBundle::class => ['all' => true],
+    SonataDoctrineORMAdminBundle::class => ['all' => true],
+    MakerBundle::class => ['dev' => true],
+    DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
+    DebugBundle::class => ['dev' => true],
+    WebProfilerBundle::class => ['dev' => true, 'test' => true],
+    DoctrineMigrationsBundle::class => ['all' => true],
+    StofDoctrineExtensionsBundle::class => ['all' => true],
 ];
