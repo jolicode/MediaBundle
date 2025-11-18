@@ -33,7 +33,7 @@ function create_default_variables(): array
         'root_domain' => "{$projectName}.{$tld}",
         'extra_domains' => [],
         'php_version' => '8.4',
-        'registry' => $_SERVER['DS_REGISTRY'] ?? null,
+        'registry' => 'ghcr.io/jolicode/media-bundle',
     ];
 }
 
