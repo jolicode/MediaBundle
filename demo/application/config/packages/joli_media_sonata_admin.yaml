@@ -1,0 +1,17 @@
+joli_media_sonata_admin:
+    visibility:
+        show_variations_list: true
+        show_variations_list_admin_variations: true
+        show_variations_stored: true
+        show_variations_action_regenerate: true
+        show_html_code: true
+        show_markdown_code: true
+    upload:
+        max_files: 20
+        max_file_size: 500
+        accepted_files:
+            - audio/*
+            - image/*
+            - video/*
+            - application/pdf
+

@@ -12,6 +12,7 @@ $finder
     ->in('templates')
     ->in('src/Bridge/EasyAdmin/templates')
     ->in('src/Bridge/SonataAdmin/templates')
+    ->in('demo/application/templates')
 ;
 
 $config = new TwigCsFixer\Config\Config();

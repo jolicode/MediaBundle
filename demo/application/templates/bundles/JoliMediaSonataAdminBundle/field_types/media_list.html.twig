@@ -1,0 +1,9 @@
+{% extends get_admin_template('base_list_field', admin.code) %}
+
+{% block field %}
+    {% if value %}
+        {{ include('@JoliMediaSonataAdmin/_preview.html.twig', { media: value, variation: 'admin_list_thumbnail', className: 'media-preview media-list-preview' }) }}
+    {% else %}
+        <span class="label label-warning bg-gray-active">N/A</span>
+    {% endif %}
+{% endblock %}

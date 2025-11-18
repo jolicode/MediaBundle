@@ -16,6 +16,7 @@ return RectorConfig::configure()
         __DIR__ . '/config',
         __DIR__ . '/src',
         __DIR__ . '/tests/src',
+        __DIR__ . '/demo/application/src',
     ])
     ->withImportNames(importShortClasses: false, removeUnusedImports: true)
     ->withParallel(120, 4, 16)

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        {% block stylesheets %}
+            <style type="text/css">
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 0;
+                    background-color: #f9f9f9;
+                }
+                header {
+                    background-color: #333;
+                    color: white;
+                    padding: 1em;
+                    text-align: center;
+
+                    a {
+                        color: white;
+                    }
+                }
+                main {
+                    padding: 2em;
+                    max-width: 800px;
+                    margin: auto;
+                    background-color: white;
+                }
+                a {
+                    color: #0066cc;
+                    text-decoration: none;
+                }
+                article {
+                    margin-bottom: 2em;
+                }
+                h1, h2 {
+                    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                }
+                menu {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                    display: flex;
+                    justify-content: center;
+                    gap: 3em;
+                }
+            </style>
+        {% endblock %}
+
+        {% block javascripts %}
+        {% endblock %}
+    </head>
+    <body>
+        <header>
+            <h1><a href="{{ path('app_post_index') }}">Demo blog</a></h1>
+            <menu>
+                <li><a href="{{ path('app_post_index') }}">Home</a></li>
+                <li><a href="{{ path('admin') }}">Easy Admin</a></li>
+                <li><a href="{{ path('sonata_admin_dashboard') }}">Sonata Admin</a></li>
+            </menu>
+        </header>
+        <main>
+            {% block body %}{% endblock %}
+        </main>
+    </body>
+</html>
