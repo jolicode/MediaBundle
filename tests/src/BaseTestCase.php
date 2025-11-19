@@ -40,21 +40,21 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class BaseTestCase extends TestCase
 {
-    public const string AVIF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.avif';
+    public const AVIF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.avif';
 
-    public const string JPEG_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.jpeg';
+    public const JPEG_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.jpeg';
 
-    public const string GIF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.gif';
+    public const GIF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.gif';
 
-    public const string HEIF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.heic';
+    public const HEIF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.heic';
 
-    public const string PNG_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.png';
+    public const PNG_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.png';
 
-    public const string TIFF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.tiff';
+    public const TIFF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.tiff';
 
-    public const string WEBP_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.webp';
+    public const WEBP_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.webp';
 
-    public const array FIXTURE_BINARIES = [
+    public const FIXTURE_BINARIES = [
         'avif' => self::AVIF_FIXTURE_PATH,
         'gif' => self::GIF_FIXTURE_PATH,
         'heif' => self::HEIF_FIXTURE_PATH,

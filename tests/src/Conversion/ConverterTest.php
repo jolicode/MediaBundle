@@ -26,7 +26,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class ConverterTest extends BaseTestCase
 {
-    private const array TO_EXTENSIONS = [
+    private const TO_EXTENSIONS = [
         null,
         'jpeg',
         'png',

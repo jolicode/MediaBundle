@@ -64,7 +64,7 @@ When resolving a media, the ``PreResolveMediaEvent`` can be used to modify the m
 
     final class ResolveEventListener
     {
-        private const string MEDIA_ORIGINAL_PATH = 'some/legacy/prefix/';
+        private const MEDIA_ORIGINAL_PATH = 'some/legacy/prefix/';
 
         #[AsEventListener(event: MediaEvents::PRE_RESOLVE_MEDIA)]
         public function onPreResolve(PreResolveMediaEvent $event): void

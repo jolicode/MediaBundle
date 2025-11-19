@@ -10,7 +10,7 @@ readonly class Gifsicle extends AbstractPostProcessor implements PostProcessorIn
     /**
      * @var array<string, mixed>
      */
-    private const array DEFAULT_OPTIONS = [
+    private const DEFAULT_OPTIONS = [
         'optimize' => 3,
         'lossy' => 20,
         'colors' => 256,

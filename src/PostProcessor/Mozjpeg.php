@@ -10,7 +10,7 @@ readonly class Mozjpeg extends AbstractPostProcessor implements PostProcessorInt
     /**
      * @var array<string, mixed>
      */
-    private const array DEFAULT_OPTIONS = [
+    private const DEFAULT_OPTIONS = [
         'optimize' => true,
         'progressive' => true,
         'quality' => 80,

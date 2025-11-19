@@ -10,7 +10,7 @@ readonly class Oxipng extends AbstractPostProcessor implements PostProcessorInte
     /**
      * @var array<string, mixed>
      */
-    private const array DEFAULT_OPTIONS = [
+    private const DEFAULT_OPTIONS = [
         'optimization' => 4,
         'strip' => 'all',
         'zopfli' => true,

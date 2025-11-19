@@ -13,7 +13,7 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
     /**
      * @var array<string, array<string, mixed>>
      */
-    private const array DEFAULT_OPTIONS = [
+    private const DEFAULT_OPTIONS = [
         'near_lossless' => [
             'quality' => 40,
             'method' => 6,
