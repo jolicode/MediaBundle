@@ -13,7 +13,7 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
     /**
      * @var array<string, mixed>
      */
-    private const array DEFAULT_OPTIONS = [
+    private const DEFAULT_OPTIONS = [
         'jpeg_quality' => 80,
         'png_quality' => 80,
         'quality' => 80,

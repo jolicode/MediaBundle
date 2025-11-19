@@ -56,8 +56,8 @@ A pre-processor class must implement the ``process`` method of the ``Joli\MediaB
 
     readonly class OgImagePreProcessor extends AbstractPreProcessor implements PreProcessorInterface
     {
-        private const int WIDTH = 1200;
-        private const int HEIGHT = 1000;
+        private const WIDTH = 1200;
+        private const HEIGHT = 1000;
 
         public function __construct(
             private ImagineInterface $imagine,

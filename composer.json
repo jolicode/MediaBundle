@@ -49,7 +49,7 @@
         "imagine/imagine": "^1.5",
         "league/flysystem-bundle": "^3.4",
         "league/flysystem-memory": "^3.0",
-        "phpunit/phpunit": "^12",
+        "phpunit/phpunit": "^11",
         "psr/log": "^2.0 || ^3.0",
         "sonata-project/admin-bundle": "^4.30",
         "symfony/browser-kit": "^7.0 || ^8.0",

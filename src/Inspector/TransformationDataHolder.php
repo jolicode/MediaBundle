@@ -10,7 +10,7 @@ use Symfony\Component\Stopwatch\StopwatchEvent;
 
 class TransformationDataHolder
 {
-    private const string STOPWATCH_KEY = 'JoliMediaBundle';
+    private const STOPWATCH_KEY = 'JoliMediaBundle';
 
     private const TRANSFORMATION_PROPERTIES = [
         'binaryWidth' => 'Binary width (before the transformation)',

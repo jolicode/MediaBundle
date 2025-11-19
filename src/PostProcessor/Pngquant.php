@@ -11,7 +11,7 @@ readonly class Pngquant extends AbstractPostProcessor implements PostProcessorIn
     /**
      * @var array<string, mixed>
      */
-    private const array DEFAULT_OPTIONS = [
+    private const DEFAULT_OPTIONS = [
         'quality' => '75-85',
         'speed' => 5,
     ];

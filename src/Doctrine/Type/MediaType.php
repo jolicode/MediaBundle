@@ -13,7 +13,7 @@ class MediaType extends StringType
     use MediaTypeTrait;
 
     #[\Deprecated(message: 'use Types::MEDIA instead')]
-    public const string NAME = Types::MEDIA;
+    public const NAME = Types::MEDIA;
 
     /**
      * @param Media|string|null $value

@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 final readonly class Package implements PackageInterface
 {
-    public const string NAME = 'joli-media-sonata-admin';
+    public const NAME = 'joli-media-sonata-admin';
 
     private PackageInterface $package;
 

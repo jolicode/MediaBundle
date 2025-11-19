@@ -10,7 +10,7 @@ readonly class Jpegoptim extends AbstractPostProcessor implements PostProcessorI
     /**
      * @var array<string, mixed>
      */
-    private const array DEFAULT_OPTIONS = [
+    private const DEFAULT_OPTIONS = [
         'strip_all' => true,
         'progressive' => true,
         'max_quality' => 80,

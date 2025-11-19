@@ -12,7 +12,7 @@ readonly class Gif2webp extends AbstractProcessor implements ProcessorInterface
     /**
      * @var array<string, mixed>
      */
-    private const array DEFAULT_OPTIONS = [
+    private const DEFAULT_OPTIONS = [
         'lossy' => true,
         'metadata' => 'none',
         'min_size' => true,
