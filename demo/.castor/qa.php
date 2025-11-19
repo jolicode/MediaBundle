@@ -1,6 +1,6 @@
 <?php
 
-namespace qa;
+namespace demo\qa;
 
 // use Castor\Attribute\AsRawTokens;
 use Castor\Attribute\AsOption;
@@ -8,10 +8,10 @@ use Castor\Attribute\AsTask;
 
 use function Castor\io;
 use function Castor\variable;
-use function docker\docker_compose_run;
-use function docker\docker_exit_code;
+use function demo\docker\docker_compose_run;
+use function demo\docker\docker_exit_code;
 
-#[AsTask(description: 'Runs all QA tasks')]
+#[AsTask(description: 'Runs all QA tasks', namespace: 'qa')]
 function all(): int
 {
     $cs = cs();
@@ -22,7 +22,7 @@ function all(): int
     return max($cs, $phpstan, $twigCs, $rector);
 }
 
-#[AsTask(description: 'Installs tooling')]
+#[AsTask(description: 'Installs tooling', namespace: 'qa')]
 function install(): void
 {
     io()->title('Installing QA tooling');
@@ -33,7 +33,7 @@ function install(): void
     docker_compose_run('composer install -o', workDir: '/var/www/tools/rector');
 }
 
-#[AsTask(description: 'Updates tooling')]
+#[AsTask(description: 'Updates tooling', namespace: 'qa')]
 function update(): void
 {
     io()->title('Updating QA tooling');
@@ -55,7 +55,7 @@ function update(): void
 //     return docker_exit_code('bin/phpunit ' . implode(' ', $rawTokens));
 // }
 
-#[AsTask(description: 'Runs PHPStan', aliases: ['phpstan'])]
+#[AsTask(description: 'Runs PHPStan', namespace: 'qa')]
 function phpstan(
     #[AsOption(description: 'Generate baseline file', shortcut: 'b')]
     bool $baseline = false,
@@ -72,7 +72,7 @@ function phpstan(
     return docker_exit_code($command, workDir: '/var/www');
 }
 
-#[AsTask(description: 'Fixes Coding Style', aliases: ['cs'])]
+#[AsTask(description: 'Fixes Coding Style', namespace: 'qa')]
 function cs(bool $dryRun = false): int
 {
     if (!is_dir(variable('root_dir') . '/tools/php-cs-fixer/vendor')) {
@@ -88,7 +88,7 @@ function cs(bool $dryRun = false): int
     return docker_exit_code('php-cs-fixer fix', workDir: '/var/www');
 }
 
-#[AsTask(description: 'Run the rector upgrade')]
+#[AsTask(description: 'Run the rector upgrade', namespace: 'qa')]
 function rector(bool $dryRun = false): int
 {
     if (!is_dir(variable('root_dir') . '/tools/rector/vendor')) {
@@ -100,7 +100,7 @@ function rector(bool $dryRun = false): int
     return docker_exit_code('rector process' . ($dryRun ? ' --dry-run' : ''), workDir: '/var/www/application');
 }
 
-#[AsTask(description: 'Fixes Twig Coding Style', aliases: ['twig-cs'])]
+#[AsTask(description: 'Fixes Twig Coding Style', namespace: 'qa')]
 function twigCs(bool $dryRun = false): int
 {
     if (!is_dir(variable('root_dir') . '/tools/twig-cs-fixer/vendor')) {

@@ -8,13 +8,10 @@ use function Castor\import;
 use function Castor\io;
 use function Castor\notify;
 use function Castor\variable;
-use function docker\about;
-use function docker\build;
-use function docker\docker_compose_run;
-use function docker\up;
-
-// use function docker\workers_start;
-// use function docker\workers_stop;
+use function demo\docker\about;
+use function demo\docker\build;
+use function demo\docker\docker_compose_run;
+use function demo\docker\up;
 
 guard_min_version('0.26.0');
 
@@ -42,12 +39,10 @@ function start(): void
 {
     io()->title('Starting the stack');
 
-    // workers_stop();
     build();
     install();
     up(profiles: ['default']); // We can't start worker now, they are not installed
     migrate();
-    // workers_start();
 
     notify('The stack is now up and running.');
     io()->success('The stack is now up and running.');

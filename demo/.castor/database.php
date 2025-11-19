@@ -1,12 +1,14 @@
 <?php
 
+namespace demo\db;
+
 use Castor\Attribute\AsTask;
 
 use function Castor\context;
 use function Castor\io;
-use function docker\docker_compose;
+use function demo\docker\docker_compose;
 
-#[AsTask(description: 'Connect to the PostgreSQL database', name: 'db:client', aliases: ['postgres', 'pg'])]
+#[AsTask(description: 'Connect to the PostgreSQL database', name: 'client', namespace: 'db')]
 function postgres_client(): void
 {
     io()->title('Connecting to the PostgreSQL database');

@@ -1,6 +1,6 @@
 <?php
 
-namespace docker;
+namespace demo\docker;
 
 use Castor\Attribute\AsContext;
 use Castor\Context;

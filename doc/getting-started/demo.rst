@@ -13,7 +13,7 @@ To start the demo application, you need to have Docker and `Castor <https://gith
 .. code-block:: terminal
 
     $ git clone https://github.com/JoliCode/MediaBundle.git
-    $ cd MediaBundle/demo
+    $ cd MediaBundle
 
 2. Configure the local domain:
 
@@ -25,7 +25,7 @@ To start the demo application, you need to have Docker and `Castor <https://gith
 
 .. code-block:: terminal
 
-    $ castor start
+    $ castor demo:start
 
 The first start of the stack should take a few minutes: docker images will be built, and dependencies will be installed.
 
@@ -33,7 +33,10 @@ The first start of the stack should take a few minutes: docker images will be bu
 
 .. code-block:: terminal
 
-    $ castor app:db:fixtures
+    $ castor demo:app:db:fixtures
 
 5. Finally, open your browser and navigate to https://jolimediabundle-demo.test. You should see the demo application homepage.
 
+.. tip::
+
+    The ``demo`` castor commands namespace contains other useful commands to interact with the demo application (clearing the cache, loading fixtures, etc.). You can list them by running the ``castor`` command.

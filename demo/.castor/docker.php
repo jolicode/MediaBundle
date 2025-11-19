@@ -1,14 +1,12 @@
 <?php
 
-namespace docker;
+namespace demo\docker;
 
 use Castor\Attribute\AsOption;
 use Castor\Attribute\AsTask;
 use Castor\Context;
-use Castor\Helper\PathHelper;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Exception\ExceptionInterface;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpExceptionInterface;
@@ -23,7 +21,7 @@ use function Castor\open;
 use function Castor\run;
 use function Castor\variable;
 
-#[AsTask(description: 'Displays some help and available urls for the current project', namespace: '')]
+#[AsTask(description: 'Displays some help and available urls for the current project', namespace: 'docker')]
 function about(): void
 {
     io()->title('About this project');
@@ -60,15 +58,15 @@ function about(): void
     io()->listing(array_map(fn ($url) => "https://{$url}", array_unique($urls)));
 }
 
-#[AsTask(description: 'Opens the project in your browser', namespace: '', aliases: ['open'])]
+#[AsTask(description: 'Opens the project in your browser', namespace: 'docker')]
 function open_project(): void
 {
     open('https://' . variable('root_domain'));
 }
 
-#[AsTask(description: 'Builds the infrastructure', aliases: ['build'])]
+#[AsTask(description: 'Builds the infrastructure', namespace: 'docker')]
 function build(
-    #[AsOption(description: 'The service to build (default: all services)', autocomplete: 'docker\get_service_names')]
+    #[AsOption(description: 'The service to build (default: all services)', autocomplete: 'demo\docker\get_service_names')]
     ?string $service = null,
     ?string $profile = null,
 ): void {
@@ -102,9 +100,9 @@ function build(
 /**
  * @param list<string> $profiles
  */
-#[AsTask(description: 'Builds and starts the infrastructure', aliases: ['up'])]
+#[AsTask(description: 'Builds and starts the infrastructure', namespace: 'docker')]
 function up(
-    #[AsOption(description: 'The service to start (default: all services)', autocomplete: 'docker\get_service_names')]
+    #[AsOption(description: 'The service to start (default: all services)', autocomplete: 'demo\docker\get_service_names')]
     ?string $service = null,
     #[AsOption(mode: InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED)]
     array $profiles = [],
@@ -133,9 +131,9 @@ function up(
 /**
  * @param list<string> $profiles
  */
-#[AsTask(description: 'Stops the infrastructure', aliases: ['stop'])]
+#[AsTask(description: 'Stops the infrastructure', namespace: 'docker')]
 function stop(
-    #[AsOption(description: 'The service to stop (default: all services)', autocomplete: 'docker\get_service_names')]
+    #[AsOption(description: 'The service to stop (default: all services)', autocomplete: 'demo\docker\get_service_names')]
     ?string $service = null,
     #[AsOption(mode: InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED)]
     array $profiles = [],
@@ -153,7 +151,7 @@ function stop(
     docker_compose($command, profiles: $profiles);
 }
 
-#[AsTask(description: 'Opens a shell (bash) into a builder container', aliases: ['builder'])]
+#[AsTask(description: 'Opens a shell (bash) into a builder container', namespace: 'docker')]
 function builder(): void
 {
     $c = context()
@@ -168,7 +166,7 @@ function builder(): void
 /**
  * @param list<string> $profiles
  */
-#[AsTask(description: 'Displays infrastructure logs', aliases: ['logs'])]
+#[AsTask(description: 'Displays infrastructure logs', namespace: 'docker')]
 function logs(
     ?string $service = null,
     #[AsOption(mode: InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED)]
@@ -183,7 +181,7 @@ function logs(
     docker_compose($command, c: context()->withTty(), profiles: $profiles);
 }
 
-#[AsTask(description: 'Lists containers status', aliases: ['ps'])]
+#[AsTask(description: 'Lists containers status', namespace: 'docker')]
 function ps(bool $ports = false): void
 {
     $command = [
@@ -203,7 +201,7 @@ function ps(bool $ports = false): void
     }
 }
 
-#[AsTask(description: 'Cleans the infrastructure (remove container, volume, networks)', aliases: ['destroy'])]
+#[AsTask(description: 'Cleans the infrastructure (remove container, volume, networks)', namespace: 'docker')]
 function destroy(
     #[AsOption(description: 'Force the destruction without confirmation', shortcut: 'f')]
     bool $force = false,
@@ -229,7 +227,7 @@ function destroy(
     fs()->remove($files);
 }
 
-#[AsTask(description: 'Generates SSL certificates (with mkcert if available or self-signed if not)')]
+#[AsTask(description: 'Generates SSL certificates (with mkcert if available or self-signed if not)', namespace: 'docker')]
 function generate_certificates(
     #[AsOption(description: 'Force the certificates re-generation without confirmation', shortcut: 'f')]
     bool $force = false,
@@ -296,69 +294,6 @@ function generate_certificates(
     if ($force) {
         io()->note('Please restart the infrastructure to use the new certificates with "castor up" or "castor start".');
     }
-}
-
-#[AsTask(description: 'Starts the workers', namespace: 'docker:worker', name: 'start', aliases: ['start-workers'])]
-function workers_start(): void
-{
-    io()->title('Starting workers');
-
-    $command = ['up', '--detach', '--wait', '--no-build'];
-    $profiles = ['worker', 'default'];
-
-    try {
-        docker_compose($command, profiles: $profiles);
-    } catch (ProcessFailedException $e) {
-        preg_match('/service "(\w+)" depends on undefined service "(\w+)"/', $e->getProcess()->getErrorOutput(), $matches);
-        if (!$matches) {
-            throw $e;
-        }
-
-        $r = new \ReflectionFunction(__FUNCTION__);
-
-        io()->newLine();
-        io()->error('An error occurred while starting the workers.');
-        io()->warning(\sprintf(
-            <<<'EOT'
-                The "%1$s" service depends on the "%2$s" service, which is not defined in the current docker-compose configuration.
-
-                Usually, this means that the service "%2$s" is not defined in the same profile (%3$s) as the "%1$s" service.
-
-                You can try to add its profile in the current task: %4$s:%5$s
-                EOT,
-            $matches[1],
-            $matches[2],
-            implode(', ', $profiles),
-            PathHelper::makeRelative((string) $r->getFileName()),
-            $r->getStartLine(),
-        ));
-    }
-}
-
-#[AsTask(description: 'Stops the workers', namespace: 'docker:worker', name: 'stop', aliases: ['stop-workers'])]
-function workers_stop(): void
-{
-    io()->title('Stopping workers');
-
-    // Docker compose cannot stop a single service in a profile, if it depends
-    // on another service in another profile. To make it work, we need to select
-    // both profiles, and so stop both services
-
-    // So we find all services, in all profiles, and manually filter the one
-    // that has the "worker" profile, then we stop it
-    $command = ['stop'];
-
-    foreach (get_services() as $name => $service) {
-        foreach ($service['profiles'] ?? [] as $profile) {
-            if ('worker' === $profile) {
-                $command[] = $name;
-
-                continue 2;
-            }
-        }
-    }
-
-    docker_compose($command, profiles: ['*']);
 }
 
 /**
@@ -476,7 +411,7 @@ function run_in_docker_or_locally_for_mac(string $command, ?Context $c = null): 
     }
 }
 
-#[AsTask(description: 'Push images cache to the registry', namespace: 'docker', name: 'push', aliases: ['push'])]
+#[AsTask(description: 'Push images cache to the registry', namespace: 'docker', name: 'push')]
 function push(bool $dryRun = false): void
 {
     $registry = variable('registry');
