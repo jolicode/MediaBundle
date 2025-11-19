@@ -1,0 +1,10 @@
+<article>
+    <h2><a href="{{ path('app_post_show', { slug: post.slug }) }}">{{ post.title }}</a></h2>
+    <p>Published on {{ post.publishedAt|date('F j, Y') }} by {{ post.author.name }}</p>
+    <twig:joli:Picture
+        media="{{ post.coverMedia }}"
+        variation="blog_show"
+        alt="Cover image for {{ post.title }}"
+    />
+    <p>{{ post.body|raw }}</p>
+</article>

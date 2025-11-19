@@ -66,3 +66,5 @@ rules:
 exclude_rule_for_file:
     - path: dependencies-and-tooling.rst
       rule_name: replacement
+    - path: getting-started/demo.rst
+      rule_name: blank_line_before_directive

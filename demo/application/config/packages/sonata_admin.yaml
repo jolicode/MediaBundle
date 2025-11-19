@@ -1,0 +1,25 @@
+sonata_admin:
+    title: 'JoliMediaBundle demo'
+    title_logo: https://jolicode.com/build/images/favicons/favicon-32x32.png
+    dashboard:
+        blocks:
+            - { type: sonata.admin.block.admin_list, position: left }
+
+        groups:
+            Users:
+                on_top: true
+                icon: 'fas fa-users'
+                items:
+                    - admin.user
+            Contents:
+                keep_open: true
+                items:
+                    - admin.post
+                    -
+                        route: joli_media_sonata_admin_explore
+                        label: Media library
+
+sonata_block:
+    blocks:
+        sonata.admin.block.admin_list:
+            contexts: [admin]

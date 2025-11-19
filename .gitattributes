@@ -17,6 +17,7 @@
 /rector.php             export-ignore
 /webpack.config.js      export-ignore
 /yarn.lock              export-ignore
+/demo                   export-ignore
 /doc                    export-ignore
 /tests                  export-ignore
 /tools                  export-ignore

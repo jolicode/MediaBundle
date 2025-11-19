@@ -1,0 +1,7 @@
+{% if field.value %}
+    <div style="width:40px; height: 30px">
+        {{ include('@JoliMediaEasyAdmin/_preview.html.twig', { media: field.value, variation: 'admin_list_thumbnail', className: 'media-preview media-list-preview' }) }}
+    </div>
+{% else %}
+    {{ include('@EasyAdmin/label/null.html.twig') }}
+{% endif %}

@@ -1,0 +1,102 @@
+joli_media:
+    default_library: default
+    libraries:
+        default:
+            original:
+                flysystem: "filesystem.original.storage"
+                url_generator:
+                    strategy: folder
+                    path: /media/original/
+            cache:
+                flysystem: "filesystem.cache.storage"
+                must_store_when_generating_url: false
+                url_generator:
+                    strategy: folder
+                    path: /media/cache/
+            enable_auto_webp: true
+            # pixel_ratios: [1, 2]
+
+            variations:
+                admin_list_thumbnail:
+                    format: webp
+                    transformers:
+                        thumbnail:
+                            width: 40
+                            height: 30
+                            allow_upscale: true
+
+                blog_show:
+                    transformers:
+                        thumbnail:
+                            width: 800
+                            height: 100
+                            allow_downscale: true
+                            allow_upscale: true
+
+                transform_resize:
+                    format: webp
+                    transformers:
+                        resize:
+                            width: 50%
+                            height: 50%
+
+                transform_thumbnail:
+                    enable_auto_webp: false
+                    transformers:
+                        thumbnail:
+                            width: 800
+                            height: 800
+                            allow_upscale: false
+
+                transform_chained:
+                    transformers:
+                        -
+                            type: crop
+                            width: 60
+                            height: 60
+                        -
+                            type: expand
+                            width: 80
+                            height: 80
+                            background_color: '#ffcccc'
+                            position_x: end
+                            position_y: end
+                        -
+                            type: heighten
+                            height: 100
+                        -
+                            type: expand
+                            width: 120
+                            height: 120
+                            background_color: '#ccffcc'
+                            position_x: start
+                            position_y: end
+                        -
+                            type: widen
+                            width: 140
+                        -
+                            type: expand
+                            width: 160
+                            height: 160
+                            background_color: '#ccccff'
+                            position_x: start
+                            position_y: start
+                        -
+                            type: resize
+                            width: 180
+                            height: 180
+                            mode: exact
+                        -
+                            type: expand
+                            width: 200
+                            height: 200
+                            background_color: '#ffff44'
+                        -
+                            type: thumbnail
+                            width: 100
+                            height: 100
+
+    pre_processors:
+        - JoliCode\MediaBundle\PreProcessor\ExifRemovalPreProcessor
+
+    processors: ~

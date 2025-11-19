@@ -1,0 +1,37 @@
+parameters:
+    level: 8
+    paths:
+        - application/src
+        - application/public
+        - castor.php
+        - .castor/
+    scanFiles:
+        - .castor.stub.php
+    scanDirectories:
+        - application/vendor
+    tmpDir: tools/phpstan/var/demo
+    inferPrivatePropertyTypeFromConstructor: true
+
+    ignoreErrors:
+        -
+            identifier: missingType.generics
+
+    symfony:
+        containerXmlPath: 'application/var/cache/dev/App_KernelDevDebugContainer.xml'
+
+    typeAliases:
+        ContextData: '''
+            array{
+                project_name: string,
+                root_domain: string,
+                extra_domains: string[],
+                php_version: string,
+                docker_compose_files: list<string>,
+                docker_compose_run_environment: list<string>,
+                macos: bool,
+                power_shell: bool,
+                user_id: int,
+                root_dir: string,
+                registry?: ?string,
+            }
+        '''

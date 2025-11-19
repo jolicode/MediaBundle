@@ -11,7 +11,7 @@ use Rector\Symfony\Set\SymfonySetList;
 use Rector\Symfony\Set\TwigSetList;
 
 return RectorConfig::configure()
-    ->withCache('./tools/rector/var/cache', FileCacheStorage::class)
+    ->withCache('./tools/rector/var/cache/bundle', FileCacheStorage::class)
     ->withPaths([
         __DIR__ . '/config',
         __DIR__ . '/src',
