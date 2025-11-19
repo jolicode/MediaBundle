@@ -93,7 +93,7 @@ Start the builder which will give you access to a container with all these
 tools available:
 
 ```bash
-castor builder
+castor docker:builder
 ```
 
 ### Other tasks

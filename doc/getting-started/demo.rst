@@ -9,34 +9,30 @@ Starting the demo application
 To start the demo application, you need to have Docker and `Castor <https://github.com/jolicode/castor#installation>`_ installed on your system. Then, follow these steps:
 
 1. Clone the repository if you haven't already:
+    .. code-block:: terminal
 
-.. code-block:: terminal
-
-    $ git clone https://github.com/JoliCode/MediaBundle.git
-    $ cd MediaBundle
+        git clone https://github.com/JoliCode/MediaBundle.git
+        cd MediaBundle
 
 2. Configure the local domain:
+    .. code-block:: terminal
 
-.. code-block:: terminal
-
-    $ echo '127.0.0.1 jolimediabundle-demo.test' | sudo tee -a /etc/hosts
+        echo '127.0.0.1 jolimediabundle-demo.test' | sudo tee -a /etc/hosts
 
 3. Start the application using Castor:
+    .. code-block:: terminal
 
-.. code-block:: terminal
+        $ castor demo:start
 
-    $ castor demo:start
-
-The first start of the stack should take a few minutes: docker images will be built, and dependencies will be installed.
+    The first start of the stack should take a few minutes: docker images will be built, and dependencies will be installed.
 
 4. Once the application is started, insert some fixture data:
+    .. code-block:: terminal
 
-.. code-block:: terminal
-
-    $ castor demo:app:db:fixtures
+        $ castor demo:app:db:fixtures
 
 5. Finally, open your browser and navigate to https://jolimediabundle-demo.test. You should see the demo application homepage.
 
 .. tip::
 
-    The ``demo`` castor commands namespace contains other useful commands to interact with the demo application (clearing the cache, loading fixtures, etc.). You can list them by running the ``castor`` command.
+    The ``demo`` castor commands namespace contains other useful commands to interact with the demo application (clearing the cache, loading fixtures, etc.). You can list them by running the ``castor`` command. You can also get detauiled usage instructions by reading `the demo README file <https://github.com/jolicode/MediaBundle/blob/main/demo/README.md>`_.
