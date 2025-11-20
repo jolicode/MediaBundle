@@ -10,6 +10,7 @@ x-templates:
                 condition: service_healthy
         volumes:
             - "../..:/var/www:cached"
+            - "../../..:/var/MediaBundle:cached"
         profiles:
             - worker
 
@@ -44,6 +45,7 @@ services:
         volumes:
             - "../..:/var/www:cached"
             - "../../.home:/home/app:cached"
+            - "../../..:/var/MediaBundle:cached"
         depends_on:
             postgres:
                 condition: service_healthy
@@ -80,6 +82,7 @@ services:
         volumes:
             - "../..:/var/www:cached"
             - "../../.home:/home/app:cached"
+            - "../../..:/var/MediaBundle:cached"
             # Needed when $XDG_ env vars have overridden, to persist the yarn
             # cache between builder and watcher, adapt according to the location
             # of $XDG_DATA_HOME

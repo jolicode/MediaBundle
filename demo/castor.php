@@ -50,7 +50,7 @@ function start(): void
     about();
 }
 
-#[AsTask(description: 'Installs the application (composer, yarn, ...)', namespace: 'app', aliases: ['install'])]
+#[AsTask(description: 'Installs the application (composer, yarn, ...)', namespace: 'app')]
 function install(): void
 {
     io()->title('Installing the application');
@@ -58,8 +58,27 @@ function install(): void
     $basePath = sprintf('%s/application', variable('root_dir'));
 
     if (is_file("{$basePath}/composer.json")) {
+        io()->section('Build a custom composer.json file to use the local JoliMediaBundle');
+        $composerJson = json_decode(file_get_contents("{$basePath}/composer.json"), true, 512, JSON_THROW_ON_ERROR);
+        $composerJson['require']['jolicode/media-bundle'] = '*';
+        $composerJson['minimum-stability'] = 'dev';
+        $composerJson['repositories'] = [
+            [
+                'type' => 'path',
+                'url' => '/var/MediaBundle',
+                'options' => [
+                    'symlink' => true,
+                ],
+            ],
+        ];
+        file_put_contents(
+            "{$basePath}/docker-composer.json",
+            json_encode($composerJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n",
+        );
+        copy("{$basePath}/symfony.lock", "{$basePath}/docker-symfony.lock");
+
         io()->section('Installing PHP dependencies');
-        docker_compose_run('composer install -n --prefer-dist --optimize-autoloader');
+        docker_compose_run('COMPOSER=docker-composer.json composer install -n --prefer-dist --optimize-autoloader');
     }
     if (is_file("{$basePath}/yarn.lock")) {
         io()->section('Installing Node.js dependencies');
@@ -79,7 +98,28 @@ function install(): void
     }
 }
 
-#[AsTask(description: 'Clears the application cache', namespace: 'app', aliases: ['cache-clear'])]
+#[AsTask(name: 'watch', description: 'Watch the frontend changes', namespace: 'app:front')]
+function front_watch(): void
+{
+    $lastCallTime = 0;
+    \Castor\watch([
+        '../src/Bridge/EasyAdmin/public/...',
+        '../src/Bridge/SonataAdmin/public/...',
+    ], function (string $file, string $action) use (&$lastCallTime) {
+        $currentTime = time();
+
+        if ($currentTime - $lastCallTime < 2) {
+            return;
+        }
+
+        io()->title('Updated media bundle assets...');
+        docker_compose_run('bin/console assets:install');
+        $lastCallTime = $currentTime;
+    });
+}
+
+
+#[AsTask(description: 'Clears the application cache', namespace: 'app')]
 function cache_clear(bool $warm = true): void
 {
     io()->title('Clearing the application cache');
