@@ -26,7 +26,7 @@ The JoliMediaBundle aims to provide numerous facilities to manage media in Symfo
 
 The project seeks to provide:
 
-- a complete set of featrures to manage media in Symfony applications
+- a complete set of features to manage media in Symfony applications
 - a standard Symfony approach, using services, dependency injection, configuration, and events. The bundle can be installed in an existing Symfony app, without imposing a specific architecture.
 - the best tools available to handle media transformations and optimizations
 - tools to output media using best practices, such as responsive images with the ``<picture>`` tag, lazy loading, and more
