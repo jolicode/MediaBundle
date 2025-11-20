@@ -66,6 +66,26 @@ The ``visibility`` section of the configuration allows you to control the visibi
 - ``show_html_code``: Displays the HTML code for embedding media.
 - ``show_markdown_code``: Displays the Markdown code for embedding media.
 
+Media libray menu item
+----------------------
+
+To add a link to the media library in your EasyAdmin menu, you need to use the ``MenuItem::linkToRoute`` method, with the ``joli_media_easy_admin_explore`` route::
+
+    use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+    use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+
+    class DashboardController extends AbstractDashboardController
+    {
+        public function configureMenuItems(): iterable
+        {
+            // ...
+
+            yield MenuItem::linkToRoute('Media Library', 'fa fa-image', 'joli_media_easy_admin_explore');
+        }
+    }
+
+From the media library, you will be able to upload new files and switch between a grid or a list view to browse them. You can also organize your media by creating sub-folders, and perform CRUD operations.
+
 Media selector widget
 ---------------------
 
