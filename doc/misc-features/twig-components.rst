@@ -536,7 +536,7 @@ When the ``joli:Img`` or ``joli:Picture`` components are used, the media variati
 
 This means that, when using the ``joli:Img`` or ``joli:Picture`` components for displaying a newly created media, that does not yet have variation files, the bundle will not be able to retrieve the mime-type, the dimensions and some other information about the requested media variation files. And, by consequence, the ``<img>`` and ``<picture>`` tags will not be able to set the ``width``, ``height``, ``type``, ``sizes``, etc. attributes.
 
-This could be a problem if you are picky about the HTMl attributes or if you do not want media variatiosn to be generated on the fly. In this case, you can set the ``must_store_when_generating_url`` attribute to ``true`` in the cache storage configuration to have the media variation files generated when the URL is generated:
+This could be a problem if you are picky about the HTMl attributes or if you do not want media variations to be generated on the fly. In this case, you can set the ``must_store_when_generating_url`` attribute to ``true`` in the cache storage configuration to have the media variation files generated when the URL is generated:
 
 .. code-block:: yaml
 
