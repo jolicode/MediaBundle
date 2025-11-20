@@ -15,4 +15,9 @@
   --jm-color-red: #dc2626;
   --jm-dropzone-color: #293a53;
   --jm-dropzone-border-color: #aab6c8;
+  --jm-code-color: #c44c34;
+}
+
+[data-bs-theme="dark"] {
+  --jm-code-color: #fc4c3f;
 }

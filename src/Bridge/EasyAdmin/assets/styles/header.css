@@ -1,8 +1,28 @@
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+/* Custom properties
+   ========================================================================== */
+
 .joli-media-header-tools {
   .btn-group .btn.active {
     --button-hover-bg: linear-gradient(180deg, var(--button-secondary-color), hsl(from var(--button-secondary-color) h calc(s + 3) calc(l + 5)));
     --button-secondary-bg: linear-gradient(180deg, var(--button-secondary-color), hsl(from var(--button-secondary-color) h calc(s + 3) calc(l + 5)));
     --button-hover-color: var(--button-primary-active-color);
     cursor: pointer;
+  }
+}
+
+[data-bs-theme="dark"] {
+  .joli-media-header-tools {
+    .btn-group .btn.active,
+    .btn-group .btn.disabled.active {
+      --button-active-bg: var(--true-gray-700);
+    }
+  }
+
+  .modal-content .content-header {
+    background-color: transparent;
   }
 }
