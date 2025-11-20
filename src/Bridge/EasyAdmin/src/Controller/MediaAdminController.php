@@ -250,8 +250,8 @@ class MediaAdminController extends AbstractController
         $this->addAssets($adminContext);
         $routeName = $request->query->get('routeName', 'joli_media_easy_admin_explore');
 
-        if ($request->get('view_mode')) {
-            $request->getSession()->set('view_mode', $request->get('view_mode'));
+        if ($request->query->get('view_mode')) {
+            $request->getSession()->set('view_mode', $request->query->get('view_mode'));
 
             return $this->redirect($this->adminUrlGenerator
                 ->setRoute($routeName, [
