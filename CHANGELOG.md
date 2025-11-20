@@ -1,8 +1,13 @@
 # Changelog
 
-## Not released yet
+## [0.1.2] - 2024-11-20
 
-* Add support for Symfony 8.0
+- feature - support for Symfony 8.0
+- feature - demo application to showcase the bundle features
+- fix - remove useless ext-json requirement
+- fix - support php 8.2 and test it
+- fix - sanitize cache keys to avoid reserved characters validation error
+- fix - improve dark mode styles for easyadmin
 
 ## [0.1.1] - 2025-11-12
 
@@ -33,3 +38,4 @@ This is the initial release of the bundle.
 
 [0.1.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.1.0
 [0.1.1]: https://github.com/jolicode/mediabundle/releases/tag/v0.1.1
+[0.1.2]: https://github.com/jolicode/mediabundle/releases/tag/v0.1.2
