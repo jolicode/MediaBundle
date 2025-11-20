@@ -21,4 +21,8 @@
       --button-active-bg: var(--true-gray-700);
     }
   }
+
+  .modal-content .content-header {
+    background-color: transparent;
+  }
 }

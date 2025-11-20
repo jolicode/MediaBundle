@@ -7,12 +7,15 @@
 
 .dropzone-container {
   --dropzone-background-color: var(--jm-color-gray-100);
+  --dropzone-color: var(--jm-dropzone-color);
+  --dropzone-border-color: var(--jm-dropzone-border-color);
 }
 
 [data-bs-theme="dark"] {
   .dropzone-container {
     --dropzone-background-color: var(--true-gray-800);
     --dropzone-color: var(--jm-color-gray-100);
+    --dropzone-border-color: var(--jm-color-gray);
   }
 }
 
@@ -39,9 +42,9 @@
   flex-wrap: wrap;
   min-height: auto;
   margin-bottom: 1.5rem;
-  color: var(--dropzone-color, var(--jm-dropzone-color));
+  color: var(--dropzone-color);
   background-color: var(--dropzone-background-color, var(--jm-color-gray-100));
-  border: dashed 1px var(--jm-dropzone-border-color);
+  border: dashed 1px var(--dropzone-border-color);
   border-radius: 4px;
   z-index: 100;
 }

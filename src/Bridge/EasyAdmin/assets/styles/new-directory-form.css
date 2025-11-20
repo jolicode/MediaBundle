@@ -1,5 +1,5 @@
 /* ==========================================================================
-   New Directory Form
+   New directory form
    ========================================================================== */
 
 /* Custom properties
@@ -8,12 +8,14 @@
 .new-directory-container {
   --new-directory-color: var(--jm-dropzone-color);
   --new-directory-background-color: var(--jm-color-gray-100);
+  --new-directory-border-color: var(--jm-dropzone-border-color);
 }
 
 [data-bs-theme="dark"] {
   .new-directory-container {
     --new-directory-background-color: var(--true-gray-800);
     --new-directory-color: var(--jm-color-gray-100);
+    --new-directory-border-color: var(--jm-color-gray);
   }
 }
 
@@ -30,7 +32,7 @@
   padding: 1.5rem;
   color: var(--new-directory-color);
   background-color: var(--new-directory-background-color);
-  border: dashed 1px var(--jm-dropzone-border-color);
+  border: dashed 1px var(--new-directory-border-color);
   border-radius: 4px;
   z-index: 100;
 

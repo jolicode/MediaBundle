@@ -1,3 +1,27 @@
+/* ==========================================================================
+   Rename directory form
+   ========================================================================== */
+
+/* Custom properties
+   ========================================================================== */
+
+.rename-directory-container {
+  --rename-directory-color: var(--jm-dropzone-color);
+  --rename-directory-background-color: var(--jm-color-gray-100);
+  --rename-directory-border-color: var(--jm-dropzone-border-color);
+}
+
+[data-bs-theme="dark"] {
+  .rename-directory-container {
+    --rename-directory-color: var(--jm-color-gray-100);
+    --rename-directory-background-color: var(--true-gray-800);
+    --rename-directory-border-color: var(--jm-color-gray);
+  }
+}
+
+/* Rules
+   ========================================================================== */
+
 .rename-directory-container {
   display: none;
   top: 100%;
@@ -6,9 +30,9 @@
   min-height: auto;
   margin-bottom: 1.5rem;
   padding: 1.5rem;
-  color: var(--jm-dropzone-color);
-  background-color: var(--jm-color-gray-100);
-  border: dashed 1px var(--jm-dropzone-border-color);
+  color: var(--rename-directory-color);
+  background-color: var(--rename-directory-background-color);
+  border: dashed 1px var(--rename-directory-border-color);
   border-radius: 4px;
   z-index: 100;
 
