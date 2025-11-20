@@ -85,24 +85,24 @@ class MediaVariationPropertyAccessor
 
     private function getCacheKey(string $path, Variation $variation, string $property): string
     {
-        return \sprintf(
+        return CacheKeySanitizer::sanitize(\sprintf(
             'joli_media_property_%s_%s_%s_%s_%s',
             $this->libraryName,
             $variation->getName(),
             Resolver::normalizePath($path),
             $this->getLastModified($path, $variation),
             $property,
-        );
+        ));
     }
 
     private function getLastModifiedCacheKey(string $path, Variation $variation): string
     {
-        return \sprintf(
+        return CacheKeySanitizer::sanitize(\sprintf(
             'joli_media_property_%s_%s_%s_lastModified',
             $this->libraryName,
             $variation->getName(),
             Resolver::normalizePath($path),
-        );
+        ));
     }
 
     private function guessFilesize(string $path, Variation $variation): int
