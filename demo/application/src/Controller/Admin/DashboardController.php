@@ -40,6 +40,6 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Contents');
         yield MenuItem::linkToCrud('Posts', 'fa fa-file-text', Post::class);
-        yield MenuItem::linktoRoute('Media Library', 'fa fa-image', 'joli_media_easy_admin_explore');
+        yield MenuItem::linkToRoute('Media Library', 'fa fa-image', 'joli_media_easy_admin_explore');
     }
 }
