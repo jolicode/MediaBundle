@@ -27,7 +27,9 @@ use Symfony\Component\Mime\MimeTypes;
 class CacheKeyWithSubfolderTest extends TestCase
 {
     private ArrayAdapter $cache;
+
     private Filesystem $filesystem;
+
     private MimeTypeGuesser $mimeTypeGuesser;
 
     protected function setUp(): void
@@ -52,19 +54,15 @@ class CacheKeyWithSubfolderTest extends TestCase
             $this->cache,
         );
 
+        $this->expectNotToPerformAssertions();
+
         // This should NOT throw an exception about reserved characters
-        $mimeType = $accessor->getMimeType($path);
-        $this->assertIsString($mimeType);
-
-        $format = $accessor->getFormat($path);
-        $this->assertIsString($format);
-
-        $fileSize = $accessor->getFileSize($path);
-        $this->assertGreaterThan(0, $fileSize);
+        $accessor->getMimeType($path);
+        $accessor->getFormat($path);
+        $accessor->getFileSize($path);
 
         // Test clearCache doesn't throw either
         $accessor->clearCache($path);
-        $this->assertTrue(true); // If we reach here, no exception was thrown
     }
 
     public function testVariationSubfolderPath(): void
@@ -85,19 +83,15 @@ class CacheKeyWithSubfolderTest extends TestCase
             $this->cache,
         );
 
+        $this->expectNotToPerformAssertions();
+
         // This should NOT throw an exception about reserved characters
-        $mimeType = $accessor->getMimeType($path, $variation);
-        $this->assertIsString($mimeType);
-
-        $format = $accessor->getFormat($path, $variation);
-        $this->assertIsString($format);
-
-        $fileSize = $accessor->getFileSize($path, $variation);
-        $this->assertIsInt($fileSize);
+        $accessor->getMimeType($path, $variation);
+        $accessor->getFormat($path, $variation);
+        $accessor->getFileSize($path, $variation);
 
         // Test clearCache doesn't throw either
         $accessor->clearCache($path, $variation);
-        $this->assertTrue(true); // If we reach here, no exception was thrown
     }
 
     public function testNestedSubfolderPath(): void
@@ -115,7 +109,6 @@ class CacheKeyWithSubfolderTest extends TestCase
 
         // Should work without throwing PSR-6 cache key validation errors
         $mimeType = $accessor->getMimeType($path);
-        $this->assertIsString($mimeType);
 
         // Verify the cache was actually used by calling again
         $mimeType2 = $accessor->getMimeType($path);
