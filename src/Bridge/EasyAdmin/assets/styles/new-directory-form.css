@@ -1,3 +1,25 @@
+/* ==========================================================================
+   New Directory Form
+   ========================================================================== */
+
+/* Custom properties
+   ========================================================================== */
+
+.new-directory-container {
+  --new-directory-color: var(--jm-dropzone-color);
+  --new-directory-background-color: var(--jm-color-gray-100);
+}
+
+[data-bs-theme="dark"] {
+  .new-directory-container {
+    --new-directory-background-color: var(--true-gray-800);
+    --new-directory-color: var(--jm-color-gray-100);
+  }
+}
+
+/* Rules
+   ========================================================================== */
+
 .new-directory-container {
   display: none;
   top: 100%;
@@ -6,8 +28,8 @@
   min-height: auto;
   margin-bottom: 1.5rem;
   padding: 1.5rem;
-  color: var(--jm-dropzone-color);
-  background-color: var(--jm-color-gray-100);
+  color: var(--new-directory-color);
+  background-color: var(--new-directory-background-color);
   border: dashed 1px var(--jm-dropzone-border-color);
   border-radius: 4px;
   z-index: 100;
