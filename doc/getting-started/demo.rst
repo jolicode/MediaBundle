@@ -57,7 +57,7 @@ Using the demo application to contribute to JoliCode MediaBundle
 
 The demo application can be a good playground to write and test your contributions to the MediaBundle. When the demo application is started using Castor, it uses the local version of the MediaBundle from your cloned repository. This way, any changes you make to the MediaBundle code will be directly available in the demo application.
 
-When working on asset files (eg. javascript and stylesheets provided by the admin bridges), it can however be a bit anoying to have to rebuild the assets each time you make a change. To ease this process, you can use the following Castor command to watch for changes and automatically rebuild the assets:
+When working on asset files (e.g. javascript and stylesheets provided by the admin bridges), it can however be a bit anoying to have to rebuild the assets each time you make a change. To ease this process, you can use the following Castor command to watch for changes and automatically rebuild the assets:
 
 .. code-block:: terminal
 
