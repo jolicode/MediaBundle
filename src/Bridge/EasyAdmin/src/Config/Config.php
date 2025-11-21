@@ -18,6 +18,8 @@ readonly class Config
         private array $acceptedFiles,
         private int $maxFileSize,
         private ?int $maxFiles = null,
+        private ?int $perPage = null,
+        private bool $infiniteScroll = false,
     ) {
     }
 
@@ -60,5 +62,15 @@ readonly class Config
         }
 
         return $config;
+    }
+
+    public function getPerPage(): ?int
+    {
+        return $this->perPage;
+    }
+
+    public function isInfiniteScrollEnabled(): bool
+    {
+        return $this->infiniteScroll;
     }
 }
