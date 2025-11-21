@@ -44,11 +44,10 @@ class Media extends Constraint
     public string $unresolvedMediaMessage = 'The media "{{ value }}" could not be resolved.';
 
     /**
-     * @param string[]             $allowedExtensions
-     * @param string[]             $allowedMimeTypes
-     * @param string[]             $allowedPaths
-     * @param string[]             $allowedTypes
-     * @param array<string, mixed> $options
+     * @param string[] $allowedExtensions
+     * @param string[] $allowedMimeTypes
+     * @param string[] $allowedPaths
+     * @param string[] $allowedTypes
      */
     public function __construct(
         ?array $allowedExtensions = [],
@@ -65,9 +64,8 @@ class Media extends Constraint
         ?string $unresolvedMediaMessage = null,
         ?array $groups = null,
         mixed $payload = null,
-        array $options = [],
     ) {
-        parent::__construct($options, $groups, $payload);
+        parent::__construct(null, $groups, $payload);
 
         $this->allowedExtensions = $allowedExtensions ?? $this->allowedExtensions;
         $this->allowedMimeTypes = $allowedMimeTypes ?? $this->allowedMimeTypes;
