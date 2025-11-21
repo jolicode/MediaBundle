@@ -42,6 +42,10 @@ There are multiple ways of managing media files in Symfony applications, and sev
 
 The JoliMediaBundle aims to fill this gap by providing a modern, flexible, and easy-to-use solution to manage media in Symfony applications.
 
+.. note::
+
+    You can learn more about the motivations behind the creation of this bundle by reading the `blog post published on JoliCode's blog <https://jolicode.com/blog/jolimediabundle-a-new-media-bundle-for-your-symfony-projects>`_.
+
 🗣️ Vocabulary
 -------------
 
