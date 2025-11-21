@@ -7,6 +7,7 @@ use JoliCode\MediaBundle\Exception\MediaNotFoundException;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
+use JoliCode\MediaBundle\Model\NullMedia;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Variation\Variation;
 use League\Flysystem\UnableToReadFile;
@@ -69,7 +70,15 @@ class Img
             $srcset = [$variation];
         }
 
-        if ($media instanceof Media) {
+        if ($media instanceof NullMedia) {
+            $this->logger?->error(\sprintf(
+                'The media "%s" could not be resolved in the library "%s", and it will be rendered as a <img> tag with a non-existent src attribute. This may happen if the media file has been physically deleted without the entity being updated. You may need to configure the media removal behavior.',
+                $media->getPath(),
+                $media->getLibrary()->getName(),
+            ));
+            $path = $media->getPath();
+            $media = null;
+        } elseif ($media instanceof Media) {
             if (null !== $path) {
                 throw new \InvalidArgumentException('You must provide either a media or a path, not both');
             }

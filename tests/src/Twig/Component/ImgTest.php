@@ -7,6 +7,7 @@ use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
+use JoliCode\MediaBundle\Model\NullMedia;
 use JoliCode\MediaBundle\Tests\Application\Kernel;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
 use JoliCode\MediaBundle\Twig\Components\Img;
@@ -301,6 +302,36 @@ class ImgTest extends WebTestCase
             ],
             '<img src="/media/cache/variation-standard/some%5C%20filename%5C%20that%5C%20does%5C%20not%5C%20exist.jpg" loading="lazy" decoding="async">',
         ];
+    }
+
+    public function testNonResolvedMedia(): void
+    {
+        $container = static::getContainer();
+        $libraries = $container->get('joli_media.library_container');
+        $library = $libraries->getDefault();
+        $nonResolvedMedia = new NullMedia(
+            self::NON_EXISTING_FILENAME,
+            $library->getOriginalStorage()
+        );
+        $cases = [
+            'non-resolved-media' => [
+                [
+                    'media' => $nonResolvedMedia,
+                ],
+                '<img src="/media/original/some%5C%20filename%5C%20that%5C%20does%5C%20not%5C%20exist.jpg" loading="lazy" decoding="async">',
+            ],
+            'non-resolved-media-variation' => [
+                [
+                    'media' => $nonResolvedMedia,
+                    'variation' => 'variation-standard',
+                ],
+                '<img src="/media/cache/variation-standard/some%5C%20filename%5C%20that%5C%20does%5C%20not%5C%20exist.jpg" loading="lazy" decoding="async">',
+            ],
+        ];
+
+        foreach ($cases as [$configuration, $expected]) {
+            $this->testComponents(Img::class, $configuration, $expected);
+        }
     }
 
     protected static function getKernelClass(): string

@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Model;
 
 use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Exception\MediaNotResolvedException;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Variation\Variation;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -27,63 +28,63 @@ class NullMedia extends Media
 
     public function addVariation(MediaVariation $variation): void
     {
-        throw new \LogicException('Cannot add a variation to a NullMedia');
+        throw new MediaNotResolvedException('Cannot add a variation to a NullMedia', $this);
     }
 
     public function createVariation(string|Variation $variation): MediaVariation
     {
-        throw new \LogicException('Cannot create variation on a NullMedia');
+        throw new MediaNotResolvedException('Cannot create variation on a NullMedia', $this);
     }
 
     public function getBinary(): Binary
     {
-        throw new \LogicException('Cannot get binary from a NullMedia');
+        throw new MediaNotResolvedException('Cannot get binary from a NullMedia', $this);
     }
 
     public function getFileSize(): int
     {
-        throw new \LogicException('Cannot get file size from a NullMedia');
+        throw new MediaNotResolvedException('Cannot get file size from a NullMedia', $this);
     }
 
     public function getFileType(): string
     {
-        throw new \LogicException('Cannot get file type from a NullMedia');
+        throw new MediaNotResolvedException('Cannot get file type from a NullMedia', $this);
     }
 
     public function getFormat(): string
     {
-        throw new \LogicException('Cannot get format from a NullMedia');
+        throw new MediaNotResolvedException('Cannot get format from a NullMedia', $this);
     }
 
     public function getMimeType(): string
     {
-        throw new \LogicException('Cannot get mime type from a NullMedia');
+        throw new MediaNotResolvedException('Cannot get mime type from a NullMedia', $this);
     }
 
     public function getLastModified(): \DateTime
     {
-        throw new \LogicException('Cannot get last modified date from a NullMedia');
+        throw new MediaNotResolvedException('Cannot get last modified date from a NullMedia', $this);
     }
 
     public function getPixelDimensions(): array|false
     {
-        throw new \LogicException('Cannot get pixel dimensions from a NullMedia');
+        throw new MediaNotResolvedException('Cannot get pixel dimensions from a NullMedia', $this);
     }
 
     public function getStorage(): OriginalStorage
     {
-        throw new \LogicException('Cannot get storage from a NullMedia');
+        throw new MediaNotResolvedException('Cannot get storage from a NullMedia', $this);
     }
 
     public function getUrl(
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH,
     ): string {
-        throw new \LogicException('Cannot get URL from a NullMedia');
+        throw new MediaNotResolvedException('Cannot get URL from a NullMedia', $this);
     }
 
     public function getVariation(string $variationName): MediaVariation
     {
-        throw new \LogicException('Cannot get variation from a NullMedia');
+        throw new MediaNotResolvedException('Cannot get variation from a NullMedia', $this);
     }
 
     /**
@@ -91,12 +92,12 @@ class NullMedia extends Media
      */
     public function getVariations(): array
     {
-        throw new \LogicException('Cannot get variations from a NullMedia');
+        throw new MediaNotResolvedException('Cannot get variations from a NullMedia', $this);
     }
 
     public function hasVariation(string $variationName): bool
     {
-        throw new \LogicException('Cannot check variation existence on a NullMedia');
+        throw new MediaNotResolvedException('Cannot check variation existence on a NullMedia');
     }
 
     public function isStored(): bool
@@ -106,6 +107,6 @@ class NullMedia extends Media
 
     public function store(?Binary $binary = null): void
     {
-        throw new \LogicException('A NullMedia cannot be stored');
+        throw new MediaNotResolvedException('A NullMedia cannot be stored', $this);
     }
 }
