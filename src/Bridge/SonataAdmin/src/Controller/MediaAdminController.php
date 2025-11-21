@@ -233,10 +233,10 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/explore/{key}', name: 'explore', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]
     public function list(Request $request, string $key = ''): Response
     {
-        if ($request->get('view_mode')) {
-            $request->getSession()->set('view_mode', $request->get('view_mode'));
+        if ($request->query->get('view_mode')) {
+            $request->getSession()->set('view_mode', $request->query->get('view_mode'));
 
-            return $this->redirectToRoute($request->get('_route'), ['key' => $key]);
+            return $this->redirectToRoute($request->attributes->get('_route'), ['key' => $key]);
         }
 
         $currentKey = Resolver::normalizePath($key);
@@ -267,7 +267,7 @@ class MediaAdminController extends AbstractController
             return $this->redirectToRoute('joli_media_sonata_admin_explore', ['key' => '']);
         }
 
-        $template = match ($request->get('_route')) {
+        $template = match ($request->attributes->get('_route')) {
             'joli_media_sonata_admin_choose' => 'choose',
             'joli_media_sonata_admin_choose_directory' => 'choose_directory',
             default => 'explore',
