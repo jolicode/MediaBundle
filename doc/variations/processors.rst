@@ -1,7 +1,7 @@
 Processors
 ==========
 
-Processors are responsible to "process" (ie., *execute*) the transformations. In other words, processors apply a transformation to a media to change its shape or properties.
+Processors are responsible to "process" (i.e., *execute*) the transformations. In other words, processors apply a transformation to a media to change its shape or properties.
 
 Configuration
 -------------
@@ -75,7 +75,7 @@ The ``near_lossless`` configuration preset is used for images that you want to c
 
 The ``lossy`` configuration preset is the default preset, it offers a good balance between quality and file size for most images.
 
-If the ``near_lossless`` preset is used by the processor, it will check that the processing result is not larger than the original image, and that the ratio between the resulting image pixels area and its file size is staisfying. If the processor finds it is necessary, it will fall back to the ``lossy`` preset.
+If the ``near_lossless`` preset is used by the processor, it will check that the processing result is not larger than the original image, and that the ratio between the resulting image pixels area and its file size is satisfying. If the processor finds it is necessary, it will fall back to the ``lossy`` preset.
 
 The various configuration keys are mapped to `the official cwebp options <https://developers.google.com/speed/webp/docs/cwebp>`_:
 

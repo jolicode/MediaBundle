@@ -70,7 +70,7 @@ Imagine the following configuration:
     {{ 'example-image.png'|joli_media_url('variation_name', 'media') }}
     {# output: /path/to/cache/variation-name/example-image.png #}
 
-    {# try to the gnerate an URL for a media that does not exist in the default library #}
+    {# try to generate an URL for a media that does not exist in the default library #}
     {{ 'example-contribution.png'|joli_media_url('variation_name') }}
     {# output: no URL, as the media can not be found in the default library #}
 

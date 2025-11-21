@@ -35,7 +35,7 @@ To start the demo application, you need to have Docker and `Castor <https://gith
 
 .. tip::
 
-    The ``demo`` castor commands namespace contains other useful commands to interact with the demo application (clearing the cache, loading fixtures, etc.). You can list them by running the ``castor`` command. You can also get detauiled usage instructions by reading `the demo README file <https://github.com/jolicode/MediaBundle/blob/main/demo/README.md>`_.
+    The ``demo`` castor commands namespace contains other useful commands to interact with the demo application (clearing the cache, loading fixtures, etc.). You can list them by running the ``castor`` command. You can also get detailed usage instructions by reading `the demo README file <https://github.com/jolicode/MediaBundle/blob/main/demo/README.md>`_.
 
 Stopping the demo application
 -----------------------------
@@ -57,7 +57,7 @@ Using the demo application to contribute to JoliCode MediaBundle
 
 The demo application can be a good playground to write and test your contributions to the MediaBundle. When the demo application is started using Castor, it uses the local version of the MediaBundle from your cloned repository. This way, any changes you make to the MediaBundle code will be directly available in the demo application.
 
-When working on asset files (e.g. javascript and stylesheets provided by the admin bridges), it can however be a bit anoying to have to rebuild the assets each time you make a change. To ease this process, you can use the following Castor command to watch for changes and automatically rebuild the assets:
+When working on asset files (e.g. JavaScript and stylesheets provided by the admin bridges), it can however be a bit anoying to have to rebuild the assets each time you make a change. To ease this process, you can use the following Castor command to watch for changes and automatically rebuild the assets:
 
 .. code-block:: terminal
 

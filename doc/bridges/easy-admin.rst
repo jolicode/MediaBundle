@@ -158,7 +158,7 @@ The ``MediaChoiceField`` can be nested into a ``CollectionField``, allowing you 
 Trix and `TextEditorField` integration
 --------------------------------------
 
-When a `TextEditorField` is used in an EasyAdmin form, a media selector button can added to the toolbar. This allows users to easily insert media into the text editor content. In order to enable this feature, you need to use the form theme provided by the JoliMediaEasyAdminBundle. You can do this by adding the following line to your `configureCrud` method in your EasyAdmin controller::
+When a `TextEditorField` is used in an EasyAdmin form, a media selector button can be added to the toolbar. This allows users to easily insert media into the text editor content. In order to enable this feature, you need to use the form theme provided by the JoliMediaEasyAdminBundle. You can do this by adding the following line to your `configureCrud` method in your EasyAdmin controller::
 
     public function configureCrud(Crud $crud): Crud
     {
