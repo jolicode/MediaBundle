@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Post;
 use App\Repository\PostRepository;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,11 +19,9 @@ final class PostController extends AbstractController
         ]);
     }
 
-    #[Route('/blog/{slug}', name: 'app_post_show')]
-    public function show(
-        #[MapEntity()]
-        Post $post,
-    ): Response {
+    #[Route('/blog/{slug:post}', name: 'app_post_show')]
+    public function show(Post $post): Response
+    {
         if (!$post->isCurrentlyPublished()) {
             throw $this->createNotFoundException('This post is not published.');
         }
