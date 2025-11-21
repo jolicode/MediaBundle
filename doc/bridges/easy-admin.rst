@@ -66,8 +66,8 @@ The ``visibility`` section of the configuration allows you to control the visibi
 - ``show_html_code``: Displays the HTML code for embedding media.
 - ``show_markdown_code``: Displays the Markdown code for embedding media.
 
-Media libray menu item
-----------------------
+Media library menu item
+-----------------------
 
 To add a link to the media library in your EasyAdmin menu, you need to use the ``MenuItem::linkToRoute`` method, with the ``joli_media_easy_admin_explore`` route::
 
