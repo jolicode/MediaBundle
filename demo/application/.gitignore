@@ -9,4 +9,7 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
+docker-composer.json
+docker-composer.lock
+docker-symfony.lock
 public/media

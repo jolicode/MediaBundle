@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ad6d59d251653c008bc6a74f16a4bdbe",
+    "content-hash": "418b2f95f912efdf0b5094e554201a6a",
     "packages": [
         {
             "name": "doctrine/collections",
@@ -868,16 +868,16 @@
         },
         {
             "name": "doctrine/migrations",
-            "version": "3.9.4",
+            "version": "3.9.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/migrations.git",
-                "reference": "1b88fcb812f2cd6e77c83d16db60e3cf1e35c66c"
+                "reference": "1b823afbc40f932dae8272574faee53f2755eac5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/migrations/zipball/1b88fcb812f2cd6e77c83d16db60e3cf1e35c66c",
-                "reference": "1b88fcb812f2cd6e77c83d16db60e3cf1e35c66c",
+                "url": "https://api.github.com/repos/doctrine/migrations/zipball/1b823afbc40f932dae8272574faee53f2755eac5",
+                "reference": "1b823afbc40f932dae8272574faee53f2755eac5",
                 "shasum": ""
             },
             "require": {
@@ -887,15 +887,15 @@
                 "doctrine/event-manager": "^1.2 || ^2.0",
                 "php": "^8.1",
                 "psr/log": "^1.1.3 || ^2 || ^3",
-                "symfony/console": "^5.4 || ^6.0 || ^7.0",
-                "symfony/stopwatch": "^5.4 || ^6.0 || ^7.0",
-                "symfony/var-exporter": "^6.2 || ^7.0"
+                "symfony/console": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "symfony/stopwatch": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "symfony/var-exporter": "^6.2 || ^7.0 || ^8.0"
             },
             "conflict": {
                 "doctrine/orm": "<2.12 || >=4"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^13",
+                "doctrine/coding-standard": "^14",
                 "doctrine/orm": "^2.13 || ^3",
                 "doctrine/persistence": "^2 || ^3 || ^4",
                 "doctrine/sql-formatter": "^1.0",
@@ -907,9 +907,9 @@
                 "phpstan/phpstan-strict-rules": "^2",
                 "phpstan/phpstan-symfony": "^2",
                 "phpunit/phpunit": "^10.3 || ^11.0 || ^12.0",
-                "symfony/cache": "^5.4 || ^6.0 || ^7.0",
-                "symfony/process": "^5.4 || ^6.0 || ^7.0",
-                "symfony/yaml": "^5.4 || ^6.0 || ^7.0"
+                "symfony/cache": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "symfony/process": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "symfony/yaml": "^5.4 || ^6.0 || ^7.0 || ^8.0"
             },
             "suggest": {
                 "doctrine/sql-formatter": "Allows to generate formatted SQL with the diff command.",
@@ -951,7 +951,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/migrations/issues",
-                "source": "https://github.com/doctrine/migrations/tree/3.9.4"
+                "source": "https://github.com/doctrine/migrations/tree/3.9.5"
             },
             "funding": [
                 {
@@ -967,7 +967,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-19T06:41:07+00:00"
+            "time": "2025-11-20T11:15:36+00:00"
         },
         {
             "name": "doctrine/orm",
@@ -1568,50 +1568,48 @@
         },
         {
             "name": "jolicode/media-bundle",
-            "version": "v0.1.1",
+            "version": "v0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jolicode/MediaBundle.git",
-                "reference": "e16253e01f47056883c92bd1d8eb99d5f9921310"
+                "reference": "380fb20a1b2aeef9b31abac3607304679f6d047c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jolicode/MediaBundle/zipball/e16253e01f47056883c92bd1d8eb99d5f9921310",
-                "reference": "e16253e01f47056883c92bd1d8eb99d5f9921310",
+                "url": "https://api.github.com/repos/jolicode/MediaBundle/zipball/380fb20a1b2aeef9b31abac3607304679f6d047c",
+                "reference": "380fb20a1b2aeef9b31abac3607304679f6d047c",
                 "shasum": ""
             },
             "require": {
                 "ext-ctype": "*",
                 "ext-iconv": "*",
-                "ext-json": "*",
                 "ext-mbstring": "*",
                 "league/flysystem": "^3",
                 "league/flysystem-read-only": "^3",
                 "php": ">=8.2",
-                "symfony/asset": "^7.0",
-                "symfony/cache": "^7.0",
-                "symfony/console": "^7.0",
-                "symfony/dependency-injection": "^7.0",
+                "symfony/asset": "^7.0 || ^8.0",
+                "symfony/cache": "^7.0 || ^8.0",
+                "symfony/console": "^7.0 || ^8.0",
+                "symfony/dependency-injection": "^7.0 || ^8.0",
                 "symfony/deprecation-contracts": "^3.0",
-                "symfony/dotenv": "^7.0",
-                "symfony/event-dispatcher": "^7.0",
+                "symfony/event-dispatcher": "^7.0 || ^8.0",
                 "symfony/event-dispatcher-contracts": "^2.0 || ^3.0",
-                "symfony/expression-language": "^7.0",
-                "symfony/filesystem": "^7.0",
-                "symfony/form": "^7.0",
-                "symfony/http-foundation": "^7.0",
-                "symfony/http-kernel": "^7.0",
-                "symfony/intl": "^7.0",
-                "symfony/process": "^7.0",
-                "symfony/routing": "^7.0",
-                "symfony/runtime": "^7.0",
-                "symfony/string": "^7.0",
-                "symfony/translation": "^7.0",
+                "symfony/expression-language": "^7.0 || ^8.0",
+                "symfony/filesystem": "^7.0 || ^8.0",
+                "symfony/form": "^7.0 || ^8.0",
+                "symfony/http-foundation": "^7.0 || ^8.0",
+                "symfony/http-kernel": "^7.0 || ^8.0",
+                "symfony/intl": "^7.0 || ^8.0",
+                "symfony/process": "^7.0 || ^8.0",
+                "symfony/routing": "^7.0 || ^8.0",
+                "symfony/runtime": "^7.0 || ^8.0",
+                "symfony/string": "^7.0 || ^8.0",
+                "symfony/translation": "^7.0 || ^8.0",
                 "symfony/translation-contracts": "^2.3 || ^3.0",
-                "symfony/twig-bridge": "^7.1.9",
-                "symfony/twig-bundle": "^7.0",
+                "symfony/twig-bridge": "^7.1.9 || ^8.0",
+                "symfony/twig-bundle": "^7.0 || ^8.0",
                 "symfony/ux-twig-component": "^2.21",
-                "symfony/validator": "^7.0",
+                "symfony/validator": "^7.0 || ^8.0",
                 "twig/twig": "^3.20"
             },
             "require-dev": {
@@ -1621,14 +1619,14 @@
                 "imagine/imagine": "^1.5",
                 "league/flysystem-bundle": "^3.4",
                 "league/flysystem-memory": "^3.0",
-                "phpunit/phpunit": "^12",
+                "phpunit/phpunit": "^11",
                 "psr/log": "^2.0 || ^3.0",
                 "sonata-project/admin-bundle": "^4.30",
-                "symfony/browser-kit": "^7.0",
-                "symfony/css-selector": "^7.0",
+                "symfony/browser-kit": "^7.0 || ^8.0",
+                "symfony/css-selector": "^7.0 || ^8.0",
                 "symfony/monolog-bundle": "^3.10",
-                "symfony/stopwatch": "^7.0",
-                "symfony/yaml": "^7.2"
+                "symfony/stopwatch": "^7.0 || ^8.0",
+                "symfony/yaml": "^7.2 || ^8.0"
             },
             "suggest": {
                 "ext-imagick": "required to use imagine processor",
@@ -1669,9 +1667,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jolicode/MediaBundle/issues",
-                "source": "https://github.com/jolicode/MediaBundle/tree/v0.1.1"
+                "source": "https://github.com/jolicode/MediaBundle/tree/v0.1.2"
             },
-            "time": "2025-11-12T16:45:38+00:00"
+            "time": "2025-11-20T16:18:24+00:00"
         },
         {
             "name": "knplabs/knp-menu",
