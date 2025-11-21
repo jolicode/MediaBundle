@@ -12,11 +12,10 @@ use JoliCode\MediaBundle\Tests\Application\Kernel;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
 use JoliCode\MediaBundle\Twig\Components\Img;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
 
-class ImgTest extends WebTestCase
+class ImgTest extends BaseTestCase
 {
     use InteractsWithTwigComponents;
 
@@ -306,12 +305,9 @@ class ImgTest extends WebTestCase
 
     public function testNonResolvedMedia(): void
     {
-        $container = static::getContainer();
-        $libraries = $container->get('joli_media.library_container');
-        $library = $libraries->getDefault();
         $nonResolvedMedia = new NullMedia(
             self::NON_EXISTING_FILENAME,
-            $library->getOriginalStorage()
+            $this->originalStorage
         );
         $cases = [
             'non-resolved-media' => [
