@@ -126,11 +126,11 @@
                 <div class="content-header-title">
                     <h1 class="title d-none">{{ 'media_library'|trans }}</h1>
                     <div class="btn-group" role="group" aria-label="Change view mode">
-                        <a href="{{ ea_url().setRoute(route_name, { key: current_key, view_mode: 'list' }) }}" class="btn btn-secondary {{ app.session.get('view_mode', 'grid') == 'list' ? 'active disabled' }}">
+                        <a href="{{ ea_url().setRoute(route_name, { key: current_key }).set('view_mode', 'list') }}" class="btn btn-secondary {{ app.session.get('view_mode', 'grid') == 'list' ? 'active disabled' }}">
                             <span>
                                 <i class="fas fa-list"></i> {{ 'view.list'|trans }}
                             </span>
-                        </a><a href="{{ ea_url().setRoute(route_name, { key: current_key, view_mode: 'grid' }) }}" class="btn btn-secondary {{ app.session.get('view_mode', 'grid') == 'grid' ? 'active disabled' }}">
+                        </a><a href="{{ ea_url().setRoute(route_name, { key: current_key }).set('view_mode', 'grid') }}" class="btn btn-secondary {{ app.session.get('view_mode', 'grid') == 'grid' ? 'active disabled' }}">
                             <span>
                                 <i class="fas fa-th-large"></i> {{ 'view.grid'|trans }}
                             </span>
