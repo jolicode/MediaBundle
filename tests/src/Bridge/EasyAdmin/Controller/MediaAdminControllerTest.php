@@ -165,6 +165,23 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertStringContainsString('active', (string) $crawler->selectLink('Grid view')->attr('class'));
         $this->assertSelectorCount(5, '.gallery-grid-item');
         $this->assertSelectorNotExists('.gallery-list-item');
+
+        // test the view mode inside a subfolder
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_explore&routeParams%5Bkey%5D=/sub/folder');
+        $gridViewLink = $crawler->selectLink('Grid view');
+        $this->assertStringContainsString('active', (string) $gridViewLink->attr('class')); // grid is default
+        $this->assertSelectorCount(3, '.gallery-grid-item');
+        $this->assertSelectorNotExists('.gallery-list-item');
+
+        $listViewLink = $crawler->selectLink('List view');
+        $this->assertStringNotContainsString('active', (string) $listViewLink->attr('class'));
+
+        $crawler = $this->client->click($listViewLink->link());
+
+        $listViewLink = $crawler->selectLink('List view');
+        $this->assertStringContainsString('active', (string) $listViewLink->attr('class'));
+        $this->assertSelectorNotExists('.gallery-grid-item');
+        $this->assertSelectorCount(3, '.gallery-list-item');
     }
 
     protected static function getKernelClass(): string
