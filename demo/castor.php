@@ -40,7 +40,7 @@ function start(): void
     io()->title('Starting the stack');
 
     build();
-    install();
+    demo_install();
     up(profiles: ['default']); // We can't start worker now, they are not installed
     migrate();
 

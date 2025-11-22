@@ -108,7 +108,7 @@ generates:
         decoding="async"
     >
 
-If the provided image is a high pixels density image, you may wish the twig component to generate a srcset attribute with an additional pixel density descriptor. Consider the following conditions:
+If the provided image is a high pixels density image, you may wish the twig component to generate a ``srcset`` attribute with an additional pixel density descriptor. Consider the following conditions:
 
 - the original image ``high-density-image.png`` has ``1600x1600`` pixel dimensions
 - the variation ``variation_name`` is defined to resize the image to ``200x200`` pixels and it is defined with a ``pixel_ratios`` option set to ``[1,2]``
@@ -173,7 +173,7 @@ generates:
         loading="lazy"
         decoding="async"
 
-The ``srcset`` and ``sizes`` attributes can be used to provide multiple image sources for different screen sizes and resolutions. The ``srcset`` attribute is a comma-separated list of image URLs and their corresponding pixel widths, while the ``sizes`` attribute specifies the intended display size of the image in different viewport conditions. In the example above, you can see that the ``srcset`` attribute contains two entries: one for the normal density (1x, ie. a 200px image displayed in a 200px box) and one for the high density (2x, ie. a 400px image displayed in a 200px box). The ``sizes`` attribute is set to ``200px``, which means that the image will be displayed at 200 pixels wide on all screen sizes. Of course, you can override the ``sizes`` attribute by providing a custom value (which can include media queries):
+The ``srcset`` and ``sizes`` attributes can be used to provide multiple image sources for different screen sizes and resolutions. The ``srcset`` attribute is a comma-separated list of image URLs and their corresponding pixel widths, while the ``sizes`` attribute specifies the intended display size of the image in different viewport conditions. In the example above, you can see that the ``srcset`` attribute contains two entries: one for the normal density (1x, i.e. a 200px image displayed in a 200px box) and one for the high density (2x, i.e. a 400px image displayed in a 200px box). The ``sizes`` attribute is set to ``200px``, which means that the image will be displayed at 200 pixels wide on all screen sizes. Of course, you can override the ``sizes`` attribute by providing a custom value (which can include media queries):
 
 .. code-block:: html+twig
 
@@ -289,7 +289,7 @@ The ``sources`` attribute can be a bit more fine-grained by providing the precis
         sources="{{ ['first_variation_name','second_variation_name'] }}"
     />
 
-generates the exact same HTML as the previous example, but with two additionnal ``source`` tags for the variations you specified. Note that these sources come with the right mime-type, and the ``width`` and ``height`` attributes are set to the media file intrinsic dimensions:
+generates the exact same HTML as the previous example, but with two additional ``source`` tags for the variations you specified. Note that these sources come with the right mime-type, and the ``width`` and ``height`` attributes are set to the media file intrinsic dimensions:
 
 .. code-block:: html
 
@@ -493,7 +493,7 @@ This will generate the following HTML:
 ``<source>`` tag
 ----------------
 
-Would you need even more control over the ``<picture>`` tag, you can use the ``joli:Source`` component. This component generates a ``<source>`` tag with the correct ``srcset`` attribute, depending on the media and the variations you want to display.
+When you need even more control over the ``<picture>`` tag, you can use the ``joli:Source`` component. This component generates a ``<source>`` tag with the correct ``srcset`` attribute, depending on the media and the variations you want to display.
 
 For example, the following code:
 
@@ -536,7 +536,7 @@ When the ``joli:Img`` or ``joli:Picture`` components are used, the media variati
 
 This means that, when using the ``joli:Img`` or ``joli:Picture`` components for displaying a newly created media, that does not yet have variation files, the bundle will not be able to retrieve the mime-type, the dimensions and some other information about the requested media variation files. And, by consequence, the ``<img>`` and ``<picture>`` tags will not be able to set the ``width``, ``height``, ``type``, ``sizes``, etc. attributes.
 
-This could be a problem if you are picky about the HTMl attributes or if you do not want media variations to be generated on the fly. In this case, you can set the ``must_store_when_generating_url`` attribute to ``true`` in the cache storage configuration to have the media variation files generated when the URL is generated:
+This could be a problem if you are picky about the HTML attributes or if you do not want media variations to be generated on the fly. In this case, you can set the ``must_store_when_generating_url`` attribute to ``true`` in the cache storage configuration to have the media variation files generated when the URL is generated:
 
 .. code-block:: yaml
 

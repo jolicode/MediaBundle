@@ -39,7 +39,7 @@ Options:
 Expand
 ~~~~~~
 
-This transformer expands the image to a specific width and height, by adding a background color to the image. It is useful if you want to add a background color to an image that is smaller than the target size, or if you want to create a specific aspect ratio for the image without cropping or distorteding it.
+This transformer expands the image to a specific width and height, by adding a background color to the image. It is useful if you want to add a background color to an image that is smaller than the target size, or if you want to create a specific aspect ratio for the image without cropping or distorting it.
 
 .. code-block:: yaml
 
@@ -123,7 +123,7 @@ For example, imagine you have an image that is 900x600 pixels. Applying the ``th
 
 By default, the crop area will be centered on the image. If you want to crop the image from the top-left corner, you can set the ``crop_position`` option to ``start``. If you want to crop the image from the bottom-right corner, you can set the ``crop_position`` option to ``end``.
 
-Whith the example above (a ``900x600`` image) and a ``300x300`` thumbnail, the crop area will be defined as follows:
+With the example above (a ``900x600`` image) and a ``300x300`` thumbnail, the crop area will be defined as follows:
 
 - if you set the ``crop_position`` option to ``25%`` for a ``300x300`` thumbnail, the resulting image will be cropped from ```150x0`` to ``450x300``.
 - if you set the ``crop_position`` option to ``50%``, the resulting image will be cropped from ``300x0`` to ``600x300``
