@@ -4,12 +4,19 @@ import configureFolderSelector from './components/folderSelector';
 import configureMediaSelector from './components/mediaSelector';
 import configureClipboard from './components/clipboard';
 import configureTrixToolbar from './components/configureTrixToolbar';
+import initLazyLoad from './components/lazyLoad';
+import initInfiniteScroll from './components/infiniteScroll';
+
+// Expose initLazyLoad globally for infinite scroll
+window.initLazyLoad = initLazyLoad;
 
 document.addEventListener('DOMContentLoaded', () => {
   configureFolderSelector();
   configureMediaSelector();
   configureClipboard();
   configureTrixToolbar();
+  initLazyLoad();
+  initInfiniteScroll();
   let dropzoneInstance = null;
 
   const switchTool = (target, currentTool) => {

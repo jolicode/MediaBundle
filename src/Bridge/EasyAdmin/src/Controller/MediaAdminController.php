@@ -298,6 +298,16 @@ class MediaAdminController extends AbstractController
             default => 'explore',
         };
 
+        $page = max(1, (int) $request->query->get('page', '1'));
+        $perPage = $this->config->getPerPage() ?? 50;
+
+        $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
+            $currentKey,
+            recursive: false,
+            page: $page,
+            perPage: $perPage
+        );
+
         return new Response($this->twig->render('@JoliMediaEasyAdmin/list.html.twig', [
             'base_template' => \sprintf('@JoliMediaEasyAdmin/%s.html.twig', $template),
             'breadcrumb' => $this->generateBreadcrumb($currentKey, $routeName),
@@ -307,7 +317,14 @@ class MediaAdminController extends AbstractController
             'current_key' => $currentKey,
             'delete_directory_form' => $this->createDeleteDirectoryForm($key)->createView(),
             'directories' => $directories,
-            'medias' => $this->getOriginalStorage()->listMedias($currentKey, recursive: false),
+            'medias' => $paginatedMedias['items'],
+            'pagination' => [
+                'page' => $paginatedMedias['page'],
+                'perPage' => $paginatedMedias['perPage'],
+                'total' => $paginatedMedias['total'],
+                'totalPages' => $paginatedMedias['totalPages'],
+                'infiniteScroll' => $this->config->isInfiniteScrollEnabled(),
+            ],
             'parent_key' => \dirname($currentKey),
             'rename_directory_form' => $this->createRenameDirectoryForm($key)->createView(),
             'route_name' => $routeName,
