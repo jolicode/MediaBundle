@@ -363,7 +363,7 @@ class OriginalStorage
         ?string $contains = null,
         bool $recursive = false,
         int $page = 1,
-        int $perPage = 50
+        int $perPage = 50,
     ): array {
         $allMedias = $this->listMedias($path, $contains, $recursive);
 

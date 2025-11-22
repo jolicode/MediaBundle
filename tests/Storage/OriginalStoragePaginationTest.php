@@ -3,7 +3,6 @@
 namespace JoliCode\MediaBundle\Tests\Storage;
 
 use JoliCode\MediaBundle\Binary\MimeTypeGuesser;
-use JoliCode\MediaBundle\Event\MediaEvents;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Storage\MediaPropertyAccessor;

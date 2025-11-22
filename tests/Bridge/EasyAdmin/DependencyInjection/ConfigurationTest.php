@@ -4,32 +4,11 @@ namespace JoliCode\MediaBundle\Tests\Bridge\EasyAdmin\DependencyInjection;
 
 use JoliCode\MediaBundle\Bridge\EasyAdmin\JoliMediaEasyAdminBundle;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends TestCase
 {
-    private function processConfiguration(array $configs): array
-    {
-        $bundle = new JoliMediaEasyAdminBundle();
-        $treeBuilder = new TreeBuilder('joli_media_easy_admin');
-
-        // Get the configuration tree from the bundle
-        $reflection = new \ReflectionMethod($bundle, 'configure');
-        $reflection->setAccessible(true);
-
-        $configurator = $this->createMock(\Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator::class);
-        $configurator->expects($this->once())
-            ->method('rootNode')
-            ->willReturn($treeBuilder->getRootNode());
-
-        $reflection->invoke($bundle, $configurator);
-
-        $processor = new Processor();
-        return $processor->process($treeBuilder->buildTree(), $configs);
-    }
-
     public function testDefaultConfiguration(): void
     {
         $config = $this->processConfiguration([]);
@@ -142,5 +121,27 @@ class ConfigurationTest extends TestCase
 
         $this->assertEquals(50, $config['pagination']['per_page']);
         $this->assertTrue($config['pagination']['infinite_scroll']);
+    }
+
+    private function processConfiguration(array $configs): array
+    {
+        $bundle = new JoliMediaEasyAdminBundle();
+        $treeBuilder = new TreeBuilder('joli_media_easy_admin');
+
+        // Get the configuration tree from the bundle
+        $reflection = new \ReflectionMethod($bundle, 'configure');
+        $reflection->setAccessible(true);
+
+        $configurator = $this->createMock(\Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator::class);
+        $configurator->expects($this->once())
+            ->method('rootNode')
+            ->willReturn($treeBuilder->getRootNode())
+        ;
+
+        $reflection->invoke($bundle, $configurator);
+
+        $processor = new Processor();
+
+        return $processor->process($treeBuilder->buildTree(), $configs);
     }
 }

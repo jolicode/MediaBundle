@@ -10,45 +10,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 class ServiceTest extends TestCase
 {
-    private function createContainer(array $config = []): ContainerBuilder
-    {
-        $container = new ContainerBuilder(new ParameterBag([
-            'kernel.bundles' => [
-                'JoliMediaBundle' => true,
-                'EasyAdminBundle' => true,
-            ],
-            'kernel.project_dir' => __DIR__,
-        ]));
-
-        $bundle = new JoliMediaEasyAdminBundle();
-
-        $defaultConfig = [
-            'pagination' => [
-                'per_page' => 50,
-                'infinite_scroll' => false,
-            ],
-            'upload' => [
-                'max_files' => null,
-                'max_file_size' => 20,
-                'accepted_files' => [],
-            ],
-            'visibility' => [
-                'show_markdown_code' => false,
-                'show_html_code' => false,
-                'show_variations_action_regenerate' => false,
-                'show_variations_list' => true,
-                'show_variations_list_admin_variations' => false,
-                'show_variations_stored' => false,
-            ],
-        ];
-
-        $mergedConfig = array_replace_recursive($defaultConfig, $config);
-
-        $container->setParameter('joli_media_easy_admin.config', $mergedConfig);
-
-        return $container;
-    }
-
     public function testConfigServiceIsRegistered(): void
     {
         $container = $this->createContainer();
@@ -121,5 +82,44 @@ class ServiceTest extends TestCase
         $this->assertEquals(10, $config->getUploadOption('maxFiles'));
         $this->assertEquals(25, $config->getPerPage());
         $this->assertTrue($config->isInfiniteScrollEnabled());
+    }
+
+    private function createContainer(array $config = []): ContainerBuilder
+    {
+        $container = new ContainerBuilder(new ParameterBag([
+            'kernel.bundles' => [
+                'JoliMediaBundle' => true,
+                'EasyAdminBundle' => true,
+            ],
+            'kernel.project_dir' => __DIR__,
+        ]));
+
+        $bundle = new JoliMediaEasyAdminBundle();
+
+        $defaultConfig = [
+            'pagination' => [
+                'per_page' => 50,
+                'infinite_scroll' => false,
+            ],
+            'upload' => [
+                'max_files' => null,
+                'max_file_size' => 20,
+                'accepted_files' => [],
+            ],
+            'visibility' => [
+                'show_markdown_code' => false,
+                'show_html_code' => false,
+                'show_variations_action_regenerate' => false,
+                'show_variations_list' => true,
+                'show_variations_list_admin_variations' => false,
+                'show_variations_stored' => false,
+            ],
+        ];
+
+        $mergedConfig = array_replace_recursive($defaultConfig, $config);
+
+        $container->setParameter('joli_media_easy_admin.config', $mergedConfig);
+
+        return $container;
     }
 }
