@@ -8,6 +8,7 @@ use Imagine\Gd\Imagine as GdImagine;
 use Imagine\Gmagick\Imagine as GmagickImagine;
 use Imagine\Imagick\Imagine as ImagickImagine;
 use JoliCode\MediaBundle\DependencyInjection\Compiler\CollectorPass;
+use JoliCode\MediaBundle\DependencyInjection\Compiler\DoctrinePass;
 use JoliCode\MediaBundle\Doctrine\Type\MediaLongType;
 use JoliCode\MediaBundle\Doctrine\Type\MediaType;
 use JoliCode\MediaBundle\Doctrine\Types;
@@ -31,6 +32,10 @@ class JoliMediaBundle extends AbstractBundle
 {
     public function boot(): void
     {
+        if (!class_exists(\Doctrine\DBAL\Types\StringType::class)) {
+            return;
+        }
+
         // doctrine media type
         $resolverInitializer = fn (): ?object => $this->container->get('joli_media.resolver');
         MediaType::$resolverInitializer = $resolverInitializer;
@@ -42,6 +47,7 @@ class JoliMediaBundle extends AbstractBundle
         parent::build($container);
 
         $container->addCompilerPass(new CollectorPass());
+        $container->addCompilerPass(new DoctrinePass());
     }
 
     public function configure(DefinitionConfigurator $definition): void
