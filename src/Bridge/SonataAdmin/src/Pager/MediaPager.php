@@ -3,26 +3,19 @@
 namespace JoliCode\MediaBundle\Bridge\SonataAdmin\Pager;
 
 use JoliCode\MediaBundle\Model\Media;
-use Sonata\AdminBundle\Datagrid\PagerInterface;
-use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
+use Sonata\AdminBundle\Datagrid\Pager;
 
 /**
  * Pager adapter for media files to work with Sonata Admin's pagination.
- * This adapter provides the same interface as Sonata's Pager
+ * Extends Sonata's Pager class to reuse all pagination logic,
  * but works with array data instead of Doctrine entities.
  *
- * Note: This class implements PagerInterface which includes query-related methods
- * (getQuery/setQuery) that are not applicable for array-based pagination.
- * These methods are implemented as no-ops to satisfy the interface contract.
+ * Note: This class does not use ProxyQueryInterface as it works with array-based data.
+ * The query-related methods (getQuery/setQuery) are inherited from the parent class
+ * but return/accept null since we don't have database queries.
  */
-class MediaPager implements PagerInterface
+class MediaPager extends Pager
 {
-    private int $page = 1;
-
-    private int $maxPerPage = 50;
-
-    private int $maxPageLinks = 7;
-
     private int $countResults = 0;
 
     /**
@@ -44,87 +37,18 @@ class MediaPager implements PagerInterface
      */
     public function paginate(array $paginationData, string $routeName, string $currentKey): self
     {
-        $this->page = $paginationData['page'];
-        $this->maxPerPage = $paginationData['perPage'];
+        $this->setPage($paginationData['page']);
+        $this->setMaxPerPage($paginationData['perPage']);
         $this->countResults = $paginationData['total'];
         $this->results = $paginationData['items'];
         $this->routeName = $routeName;
         $this->currentKey = $currentKey;
 
+        // Calculate and set last page
+        $lastPage = $this->maxPerPage > 0 ? (int) ceil($this->countResults / $this->maxPerPage) : 1;
+        $this->setLastPage($lastPage);
+
         return $this;
-    }
-
-    public function getMaxPerPage(): int
-    {
-        return $this->maxPerPage;
-    }
-
-    public function setMaxPerPage(int $max): void
-    {
-        $this->maxPerPage = $max;
-    }
-
-    public function getPage(): int
-    {
-        return $this->page;
-    }
-
-    public function setPage(int $page): void
-    {
-        $this->page = $page;
-    }
-
-    public function getNextPage(): int
-    {
-        return min($this->getLastPage(), $this->page + 1);
-    }
-
-    public function getPreviousPage(): int
-    {
-        return max(1, $this->page - 1);
-    }
-
-    public function getFirstPage(): int
-    {
-        return 1;
-    }
-
-    public function isFirstPage(): bool
-    {
-        return 1 === $this->page;
-    }
-
-    public function getLastPage(): int
-    {
-        return (int) ceil($this->countResults / $this->maxPerPage);
-    }
-
-    public function isLastPage(): bool
-    {
-        return $this->page >= $this->getLastPage();
-    }
-
-    public function getQuery(): ?ProxyQueryInterface
-    {
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * Note: This method is a no-op as this pager works with array data, not database queries.
-     * MediaPager uses array-based pagination and does not work with ProxyQueryInterface.
-     *
-     * @throws \LogicException if called (optional: you can add this exception for fail-fast behavior)
-     */
-    public function setQuery(ProxyQueryInterface $query): void
-    {
-        // No-op: MediaPager uses array-based pagination, not database queries
-    }
-
-    public function haveToPaginate(): bool
-    {
-        return $this->countResults > $this->maxPerPage;
     }
 
     public function getCurrentPageResults(): iterable
@@ -135,58 +59,6 @@ class MediaPager implements PagerInterface
     public function countResults(): int
     {
         return $this->countResults;
-    }
-
-    /**
-     * Returns an array of page numbers to use in pagination links.
-     *
-     * @param int|null $nbLinks The maximum number of page numbers to return
-     *
-     * @return int[]
-     */
-    public function getLinks(?int $nbLinks = null): array
-    {
-        if (null === $nbLinks) {
-            $nbLinks = $this->getMaxPageLinks();
-        }
-
-        $links = [];
-        $lastPage = $this->getLastPage();
-
-        if ($lastPage <= 1) {
-            return [];
-        }
-
-        // Calculate how many pages to show on each side of current page
-        $pagesOnEachSide = (int) floor(($nbLinks - 1) / 2);
-
-        $startPage = max(1, $this->page - $pagesOnEachSide);
-        $endPage = min($lastPage, $this->page + $pagesOnEachSide);
-
-        // Adjust if we're near the beginning or end
-        if ($this->page <= $pagesOnEachSide) {
-            $endPage = min($lastPage, $nbLinks);
-        }
-
-        if ($this->page >= $lastPage - $pagesOnEachSide) {
-            $startPage = max(1, $lastPage - $nbLinks + 1);
-        }
-
-        for ($i = $startPage; $i <= $endPage; ++$i) {
-            $links[] = $i;
-        }
-
-        return $links;
-    }
-
-    public function setMaxPageLinks(int $maxPageLinks): void
-    {
-        $this->maxPageLinks = $maxPageLinks;
-    }
-
-    public function getMaxPageLinks(): int
-    {
-        return $this->maxPageLinks;
     }
 
     public function getRouteName(): string
