@@ -15,10 +15,8 @@ class ConfigurationTest extends TestCase
 
         $this->assertArrayHasKey('pagination', $config);
         $this->assertArrayHasKey('per_page', $config['pagination']);
-        $this->assertArrayHasKey('infinite_scroll', $config['pagination']);
 
         $this->assertEquals(50, $config['pagination']['per_page']);
-        $this->assertFalse($config['pagination']['infinite_scroll']);
     }
 
     public function testCustomPaginationConfiguration(): void
@@ -27,13 +25,11 @@ class ConfigurationTest extends TestCase
             [
                 'pagination' => [
                     'per_page' => 100,
-                    'infinite_scroll' => true,
                 ],
             ],
         ]);
 
         $this->assertEquals(100, $config['pagination']['per_page']);
-        $this->assertTrue($config['pagination']['infinite_scroll']);
     }
 
     public function testUploadConfiguration(): void
@@ -106,21 +102,6 @@ class ConfigurationTest extends TestCase
         ]);
 
         $this->assertEquals(25, $config['pagination']['per_page']);
-        $this->assertFalse($config['pagination']['infinite_scroll']);
-    }
-
-    public function testInfiniteScrollOnlyConfiguration(): void
-    {
-        $config = $this->processConfiguration([
-            [
-                'pagination' => [
-                    'infinite_scroll' => true,
-                ],
-            ],
-        ]);
-
-        $this->assertEquals(50, $config['pagination']['per_page']);
-        $this->assertTrue($config['pagination']['infinite_scroll']);
     }
 
     private function processConfiguration(array $configs): array

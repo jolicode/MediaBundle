@@ -33,7 +33,6 @@ class ServiceTest extends TestCase
 
         $this->assertInstanceOf(Config::class, $config);
         $this->assertNull($config->getPerPage());
-        $this->assertFalse($config->isInfiniteScrollEnabled());
     }
 
     public function testConfigCanBeInstantiatedWithCustomPagination(): void
@@ -46,12 +45,10 @@ class ServiceTest extends TestCase
             [],
             20,
             null,
-            100,
-            true
+            100
         );
 
         $this->assertEquals(100, $config->getPerPage());
-        $this->assertTrue($config->isInfiniteScrollEnabled());
     }
 
     public function testConfigWithAllParameters(): void
@@ -71,8 +68,7 @@ class ServiceTest extends TestCase
             $acceptedFiles,
             50,
             10,
-            25,
-            true
+            25
         );
 
         $this->assertTrue($config->isVisible('show_variations_list'));
@@ -81,7 +77,6 @@ class ServiceTest extends TestCase
         $this->assertEquals(50, $config->getUploadOption('maxFileSize'));
         $this->assertEquals(10, $config->getUploadOption('maxFiles'));
         $this->assertEquals(25, $config->getPerPage());
-        $this->assertTrue($config->isInfiniteScrollEnabled());
     }
 
     private function createContainer(array $config = []): ContainerBuilder
@@ -99,7 +94,6 @@ class ServiceTest extends TestCase
         $defaultConfig = [
             'pagination' => [
                 'per_page' => 50,
-                'infinite_scroll' => false,
             ],
             'upload' => [
                 'max_files' => null,

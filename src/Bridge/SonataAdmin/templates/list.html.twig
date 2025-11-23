@@ -158,6 +158,9 @@
                         </tbody>
                     </table>
                 </div>
+                {% if pager is defined and pager.haveToPaginate() %}
+                    {% include '@JoliMediaSonataAdmin/Pager/results.html.twig' %}
+                {% endif %}
             </div>
         {% else %}
             <ul class="gallery-grid gallery-grid--folders">
@@ -189,6 +192,11 @@
                     {% endif %}
                 {%- endfor %}
             </ul>
+            {% if pager is defined and pager.haveToPaginate() %}
+                <div class="box box-primary">
+                    {% include '@JoliMediaSonataAdmin/Pager/results.html.twig' %}
+                </div>
+            {% endif %}
         {% endif %}
     </div>
 {% endblock %}

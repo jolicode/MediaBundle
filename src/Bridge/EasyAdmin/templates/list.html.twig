@@ -117,78 +117,8 @@
             </ul>
         {% endif %}
 
-        {% if pagination is defined %}
-            {% if pagination.infiniteScroll %}
-                {% if pagination.page < pagination.totalPages %}
-                    <div
-                        data-infinite-scroll-trigger
-                        data-current-page="{{ pagination.page }}"
-                        data-total-pages="{{ pagination.totalPages }}"
-                        data-has-more="{{ pagination.page < pagination.totalPages ? 'true' : 'false' }}"
-                        data-route-name="{{ route_name }}"
-                        data-current-key="{{ current_key }}"
-                        style="height: 1px;"
-                    ></div>
-                {% endif %}
-                <div class="list-pagination">
-                    <div class="list-pagination-counter text-center">
-                        {{ 'paginator.results'|trans({'%count%': pagination.total}, 'EasyAdminBundle')|raw }}
-                        {% if pagination.page < pagination.totalPages %}
-                            <span class="text-muted">{{ '(showing %count%)'|trans({'%count%': pagination.page * pagination.perPage}, 'EasyAdminBundle') }}</span>
-                        {% endif %}
-                    </div>
-                </div>
-            {% elseif pagination.totalPages > 1 %}
-                <div class="list-pagination">
-                    <div class="list-pagination-counter">
-                        {{ 'paginator.results'|trans({'%count%': pagination.total}, 'EasyAdminBundle')|raw }}
-                    </div>
-                    <nav class="pager list-pagination-paginator {{ pagination.page == 1 ? 'first-page' }} {{ pagination.page == pagination.totalPages ? 'last-page' }}">
-                        <ul class="pagination">
-                            <li class="page-item page-item-previous {{ pagination.page == 1 ? 'disabled' }}">
-                                <a class="page-link" href="{{ pagination.page == 1 ? '#' : ea_url().setRoute(route_name, { key: current_key }).set('page', pagination.page - 1) }}">
-                                    <twig:ea:Icon name="internal:chevron-left" class="mx-1" aria-hidden="true" />
-                                    <span class="btn-label">{{ 'paginator.previous'|trans({}, 'EasyAdminBundle') }}</span>
-                                </a>
-                            </li>
-
-                            {% set showFirst = pagination.page > 3 %}
-                            {% set showLast = pagination.page < pagination.totalPages - 2 %}
-
-                            {% if showFirst %}
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ ea_url().setRoute(route_name, { key: current_key }).set('page', 1) }}">1</a>
-                                </li>
-                                {% if pagination.page > 4 %}
-                                    <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
-                                {% endif %}
-                            {% endif %}
-
-                            {% for i in max(1, pagination.page - 2)..min(pagination.totalPages, pagination.page + 2) %}
-                                <li class="page-item {{ i == pagination.page ? 'active' }}">
-                                    <a class="page-link" href="{{ ea_url().setRoute(route_name, { key: current_key }).set('page', i) }}">{{ i }}</a>
-                                </li>
-                            {% endfor %}
-
-                            {% if showLast %}
-                                {% if pagination.page < pagination.totalPages - 3 %}
-                                    <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
-                                {% endif %}
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ ea_url().setRoute(route_name, { key: current_key }).set('page', pagination.totalPages) }}">{{ pagination.totalPages }}</a>
-                                </li>
-                            {% endif %}
-
-                            <li class="page-item page-item-next {{ pagination.page == pagination.totalPages ? 'disabled' }}">
-                                <a class="page-link" href="{{ pagination.page == pagination.totalPages ? '#' : ea_url().setRoute(route_name, { key: current_key }).set('page', pagination.page + 1) }}">
-                                    <span class="btn-label">{{ 'paginator.next'|trans({}, 'EasyAdminBundle') }}</span>
-                                    <twig:ea:Icon name="internal:chevron-right" class="mx-1" aria-hidden="true" />
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            {% endif %}
+        {% if paginator is defined and paginator.hasToPaginate %}
+            {% include '@EasyAdmin/crud/paginator.html.twig' %}
         {% endif %}
     </div>
 {% endblock %}

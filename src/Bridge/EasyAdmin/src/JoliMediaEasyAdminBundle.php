@@ -38,10 +38,6 @@ class JoliMediaEasyAdminBundle extends AbstractBundle
                             ->defaultValue(50)
                             ->info('Number of media items to display per page.')
                         ->end()
-                        ->booleanNode('infinite_scroll')
-                            ->defaultFalse()
-                            ->info('If true, enables infinite scroll instead of classic pagination.')
-                        ->end()
                     ->end()
                 ->end()
                 ->arrayNode('visibility')
@@ -98,7 +94,6 @@ class JoliMediaEasyAdminBundle extends AbstractBundle
             ->arg('$maxFiles', $config['upload']['max_files'])
             ->arg('$maxFileSize', $config['upload']['max_file_size'])
             ->arg('$perPage', $config['pagination']['per_page'])
-            ->arg('$infiniteScroll', $config['pagination']['infinite_scroll'])
         ;
     }
 

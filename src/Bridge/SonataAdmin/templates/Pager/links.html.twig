@@ -1,0 +1,31 @@
+{#
+Pagination links for media library
+Adapted from Sonata Admin's base_links.html.twig
+#}
+<div class="text-center">
+    <ul class="pagination">
+        {% if pager.page > 2 %}
+            <li><a href="{{ path(pager.routeName, { key: pager.currentKey, page: 1 }) }}" title="{{ 'link_first_pager'|trans({}, 'SonataAdminBundle') }}">&laquo;</a></li>
+        {% endif %}
+
+        {% if pager.page != pager.previousPage %}
+            <li><a href="{{ path(pager.routeName, { key: pager.currentKey, page: pager.previousPage }) }}" title="{{ 'link_previous_pager'|trans({}, 'SonataAdminBundle') }}">&lsaquo;</a></li>
+        {% endif %}
+
+        {% for page in pager.getLinks(7) %}
+            {% if page == pager.page %}
+                <li class="active"><a href="{{ path(pager.routeName, { key: pager.currentKey, page: page }) }}">{{ page }}</a></li>
+            {% else %}
+                <li><a href="{{ path(pager.routeName, { key: pager.currentKey, page: page }) }}">{{ page }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if pager.page != pager.nextPage %}
+            <li><a href="{{ path(pager.routeName, { key: pager.currentKey, page: pager.nextPage }) }}" title="{{ 'link_next_pager'|trans({}, 'SonataAdminBundle') }}">&rsaquo;</a></li>
+        {% endif %}
+
+        {% if pager.page != pager.lastPage and pager.lastPage != pager.nextPage %}
+            <li><a href="{{ path(pager.routeName, { key: pager.currentKey, page: pager.lastPage }) }}" title="{{ 'link_last_pager'|trans({}, 'SonataAdminBundle') }}">&raquo;</a></li>
+        {% endif %}
+    </ul>
+</div>

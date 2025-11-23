@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Config\Config;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Controller\MediaAdminController;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\DataTransformer\MediaTransformer;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Paginator\MediaPaginator;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\MediaChoiceType;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\UploadType;
 use JoliCode\MediaBundle\Bridge\Security\Voter\MediaVoter;
@@ -24,6 +25,12 @@ return static function (ContainerConfigurator $container): void {
             '$translator' => service('translator')->ignoreOnInvalid(),
         ])
 
+        // paginator
+        ->set('joli_media_easy_admin.paginator', MediaPaginator::class)
+        ->args([
+            '$adminUrlGenerator' => service(AdminUrlGenerator::class),
+        ])
+
         // controller
         ->set('joli_media_easy_admin.controller.admin', MediaAdminController::class)
         ->args([
@@ -35,6 +42,7 @@ return static function (ContainerConfigurator $container): void {
             '$twig' => service('twig'),
             '$formFactory' => service('form.factory'),
             '$adminUrlGenerator' => service(AdminUrlGenerator::class),
+            '$mediaPaginator' => service('joli_media_easy_admin.paginator'),
             '$authorizationChecker' => service('security.authorization_checker')->ignoreOnInvalid(),
         ])
         ->call('setContainer', [service('service_container')])

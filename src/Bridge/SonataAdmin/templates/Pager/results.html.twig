@@ -1,0 +1,11 @@
+{#
+Results count for media library
+#}
+<div class="box-footer clearfix">
+    <div class="pull-left">
+        {% trans with {'%count%': pager.countResults()} from 'SonataAdminBundle' %}list_results_count{% endtrans %}
+    </div>
+    <div class="pull-right">
+        {% include '@JoliMediaSonataAdmin/Pager/links.html.twig' %}
+    </div>
+</div>

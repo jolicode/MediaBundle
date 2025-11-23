@@ -5,6 +5,7 @@ namespace JoliCode\MediaBundle\Bridge\SonataAdmin\Controller;
 use JoliCode\MediaBundle\Bridge\Security\Voter\AdminAction;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Config\Config;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\CreateDirectoryType;
+use JoliCode\MediaBundle\Bridge\SonataAdmin\Pager\MediaPager;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\DeleteDirectoryType;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\DeleteType;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\MoveType;
@@ -49,6 +50,7 @@ class MediaAdminController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
+        private readonly MediaPager $mediaPager,
         private readonly string $sonataAdminLayoutTemplate,
         private readonly string $sonataAdminAjaxTemplate,
         private readonly ?AuthorizationCheckerInterface $authorizationChecker = null,
@@ -273,6 +275,19 @@ class MediaAdminController extends AbstractController
             default => 'explore',
         };
 
+        $routeName = $request->attributes->get('_route') ?? 'joli_media_sonata_admin_explore';
+        $page = max(1, (int) $request->query->get('page', '1'));
+        $perPage = $this->config->getPerPage() ?? 50;
+
+        $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
+            $currentKey,
+            recursive: false,
+            page: $page,
+            perPage: $perPage
+        );
+
+        $pager = $this->mediaPager->paginate($paginatedMedias, $routeName, $currentKey);
+
         return new Response($this->twig->render('@JoliMediaSonataAdmin/list.html.twig', [
             'admin_pool' => $this->sonataAdminPool,
             'base_ajax_template' => $this->sonataAdminAjaxTemplate,
@@ -284,7 +299,8 @@ class MediaAdminController extends AbstractController
             'current_key' => $currentKey,
             'delete_directory_form' => $this->createDeleteDirectoryForm($key)->createView(),
             'directories' => $directories,
-            'medias' => $this->getOriginalStorage()->listMedias($currentKey, recursive: false),
+            'medias' => $pager->getCurrentPageResults(),
+            'pager' => $pager,
             'parent_key' => \dirname($currentKey),
             'rename_directory_form' => $this->createRenameDirectoryForm($key)->createView(),
         ]));

@@ -44,48 +44,6 @@ class ConfigTest extends TestCase
         $this->assertEquals(100, $config->getPerPage());
     }
 
-    public function testIsInfiniteScrollEnabledDefault(): void
-    {
-        $config = new Config(
-            $this->translator,
-            [],
-            [],
-            20
-        );
-
-        $this->assertFalse($config->isInfiniteScrollEnabled());
-    }
-
-    public function testIsInfiniteScrollEnabledTrue(): void
-    {
-        $config = new Config(
-            $this->translator,
-            [],
-            [],
-            20,
-            null,
-            50,
-            true
-        );
-
-        $this->assertTrue($config->isInfiniteScrollEnabled());
-    }
-
-    public function testIsInfiniteScrollEnabledFalse(): void
-    {
-        $config = new Config(
-            $this->translator,
-            [],
-            [],
-            20,
-            null,
-            50,
-            false
-        );
-
-        $this->assertFalse($config->isInfiniteScrollEnabled());
-    }
-
     public function testIsVisibleReturnsTrueWhenKeyExists(): void
     {
         $config = new Config(
