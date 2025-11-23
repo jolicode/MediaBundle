@@ -40,7 +40,7 @@ function start(): void
     io()->title('Starting the stack');
 
     build();
-    install();
+    demo_install();
     up(profiles: ['default']); // We can't start worker now, they are not installed
     migrate();
 
@@ -50,35 +50,37 @@ function start(): void
     about();
 }
 
-#[AsTask(description: 'Installs the application (composer, yarn, ...)', namespace: 'app')]
-function install(): void
+#[AsTask(name: 'install', description: 'Installs the application (composer, yarn, ...)', namespace: 'app')]
+function demo_install($useLocalBundle = true): void
 {
     io()->title('Installing the application');
 
     $basePath = sprintf('%s/application', variable('root_dir'));
 
     if (is_file("{$basePath}/composer.json")) {
-        io()->section('Build a custom composer.json file to use the local JoliMediaBundle');
-        $composerJson = json_decode(file_get_contents("{$basePath}/composer.json"), true, 512, JSON_THROW_ON_ERROR);
-        $composerJson['require']['jolicode/media-bundle'] = '*';
-        $composerJson['minimum-stability'] = 'dev';
-        $composerJson['repositories'] = [
-            [
-                'type' => 'path',
-                'url' => '/var/MediaBundle',
-                'options' => [
-                    'symlink' => true,
+        if ($useLocalBundle) {
+            io()->section('Build a custom composer.json file to use the local JoliMediaBundle');
+            $composerJson = json_decode(file_get_contents("{$basePath}/composer.json"), true, 512, \JSON_THROW_ON_ERROR);
+            $composerJson['require']['jolicode/media-bundle'] = '*';
+            $composerJson['minimum-stability'] = 'dev';
+            $composerJson['repositories'] = [
+                [
+                    'type' => 'path',
+                    'url' => '/var/MediaBundle',
+                    'options' => [
+                        'symlink' => true,
+                    ],
                 ],
-            ],
-        ];
-        file_put_contents(
-            "{$basePath}/docker-composer.json",
-            json_encode($composerJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n",
-        );
-        copy("{$basePath}/symfony.lock", "{$basePath}/docker-symfony.lock");
+            ];
+            file_put_contents(
+                "{$basePath}/docker-composer.json",
+                json_encode($composerJson, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES) . "\n",
+            );
+            copy("{$basePath}/symfony.lock", "{$basePath}/docker-symfony.lock");
+        }
 
         io()->section('Installing PHP dependencies');
-        docker_compose_run('COMPOSER=docker-composer.json composer install -n --prefer-dist --optimize-autoloader');
+        docker_compose_run(sprintf('%s composer install -n --prefer-dist --optimize-autoloader', $useLocalBundle ? 'COMPOSER=docker-composer.json' : ''));
     }
     if (is_file("{$basePath}/yarn.lock")) {
         io()->section('Installing Node.js dependencies');
@@ -117,7 +119,6 @@ function front_watch(): void
         $lastCallTime = $currentTime;
     });
 }
-
 
 #[AsTask(description: 'Clears the application cache', namespace: 'app')]
 function cache_clear(bool $warm = true): void

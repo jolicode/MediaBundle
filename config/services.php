@@ -206,7 +206,10 @@ return static function (ContainerConfigurator $container): void {
         // library
         ->set('joli_media.library_container', LibraryContainer::class)
         ->public()
-        ->arg('$libraries', tagged_locator('joli_media.library', indexAttribute: 'name'))
+        ->args([
+            '$libraries' => tagged_locator('joli_media.library', indexAttribute: 'name'),
+            '$logger' => service('logger')->ignoreOnInvalid(),
+        ])
         ->alias(LibraryContainer::class, 'joli_media.library_container')
 
         ->set('.joli_media.library.abstract', Library::class)

@@ -25,7 +25,7 @@ use JoliCode\MediaBundle\Variation\Variation;
 use JoliCode\MediaBundle\Variation\VariationContainer;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mime\FileBinaryMimeTypeGuesser;
@@ -38,7 +38,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
-class BaseTestCase extends TestCase
+class BaseTestCase extends WebTestCase
 {
     public const AVIF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.avif';
 

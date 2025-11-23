@@ -1,7 +1,7 @@
 Commands
 ========
 
-The MediaBundle provides some commands to streamline the management of medias and their variations.
+The MediaBundle provides some commands to streamline the management of media and their variations.
 
 .. code-block:: terminal
 
@@ -166,4 +166,4 @@ Options can be combined, eg:
 
     $ php ./bin/console joli:media:cache:remove --library=media --variation=profile_pictures --path=michel --force
 
-The above command will remove all the cache file in the "media" library, for the "profile_pictures" variation, for all the media that containe the word "michel" in their path.
+The above command will remove all cache files in the "media" library, for the "profile_pictures" variation, for all media that contain the word "michel" in their path.

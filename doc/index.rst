@@ -10,7 +10,7 @@ It proposes multiple features:
 - processors to transform media (crop / resize / etc.)
 - post processors to optimize the media size
 - Twig components to output ``<img>`` and ``<picture>`` tags
-- `CLI commands <misc-features/commands.rst>`_ to generate ad inspect media variations that are high quality yet lightweight
+- `CLI commands <misc-features/commands.rst>`_ to generate and inspect media variations that are high quality yet lightweight
 - `Twig components <misc-features/twig-components.rst>`_ to display media using best practices
 - the ability to generate `URLs for media <misc-features/url-generation.rst>`_ and their `variations <variations/variations.rst>`_
 - `events <misc-features/events.rst>`_ to allow you to hook into the media processing pipeline
@@ -41,6 +41,10 @@ The bundle does not aim to provide a complete Digital Asset Management (DAM) sol
 There are multiple ways of managing media files in Symfony applications, and several bundles already exist to provide such features. However, most of them are either unmaintained, too complex, or do not follow best practices. Most of the time, managing media files in Symfony applications requires a lot of custom code to assemble multiple libraries, and we end up with a solution that is hard to maintain and does not follow best practices.
 
 The JoliMediaBundle aims to fill this gap by providing a modern, flexible, and easy-to-use solution to manage media in Symfony applications.
+
+.. note::
+
+    You can learn more about the motivations behind the creation of this bundle by reading the `blog post published on JoliCode's blog <https://jolicode.com/blog/jolimediabundle-a-new-media-bundle-for-your-symfony-projects>`_.
 
 🗣️ Vocabulary
 -------------

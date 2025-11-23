@@ -64,6 +64,8 @@ function phpstan(
         install();
     }
 
+    demo_install(false);
+
     io()->section('Running PHPStan...');
 
     $options = $baseline ? '--generate-baseline --allow-empty-baseline' : '';

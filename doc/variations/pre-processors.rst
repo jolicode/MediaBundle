@@ -1,7 +1,7 @@
 Pre-processors
 ==============
 
-JoliMediaBundle provides different type of transformations, that allow for example to resize or crop images. However, it does not provide advanced transformations to prepare the media before the conversion, such as rotating images, applying filters, backgrounds or watermarks, because these transformations are not supported by all the underlying tools used by the bundle.
+JoliMediaBundle provides different types of transformations, that allow for example to resize or crop images. However, it does not provide advanced transformations to prepare the media before the conversion, such as rotating images, applying filters, backgrounds or watermarks, because these transformations are not supported by all the underlying tools used by the bundle.
 
 *Pre-processors* are responsible for applying transformations to a media before the conversion. They can be used to prepare the media before the transformation, for example to apply a watermark or rotate the media.
 
@@ -117,7 +117,7 @@ Heif pre-processor
 
 The bundle provides the ``HeifPreProcessor`` pre-processor, which is used to convert HEIF images to JPEG or PNG format. This pre-processor is automatically registered and does not need to be configured in the ``joli_media`` configuration.
 
-HEIF (High Efficiency Image File Format) is a modern image format that is not supported by all browsers and tools, but it is gaining traction due to its efficient compression and high quality. However, many web browsers do not support HEIF images, which can lead to compatibility issues when displaying images on the web. Iphone users can encounter this issue when they take photos in HEIF format, which available on iOS devices since iOS 11.
+HEIF (High Efficiency Image File Format) is a modern image format that is not supported by all browsers and tools, but it is gaining traction due to its efficient compression and high quality. However, many web browsers do not support HEIF images, which can lead to compatibility issues when displaying images on the web. iPhone users can encounter this issue when they take photos in HEIF format, which is available on iOS devices since iOS 11.
 
 Therefore, the ``HeifPreProcessor`` will automatically convert HEIF images to JPEG format, so that they can be used in variations and displayed in the browser.
 

@@ -25,6 +25,17 @@ joli_media:
                             height: 30
                             allow_upscale: true
 
+                avatar:
+                    format: webp
+                    transformers:
+                        thumbnail:
+                            width: 20
+                            height: 20
+                            allow_upscale: true
+                    voters:
+                        - type: folder
+                          path: users
+
                 blog_show:
                     transformers:
                         thumbnail:
@@ -32,6 +43,9 @@ joli_media:
                             height: 100
                             allow_downscale: true
                             allow_upscale: true
+                    voters:
+                        - type: folder
+                          path: articles
 
                 transform_resize:
                     format: webp

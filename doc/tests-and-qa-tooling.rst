@@ -1,7 +1,7 @@
 Tests and Quality Assurance Tooling
 ===================================
 
-`Castor <https://castor.jolicode.com/>`_ is used as a tasks runner to streamline common maintenance tasks. It is also used to run the tests.
+`Castor <https://castor.jolicode.com/>`_ is used as a task runner to streamline common maintenance tasks. It is also used to run the tests.
 
 .. code-block:: terminal
 

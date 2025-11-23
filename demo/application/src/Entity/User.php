@@ -31,7 +31,10 @@ class User implements \Stringable
     #[ORM\Column]
     public ?bool $isActive = null;
 
-    #[MediaConstraint(allowedTypes: ['image'])]
+    #[MediaConstraint(
+        allowedTypes: ['image'],
+        allowedPaths: ['users'],
+    )]
     #[MediaDeleteBehavior(strategy: Strategy::RESTRICT)]
     #[ORM\Column(type: MediaTypes::MEDIA, nullable: false)]
     public Media $profilePicture;

@@ -2,12 +2,14 @@
 
 namespace JoliCode\MediaBundle;
 
+use Doctrine\DBAL\Types\StringType;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Metadata\ExifMetadataReader;
 use Imagine\Gd\Imagine as GdImagine;
 use Imagine\Gmagick\Imagine as GmagickImagine;
 use Imagine\Imagick\Imagine as ImagickImagine;
 use JoliCode\MediaBundle\DependencyInjection\Compiler\CollectorPass;
+use JoliCode\MediaBundle\DependencyInjection\Compiler\DoctrinePass;
 use JoliCode\MediaBundle\Doctrine\Type\MediaLongType;
 use JoliCode\MediaBundle\Doctrine\Type\MediaType;
 use JoliCode\MediaBundle\Doctrine\Types;
@@ -31,6 +33,10 @@ class JoliMediaBundle extends AbstractBundle
 {
     public function boot(): void
     {
+        if (!class_exists(StringType::class)) {
+            return;
+        }
+
         // doctrine media type
         $resolverInitializer = fn (): ?object => $this->container->get('joli_media.resolver');
         MediaType::$resolverInitializer = $resolverInitializer;
@@ -42,6 +48,7 @@ class JoliMediaBundle extends AbstractBundle
         parent::build($container);
 
         $container->addCompilerPass(new CollectorPass());
+        $container->addCompilerPass(new DoctrinePass());
     }
 
     public function configure(DefinitionConfigurator $definition): void
@@ -90,12 +97,12 @@ class JoliMediaBundle extends AbstractBundle
 
         // define the default library name
         $builder->getDefinition('joli_media.library_container')
-            ->setArgument('$defaultLibraryName', $config['default_library'] ?? array_key_first($config['libraries']))
+            ->setArgument('$defaultLibraryName', $config['default_library'])
         ;
 
         // pre-processors
-        if (!in_array(HeifPreProcessor::class, $config['pre_processors'])) {
-            // Automatically add the Heif pre-processor if not manually configured
+        if (!in_array(HeifPreProcessor::class, $config['pre_processors']) && interface_exists(ImagineInterface::class)) {
+            // Automatically add the Heif pre-processor if it is not manually configured and Imagine is available
             array_unshift($config['pre_processors'], HeifPreProcessor::class);
         }
 
@@ -963,7 +970,6 @@ class JoliMediaBundle extends AbstractBundle
 
             $postProcessorContainerService->call('add', ['oxipng', service('.joli_media.post_processor.oxipng')]);
         }
-
     }
 
     private function createPreProcessorServices(ContainerConfigurator $container, array $preProcessorsConfig): void
