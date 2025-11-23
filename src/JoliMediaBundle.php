@@ -97,7 +97,7 @@ class JoliMediaBundle extends AbstractBundle
 
         // define the default library name
         $builder->getDefinition('joli_media.library_container')
-            ->setArgument('$defaultLibraryName', $config['default_library'] ?? array_key_first($config['libraries']))
+            ->setArgument('$defaultLibraryName', $config['default_library'])
         ;
 
         // pre-processors

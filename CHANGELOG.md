@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.4] - 2024-11-23
+
+- fix - do not trigger an error when no library is defined
+
 ## [0.1.3] - 2024-11-23
 
 - fix - `Request::get()` deprecation
@@ -47,3 +51,4 @@ This is the initial release of the bundle.
 [0.1.1]: https://github.com/jolicode/mediabundle/releases/tag/v0.1.1
 [0.1.2]: https://github.com/jolicode/mediabundle/releases/tag/v0.1.2
 [0.1.3]: https://github.com/jolicode/mediabundle/releases/tag/v0.1.3
+[0.1.4]: https://github.com/jolicode/mediabundle/releases/tag/v0.1.4
