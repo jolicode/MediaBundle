@@ -2,16 +2,27 @@
 
 namespace JoliCode\MediaBundle\Library;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class LibraryContainer
 {
     public function __construct(
         private readonly ServiceLocator $libraries,
-        private string $defaultLibraryName,
+        private ?string $defaultLibraryName = null,
+        private readonly ?LoggerInterface $logger = null,
     ) {
-        if (!$this->has($defaultLibraryName)) {
-            throw new \InvalidArgumentException(\sprintf('Library "%s" not found.', $defaultLibraryName));
+        if (0 === $libraries->count()) {
+            $this->logger?->warning('No library has been defined in the MediaBundle configuration. Please add one to be able to use the bundle features.');
+        }
+
+        if (null === $this->defaultLibraryName && $libraries->count() > 0) {
+            $names = array_keys($libraries->getProvidedServices());
+            $this->defaultLibraryName = $names[0];
+        }
+
+        if (null !== $this->defaultLibraryName && !$this->has($this->defaultLibraryName)) {
+            throw new \InvalidArgumentException(\sprintf('Library "%s" not found.', $this->defaultLibraryName));
         }
     }
 
@@ -30,11 +41,19 @@ class LibraryContainer
 
     public function getDefault(): Library
     {
+        if (null === $this->defaultLibraryName) {
+            throw new \InvalidArgumentException('The default library is not defined');
+        }
+
         return $this->get($this->defaultLibraryName);
     }
 
     public function getDefaultName(): string
     {
+        if (null === $this->defaultLibraryName) {
+            throw new \InvalidArgumentException('The default library is not defined');
+        }
+
         return $this->defaultLibraryName;
     }
 
