@@ -7,10 +7,10 @@ use JoliCode\MediaBundle\Bridge\SonataAdmin\Asset\Package;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Config\Config;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Controller\MediaAdminController;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\FieldDescription\TypeGuesser;
-use JoliCode\MediaBundle\Bridge\SonataAdmin\Pager\MediaPager;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\DataTransformer\MediaTransformer;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\MediaChoiceType;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\UploadType;
+use JoliCode\MediaBundle\Bridge\SonataAdmin\Pager\MediaPager;
 use JoliCode\MediaBundle\Bridge\Twig\JoliMediaAdminExtension;
 
 return static function (ContainerConfigurator $container): void {

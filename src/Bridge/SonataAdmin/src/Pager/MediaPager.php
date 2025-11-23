@@ -2,6 +2,7 @@
 
 namespace JoliCode\MediaBundle\Bridge\SonataAdmin\Pager;
 
+use JoliCode\MediaBundle\Model\Media;
 use Sonata\AdminBundle\Datagrid\PagerInterface;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 
@@ -9,15 +10,28 @@ use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
  * Pager adapter for media files to work with Sonata Admin's pagination.
  * This adapter provides the same interface as Sonata's Pager
  * but works with array data instead of Doctrine entities.
+ *
+ * Note: This class implements PagerInterface which includes query-related methods
+ * (getQuery/setQuery) that are not applicable for array-based pagination.
+ * These methods are implemented as no-ops to satisfy the interface contract.
  */
 class MediaPager implements PagerInterface
 {
     private int $page = 1;
+
     private int $maxPerPage = 50;
+
     private int $maxPageLinks = 7;
+
     private int $countResults = 0;
+
+    /**
+     * @var array<Media>
+     */
     private array $results = [];
+
     private ?string $routeName = null;
+
     private ?string $currentKey = null;
 
     public function init(): void
@@ -25,6 +39,9 @@ class MediaPager implements PagerInterface
         // Nothing to initialize for array-based pagination
     }
 
+    /**
+     * @param array{items: array<Media>, total: int, page: int, perPage: int} $paginationData
+     */
     public function paginate(array $paginationData, string $routeName, string $currentKey): self
     {
         $this->page = $paginationData['page'];
@@ -74,7 +91,7 @@ class MediaPager implements PagerInterface
 
     public function isFirstPage(): bool
     {
-        return $this->page === 1;
+        return 1 === $this->page;
     }
 
     public function getLastPage(): int
@@ -89,13 +106,20 @@ class MediaPager implements PagerInterface
 
     public function getQuery(): ?ProxyQueryInterface
     {
-        // Not applicable for array-based pagination
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * Note: This method is a no-op as this pager works with array data, not database queries.
+     * MediaPager uses array-based pagination and does not work with ProxyQueryInterface.
+     *
+     * @throws \LogicException if called (optional: you can add this exception for fail-fast behavior)
+     */
     public function setQuery(ProxyQueryInterface $query): void
     {
-        // Not applicable for array-based pagination
+        // No-op: MediaPager uses array-based pagination, not database queries
     }
 
     public function haveToPaginate(): bool

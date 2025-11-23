@@ -6,9 +6,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Config\Config;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Controller\MediaAdminController;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\DataTransformer\MediaTransformer;
-use JoliCode\MediaBundle\Bridge\EasyAdmin\Paginator\MediaPaginator;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\MediaChoiceType;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\UploadType;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Paginator\MediaPaginator;
 use JoliCode\MediaBundle\Bridge\Security\Voter\MediaVoter;
 use JoliCode\MediaBundle\Bridge\Twig\JoliMediaAdminExtension;
 

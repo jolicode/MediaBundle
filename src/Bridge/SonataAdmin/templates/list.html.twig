@@ -159,7 +159,7 @@
                     </table>
                 </div>
                 {% if pager is defined and pager.haveToPaginate() %}
-                    {% include '@JoliMediaSonataAdmin/Pager/results.html.twig' %}
+                    {{ include('@JoliMediaSonataAdmin/Pager/results.html.twig') }}
                 {% endif %}
             </div>
         {% else %}
@@ -194,7 +194,7 @@
             </ul>
             {% if pager is defined and pager.haveToPaginate() %}
                 <div class="box box-primary">
-                    {% include '@JoliMediaSonataAdmin/Pager/results.html.twig' %}
+                    {{ include('@JoliMediaSonataAdmin/Pager/results.html.twig') }}
                 </div>
             {% endif %}
         {% endif %}

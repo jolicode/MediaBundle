@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Bridge\EasyAdmin\Paginator;
 
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use JoliCode\MediaBundle\Model\Media;
 
 /**
  * Paginator adapter for media files to work with EasyAdmin's pagination template.
@@ -12,10 +13,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 class MediaPaginator
 {
     private int $currentPage;
+
     private int $pageSize;
+
     private int $numResults;
+
+    /**
+     * @var array<Media>
+     */
     private array $results;
+
     private string $routeName;
+
     private string $currentKey;
 
     public function __construct(
@@ -23,6 +32,9 @@ class MediaPaginator
     ) {
     }
 
+    /**
+     * @param array{items: array<Media>, total: int, page: int, perPage: int} $paginationData
+     */
     public function paginate(array $paginationData, string $routeName, string $currentKey): self
     {
         $this->currentPage = $paginationData['page'];
@@ -40,7 +52,8 @@ class MediaPaginator
         return $this->adminUrlGenerator
             ->setRoute($this->routeName, ['key' => $this->currentKey])
             ->set('page', $page)
-            ->generateUrl();
+            ->generateUrl()
+        ;
     }
 
     public function getCurrentPage(): int
@@ -61,8 +74,8 @@ class MediaPaginator
      */
     public function getPageRange(?int $pagesOnEachSide = null, ?int $pagesOnEdges = null): iterable
     {
-        $pagesOnEachSide = $pagesOnEachSide ?? 2;
-        $pagesOnEdges = $pagesOnEdges ?? 1;
+        $pagesOnEachSide ??= 2;
+        $pagesOnEdges ??= 1;
 
         $lastPage = $this->getLastPage();
         $currentPage = $this->currentPage;
@@ -82,6 +95,7 @@ class MediaPaginator
             for ($i = 1; $i <= $pagesOnEdges; ++$i) {
                 $pages[] = $i;
             }
+
             // Add ellipsis if there's a gap
             if ($startPage > $pagesOnEdges + 2) {
                 $pages[] = null;
@@ -107,6 +121,7 @@ class MediaPaginator
             } elseif ($endPage === $lastPage - $pagesOnEdges - 1) {
                 $pages[] = $lastPage - $pagesOnEdges;
             }
+
             for ($i = $lastPage - $pagesOnEdges + 1; $i <= $lastPage; ++$i) {
                 $pages[] = $i;
             }
@@ -154,6 +169,9 @@ class MediaPaginator
         return $this->numResults;
     }
 
+    /**
+     * @return array<Media>
+     */
     public function getResults(): array
     {
         return $this->results;
