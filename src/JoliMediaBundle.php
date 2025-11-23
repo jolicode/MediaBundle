@@ -2,6 +2,7 @@
 
 namespace JoliCode\MediaBundle;
 
+use Doctrine\DBAL\Types\StringType;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Metadata\ExifMetadataReader;
 use Imagine\Gd\Imagine as GdImagine;
@@ -32,7 +33,7 @@ class JoliMediaBundle extends AbstractBundle
 {
     public function boot(): void
     {
-        if (!class_exists(\Doctrine\DBAL\Types\StringType::class)) {
+        if (!class_exists(StringType::class)) {
             return;
         }
 
@@ -100,8 +101,8 @@ class JoliMediaBundle extends AbstractBundle
         ;
 
         // pre-processors
-        if (!in_array(HeifPreProcessor::class, $config['pre_processors'])) {
-            // Automatically add the Heif pre-processor if not manually configured
+        if (!in_array(HeifPreProcessor::class, $config['pre_processors']) && interface_exists(ImagineInterface::class)) {
+            // Automatically add the Heif pre-processor if it is not manually configured and Imagine is available
             array_unshift($config['pre_processors'], HeifPreProcessor::class);
         }
 
@@ -969,7 +970,6 @@ class JoliMediaBundle extends AbstractBundle
 
             $postProcessorContainerService->call('add', ['oxipng', service('.joli_media.post_processor.oxipng')]);
         }
-
     }
 
     private function createPreProcessorServices(ContainerConfigurator $container, array $preProcessorsConfig): void
