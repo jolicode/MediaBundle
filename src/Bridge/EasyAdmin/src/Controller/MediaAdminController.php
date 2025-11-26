@@ -300,7 +300,7 @@ class MediaAdminController extends AbstractController
             default => 'explore',
         };
 
-        $page = max(1, (int) $request->query->get('page', '1'));
+        $page = max(1, $request->query->getInt('page', 1));
         $perPage = $this->config->getPerPage() ?? 50;
 
         $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
