@@ -15,6 +15,15 @@ class JoliMediaSonataAdminBundle extends AbstractBundle
     {
         $definition->rootNode()
             ->children()
+                ->arrayNode('pagination')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->integerNode('per_page')
+                            ->defaultValue(50)
+                            ->info('Number of media items to display per page.')
+                        ->end()
+                    ->end()
+                ->end()
                 ->arrayNode('upload')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -104,6 +113,7 @@ class JoliMediaSonataAdminBundle extends AbstractBundle
             ->arg('$acceptedFiles', $config['upload']['accepted_files'])
             ->arg('$maxFiles', $config['upload']['max_files'])
             ->arg('$maxFileSize', $config['upload']['max_file_size'])
+            ->arg('$perPage', $config['pagination']['per_page'])
         ;
 
         $container->services()

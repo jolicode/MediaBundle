@@ -31,6 +31,15 @@ class JoliMediaEasyAdminBundle extends AbstractBundle
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('pagination')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->integerNode('per_page')
+                            ->defaultValue(50)
+                            ->info('Number of media items to display per page.')
+                        ->end()
+                    ->end()
+                ->end()
                 ->arrayNode('visibility')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -84,6 +93,7 @@ class JoliMediaEasyAdminBundle extends AbstractBundle
             ->arg('$acceptedFiles', $config['upload']['accepted_files'])
             ->arg('$maxFiles', $config['upload']['max_files'])
             ->arg('$maxFileSize', $config['upload']['max_file_size'])
+            ->arg('$perPage', $config['pagination']['per_page'])
         ;
     }
 

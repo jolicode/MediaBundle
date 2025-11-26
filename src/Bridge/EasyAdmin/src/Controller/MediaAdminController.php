@@ -13,6 +13,7 @@ use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\MoveType;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\RenameDirectoryType;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\RenameType;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\UploadType;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Paginator\MediaPaginator;
 use JoliCode\MediaBundle\Bridge\Security\Voter\AdminAction;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
@@ -53,6 +54,7 @@ class MediaAdminController extends AbstractController
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
         private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly MediaPaginator $mediaPaginator,
         private readonly ?AuthorizationCheckerInterface $authorizationChecker = null,
     ) {
     }
@@ -298,6 +300,18 @@ class MediaAdminController extends AbstractController
             default => 'explore',
         };
 
+        $page = max(1, (int) $request->query->get*int('page', '1'));
+        $perPage = $this->config->getPerPage() ?? 50;
+
+        $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
+            $currentKey,
+            recursive: false,
+            page: $page,
+            perPage: $perPage
+        );
+
+        $paginator = $this->mediaPaginator->paginate($paginatedMedias, $routeName, $currentKey);
+
         return new Response($this->twig->render('@JoliMediaEasyAdmin/list.html.twig', [
             'base_template' => \sprintf('@JoliMediaEasyAdmin/%s.html.twig', $template),
             'breadcrumb' => $this->generateBreadcrumb($currentKey, $routeName),
@@ -307,7 +321,8 @@ class MediaAdminController extends AbstractController
             'current_key' => $currentKey,
             'delete_directory_form' => $this->createDeleteDirectoryForm($key)->createView(),
             'directories' => $directories,
-            'medias' => $this->getOriginalStorage()->listMedias($currentKey, recursive: false),
+            'medias' => $paginator->getResults(),
+            'paginator' => $paginator,
             'parent_key' => \dirname($currentKey),
             'rename_directory_form' => $this->createRenameDirectoryForm($key)->createView(),
             'route_name' => $routeName,

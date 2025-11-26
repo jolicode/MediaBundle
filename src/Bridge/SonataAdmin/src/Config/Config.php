@@ -18,6 +18,7 @@ readonly class Config
         private array $acceptedFiles,
         private int $maxFileSize,
         private ?int $maxFiles = null,
+        private ?int $perPage = null,
     ) {
     }
 
@@ -60,5 +61,10 @@ readonly class Config
         }
 
         return $config;
+    }
+
+    public function getPerPage(): ?int
+    {
+        return $this->perPage;
     }
 }
