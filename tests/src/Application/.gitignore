@@ -1,3 +1,5 @@
 ###> jolicode/media-bundle ###
 /public
 ###< jolicode/media-bundle ###
+
+config/reference.php
