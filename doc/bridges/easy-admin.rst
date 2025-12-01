@@ -38,7 +38,7 @@ The integration can be configured in the ``config/packages/joli_media_easy_admin
 
     joli_media_easy_admin:
         pagination:
-            per_page: 50  # Number of items per page
+            per_page: 20
         upload:
             max_files: 10
             max_file_size: 20
@@ -57,7 +57,7 @@ Configuration Options
 
 The ``pagination`` section controls how media items are loaded and displayed:
 
-- ``per_page``: Number of media items to display per page (default: 50). This improves performance for large libraries by loading only a subset of items.
+- ``per_page``: Number of media items to display per page (default: ``20``). This improves performance for large libraries by loading only a subset of items.
 
 The ``upload`` section of the configuration allows you to control the media upload behavior in EasyAdmin:
 
@@ -83,7 +83,7 @@ You can configure the number of items displayed per page:
 
     joli_media_easy_admin:
         pagination:
-            per_page: 50  # Adjust based on your needs
+            per_page: 20
 
 Media libray menu item
 ----------------------

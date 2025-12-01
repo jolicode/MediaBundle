@@ -368,10 +368,13 @@ class OriginalStorage
         $allMedias = $this->listMedias($path, $contains, $recursive);
 
         $total = \count($allMedias);
-        $totalPages = (int) ceil($total / $perPage);
-        $page = max(1, min($page, $totalPages ?: 1));
-        $offset = ($page - 1) * $perPage;
+        $totalPages = max(1, (int) ceil($total / $perPage));
 
+        if ($page < 1 || $page > $totalPages) {
+            throw new \OutOfRangeException('The requested page number is out of range.');
+        }
+
+        $offset = ($page - 1) * $perPage;
         $items = \array_slice($allMedias, $offset, $perPage);
 
         return [

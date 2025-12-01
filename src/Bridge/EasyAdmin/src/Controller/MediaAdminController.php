@@ -31,6 +31,7 @@ use Symfony\Component\Asset\PathPackage;
 use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -300,15 +301,16 @@ class MediaAdminController extends AbstractController
             default => 'explore',
         };
 
-        $page = max(1, $request->query->getInt('page', 1));
-        $perPage = $this->config->getPerPage() ?? 50;
-
-        $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
-            $currentKey,
-            recursive: false,
-            page: $page,
-            perPage: $perPage
-        );
+        try {
+            $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
+                $currentKey,
+                recursive: false,
+                page: $request->query->getInt('page', 1),
+                perPage: $this->config->getPaginationSize(),
+            );
+        } catch (\OutOfRangeException) {
+            throw new BadRequestException('The requested page number is out of range.');
+        }
 
         $paginator = $this->mediaPaginator->paginate($paginatedMedias, $routeName, $currentKey);
 

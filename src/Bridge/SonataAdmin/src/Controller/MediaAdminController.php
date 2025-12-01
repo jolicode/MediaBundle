@@ -27,6 +27,7 @@ use Sonata\AdminBundle\Admin\Pool;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -276,15 +277,17 @@ class MediaAdminController extends AbstractController
         };
 
         $routeName = $request->attributes->get('_route') ?? 'joli_media_sonata_admin_explore';
-        $page = max(1, $request->query->getInt('page', 1));
-        $perPage = $this->config->getPerPage() ?? 50;
 
-        $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
-            $currentKey,
-            recursive: false,
-            page: $page,
-            perPage: $perPage
-        );
+        try {
+            $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
+                $currentKey,
+                recursive: false,
+                page: $request->query->getInt('page', 1),
+                perPage: $this->config->getPaginationSize(),
+            );
+        } catch (\OutOfRangeException) {
+            throw new BadRequestException('The requested page number is out of range.');
+        }
 
         $pager = $this->mediaPager->paginate($paginatedMedias, $routeName, $currentKey);
 
