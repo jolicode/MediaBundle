@@ -106,6 +106,7 @@ class PictureTest extends WebTestCase
         $img = $crawler->filterXPath('//body/*')->first();
         $html = preg_replace(['/(\n\s*)+/', '/\s+/'], ['', ' '], $img->outerHtml());
 
+        // @phpstan-ignore-next-line
         if (Kernel::MAJOR_VERSION < 8 && !(Kernel::MAJOR_VERSION === 7 && Kernel::MINOR_VERSION === 4 && \PHP_VERSION_ID >= 80400)) {
             // Since Symfony 7.4 with PHP 8.4, the native HTML5 parser is used unconditionally
             $expected = str_replace('</source>', '', $expected);
