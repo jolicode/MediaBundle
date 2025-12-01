@@ -106,6 +106,13 @@ class PictureTest extends WebTestCase
         $img = $crawler->filterXPath('//body/*')->first();
         $html = preg_replace(['/(\n\s*)+/', '/\s+/'], ['', ' '], $img->outerHtml());
 
+        // @phpstan-ignore-next-line
+        if (Kernel::MAJOR_VERSION < 8 && !(Kernel::MAJOR_VERSION === 7 && Kernel::MINOR_VERSION === 4 && \PHP_VERSION_ID >= 80400)) {
+            // Since Symfony 7.4 with PHP 8.4, the native HTML5 parser is used unconditionally
+            $expected = str_replace('</source>', '', $expected);
+            $expected = str_replace('&gt;', '>', $expected);
+        }
+
         if ($expected !== $html) {
             echo "\n\n" . $html . "\n\n";
         }
@@ -125,7 +132,7 @@ class PictureTest extends WebTestCase
                 'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
             ],
-            '<picture><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109"></picture>',
+            '<picture><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"></source><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'partial-picture-tag' => [
             Picture::class,
@@ -134,7 +141,7 @@ class PictureTest extends WebTestCase
                 'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
             ],
-            '<picture><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text"></picture>',
+            '<picture><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"></source><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text"></picture>',
         ];
         yield 'picture-with-class' => [
             Picture::class,
@@ -145,7 +152,7 @@ class PictureTest extends WebTestCase
                 'picture:class' => 'picture-class',
                 'img:class' => 'img-class',
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+            '<picture class="picture-class"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"></source><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'picture-with-sources' => [
             Picture::class,
@@ -157,7 +164,7 @@ class PictureTest extends WebTestCase
                 'img:class' => 'img-class',
                 'sources' => ['variation-standard', 'variation-large'],
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/circle-pattern.jpg" type="image/jpeg" width="145" height="109"><source srcset="/media/cache/variation-large/circle-pattern.jpg" type="image/jpeg" width="800" height="600"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/circle-pattern.jpg" type="image/jpeg" width="145" height="109"></source><source srcset="/media/cache/variation-large/circle-pattern.jpg" type="image/jpeg" width="800" height="600"></source><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"></source><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'picture-with-sources-and-skipAutoDimensions' => [
             Picture::class,
@@ -170,7 +177,7 @@ class PictureTest extends WebTestCase
                 'sources' => ['variation-standard', 'variation-large'],
                 'skipAutoDimensions' => true,
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/circle-pattern.jpg" type="image/jpeg"><source srcset="/media/cache/variation-large/circle-pattern.jpg" type="image/jpeg"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/circle-pattern.jpg" type="image/jpeg"></source><source srcset="/media/cache/variation-large/circle-pattern.jpg" type="image/jpeg"></source><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp"></source><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
         ];
         yield 'partial-picture-with-sources' => [
             Picture::class,
@@ -182,7 +189,7 @@ class PictureTest extends WebTestCase
                 'img:class' => 'img-class',
                 'sources' => ['variation-standard', 'variation-large'],
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/partially-stored-media.jpg"><source srcset="/media/cache/variation-large/partially-stored-media.jpg"><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/partially-stored-media.jpg"></source><source srcset="/media/cache/variation-large/partially-stored-media.jpg"></source><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"></source><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
         ];
         yield 'partial-picture-with-sources-and-skipAutoDimensions' => [
             Picture::class,
@@ -195,7 +202,7 @@ class PictureTest extends WebTestCase
                 'sources' => ['variation-standard', 'variation-large'],
                 'skipAutoDimensions' => true,
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/partially-stored-media.jpg"><source srcset="/media/cache/variation-large/partially-stored-media.jpg"><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/partially-stored-media.jpg"></source><source srcset="/media/cache/variation-large/partially-stored-media.jpg"></source><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"></source><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
         ];
         yield 'auto-generate-partial-picture-with-sources' => [
             Picture::class,
@@ -208,7 +215,7 @@ class PictureTest extends WebTestCase
                 'img:class' => 'img-class',
                 'sources' => ['variation-standard'],
             ],
-            '<picture class="picture-class"><source srcset="/media-auto-generate/cache/variation-standard/partially-stored-media.jpg" type="image/jpeg" width="145" height="109"><source srcset="/media-auto-generate/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp" type="image/webp" width="145" height="109"><img src="/media-auto-generate/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+            '<picture class="picture-class"><source srcset="/media-auto-generate/cache/variation-standard/partially-stored-media.jpg" type="image/jpeg" width="145" height="109"></source><source srcset="/media-auto-generate/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp" type="image/webp" width="145" height="109"></source><img src="/media-auto-generate/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'picture-with-media-and-string-srcset' => [
             Picture::class,
@@ -226,7 +233,7 @@ class PictureTest extends WebTestCase
                     'srcset' => 'variation-large',
                 ]],
             ],
-            '<picture class="picture-class"><source media="(min-width: 1024px)" srcset="/media/cache/variation-extra-large-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="1800" height="1200"><source media="(min-width: 1024px)" srcset="/media/cache/variation-extra-large/circle-pattern.jpg" type="image/jpeg" width="1800" height="1200"><source media="(max-width: 1023px)" srcset="/media/cache/variation-large-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="800" height="600"><source media="(max-width: 1023px)" srcset="/media/cache/variation-large/circle-pattern.jpg" type="image/jpeg" width="800" height="600"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+            '<picture class="picture-class"><source media="(min-width: 1024px)" srcset="/media/cache/variation-extra-large-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="1800" height="1200"></source><source media="(min-width: 1024px)" srcset="/media/cache/variation-extra-large/circle-pattern.jpg" type="image/jpeg" width="1800" height="1200"></source><source media="(max-width: 1023px)" srcset="/media/cache/variation-large-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="800" height="600"></source><source media="(max-width: 1023px)" srcset="/media/cache/variation-large/circle-pattern.jpg" type="image/jpeg" width="800" height="600"></source><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"></source><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'picture-with-sources-and-media' => [
             Picture::class,
@@ -252,7 +259,7 @@ class PictureTest extends WebTestCase
                     ],
                 ]],
             ],
-            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/circle-pattern.d601f6f2.webp 2560w, /media/cache/variation-large-webp/circle-pattern.d601f6f2.webp 1920w" type="image/webp" width="1800" height="1200"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/circle-pattern.jpg 2560w, /media/cache/variation-large/circle-pattern.jpg 1920w" type="image/jpeg" width="1800" height="1200"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/circle-pattern.d601f6f2.webp 1600w, /media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp 1024w" type="image/webp" width="800" height="600"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large/circle-pattern.jpg 1600w, /media/cache/variation-standard/circle-pattern.jpg 1024w" type="image/jpeg" width="800" height="600"><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
+            '<picture class="picture-class"><source media="(width &gt; 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/circle-pattern.d601f6f2.webp 2560w, /media/cache/variation-large-webp/circle-pattern.d601f6f2.webp 1920w" type="image/webp" width="1800" height="1200"></source><source media="(width &gt; 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/circle-pattern.jpg 2560w, /media/cache/variation-large/circle-pattern.jpg 1920w" type="image/jpeg" width="1800" height="1200"></source><source media="(width &gt;= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/circle-pattern.d601f6f2.webp 1600w, /media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp 1024w" type="image/webp" width="800" height="600"></source><source media="(width &gt;= 768px)" sizes="1024px" srcset="/media/cache/variation-large/circle-pattern.jpg 1600w, /media/cache/variation-standard/circle-pattern.jpg 1024w" type="image/jpeg" width="800" height="600"></source><source srcset="/media/cache/variation-standard-webp/circle-pattern.d601f6f2.webp" type="image/webp" width="145" height="109"></source><img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'partial-picture-with-sources-and-media' => [
             Picture::class,
@@ -278,7 +285,7 @@ class PictureTest extends WebTestCase
                     ],
                 ]],
             ],
-            '<picture class="picture-class"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/partially-stored-media.b16d66f4.webp 2560w, /media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1920w" type="image/webp"><source media="(width > 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/partially-stored-media.jpg 2560w, /media/cache/variation-large/partially-stored-media.jpg 1920w"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1600w, /media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp 1024w" type="image/webp"><source media="(width >= 768px)" sizes="1024px" srcset="/media/cache/variation-large/partially-stored-media.jpg 1600w, /media/cache/variation-standard/partially-stored-media.jpg 1024w"><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<picture class="picture-class"><source media="(width &gt; 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/partially-stored-media.b16d66f4.webp 2560w, /media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1920w" type="image/webp"></source><source media="(width &gt; 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/partially-stored-media.jpg 2560w, /media/cache/variation-large/partially-stored-media.jpg 1920w"></source><source media="(width &gt;= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1600w, /media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp 1024w" type="image/webp"></source><source media="(width &gt;= 768px)" sizes="1024px" srcset="/media/cache/variation-large/partially-stored-media.jpg 1600w, /media/cache/variation-standard/partially-stored-media.jpg 1024w"></source><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"></source><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
         ];
     }
 
