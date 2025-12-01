@@ -116,6 +116,10 @@
                 {%- endfor %}
             </ul>
         {% endif %}
+
+        {% if paginator is defined and paginator.hasToPaginate %}
+            {{ include('@EasyAdmin/crud/paginator.html.twig') }}
+        {% endif %}
     </div>
 {% endblock %}
 

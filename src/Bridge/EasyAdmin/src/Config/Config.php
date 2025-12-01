@@ -18,6 +18,7 @@ readonly class Config
         private array $acceptedFiles,
         private int $maxFileSize,
         private ?int $maxFiles = null,
+        private int $paginationSize = 20,
     ) {
     }
 
@@ -60,5 +61,10 @@ readonly class Config
         }
 
         return $config;
+    }
+
+    public function getPaginationSize(): int
+    {
+        return $this->paginationSize;
     }
 }

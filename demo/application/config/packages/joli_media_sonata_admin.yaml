@@ -1,4 +1,6 @@
 joli_media_sonata_admin:
+    pagination:
+        per_page: 25
     visibility:
         show_variations_list: true
         show_variations_list_admin_variations: true

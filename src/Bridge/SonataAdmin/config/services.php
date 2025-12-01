@@ -10,6 +10,7 @@ use JoliCode\MediaBundle\Bridge\SonataAdmin\FieldDescription\TypeGuesser;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\DataTransformer\MediaTransformer;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\MediaChoiceType;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\UploadType;
+use JoliCode\MediaBundle\Bridge\SonataAdmin\Pager\MediaPager;
 use JoliCode\MediaBundle\Bridge\Twig\JoliMediaAdminExtension;
 
 return static function (ContainerConfigurator $container): void {
@@ -30,6 +31,9 @@ return static function (ContainerConfigurator $container): void {
             '$translator' => service('translator')->ignoreOnInvalid(),
         ])
 
+        // pager
+        ->set('joli_media_sonata_admin.pager', MediaPager::class)
+
         // controller
         ->set('joli_media_sonata_admin.controller.admin', MediaAdminController::class)
         ->args([
@@ -41,6 +45,7 @@ return static function (ContainerConfigurator $container): void {
             '$translator' => service('translator')->ignoreOnInvalid(),
             '$twig' => service('twig'),
             '$formFactory' => service('form.factory'),
+            '$mediaPager' => service('joli_media_sonata_admin.pager'),
             '$sonataAdminLayoutTemplate' => param('joli_media_sonata_admin.sonata_admin.templates.layout'),
             '$sonataAdminAjaxTemplate' => param('joli_media_sonata_admin.sonata_admin.templates.ajax'),
             '$authorizationChecker' => service('security.authorization_checker')->ignoreOnInvalid(),

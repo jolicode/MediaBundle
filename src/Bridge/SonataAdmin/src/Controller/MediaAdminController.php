@@ -11,6 +11,7 @@ use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\MoveType;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\RenameDirectoryType;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\RenameType;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\UploadType;
+use JoliCode\MediaBundle\Bridge\SonataAdmin\Pager\MediaPager;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Exception\MediaInUseException;
@@ -26,6 +27,7 @@ use Sonata\AdminBundle\Admin\Pool;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -49,6 +51,7 @@ class MediaAdminController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
+        private readonly MediaPager $mediaPager,
         private readonly string $sonataAdminLayoutTemplate,
         private readonly string $sonataAdminAjaxTemplate,
         private readonly ?AuthorizationCheckerInterface $authorizationChecker = null,
@@ -273,6 +276,21 @@ class MediaAdminController extends AbstractController
             default => 'explore',
         };
 
+        $routeName = $request->attributes->get('_route') ?? 'joli_media_sonata_admin_explore';
+
+        try {
+            $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
+                $currentKey,
+                recursive: false,
+                page: $request->query->getInt('page', 1),
+                perPage: $this->config->getPaginationSize(),
+            );
+        } catch (\OutOfRangeException) {
+            throw new BadRequestException('The requested page number is out of range.');
+        }
+
+        $pager = $this->mediaPager->paginate($paginatedMedias, $routeName, $currentKey);
+
         return new Response($this->twig->render('@JoliMediaSonataAdmin/list.html.twig', [
             'admin_pool' => $this->sonataAdminPool,
             'base_ajax_template' => $this->sonataAdminAjaxTemplate,
@@ -284,7 +302,8 @@ class MediaAdminController extends AbstractController
             'current_key' => $currentKey,
             'delete_directory_form' => $this->createDeleteDirectoryForm($key)->createView(),
             'directories' => $directories,
-            'medias' => $this->getOriginalStorage()->listMedias($currentKey, recursive: false),
+            'medias' => $pager->getCurrentPageResults(),
+            'pager' => $pager,
             'parent_key' => \dirname($currentKey),
             'rename_directory_form' => $this->createRenameDirectoryForm($key)->createView(),
         ]));

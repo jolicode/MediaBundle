@@ -355,6 +355,37 @@ class OriginalStorage
         return $listing;
     }
 
+    /**
+     * @return array{items: Media[], total: int, page: int, perPage: int, totalPages: int}
+     */
+    public function listMediasPaginated(
+        ?string $path = null,
+        ?string $contains = null,
+        bool $recursive = false,
+        int $page = 1,
+        int $perPage = 50,
+    ): array {
+        $allMedias = $this->listMedias($path, $contains, $recursive);
+
+        $total = \count($allMedias);
+        $totalPages = max(1, (int) ceil($total / $perPage));
+
+        if ($page < 1 || $page > $totalPages) {
+            throw new \OutOfRangeException('The requested page number is out of range.');
+        }
+
+        $offset = ($page - 1) * $perPage;
+        $items = \array_slice($allMedias, $offset, $perPage);
+
+        return [
+            'items' => $items,
+            'total' => $total,
+            'page' => $page,
+            'perPage' => $perPage,
+            'totalPages' => $totalPages,
+        ];
+    }
+
     public function move(string $from, string $to): void
     {
         $from = Resolver::normalizePath($from);

@@ -13,6 +13,7 @@ use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\MoveType;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\RenameDirectoryType;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\RenameType;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\UploadType;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Paginator\MediaPaginator;
 use JoliCode\MediaBundle\Bridge\Security\Voter\AdminAction;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
@@ -30,6 +31,7 @@ use Symfony\Component\Asset\PathPackage;
 use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -53,6 +55,7 @@ class MediaAdminController extends AbstractController
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
         private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly MediaPaginator $mediaPaginator,
         private readonly ?AuthorizationCheckerInterface $authorizationChecker = null,
     ) {
     }
@@ -298,6 +301,19 @@ class MediaAdminController extends AbstractController
             default => 'explore',
         };
 
+        try {
+            $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
+                $currentKey,
+                recursive: false,
+                page: $request->query->getInt('page', 1),
+                perPage: $this->config->getPaginationSize(),
+            );
+        } catch (\OutOfRangeException) {
+            throw new BadRequestException('The requested page number is out of range.');
+        }
+
+        $paginator = $this->mediaPaginator->paginate($paginatedMedias, $routeName, $currentKey);
+
         return new Response($this->twig->render('@JoliMediaEasyAdmin/list.html.twig', [
             'base_template' => \sprintf('@JoliMediaEasyAdmin/%s.html.twig', $template),
             'breadcrumb' => $this->generateBreadcrumb($currentKey, $routeName),
@@ -307,7 +323,8 @@ class MediaAdminController extends AbstractController
             'current_key' => $currentKey,
             'delete_directory_form' => $this->createDeleteDirectoryForm($key)->createView(),
             'directories' => $directories,
-            'medias' => $this->getOriginalStorage()->listMedias($currentKey, recursive: false),
+            'medias' => $paginator->getResults(),
+            'paginator' => $paginator,
             'parent_key' => \dirname($currentKey),
             'rename_directory_form' => $this->createRenameDirectoryForm($key)->createView(),
             'route_name' => $routeName,

@@ -28,7 +28,7 @@ class PostFixtures extends Fixture implements DependentFixtureInterface
     {
         $extensions = ['avif', 'gif', 'jpeg', 'png', 'webp'];
 
-        for ($i = 0; $i < 10; ++$i) {
+        for ($i = 0; $i < 100; ++$i) {
             $extension = $extensions[$this->faker->numberBetween(0, \count($extensions) - 1)];
             $media = $this->resolver->resolve('articles/circle-pattern.' . $extension);
             $paragraphs = [];

@@ -37,6 +37,8 @@ The integration can be configured in the ``config/packages/joli_media_easy_admin
 .. code-block:: yaml
 
     joli_media_easy_admin:
+        pagination:
+            per_page: 20
         upload:
             max_files: 10
             max_file_size: 20
@@ -53,6 +55,10 @@ The integration can be configured in the ``config/packages/joli_media_easy_admin
 Configuration Options
 ~~~~~~~~~~~~~~~~~~~~~
 
+The ``pagination`` section controls how media items are loaded and displayed:
+
+- ``per_page``: Number of media items to display per page (default: ``20``). This improves performance for large libraries by loading only a subset of items.
+
 The ``upload`` section of the configuration allows you to control the media upload behavior in EasyAdmin:
 
 - ``max_files``: Sets the maximum number of files that can be uploaded at once.
@@ -66,8 +72,21 @@ The ``visibility`` section of the configuration allows you to control the visibi
 - ``show_html_code``: Displays the HTML code for embedding media.
 - ``show_markdown_code``: Displays the Markdown code for embedding media.
 
-Media library menu item
------------------------
+Pagination and Performance
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For large media libraries (hundreds or thousands of files), pagination significantly improves performance by loading only a subset of items at a time. The media library uses traditional page navigation with Previous/Next buttons, which is ideal for precise navigation in very large libraries.
+
+You can configure the number of items displayed per page:
+
+.. code-block:: yaml
+
+    joli_media_easy_admin:
+        pagination:
+            per_page: 20
+
+Media libray menu item
+----------------------
 
 To add a link to the media library in your EasyAdmin menu, you need to use the ``MenuItem::linkToRoute`` method, with the ``joli_media_easy_admin_explore`` route::
 

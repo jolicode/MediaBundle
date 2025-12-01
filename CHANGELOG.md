@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- feature - added pagination to admin bridges media lists
+
 ## [0.1.4] - 2024-11-23
 
 - fix - do not trigger an error when no library is defined
