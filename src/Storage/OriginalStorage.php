@@ -28,6 +28,7 @@ use League\Flysystem\Config;
 use League\Flysystem\DirectoryListing;
 use League\Flysystem\Filesystem;
 use League\Flysystem\StorageAttributes;
+use League\Flysystem\UnableToGenerateTemporaryUrl;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -291,6 +292,14 @@ class OriginalStorage
             $parameters,
             $referenceType,
         );
+    }
+
+    /**
+     * @throws UnableToGenerateTemporaryUrl when unsupported by the configured filesystem adapter
+     */
+    public function getTemporaryUrl(string $path): string
+    {
+        return $this->filesystem->temporaryUrl($path, (new \DateTimeImmutable())->modify('+1 hour'));
     }
 
     public function getUrlPath(): string
