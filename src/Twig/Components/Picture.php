@@ -60,7 +60,7 @@ class Picture
             } catch (MediaNotFoundException) {
                 // the media cannot be found based on the path and library, so we create a fake media object
                 // to allow the component to render - there will obviously be a 404 error when trying to access the media
-                $media = new Media($path, $this->libraries->getDefault()->getOriginalStorage());
+                $media = new Media($path, $this->libraries->get($library)->getOriginalStorage());
             }
         }
 

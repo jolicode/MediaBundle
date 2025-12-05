@@ -458,6 +458,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('joli_media.twig_extension', JoliMediaExtension::class)
         ->args([
             service('joli_media.resolver'),
+            service('joli_media.converter'),
         ])
         ->tag('twig.extension')
 
