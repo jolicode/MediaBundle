@@ -2,6 +2,7 @@
 
 namespace JoliCode\MediaBundle\Twig;
 
+use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Resolver\Resolver;
@@ -13,6 +14,7 @@ class JoliMediaExtension extends AbstractExtension
 {
     public function __construct(
         private readonly Resolver $resolver,
+        private readonly Converter $converter,
     ) {
     }
 
@@ -40,7 +42,17 @@ class JoliMediaExtension extends AbstractExtension
         ?string $libraryName = null,
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH,
     ): ?string {
-        return $this->getMediaVariation($path, $variationName, $libraryName)?->getUrl($referenceType);
+        $media = $this->getMediaVariation($path, $variationName, $libraryName);
+
+        if ($media instanceof MediaVariation) {
+            try {
+                $this->converter->convertIfMustStoreWhenGeneratingUrl($media);
+            } catch (\Exception) {
+                // ignore errors
+            }
+        }
+
+        return $media?->getUrl($referenceType);
     }
 
     private function getMediaVariation(

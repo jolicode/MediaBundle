@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- fix - event when the boolean `must_store_when_generating_url` option is set to `true`, the media is not stored when generating a URL using the twig `joli_media_url` filter
+
 ## [0.2.0] - 2024-12-01
 
 - feature - added pagination to admin bridges media lists
