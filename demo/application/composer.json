@@ -8,19 +8,19 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/doctrine-migrations-bundle": "^3.7",
-        "easycorp/easyadmin-bundle": "^4.27.3",
+        "easycorp/easyadmin-bundle": "^4.27.4",
         "fakerphp/faker": "^1.24.1",
         "imagine/imagine": "^1.5",
-        "jolicode/media-bundle": "^0.1.2",
-        "nikic/php-parser": "^5.6.2",
+        "jolicode/media-bundle": "^0.2.0",
+        "nikic/php-parser": "^5.7.0",
         "sonata-project/doctrine-orm-admin-bundle": "^4.19",
         "stof/doctrine-extensions-bundle": "^1.14",
-        "symfony/console": "7.3.*",
-        "symfony/dotenv": "7.3.*",
+        "symfony/console": "7.4.*",
+        "symfony/dotenv": "7.4.*",
         "symfony/flex": "^2.10",
-        "symfony/framework-bundle": "7.3.*",
-        "symfony/runtime": "7.3.*",
-        "symfony/yaml": "7.3.*"
+        "symfony/framework-bundle": "7.4.*",
+        "symfony/runtime": "7.4.*",
+        "symfony/yaml": "7.4.*"
     },
     "config": {
         "allow-plugins": {
@@ -69,13 +69,13 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.3.*"
+            "require": "7.4.*"
         }
     },
     "require-dev": {
-        "doctrine/doctrine-fixtures-bundle": "^4.3",
-        "symfony/debug-bundle": "7.3.*",
-        "symfony/maker-bundle": "^1.64",
-        "symfony/web-profiler-bundle": "7.3.*"
+        "doctrine/doctrine-fixtures-bundle": "^4.3.1",
+        "symfony/debug-bundle": "7.4.*",
+        "symfony/maker-bundle": "^1.65.1",
+        "symfony/web-profiler-bundle": "7.4.*"
     }
 }

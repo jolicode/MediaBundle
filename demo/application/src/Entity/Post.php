@@ -50,7 +50,7 @@ class Post implements \Stringable
     /**
      * @var Collection<int, PostMedia>
      */
-    #[ORM\OneToMany(targetEntity: PostMedia::class, mappedBy: 'post', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: PostMedia::class, mappedBy: 'post', cascade: ['persist'], orphanRemoval: true)]
     public Collection $postMedia;
 
     public function __construct()

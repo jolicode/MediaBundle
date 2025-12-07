@@ -10,12 +10,15 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class PostController extends AbstractController
 {
+    public function __construct(private readonly PostRepository $postRepository)
+    {
+    }
+
     #[Route('/', name: 'app_post_index')]
-    public function index(
-        PostRepository $postRepository,
-    ): Response {
+    public function index(): Response
+    {
         return $this->render('post/index.html.twig', [
-            'posts' => $postRepository->findBy(['isPublished' => true], ['id' => 'DESC']),
+            'posts' => $this->postRepository->findBy(['isPublished' => true], ['publishedAt' => 'DESC']),
         ]);
     }
 

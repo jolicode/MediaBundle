@@ -1,7 +1,7 @@
 {
     "type": "project",
     "require": {
-        "friendsofphp/php-cs-fixer": "^3.89.2"
+        "friendsofphp/php-cs-fixer": "^3.91.3"
     },
     "config": {
         "platform": {

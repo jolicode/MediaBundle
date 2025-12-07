@@ -59,6 +59,19 @@
             "config/routes/easyadmin.yaml"
         ]
     },
+    "jolicode/media-bundle": {
+        "version": "0.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "47f0a88bb77418697bd0c3ed213cd1a23604d93f"
+        },
+        "files": [
+            "config/packages/joli_media.yaml",
+            "config/routes/joli_media.yaml"
+        ]
+    },
     "knplabs/knp-menu-bundle": {
         "version": "v3.6.0"
     },

@@ -1,26 +1,26 @@
 # Changelog
 
-## Unreleased
+## [0.2.1] - 2025-12-07
 
-- fix - event when the boolean `must_store_when_generating_url` option is set to `true`, the media is not stored when generating a URL using the twig `joli_media_url` filter
+- fix - even when the boolean `must_store_when_generating_url` option is set to `true`, the media is not stored when generating a URL using the twig `joli_media_url` filter
 
-## [0.2.0] - 2024-12-01
+## [0.2.0] - 2025-12-01
 
 - feature - added pagination to admin bridges media lists
 - fix - Symfony 8.0 compatibility
 
-## [0.1.4] - 2024-11-23
+## [0.1.4] - 2025-11-23
 
 - fix - do not trigger an error when no library is defined
 
-## [0.1.3] - 2024-11-23
+## [0.1.3] - 2025-11-23
 
 - fix - `Request::get()` deprecation
 - fix - no exception when rendering a non resolved media
 - fix - view mode switch in EA bridge
 - fix - have the bundle work correctly when optional dependencies are not installed
 
-## [0.1.2] - 2024-11-20
+## [0.1.2] - 2025-11-20
 
 - feature - support for Symfony 8.0
 - feature - demo application to showcase the bundle features
@@ -62,3 +62,4 @@ This is the initial release of the bundle.
 [0.1.3]: https://github.com/jolicode/mediabundle/releases/tag/v0.1.3
 [0.1.4]: https://github.com/jolicode/mediabundle/releases/tag/v0.1.4
 [0.2.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.2.0
+[0.2.1]: https://github.com/jolicode/mediabundle/releases/tag/v0.2.1
