@@ -75,6 +75,18 @@ RUN cd /tmp \
     && tar xzvf oxipng-9.1.5-x86_64-unknown-linux-musl.tar.gz \
     && cp oxipng-9.1.5-x86_64-unknown-linux-musl/oxipng /usr/local/bin/oxipng
 
+ARG NODEJS_VERSION=24.x
+RUN curl -s https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODEJS_VERSION} nodistro main" > /etc/apt/sources.list.d/nodesource.list
+
+# Default toys
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        nodejs \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* \
+    && npm install -g yarn@1.22
+
 # Fake user to maps with the one on the host
 ARG USER_ID
 RUN addgroup --gid 1000 app && \
