@@ -13,7 +13,7 @@ use function Castor\io;
 use function Castor\log;
 use function Castor\run as castor_run;
 
-const DEFAULT_PHP_VERSION = '8.3';
+const DEFAULT_PHP_VERSION = '8.2';
 
 #[AsTask(description: 'Build the test infrastructure')]
 function build(
