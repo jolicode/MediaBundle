@@ -136,7 +136,7 @@ class ConverterTest extends BaseTestCase
         foreach (self::TO_EXTENSIONS as $toExtension) {
             $variationName = $this->getVariationName($toExtension);
 
-            $variations[$variationName] = fn (): Variation => new Variation(
+            $variations[$variationName] = static fn (): Variation => new Variation(
                 $variationName,
                 $toExtension ? Format::fromName($toExtension) : null,
                 new TransformerChain([

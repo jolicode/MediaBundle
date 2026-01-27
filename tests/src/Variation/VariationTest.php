@@ -86,7 +86,7 @@ class VariationTest extends BaseTestCase
             Format::JPEG,
             $this->transformerChain,
             globalPreProcessors: new ServiceLocator([
-                HeifPreProcessor::class => fn (): HeifPreProcessor => new HeifPreProcessor(new Imagine()),
+                HeifPreProcessor::class => static fn (): HeifPreProcessor => new HeifPreProcessor(new Imagine()),
             ]),
             preProcessors: new ServiceLocator([
                 TestPreProcessor::class => fn (): PreProcessorInterface => $this->preProcessor,

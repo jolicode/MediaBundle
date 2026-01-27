@@ -192,7 +192,7 @@ class MediaAdminControllerTest extends WebTestCase
     private function findInGalleryFromName(Crawler $crawler, string $name): Crawler
     {
         return $crawler->filter('ul.gallery-grid--files .gallery-grid-item__link')
-            ->reduce(fn (Crawler $node): bool => str_contains($node->filter('.gallery-grid-item__name')->text(), $name))
+            ->reduce(static fn (Crawler $node): bool => str_contains($node->filter('.gallery-grid-item__name')->text(), $name))
         ;
     }
 }

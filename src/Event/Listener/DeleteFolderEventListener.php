@@ -28,7 +28,7 @@ readonly class DeleteFolderEventListener
         /**
          * @var array<string, array<class-string, array<string, Strategy>>> $metadata
          */
-        $metadata = $this->cache->get(MediaEntityMetadataWarmer::MEDIA_DELETE_BEHAVIORS_CACHE_KEY, fn (): array => []);
+        $metadata = $this->cache->get(MediaEntityMetadataWarmer::MEDIA_DELETE_BEHAVIORS_CACHE_KEY, static fn (): array => []);
         $mediaType = new MediaType();
 
         foreach ($metadata as $objectManagerName => $entities) {
@@ -68,7 +68,7 @@ readonly class DeleteFolderEventListener
             /**
              * @var array<string, array<class-string, array<string, Strategy>>> $metadata
              */
-            $metadata = $this->cache->get(MediaEntityMetadataWarmer::MEDIA_DELETE_BEHAVIORS_CACHE_KEY, fn (): array => []);
+            $metadata = $this->cache->get(MediaEntityMetadataWarmer::MEDIA_DELETE_BEHAVIORS_CACHE_KEY, static fn (): array => []);
 
             foreach ($metadata as $objectManagerName => $entities) {
                 /** @var EntityManagerInterface $objectManager */

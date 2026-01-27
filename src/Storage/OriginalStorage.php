@@ -48,7 +48,7 @@ class OriginalStorage
     ) {
     }
 
-    public function __sleep(): array
+    public function __serialize(): array
     {
         return [
             'urlPath',
@@ -321,7 +321,7 @@ class OriginalStorage
         return $this->list($path, $contains, 'dir', $recursive)
             ->filter(fn (StorageAttributes $attributes): bool => $this->trashPath !== $attributes->path())
             ->sortByPath()
-            ->map(fn (StorageAttributes $attributes): string => $attributes->path())
+            ->map(static fn (StorageAttributes $attributes): string => $attributes->path())
             ->toArray()
         ;
     }
@@ -333,7 +333,7 @@ class OriginalStorage
     {
         return $this->list($path, $contains, 'file', $recursive)
             ->sortByPath()
-            ->map(fn (StorageAttributes $attributes): string => $attributes->path())
+            ->map(static fn (StorageAttributes $attributes): string => $attributes->path())
             ->toArray()
         ;
     }
@@ -349,7 +349,7 @@ class OriginalStorage
         ;
 
         if (!$recursive) {
-            usort($listing, fn (Media $a, Media $b): int => strtolower($a->getPath()) <=> strtolower($b->getPath()));
+            usort($listing, static fn (Media $a, Media $b): int => strtolower($a->getPath()) <=> strtolower($b->getPath()));
         }
 
         return $listing;
@@ -511,9 +511,9 @@ class OriginalStorage
 
         if (null !== $type) {
             if ('file' === $type) {
-                $listing = $listing->filter(fn (StorageAttributes $attributes): bool => $attributes->isFile());
+                $listing = $listing->filter(static fn (StorageAttributes $attributes): bool => $attributes->isFile());
             } elseif ('dir' === $type) {
-                $listing = $listing->filter(fn (StorageAttributes $attributes): bool => $attributes->isDir());
+                $listing = $listing->filter(static fn (StorageAttributes $attributes): bool => $attributes->isDir());
             } else {
                 throw new \InvalidArgumentException('Invalid type');
             }
@@ -528,7 +528,7 @@ class OriginalStorage
         }
 
         if (null !== $contains) {
-            $listing = $listing->filter(fn (StorageAttributes $attributes): bool => (bool) preg_match(
+            $listing = $listing->filter(static fn (StorageAttributes $attributes): bool => (bool) preg_match(
                 '/' . preg_quote($contains, '/') . '/',
                 $attributes->path(),
             ));

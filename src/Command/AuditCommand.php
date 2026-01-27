@@ -104,7 +104,7 @@ class AuditCommand extends Command
                 $table
                     ->setHeaders($headers)
                     ->setRows(array_map(
-                        fn (PathStatistic $statistic): array => $statistic->asTableRow($variationNames),
+                        static fn (PathStatistic $statistic): array => $statistic->asTableRow($variationNames),
                         $details
                     ))
                 ;
