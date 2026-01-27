@@ -150,20 +150,20 @@ class CacheStorage
         }
 
         $listing = $this->filesystem->listContents($path ?? '', true)
-            ->filter(fn (StorageAttributes $attributes): bool => $attributes->isFile())
+            ->filter(static fn (StorageAttributes $attributes): bool => $attributes->isFile())
         ;
 
         if ('' !== $pathCriterion) {
             // @TODO check rather using the withPath() method
-            $listing = $listing->filter(fn (StorageAttributes $attributes): bool => (bool) preg_match('/' . $pathCriterion . '/', $attributes->path()));
+            $listing = $listing->filter(static fn (StorageAttributes $attributes): bool => (bool) preg_match('/' . $pathCriterion . '/', $attributes->path()));
         }
 
         if (null !== $contains) {
-            $listing = $listing->filter(fn (StorageAttributes $attributes): bool => (bool) preg_match('/' . preg_quote($contains, '/') . '/', $attributes->path()));
+            $listing = $listing->filter(static fn (StorageAttributes $attributes): bool => (bool) preg_match('/' . preg_quote($contains, '/') . '/', $attributes->path()));
         }
 
         return $listing
-            ->map(fn (StorageAttributes $attributes): string => $attributes->path())
+            ->map(static fn (StorageAttributes $attributes): string => $attributes->path())
             ->toArray()
         ;
     }
@@ -176,9 +176,9 @@ class CacheStorage
         $path = $this->strategy->getPath($parent ?? '', $variation);
 
         return $this->filesystem->listContents($path, false)
-            ->filter(fn (StorageAttributes $attributes): bool => $attributes->isDir())
+            ->filter(static fn (StorageAttributes $attributes): bool => $attributes->isDir())
             ->sortByPath()
-            ->map(fn (StorageAttributes $attributes): string => $attributes->path())
+            ->map(static fn (StorageAttributes $attributes): string => $attributes->path())
             ->toArray()
         ;
     }
@@ -191,9 +191,9 @@ class CacheStorage
         $path = $this->strategy->getPath($path ?? '', $variation);
 
         return $this->filesystem->listContents($path, false)
-            ->filter(fn (StorageAttributes $attributes): bool => $attributes->isFile())
+            ->filter(static fn (StorageAttributes $attributes): bool => $attributes->isFile())
             ->sortByPath()
-            ->map(fn (StorageAttributes $attributes): string => $attributes->path())
+            ->map(static fn (StorageAttributes $attributes): string => $attributes->path())
             ->toArray()
         ;
     }

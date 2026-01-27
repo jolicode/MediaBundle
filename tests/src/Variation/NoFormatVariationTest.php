@@ -47,7 +47,7 @@ class NoFormatVariationTest extends BaseTestCase
         $libraries = new LibraryContainer(
             new ServiceLocator(
                 [
-                    'default' => fn (): Library => $library,
+                    'default' => static fn (): Library => $library,
                 ]
             ),
             'default',

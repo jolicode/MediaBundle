@@ -38,7 +38,7 @@ class VariationContainerTest extends BaseTestCase
             new TransformerChain([]),
         );
         $this->variationContainer = $this->createVariationContainer($this->cacheStorage, [
-            'thumbnail' => fn (): Variation => $variation,
+            'thumbnail' => static fn (): Variation => $variation,
         ]);
 
         self::assertSame($variation, $this->variationContainer->get('thumbnail'));
@@ -73,8 +73,8 @@ class VariationContainerTest extends BaseTestCase
             new TransformerChain([]),
         );
         $this->variationContainer = $this->createVariationContainer($this->cacheStorage, [
-            'thumbnail' => fn (): Variation => $thumbnail,
-            'large' => fn (): Variation => $large,
+            'thumbnail' => static fn (): Variation => $thumbnail,
+            'large' => static fn (): Variation => $large,
         ]);
 
         $variations = $this->variationContainer->list();
@@ -97,8 +97,8 @@ class VariationContainerTest extends BaseTestCase
             new TransformerChain([]),
         );
         $this->variationContainer = $this->createVariationContainer($this->cacheStorage, [
-            'thumbnail' => fn (): Variation => $thumbnail,
-            'large' => fn (): Variation => $large,
+            'thumbnail' => static fn (): Variation => $thumbnail,
+            'large' => static fn (): Variation => $large,
         ]);
 
         $names = $this->variationContainer->getNames();

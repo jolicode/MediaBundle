@@ -26,7 +26,7 @@ readonly class MoveMediaEventListener
         /**
          * @var MediaEntityMetadata[] $metadata
          */
-        $metadata = $this->cache->get(MediaEntityMetadataWarmer::MEDIA_FIELDS_CACHE_KEY, fn (): array => []);
+        $metadata = $this->cache->get(MediaEntityMetadataWarmer::MEDIA_FIELDS_CACHE_KEY, static fn (): array => []);
         $mediaType = new MediaType();
         $objectManagers = [];
 

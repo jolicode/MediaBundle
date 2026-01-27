@@ -155,7 +155,7 @@ class BaseTestCase extends WebTestCase
             new ServiceLocator(
                 [
                     'default' => fn (): Library => $this->library,
-                    'custom' => fn (): Library => $customLibrary,
+                    'custom' => static fn (): Library => $customLibrary,
                 ]
             ),
             'default',
