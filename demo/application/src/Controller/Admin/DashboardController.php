@@ -2,8 +2,6 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Post;
-use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -36,10 +34,10 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToCrud('Users', 'fas fa-users', User::class);
+        yield MenuItem::linkTo(UserCrudController::class, 'Users', 'fas fa-users');
 
         yield MenuItem::section('Contents');
-        yield MenuItem::linkToCrud('Posts', 'fa fa-file-text', Post::class);
+        yield MenuItem::linkTo(PostCrudController::class, 'Posts', 'fa fa-file-text');
         yield MenuItem::linkToRoute('Media Library', 'fa fa-image', 'joli_media_easy_admin_explore');
     }
 }
