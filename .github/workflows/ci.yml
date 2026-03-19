@@ -51,12 +51,16 @@ jobs:
         run: castor qa:doctor-rst --error-format=github
 
   tests:
-    name: Run tests for PHP ${{ matrix.php-versions }}
+    name: Run tests (PHP ${{ matrix.php-versions }}, EasyAdmin ${{ matrix.easyadmin-versions }})
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 15
       matrix:
         php-versions:  ['8.2', '8.3', '8.4', '8.5']
+        easyadmin-versions:  [ '5.0.*']
+        include:
+          - php-versions: "8.3"
+            easyadmin-versions: "4.26.*"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -75,7 +79,7 @@ jobs:
         run: castor docker:build --php-version ${{ matrix.php-versions }}
 
       - name: Install dependencies
-        run: castor backend:install --php-version ${{ matrix.php-versions }}
+        run: castor backend:install --php-version ${{ matrix.php-versions }} --easy-admin-version ${{ matrix.easyadmin-versions }}
 
       - name: Run tests
         run: castor qa:phpunit --php-version ${{ matrix.php-versions }}

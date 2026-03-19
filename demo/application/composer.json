@@ -8,7 +8,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/doctrine-migrations-bundle": "^3.7",
-        "easycorp/easyadmin-bundle": "^4.27.4",
+        "easycorp/easyadmin-bundle": "^5.0",
         "fakerphp/faker": "^1.24.1",
         "imagine/imagine": "^1.5",
         "jolicode/media-bundle": "^0.2.0",
