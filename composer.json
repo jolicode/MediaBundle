@@ -59,6 +59,9 @@
         "symfony/stopwatch": "^7.0 || ^8.0",
         "symfony/yaml": "^7.2 || ^8.0"
     },
+    "conflict": {
+        "easycorp/easyadmin-bundle": "<4.26 || ^5.0"
+    },
     "suggest": {
         "ext-imagick": "required to use imagine processor",
         "imagine/imagine": "required to use imagine processor",
