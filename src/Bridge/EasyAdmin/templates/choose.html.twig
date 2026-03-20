@@ -21,6 +21,7 @@
     {% block rename_directory_container %}{% endblock %}
 
     {% block body_breadcrumb %}
+        {% set ea = ea() %}
         {{ include(ea.templatePath('flash_messages')) }}
         <div class="mt-3">
             {% if breadcrumb|length >= 1 %}

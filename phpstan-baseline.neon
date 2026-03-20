@@ -5,8 +5,15 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: src/Storage/MediaPropertyAccessor.php
+
 		-
 			message: '#^Method JoliCode\\MediaBundle\\Storage\\MediaVariationPropertyAccessor\:\:getPixelDimensions\(\) should return array\{height\: int, width\: int\}\|false but returns array\{height\: int, width\: int\}\|bool\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Storage/MediaVariationPropertyAccessor.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''EasyCorp\\\\Bundle\\\\EasyAdminBundle\\\\Config\\\\MenuItem'' and ''linkToCrud'' will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: tests/src/Application/src/Controller/DashboardController.php

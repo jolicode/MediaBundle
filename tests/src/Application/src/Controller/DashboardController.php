@@ -28,6 +28,12 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
 
-        yield MenuItem::linkToCrud('Pages', 'fa fa-file-text', Page::class);
+        if (method_exists(MenuItem::class, 'linkToCrud')) {
+            yield MenuItem::linkToCrud('Pages', 'fa fa-file-text', Page::class);
+
+            return;
+        }
+
+        yield MenuItem::linkTo(PageCrudController::class, 'Pages', 'fa fa-file-text');
     }
 }

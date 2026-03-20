@@ -46,7 +46,7 @@
     "require-dev": {
         "ext-imagick": "*",
         "doctrine/doctrine-fixtures-bundle": "^4.1",
-        "easycorp/easyadmin-bundle": "^4.26",
+        "easycorp/easyadmin-bundle": "^4.26 || ^5.0",
         "imagine/imagine": "^1.5",
         "league/flysystem-bundle": "^3.4",
         "league/flysystem-memory": "^3.0",
@@ -60,7 +60,7 @@
         "symfony/yaml": "^7.2 || ^8.0"
     },
     "conflict": {
-        "easycorp/easyadmin-bundle": "<4.26 || ^5.0"
+        "easycorp/easyadmin-bundle": "<4.26 || ^6.0"
     },
     "suggest": {
         "ext-imagick": "required to use imagine processor",
