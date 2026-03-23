@@ -26,7 +26,7 @@
             </form>
             <ul class="nav nav-pills flex-column px-2 py-2" id="folder-tree">
                 <li class="nav-item">
-                    <a href="{{ path('joli_media_sylius_admin_explore', { 'key': '' }) }}" class="nav-link {{ current_key is empty ? 'active' : '' }}">
+                    <a href="{{ path('joli_media_sylius_admin_explore', { 'key': '' }) }}" class="nav-link text-decoration-none {{ current_key is empty ? 'text-primary fw-semibold' : 'text-dark' }}">
                         {{ ux_icon('ph:house-fill') }}
                         Root
                     </a>
@@ -34,7 +34,7 @@
                 {% for directory in directories %}
                     <li class="nav-item folder-item" data-directory="{{ directory }}">
                         <div class="nav-link d-flex align-items-center gap-2">
-                            <a href="{{ path('joli_media_sylius_admin_explore', { 'key': directory }) }}" class="flex-grow-1 {{ current_key == directory ? 'active' : '' }}">
+                            <a href="{{ path('joli_media_sylius_admin_explore', { 'key': directory }) }}" class="flex-grow-1 text-decoration-none {{ current_key == directory ? 'text-primary fw-semibold' : 'text-dark' }}">
                                 {{ ux_icon('ph:folder-fill') }}
                                 <span class="folder-name">{{ directory }}</span>
                             </a>
