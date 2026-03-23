@@ -1,0 +1,6 @@
+app:
+    ui:
+        user: User
+        users: Users
+        post: Post
+        posts: Posts

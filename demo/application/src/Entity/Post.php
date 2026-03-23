@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Form\PostType;
+use App\Grid\PostGrid;
 use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,9 +15,29 @@ use JoliCode\MediaBundle\DeleteBehavior\Strategy;
 use JoliCode\MediaBundle\Doctrine\Types as MediaTypes;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Validator\Media as MediaConstraint;
+use Sylius\Resource\Metadata\AsResource;
+use Sylius\Resource\Metadata\BulkDelete;
+use Sylius\Resource\Metadata\Create;
+use Sylius\Resource\Metadata\Delete;
+use Sylius\Resource\Metadata\Index;
+use Sylius\Resource\Metadata\Update;
+use Sylius\Resource\Model\ResourceInterface;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
-class Post implements \Stringable
+#[AsResource(
+    section: 'admin',
+    formType: PostType::class,
+    templatesDir: '@SyliusAdminUi/crud',
+    routePrefix: '/sylius',
+    operations: [
+        new Create(),
+        new Update(),
+        new Delete(),
+        new Index(grid: PostGrid::class),
+        new BulkDelete(),
+    ],
+)]
+class Post implements \Stringable, ResourceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -56,6 +78,11 @@ class Post implements \Stringable
     public function __construct()
     {
         $this->postMedia = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
     }
 
     public function __toString(): string

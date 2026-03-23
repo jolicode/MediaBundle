@@ -1,0 +1,30 @@
+imports:
+    - { resource: '@SyliusBootstrapAdminUiBundle/config/app.php' }
+
+sylius_twig_hooks:
+    hooks:
+        'jolicode_sylius_admin.media.index':
+            title:
+                template: '@SyliusBootstrapAdminUi/shared/crud/common/content/header/title_block/title.html.twig'
+                configuration:
+                    title: Media
+
+        'jolicode_sylius_admin.media.index.content':
+            grid:
+                enabled: false
+            body:
+                template: 'media/index/content/body.html.twig'
+
+        'jolicode_sylius_admin.media.index.content.header':
+            breadcrumbs:
+                template: '@SyliusBootstrapAdminUi/shared/crud/index/content/header/breadcrumbs.html.twig'
+                configuration:
+                    title: 'Media'
+
+        'jolicode_sylius_admin.media.index.content.header.title_block':
+            title:
+                template: '@SyliusBootstrapAdminUi/shared/crud/common/content/header/title_block/title.html.twig'
+                configuration:
+                    title: Media
+#            actions:
+#                enabled: false

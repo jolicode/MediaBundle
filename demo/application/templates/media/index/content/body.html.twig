@@ -1,0 +1,86 @@
+{% set medias = hookable_metadata.context.medias %}
+{% set directories = hookable_metadata.context.directories %}
+{% set key = hookable_metadata.context.key %}
+{% set current_key = hookable_metadata.context.current_key %}
+{% import _self as self %}
+
+<div class="page-body">
+    <div class="container-xl">
+        <div class="row">
+            <div class="col-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Folders</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="nav nav-pills flex-column px-2 py-2">
+                            <li class="nav-item">
+                                <a href="{{ path('joli_media_sylius_admin_explore', { 'key': '' }) }}" class="nav-link {{ current_key is empty ? 'active' : '' }}">
+                                    {{ ux_icon('ph:house-fill') }}
+                                    Root
+                                </a>
+                            </li>
+                            {% for directory in directories %}
+                                <li class="nav-item">
+                                    <a href="{{ path('joli_media_sylius_admin_explore', { 'key': directory }) }}" class="nav-link {{ current_key == directory ? 'active' : '' }}">
+                                        {{ ux_icon('ph:folder-fill') }}
+                                        {{ directory }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-9">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                            <li class="nav-item">
+                                <a href="#tabs-list-view" class="nav-link active" data-bs-toggle="tab">List view</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#tabs-grid-view" class="nav-link" data-bs-toggle="tab">Grid view</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="tab-pane active show" id="tabs-list-view">
+                                {% hook 'grid' %}
+                            </div>
+                            <div class="tab-pane" id="tabs-grid-view">
+                                <ul class="gallery-grid gallery-grid--files">
+                                    {% for media in medias -%}
+                                        {% if joli_media_admin_is_granted('SHOW', path: media.path) %}
+                                            {{ self.media_grid_view(media, key, current_key) }}
+                                        {% endif %}
+                                    {%- endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% macro media_grid_view(media, key, current_key) %}
+    <li class="gallery-grid-item">
+        <a class="gallery-grid-item__link"
+           href="{{ ea_url().setRoute('joli_media_easy_admin_show', { key: media.path }) }}"
+           data-media-folder="{{ current_key }}"
+           data-media-url="{{ media.path }}"
+           data-media-full-url="{{ media.url }}"
+           data-media-type="{{ media.fileType }}"
+           data-media-template="{{ include('@JoliMediaEasyAdmin/_preview.html.twig', { className: 'media-preview' })|escape }}"
+           data-media-original-template="{{ include('@JoliMediaEasyAdmin/_preview.html.twig', { variation: false })|escape }}"
+        >
+                                            <span class="media-preview">
+                                                {{ include('@JoliMediaEasyAdmin/_as_image.html.twig', { skipAutoDimensions: true }) }}
+                                            </span>
+            <span class="gallery-grid-item__name">{{ media.filename }}</span>
+        </a>
+    </li>
+{% endmacro %}

@@ -1,0 +1,9 @@
+{% extends '@SyliusAdminUi/base.html.twig' %}
+
+{% block title %}
+    {{ 'Media'|trans }} {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {% hook ['jolicode_sylius_admin.media.index', 'sylius_admin.common.index'] %}
+{% endblock %}
