@@ -10,6 +10,7 @@ use Sylius\Bundle\GridBundle\Builder\ActionGroup\BulkActionGroup;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\ItemActionGroup;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\MainActionGroup;
 use Sylius\Bundle\GridBundle\Builder\Field\StringField;
+use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
 use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
 use Sylius\Bundle\GridBundle\Grid\AbstractGrid;
 use Sylius\Component\Grid\Attribute\AsGrid;
@@ -24,6 +25,8 @@ final class UserGrid extends AbstractGrid
     {
         $gridBuilder
             ->withFields(
+                TwigField::create('profilePicture', 'user/grid/field/profile_picture.html.twig')
+                    ->setLabel('Profile picture'),
                 StringField::create('name')
                     ->setLabel('Name')
                     ->setSortable(true),

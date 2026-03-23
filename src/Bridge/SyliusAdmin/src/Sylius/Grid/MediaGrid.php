@@ -20,7 +20,7 @@ final class MediaGrid extends AbstractGrid
     {
         $gridBuilder
             ->withFields(
-                TwigField::create('preview', '@JoliMediaSyliusAdmin/media/index/content/grid/field/preview.html.twig')
+                TwigField::create('preview', '@JoliMediaSyliusAdmin/media/index/grid/field/preview.html.twig')
                     ->setPath('.')
                     ->setLabel('Preview')
             )
@@ -33,11 +33,11 @@ final class MediaGrid extends AbstractGrid
                     ->setLabel('Type'),
             )
             ->withFields(
-                TwigField::create('fileSize', '@JoliMediaSyliusAdmin/media/index/content/grid/field/file_size.html.twig')
+                TwigField::create('fileSize', '@JoliMediaSyliusAdmin/media/index/grid/field/file_size.html.twig')
                     ->setLabel('File size')
             )
             ->withFields(
-                TwigField::create('pixelDimensions', '@JoliMediaSyliusAdmin/media/index/content/grid/field/dimensions.html.twig')
+                TwigField::create('pixelDimensions', '@JoliMediaSyliusAdmin/media/index/grid/field/dimensions.html.twig')
                     ->setLabel('Dimensions')
             )
         ;

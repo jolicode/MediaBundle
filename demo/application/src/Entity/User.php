@@ -28,7 +28,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     section: 'admin',
     formType: UserType::class,
     templatesDir: '@SyliusAdminUi/crud',
-    routePrefix: '/sylius',
+    routePrefix: '/sylius-admin',
     operations: [
         new Create(),
         new Update(),

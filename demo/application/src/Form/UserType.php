@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\User;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\MediaChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,7 +16,7 @@ class UserType extends AbstractType
             ->add('name')
             ->add('email')
             ->add('isActive')
-//            ->add('profilePicture')
+            ->add('profilePicture', MediaChoiceType::class)
         ;
     }
 
