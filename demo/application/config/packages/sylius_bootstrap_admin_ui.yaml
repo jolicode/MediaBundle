@@ -3,6 +3,10 @@ imports:
 
 sylius_twig_hooks:
     hooks:
+        'sylius_admin.base#javascripts':
+            folder_tree:
+                template: 'shared/assets/javascripts/folder_tree.html.twig'
+
         'jolicode_sylius_admin.media.index':
             title:
                 template: '@SyliusBootstrapAdminUi/shared/crud/common/content/header/title_block/title.html.twig'
