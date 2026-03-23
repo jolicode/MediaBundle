@@ -3,7 +3,7 @@
 {% set current_key = hookable_metadata.context.current_key %}
 
 <div class="col-3">
-    <div class="card" data-create-directory-path="{{ path('joli_media_sylius_admin_create_directory') }}" data-rename-directory-path="{{ path('joli_media_sylius_admin_rename') }}">
+    <div class="card" data-create-directory-path="{{ path('joli_media_sylius_admin_create_directory') }}" data-rename-directory-path="{{ path('joli_media_sylius_admin_rename') }}" data-delete-directory-path="{{ path('joli_media_sylius_admin_delete_directory') }}">
         <div class="card-header">
             <h3 class="card-title">Folders</h3>
             <div class="ms-auto">
@@ -40,6 +40,9 @@
                             </a>
                             <button type="button" class="btn btn-sm btn-icon folder-edit-btn" data-bs-toggle="tooltip" title="Rename">
                                 {{ ux_icon('tabler:pencil') }}
+                            </button>
+                            <button type="button" class="btn btn-sm btn-icon folder-delete-btn" data-bs-toggle="tooltip" title="Delete">
+                                {{ ux_icon('tabler:trash') }}
                             </button>
                         </div>
                         <form class="folder-rename-form d-none px-3 py-2">

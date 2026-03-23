@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const card = folderTree?.closest('.card');
     const createDirectoryPath = card?.dataset.createDirectoryPath;
     const renameDirectoryPath = card?.dataset.renameDirectoryPath;
+    const deleteDirectoryPath = card?.dataset.deleteDirectoryPath;
     const createForm = document.getElementById('folder-create-form');
     const createBtn = document.querySelector('.folder-create-btn');
     const createInput = createForm?.querySelector('.folder-create-input');
@@ -151,5 +152,38 @@ document.addEventListener('DOMContentLoaded', function () {
                 viewMode.classList.remove('d-none');
             }
         }
+    });
+
+    folderTree.addEventListener('click', function (e) {
+        const deleteBtn = e.target.closest('.folder-delete-btn');
+        if (!deleteBtn) return;
+
+        const folderItem = deleteBtn.closest('.folder-item');
+        const directory = folderItem.dataset.directory;
+
+        if (!confirm('Are you sure you want to delete the folder "' + directory + '"?')) {
+            return;
+        }
+
+        fetch(deleteDirectoryPath, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                path: directory,
+                _csrf_token: document.querySelector('meta[name="csrf-token-delete"]')?.content
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error deleting folder: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting folder');
+            });
     });
 });

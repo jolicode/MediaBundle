@@ -85,6 +85,30 @@ class MediaAdminController extends AbstractController
         }
     }
 
+    #[Route(path: '/delete-directory', name: 'delete_directory', methods: [Request::METHOD_POST])]
+    public function deleteDirectory(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!$this->isCsrfTokenValid('media_delete_directory', $data['_csrf_token'] ?? '')) {
+            return $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 400);
+        }
+
+        unset($data['_csrf_token']);
+
+        if (!isset($data['path'])) {
+            return $this->json(['success' => false, 'error' => 'Missing path parameter'], 400);
+        }
+
+        try {
+            $this->getOriginalStorage()->deleteDirectory($data['path']);
+
+            return $this->json(['success' => true]);
+        } catch (\Throwable $e) {
+            return $this->json(['success' => false, 'error' => $e->getMessage()], 400);
+        }
+    }
+
     #[Route(path: '/explore/{key}', name: 'explore', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]
     public function list(Request $request, string $key = ''): Response
     {
