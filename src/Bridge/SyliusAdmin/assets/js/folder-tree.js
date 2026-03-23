@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     const folderTree = document.getElementById('folder-tree');
+    const card = folderTree?.closest('.card');
+    const createDirectoryPath = card?.dataset.createDirectoryPath;
+    const renameDirectoryPath = card?.dataset.renameDirectoryPath;
     const createForm = document.getElementById('folder-create-form');
     const createBtn = document.querySelector('.folder-create-btn');
     const createInput = createForm?.querySelector('.folder-create-input');
@@ -25,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const parentPath = document.querySelector('meta[name="current-key"]')?.content || '';
 
-            fetch('/sylius/media/create-directory', {
+            fetch(createDirectoryPath, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -107,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const parentPath = directory.includes('/') ? directory.substring(0, directory.lastIndexOf('/') + 1) : '';
         const newPath = parentPath + newName;
 
-        fetch('/sylius/media/rename', {
+        fetch(renameDirectoryPath, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -29,7 +29,7 @@ class MediaAdminController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/sylius/media/create-directory', name: 'create_directory', methods: [Request::METHOD_POST])]
+    #[Route(path: '/create-directory', name: 'create_directory', methods: [Request::METHOD_POST])]
     public function createDirectory(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -61,7 +61,7 @@ class MediaAdminController extends AbstractController
         }
     }
 
-    #[Route(path: '/sylius/media/rename', name: 'rename', methods: [Request::METHOD_POST])]
+    #[Route(path: '/rename', name: 'rename', methods: [Request::METHOD_POST])]
     public function rename(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);

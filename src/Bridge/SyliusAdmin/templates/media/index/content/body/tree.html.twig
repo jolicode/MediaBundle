@@ -3,7 +3,7 @@
 {% set current_key = hookable_metadata.context.current_key %}
 
 <div class="col-3">
-    <div class="card">
+    <div class="card" data-create-directory-path="{{ path('joli_media_sylius_admin_create_directory') }}" data-rename-directory-path="{{ path('joli_media_sylius_admin_rename') }}">
         <div class="card-header">
             <h3 class="card-title">Folders</h3>
             <div class="ms-auto">
