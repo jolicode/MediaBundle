@@ -1,8 +1,2 @@
 imports:
     - { resource: '@SyliusBootstrapAdminUiBundle/config/app.php' }
-
-sylius_twig_hooks:
-    hooks:
-        'sylius_admin.base#javascripts':
-            folder_tree:
-                template: 'shared/assets/javascripts/folder_tree.html.twig'
