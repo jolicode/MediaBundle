@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Grid\Provider;
+declare(strict_types=1);
 
-use JoliCode\MediaBundle\Exception\ForbiddenPathException;
+namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid\Provider;
+
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
-use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Adapter\FixedAdapter;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
