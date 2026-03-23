@@ -1,0 +1,61 @@
+{% set directories = hookable_metadata.context.directories %}
+{% set key = hookable_metadata.context.key %}
+{% set current_key = hookable_metadata.context.current_key %}
+
+<div class="col-3">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Folders</h3>
+            <div class="ms-auto">
+                <button type="button" class="btn btn-sm btn-primary folder-create-btn" data-bs-toggle="tooltip" title="Create folder">
+                    {{ ux_icon('tabler:folder-plus') }}
+                </button>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <form class="folder-create-form d-none px-2 py-2" id="folder-create-form">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control folder-create-input" placeholder="New folder name">
+                    <button type="submit" class="btn btn-primary">
+                        {{ ux_icon('tabler:check') }}
+                    </button>
+                    <button type="button" class="btn btn-secondary folder-create-cancel-btn">
+                        {{ ux_icon('tabler:x') }}
+                    </button>
+                </div>
+            </form>
+            <ul class="nav nav-pills flex-column px-2 py-2" id="folder-tree">
+                <li class="nav-item">
+                    <a href="{{ path('joli_media_sylius_admin_explore', { 'key': '' }) }}" class="nav-link {{ current_key is empty ? 'active' : '' }}">
+                        {{ ux_icon('ph:house-fill') }}
+                        Root
+                    </a>
+                </li>
+                {% for directory in directories %}
+                    <li class="nav-item folder-item" data-directory="{{ directory }}">
+                        <div class="nav-link d-flex align-items-center gap-2">
+                            <a href="{{ path('joli_media_sylius_admin_explore', { 'key': directory }) }}" class="flex-grow-1 {{ current_key == directory ? 'active' : '' }}">
+                                {{ ux_icon('ph:folder-fill') }}
+                                <span class="folder-name">{{ directory }}</span>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-icon folder-edit-btn" data-bs-toggle="tooltip" title="Rename">
+                                {{ ux_icon('tabler:pencil') }}
+                            </button>
+                        </div>
+                        <form class="folder-rename-form d-none px-3 py-2">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control folder-rename-input" value="{{ directory }}">
+                                <button type="submit" class="btn btn-primary">
+                                    {{ ux_icon('tabler:check') }}
+                                </button>
+                                <button type="button" class="btn btn-secondary folder-cancel-btn">
+                                    {{ ux_icon('tabler:x') }}
+                                </button>
+                            </div>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

@@ -32,3 +32,30 @@ sylius_twig_hooks:
                     title: Media
 #            actions:
 #                enabled: false
+
+        'jolicode_sylius_admin.media.index.content.body':
+            tree:
+                template: 'media/index/content/body/tree.html.twig'
+            tabs:
+                template: 'media/index/content/body/tabs.html.twig'
+
+        'jolicode_sylius_admin.media.index.content.body.tabs.header':
+            list_view:
+                template: 'media/index/content/body/tabs/header/list_view.html.twig'
+            grid_view:
+                template: 'media/index/content/body/tabs/header/grid_view.html.twig'
+
+        'jolicode_sylius_admin.media.index.content.body.tabs.content':
+            list_view:
+                template: 'media/index/content/body/tabs/content/list_view.html.twig'
+            grid_view:
+                template: 'media/index/content/body/tabs/content/grid_view.html.twig'
+
+
+        'jolicode_sylius_admin.media.index.content.body.tabs.content.list_view':
+            grid:
+                template: '@SyliusBootstrapAdminUi/shared/crud/index/content/grid.html.twig'
+
+        'jolicode_sylius_admin.media.index.content.body.tabs.content.list_view.grid':
+            data_table:
+                template: '@SyliusBootstrapAdminUi/shared/crud/index/content/grid/data_table.html.twig'

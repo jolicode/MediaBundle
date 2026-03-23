@@ -1,0 +1,28 @@
+{% set medias = hookable_metadata.context.medias %}
+{% set key = hookable_metadata.context.key %}
+{% set current_key = hookable_metadata.context.current_key %}
+
+<div class="tab-pane" id="tabs-grid-view">
+    <ul class="gallery-grid gallery-grid--files">
+        {% for media in medias -%}
+            {% if joli_media_admin_is_granted('SHOW', path: media.path) %}
+                <li class="gallery-grid-item">
+                    <a class="gallery-grid-item__link"
+                       href="{{ ea_url().setRoute('joli_media_easy_admin_show', { key: media.path }) }}"
+                       data-media-folder="{{ current_key }}"
+                       data-media-url="{{ media.path }}"
+                       data-media-full-url="{{ media.url }}"
+                       data-media-type="{{ media.fileType }}"
+                       data-media-template="{{ include('@JoliMediaEasyAdmin/_preview.html.twig', { className: 'media-preview' })|escape }}"
+                       data-media-original-template="{{ include('@JoliMediaEasyAdmin/_preview.html.twig', { variation: false })|escape }}"
+                    >
+                                            <span class="media-preview">
+                                                {{ include('@JoliMediaEasyAdmin/_as_image.html.twig', { skipAutoDimensions: true }) }}
+                                            </span>
+                        <span class="gallery-grid-item__name">{{ media.filename }}</span>
+                    </a>
+                </li>
+            {% endif %}
+        {%- endfor %}
+    </ul>
+</div>
