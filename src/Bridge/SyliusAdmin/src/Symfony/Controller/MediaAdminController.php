@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Admin;
+namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Controller;
 
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Library\Library;
@@ -33,28 +33,28 @@ class MediaAdminController extends AbstractController
     public function createDirectory(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
-        
+
         if (!$this->isCsrfTokenValid('media_create_directory', $data['_csrf_token'] ?? '')) {
             return $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 400);
         }
-        
+
         unset($data['_csrf_token']);
-        
+
         if (!isset($data['parentPath'], $data['name'])) {
             return $this->json(['success' => false, 'error' => 'Missing parameters'], 400);
         }
-        
+
         $name = trim($data['name']);
         if (empty($name)) {
             return $this->json(['success' => false, 'error' => 'Directory name cannot be empty'], 400);
         }
-        
+
         $parentPath = rtrim($data['parentPath'], '/');
         $newPath = empty($parentPath) ? $name : $parentPath . '/' . $name;
-        
+
         try {
             $this->getOriginalStorage()->createDirectory($newPath);
-            
+
             return $this->json(['success' => true]);
         } catch (\Throwable $e) {
             return $this->json(['success' => false, 'error' => $e->getMessage()], 400);
@@ -65,27 +65,27 @@ class MediaAdminController extends AbstractController
     public function rename(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
-        
+
         if (!$this->isCsrfTokenValid('media_rename', $data['_csrf_token'] ?? '')) {
             return $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 400);
         }
-        
+
         unset($data['_csrf_token']);
-        
+
         if (!isset($data['oldPath'], $data['newPath'])) {
             return $this->json(['success' => false, 'error' => 'Missing parameters'], 400);
         }
-        
+
         try {
             $this->getOriginalStorage()->moveFolder($data['oldPath'], $data['newPath']);
-            
+
             return $this->json(['success' => true]);
         } catch (\Throwable $e) {
             return $this->json(['success' => false, 'error' => $e->getMessage()], 400);
         }
     }
 
-    #[Route(path: '/sylius/media/explore/{key}', name: 'explore', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]
+    #[Route(path: '/explore/{key}', name: 'explore', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]
     public function list(Request $request, string $key = ''): Response
     {
         $currentKey = Resolver::normalizePath($key);
@@ -102,7 +102,7 @@ class MediaAdminController extends AbstractController
 
         $gridView = $this->getGridView($request, 'joli_media_explore');
 
-        return $this->render('media/index.html.twig', [
+        return $this->render('@JoliMediaSyliusAdmin/media/index.html.twig', [
             'key' => $key,
             'current_key' => $currentKey,
             'resources' => $gridView,

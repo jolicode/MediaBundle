@@ -8,3 +8,7 @@ _joli_media_easy_admin:
 _joli_media_sonata_admin:
     resource: "@JoliMediaSonataAdminBundle/src/Controller/"
     prefix: /sonata-admin/media
+
+_joli_media_sylius_admin:
+    resource: "@JoliMediaSyliusAdminBundle/src/Symfony/Controller/"
+    prefix: /sylius-admin/media

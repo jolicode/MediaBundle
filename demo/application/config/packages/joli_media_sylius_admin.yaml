@@ -1,0 +1,2 @@
+imports:
+    - { resource: '@JoliMediaSyliusAdminBundle/config/app.php' }

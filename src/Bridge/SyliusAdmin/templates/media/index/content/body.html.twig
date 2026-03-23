@@ -1,8 +1,4 @@
-{% set medias = hookable_metadata.context.medias %}
-{% set directories = hookable_metadata.context.directories %}
-{% set key = hookable_metadata.context.key %}
 {% set current_key = hookable_metadata.context.current_key %}
-{% import _self as self %}
 
 <div class="page-body">
     <meta name="csrf-token" content="{{ csrf_token('media_rename') }}">
