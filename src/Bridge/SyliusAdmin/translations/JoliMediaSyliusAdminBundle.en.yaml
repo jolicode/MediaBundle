@@ -1,0 +1,39 @@
+action:
+    choose_a_file: 'Choose a file'
+    remove: 'Remove'
+    cancel: 'Cancel'
+browser:
+    audio:
+        unsupported: 'Your browser does not support the audio element.'
+    video:
+        unsupported: 'Your browser does not support the video element.'
+directory:
+    label: 'Directory'
+media:
+    type:
+        audio: 'Audio'
+        csv: 'CSV'
+        excel: 'Excel'
+        file: 'File'
+        html: 'HTML'
+        image: 'Image'
+        pdf: 'PDF'
+        powerpoint: 'PowerPoint'
+        text: 'Text'
+        video: 'Video'
+        word: 'Word'
+        xml: 'XML'
+        zip: 'ZIP'
+    unavailable:
+        simple: 'No media selected.'
+    inaccessible:
+        explanation: 'The media "%media%" is not accessible. It may have been deleted or moved.'
+        label: 'Inaccessible media'
+    error:
+        required: 'Please choose a media file.'
+document:
+    download: 'Download the document'
+no_file_found: 'No file found'
+preview:
+    unavailable: 'Preview not available.'
+root: 'Root'

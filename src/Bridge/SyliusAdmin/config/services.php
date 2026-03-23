@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\DataTransformer\MediaTransformer;
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type\MediaChoiceType;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid\MediaGrid;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid\Provider\MediaGridProvider;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Controller\MediaAdminController;
@@ -16,6 +18,7 @@ return static function (ContainerConfigurator $container): void {
             service('joli_media.library_container'),
             service('sylius.grid.view_factory'),
             service('sylius.grid.provider'),
+            service('twig'),
         ])
         ->call('setContainer', [service('service_container')])
         ->tag('controller.service_arguments')
@@ -33,5 +36,20 @@ return static function (ContainerConfigurator $container): void {
             service('request_stack'),
         ])
         ->tag('sylius.grid_data_provider')
+    ;
+
+    $services->set('joli_media.sylius_admin.form.media_transformer', MediaTransformer::class)
+        ->args([
+            service('joli_media.resolver'),
+        ])
+    ;
+
+    $services->set('joli_media.sylius_admin.form.media_choice', MediaChoiceType::class)
+        ->args([
+            service('joli_media.resolver'),
+            service('joli_media.library_container'),
+            service('joli_media.sylius_admin.form.media_transformer'),
+        ])
+        ->tag('form.type')
     ;
 };

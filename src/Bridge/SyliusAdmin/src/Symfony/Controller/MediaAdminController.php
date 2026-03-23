@@ -9,6 +9,8 @@ use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
+use League\Flysystem\PathTraversalDetected;
+use League\Flysystem\UnableToListContents;
 use Pagerfanta\PagerfantaInterface;
 use Sylius\Component\Grid\Parameters;
 use Sylius\Component\Grid\Provider\GridProviderInterface;
@@ -18,6 +20,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Twig\Environment;
 
 #[Route(name: 'joli_media_sylius_admin_')]
 class MediaAdminController extends AbstractController
@@ -26,6 +29,7 @@ class MediaAdminController extends AbstractController
         private readonly LibraryContainer $libraries,
         private readonly GridViewFactoryInterface $gridViewFactory,
         private readonly GridProviderInterface $gridProvider,
+        private readonly Environment $twig,
     ) {
     }
 
@@ -133,6 +137,48 @@ class MediaAdminController extends AbstractController
             'directories' => $directories,
             'medias' => $gridView->getData(),
         ]);
+    }
+
+    #[Route(path: '/choose/{key}', name: 'choose', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]
+    public function choose(Request $request, string $key = ''): Response
+    {
+        $currentKey = Resolver::normalizePath($key);
+        $request->attributes->set('currentKey', $currentKey);
+
+        try {
+            $trashPath = $this->getOriginalStorage()->getTrashPath();
+
+            if ($trashPath === $currentKey || str_starts_with($currentKey, $trashPath . '/')) {
+                throw new ForbiddenPathException($trashPath);
+            }
+
+            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: false);
+            natcasesort($directories);
+        } catch (ForbiddenPathException|PathTraversalDetected|UnableToListContents) {
+            $directories = [];
+        }
+
+        try {
+            $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
+                $currentKey,
+                recursive: false,
+                page: $request->query->getInt('page', 1),
+                perPage: 24,
+            );
+            $medias = [];
+            foreach ($paginatedMedias as $media) {
+                $medias[] = $media;
+            }
+        } catch (\OutOfRangeException) {
+            $medias = [];
+        }
+
+        return new Response($this->twig->render('@JoliMediaSyliusAdmin/media/choose.html.twig', [
+            'key' => $key,
+            'current_key' => $currentKey,
+            'directories' => $directories ?? [],
+            'medias' => $medias,
+        ]));
     }
 
     private function getGridView(Request $request, string $grid): GridViewInterface

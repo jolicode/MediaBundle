@@ -1,10 +1,19 @@
-{% set medias = hookable_metadata.context.medias %}
-{% set key = hookable_metadata.context.key %}
-{% set current_key = hookable_metadata.context.current_key %}
+{% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
 
-<div class="tab-pane" id="tabs-grid-view">
+<div class="joli-media-choose-container">
+    <div class="mb-3">
+        <a href="{{ path('joli_media_sylius_admin_explore', { key: '' }) }}" class="btn btn-sm btn-light">
+            <i class="fas fa-home"></i> Root
+        </a>
+        {% if current_key %}
+            <a href="{{ path('joli_media_sylius_admin_choose', { key: current_key|split('/')|slice(0, -1)|join('/') }) }}" class="btn btn-sm btn-light">
+                <i class="fas fa-arrow-up"></i> Parent
+            </a>
+        {% endif %}
+    </div>
+
     <ul class="gallery-grid gallery-grid--files">
-        {% for media in medias -%}
+        {% for media in medias %}
             {% if media.isStored %}
                 <li class="gallery-grid-item">
                     <a class="gallery-grid-item__link"
@@ -23,6 +32,14 @@
                     </a>
                 </li>
             {% endif %}
-        {%- endfor %}
+        {% endfor %}
+
+        {% if medias is empty and directories is empty %}
+            <li class="gallery-grid-item">
+                <div class="alert alert-info mb-0">
+                    <i class="fas fa-info-circle"></i> {{ 'no_file_found'|trans }}
+                </div>
+            </li>
+        {% endif %}
     </ul>
 </div>

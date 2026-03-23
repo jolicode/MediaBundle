@@ -47,6 +47,43 @@ final class JoliMediaSyliusAdminBundle extends AbstractBundle
             return;
         }
 
+        $joliMediaConfig = $builder->getExtensionConfig('joli_media');
+
+        if (isset($joliMediaConfig[0]['default_library'])) {
+            $joliMediaDefaultLibrary = $joliMediaConfig[0]['default_library'];
+        } elseif (isset($joliMediaConfig[0]['libraries']) && \count($joliMediaConfig[0]['libraries']) > 0) {
+            $joliMediaDefaultLibrary = array_key_first($joliMediaConfig[0]['libraries']);
+        } else {
+            throw new \RuntimeException('It is required to define a library in the JoliMediaBundle configuration before using the JoliMediaSyliusAdminBundle.');
+        }
+
+        $builder->prependExtensionConfig('twig', [
+            'form_themes' => [
+                '@JoliMediaSyliusAdmin/form/form_theme.html.twig',
+            ],
+        ]);
+
+        $builder->prependExtensionConfig('joli_media', [
+            'libraries' => [
+                $joliMediaDefaultLibrary => [
+                    'variations' => [
+                        'joli_media_sylius_admin' => [
+                            'enable_auto_webp' => false,
+                            'pixel_ratios' => [1],
+                            'transformers' => [
+                                'resize' => [
+                                    'width' => 180,
+                                    'height' => 109,
+                                    'mode' => 'inside',
+                                    'allow_upscale' => false,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
         $container->extension('sylius_twig_hooks', [
             'enable_autoprefixing' => true,
             'hook_name_section_separator' => '#',
