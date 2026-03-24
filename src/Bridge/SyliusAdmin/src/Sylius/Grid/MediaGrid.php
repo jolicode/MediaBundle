@@ -27,7 +27,7 @@ final class MediaGrid extends AbstractGrid
                     ->setLabel('Preview')
             )
             ->withFields(
-                StringField::create('path')
+                TwigField::create('path', '@JoliMediaSyliusAdmin/media/grid/field/path.html.twig')
                     ->setLabel('Name'),
             )
             ->withFields(
