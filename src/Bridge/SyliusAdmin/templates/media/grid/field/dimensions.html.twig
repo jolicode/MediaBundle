@@ -1,1 +1,6 @@
-{{ data|join('x') }}
+{% set width = data['width']|default(null) %}
+{% set height = data['height']|default(null) %}
+
+{% if width and height %}
+    {{ {width, height}|join('x') }}
+{% endif %}
