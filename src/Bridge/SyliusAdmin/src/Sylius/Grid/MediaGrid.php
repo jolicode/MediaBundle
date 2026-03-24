@@ -41,7 +41,7 @@ final class MediaGrid extends AbstractGrid
                 TwigField::create('fileSize', '@JoliMediaSyliusAdmin/media/grid/field/file_size.html.twig')
                     ->setLabel('File size')
                     ->withOptions(['vars' => [
-                        'th_class' => 'w-1 text-center',
+                        'th_class' => 'w-20 text-center',
                         'td_class' => 'text-center',
                     ]])
             )
