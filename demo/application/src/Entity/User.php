@@ -19,6 +19,7 @@ use Sylius\Resource\Metadata\Index;
 use Sylius\Resource\Metadata\Update;
 use Sylius\Resource\Model\ResourceInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -45,9 +46,11 @@ class User implements \Stringable, ResourceInterface
     public ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank]
     public ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank]
     public ?string $email = null;
 
     #[ORM\Column]
@@ -59,7 +62,8 @@ class User implements \Stringable, ResourceInterface
     )]
     #[MediaDeleteBehavior(strategy: Strategy::RESTRICT)]
     #[ORM\Column(type: MediaTypes::MEDIA, nullable: false)]
-    public Media $profilePicture;
+    #[NotBlank]
+    public ?Media $profilePicture = null;
 
     public function getId(): ?int
     {

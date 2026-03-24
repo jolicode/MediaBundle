@@ -24,6 +24,7 @@ final class UserGrid extends AbstractGrid
     public function __invoke(GridBuilderInterface $gridBuilder): void
     {
         $gridBuilder
+            ->addOrderBy('name')
             ->withFields(
                 TwigField::create('profilePicture', 'user/grid/field/profile_picture.html.twig')
                     ->setLabel('Profile picture'),
