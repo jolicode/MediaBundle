@@ -6,7 +6,6 @@ namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid;
 
 use Sylius\Bundle\GridBundle\Builder\Action\Action;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\MainActionGroup;
-use Sylius\Bundle\GridBundle\Builder\Field\StringField;
 use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
 use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
 use Sylius\Bundle\GridBundle\Grid\AbstractGrid;
@@ -22,21 +21,29 @@ final class MediaGrid extends AbstractGrid
     {
         $gridBuilder
             ->withFields(
-                TwigField::create('preview', '@JoliMediaSyliusAdmin/media/grid/field/preview.html.twig')
+                TwigField::create('image', '@JoliMediaSyliusAdmin/media/grid/field/image.html.twig')
                     ->setPath('.')
-                    ->setLabel('Preview')
+                    ->setLabel('Image')
+                    ->withOptions(['vars' => [
+                        'th_class' => 'w-1 text-center',
+                        'td_class' => 'text-center',
+                    ]])
             )
             ->withFields(
                 TwigField::create('path', '@JoliMediaSyliusAdmin/media/grid/field/path.html.twig')
                     ->setLabel('Name'),
             )
             ->withFields(
-                StringField::create('fileType')
+                TwigField::create('fileType', '@JoliMediaSyliusAdmin/media/grid/field/file_type.html.twig')
                     ->setLabel('Type'),
             )
             ->withFields(
                 TwigField::create('fileSize', '@JoliMediaSyliusAdmin/media/grid/field/file_size.html.twig')
                     ->setLabel('File size')
+                    ->withOptions(['vars' => [
+                        'th_class' => 'w-1 text-center',
+                        'td_class' => 'text-center',
+                    ]])
             )
             ->withFields(
                 TwigField::create('pixelDimensions', '@JoliMediaSyliusAdmin/media/grid/field/dimensions.html.twig')

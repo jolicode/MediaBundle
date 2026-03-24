@@ -3,4 +3,6 @@
 
 {% if width and height %}
     {{ {width, height}|join('x') }}
+{% else %}
+    -
 {% endif %}

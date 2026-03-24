@@ -93,7 +93,25 @@ return static function (ContainerConfigurator $container): void {
 
             'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.grid' => [
                 'data_table' => [
-                    'template' => '@SyliusBootstrapAdminUi/shared/crud/index/content/grid/data_table.html.twig',
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table.html.twig',
+                ],
+            ],
+
+            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.grid.data_table' => [
+                'header' => [
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table/header.html.twig',
+                ],
+                'body' => [
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table/body.html.twig',
+                ],
+            ],
+
+            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.grid.data_table.body' => [
+                'directories' => [
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table/body/directories.html.twig',
+                ],
+                'rows' => [
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table/body/rows.html.twig',
                 ],
             ],
         ],

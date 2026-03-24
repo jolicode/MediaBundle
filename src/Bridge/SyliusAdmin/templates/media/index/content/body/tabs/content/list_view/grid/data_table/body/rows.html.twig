@@ -1,0 +1,7 @@
+{% import '@SyliusBootstrapAdminUi/shared/helper/table.html.twig' as table %}
+
+{% set resources = hookable_metadata.context.resources %}
+
+{% for row in resources.data %}
+    {{ table.row(resources, resources.definition, row) }}
+{% endfor %}

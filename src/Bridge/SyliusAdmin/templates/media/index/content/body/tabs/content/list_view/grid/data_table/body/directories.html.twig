@@ -1,0 +1,21 @@
+{% set definition = hookable_metadata.context.resources.definition %}
+{% set directories = hookable_metadata.context.directories %}
+
+{% for directory in directories %}
+    <tr class="item">
+        {% for field in definition.enabledFields|sylius_sort_by('position') %}
+            <td{% if field.options.vars.td_class is defined %}  class="{{ field.options.vars.td_class }}"{% endif %}>
+                <a href="{{ path('joli_media_sylius_admin_explore', {'key': directory}) }}">
+                    {% if field.name == 'image' %}
+                        {{ ux_icon('tabler:folder') }}
+                    {% elseif field.name == 'path' %}
+                        <code>{{ directory|joli_media_admin_basename }}</code>
+                    {% elseif field.name == 'fileType' %}
+                        <div class="badge bg-blue-lt">{{ 'Directory' }}</div>
+                    {% else %}
+                    {% endif %}
+                </a>
+            </td>
+        {% endfor %}
+    </tr>
+{% endfor %}
