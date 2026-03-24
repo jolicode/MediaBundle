@@ -30,10 +30,7 @@ return static function (ContainerConfigurator $container): void {
 
             'joli_media_sylius_admin.media.index.content.header' => [
                 'breadcrumbs' => [
-                    'template' => '@SyliusBootstrapAdminUi/shared/crud/index/content/header/breadcrumbs.html.twig',
-                    'configuration' => [
-                        'title' => 'Media',
-                    ],
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/header/breadcrumbs.html.twig',
                 ],
                 'dropzone' => [
                     'template' => '@JoliMediaSyliusAdmin/media/index/content/header/dropzone.html.twig',
