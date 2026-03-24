@@ -31,6 +31,14 @@ media:
         label: 'Média inaccessible'
     error:
         required: 'Veuillez choisir un fichier média.'
+    upload:
+        dropzone:
+            default_message: 'Déposez les fichiers ici pour les télécharger'
+            fallback_message: 'Votre navigateur ne supporte pas le téléchargement par glisser-déposer.'
+            fallback_text: 'Veuillez utiliser le formulaire ci-dessous pour télécharger vos fichiers.'
+            file_too_big: 'Le fichier est trop volumineux ({{filesize}}Mo). Taille maximale: {{maxFilesize}}Mo.'
+            invalid_file_type: 'Vous ne pouvez pas télécharger de fichiers de ce type.'
+            max_files_exceeded: 'Vous ne pouvez plus télécharger de fichiers.'
 document:
     download: 'Télécharger le document'
 no_file_found: 'Aucun fichier trouvé'

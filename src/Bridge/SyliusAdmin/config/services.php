@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Config\Config;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\DataTransformer\MediaTransformer;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type\MediaChoiceType;
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type\UploadType;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid\MediaGrid;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid\Provider\MediaGridProvider;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Controller\MediaAdminController;
@@ -13,12 +15,25 @@ use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Controller\MediaAdminControl
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
 
+    $services
+        ->set('joli_media_sylius_admin.config', Config::class)
+        ->args([
+            '$visibility' => param('joli_media_easy_admin.visibility'),
+            '$acceptedFiles' => param('joli_media_easy_admin.upload.accepted_files'),
+            '$maxFiles' => param('joli_media_easy_admin.upload.max_files'),
+            '$maxFileSize' => param('joli_media_easy_admin.upload.max_file_size'),
+            '$translator' => service('translator')->ignoreOnInvalid(),
+        ])
+    ;
+
     $services->set('joli_media.sylius_admin.controller.media_admin', MediaAdminController::class)
         ->args([
             service('joli_media.library_container'),
             service('sylius.grid.view_factory'),
             service('sylius.grid.provider'),
             service('twig'),
+            service('form.factory'),
+            service('joli_media_sylius_admin.config'),
         ])
         ->call('setContainer', [service('service_container')])
         ->tag('controller.service_arguments')
@@ -49,6 +64,13 @@ return static function (ContainerConfigurator $container): void {
             service('joli_media.resolver'),
             service('joli_media.library_container'),
             service('joli_media.sylius_admin.form.media_transformer'),
+        ])
+        ->tag('form.type')
+    ;
+
+    $services->set('joli_media.sylius_admin.form.upload', UploadType::class)
+        ->args([
+            service('joli_media_sylius_admin.config'),
         ])
         ->tag('form.type')
     ;

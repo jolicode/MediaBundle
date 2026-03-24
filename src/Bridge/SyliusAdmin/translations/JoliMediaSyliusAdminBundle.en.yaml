@@ -31,6 +31,14 @@ media:
         label: 'Inaccessible media'
     error:
         required: 'Please choose a media file.'
+    upload:
+        dropzone:
+            default_message: 'Drop files here to upload'
+            fallback_message: 'Your browser does not support drag''n''drop file uploads.'
+            fallback_text: 'Please use the fallback form below to upload your files like in the olden days.'
+            file_too_big: 'File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.'
+            invalid_file_type: 'You can''t upload files of this type.'
+            max_files_exceeded: 'You can''t upload any more files.'
 document:
     download: 'Download the document'
 no_file_found: 'No file found'

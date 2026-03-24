@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony;
 
-use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
+use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 final class JoliMediaSyliusAdminBundle extends AbstractBundle
@@ -31,22 +31,76 @@ final class JoliMediaSyliusAdminBundle extends AbstractBundle
         return $this->path;
     }
 
-    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
+    public function configure(DefinitionConfigurator $definition): void
+    {
+        $definition->rootNode()
+            ->children()
+                ->arrayNode('upload')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->integerNode('max_files')
+                            ->defaultValue(null)
+                            ->info('Maximum number of files that can be uploaded at once.')
+                        ->end()
+                        ->integerNode('max_file_size')
+                            ->defaultValue(20)
+                            ->info('Maximum file size for uploads, in Megabytes.')
+                        ->end()
+                        ->arrayNode('accepted_files')
+                            ->defaultValue([])
+                            ->scalarPrototype()->end()
+                            ->info('List of accepted file mime types, e.g. image/png, image/*. Leave empty to allow any file type.')
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('visibility')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('show_markdown_code')
+                            ->defaultFalse()
+                            ->info('If true, shows the media Markdown code on the media show page.')
+                        ->end()
+                        ->booleanNode('show_html_code')
+                            ->defaultFalse()
+                            ->info('If true, shows the media HTML code on the media show page.')
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
         $bundles = $builder->getParameter('kernel.bundles');
 
-        $loader = new PhpFileLoader(
-            $builder,
-            new FileLocator(dirname(__DIR__, 2) . '/config'),
-        );
-
-         $loader->load('services.php');
-
         if (!isset($bundles['SyliusBootstrapAdminUiBundle'])) {
-            // TODO throw an exception
             return;
         }
 
+        $container->import('../../config/services.php');
+
+        $container->services()
+            ->get('joli_media_sylius_admin.config')
+            ->arg('$visibility', $config['visibility'])
+            ->arg('$acceptedFiles', $config['upload']['accepted_files'])
+            ->arg('$maxFiles', $config['upload']['max_files'])
+            ->arg('$maxFileSize', $config['upload']['max_file_size'])
+        ;
+
+        $builder->prependExtensionConfig('framework', [
+            'assets' => [
+                'packages' => [
+                    'joli_media_sylius_admin' => [
+                        'base_path' => '/bundles/jolimediasyliusadmin',
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
+    {
         $joliMediaConfig = $builder->getExtensionConfig('joli_media');
 
         if (isset($joliMediaConfig[0]['default_library'])) {
@@ -84,7 +138,7 @@ final class JoliMediaSyliusAdminBundle extends AbstractBundle
             ],
         ]);
 
-        $container->extension('sylius_twig_hooks', [
+        $builder->prependExtensionConfig('sylius_twig_hooks', [
             'enable_autoprefixing' => true,
             'hook_name_section_separator' => '#',
         ]);

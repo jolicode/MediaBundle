@@ -5,7 +5,7 @@
     {% set message = 'sylius.ui.create' %}
 {% endif %}
 
-<a href="{{ path }}" class="btn">
+<a href="{{ path }}" class="btn" data-component="media-add">
     {{ ux_icon(action.icon|default('tabler:plus'), {'class': 'icon dropdown-item-icon'}) }}
     {{ message|trans }}
 </a>

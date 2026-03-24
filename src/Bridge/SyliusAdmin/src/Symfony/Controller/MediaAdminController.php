@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Controller;
 
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Config\Config;
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
@@ -11,12 +12,18 @@ use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use League\Flysystem\PathTraversalDetected;
 use League\Flysystem\UnableToListContents;
+use League\Flysystem\UnableToWriteFile;
 use Pagerfanta\PagerfantaInterface;
 use Sylius\Component\Grid\Parameters;
 use Sylius\Component\Grid\Provider\GridProviderInterface;
 use Sylius\Component\Grid\View\GridViewFactoryInterface;
 use Sylius\Component\Grid\View\GridViewInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\Exception\UploadException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,6 +37,8 @@ class MediaAdminController extends AbstractController
         private readonly GridViewFactoryInterface $gridViewFactory,
         private readonly GridProviderInterface $gridProvider,
         private readonly Environment $twig,
+        private readonly FormFactoryInterface $formFactory,
+        private readonly Config $config,
     ) {
     }
 
@@ -136,6 +145,8 @@ class MediaAdminController extends AbstractController
             'resources' => $gridView,
             'directories' => $directories,
             'medias' => $gridView->getData(),
+            'config' => $this->config,
+            'create_media_form' => $this->createUploadForm($currentKey)->createView(),
         ]);
     }
 
@@ -218,5 +229,80 @@ class MediaAdminController extends AbstractController
     private function getLibrary(): Library
     {
         return $this->libraries->getDefault();
+    }
+
+    #[Route(path: '/upload', name: 'upload', methods: [Request::METHOD_POST])]
+    public function upload(Request $request): JsonResponse
+    {
+        $form = $this->createUploadForm();
+        $form->handleRequest($request);
+
+        try {
+            if (!$form->isSubmitted() || !$form->isValid()) {
+                return new JsonResponse([
+                    'error' => 'Invalid form',
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+            /** @var UploadedFile $uploadedFile */
+            $uploadedFile = $form->get('file')->getData();
+            $filename = $uploadedFile->getClientOriginalName();
+            $key = \sprintf('%s/%s', $form->get('path')->getData(), $filename);
+            $storage = $this->getOriginalStorage();
+
+            if ($storage->has($key)) {
+                return new JsonResponse([
+                    'error' => 'This file already exists, please change the name',
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+            $media = $storage->createMedia($key, $uploadedFile->getContent());
+
+            $size = $uploadedFile->getSize();
+            $mime = $uploadedFile->getMimeType();
+
+            unlink($uploadedFile->getRealPath());
+
+            return new JsonResponse([
+                'files' => [[
+                    'url' => $media->getUrl(),
+                    'thumbnailUrl' => null,
+                    'name' => $filename,
+                    'size' => $size,
+                    'type' => $mime,
+                    'link' => $this->generateUrl('joli_media_sylius_admin_explore', ['key' => $media->getPath()]),
+                    'mediaUrl' => $media->getPath(),
+                    'mediaFolder' => $media->getFolderPath(),
+                    'mediaTemplate' => $this->twig->render('@JoliMediaSyliusAdmin/_preview.html.twig', [
+                        'media' => $media,
+                        'className' => 'media-preview',
+                    ]),
+                    'mediaPreview' => $this->twig->render('@JoliMediaSyliusAdmin/_as_image.html.twig', [
+                        'media' => $media,
+                    ]),
+                ]],
+            ]);
+        } catch (UnableToWriteFile) {
+            return new JsonResponse([
+                'error' => 'Unable to write file',
+            ], Response::HTTP_BAD_REQUEST);
+        } catch (UploadException $e) {
+            return new JsonResponse([
+                'error' => $e->getMessage(),
+            ], Response::HTTP_BAD_REQUEST);
+        } catch (\Exception) {
+            return new JsonResponse([
+                'error' => 'An error occurred during upload',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    private function createUploadForm(?string $path = null): FormInterface
+    {
+        $form = $this->formFactory->create(\JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type\UploadType::class, null, [
+            'action' => $this->generateUrl('joli_media_sylius_admin_upload'),
+        ]);
+
+        return $form;
     }
 }

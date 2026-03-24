@@ -1,4 +1,4 @@
-import '../styles/jolimedia.css';
+import '../styles/dropzone.css';
 import addDropzone from './components/dropzone';
 import configureFolderSelector from './components/folderSelector';
 import configureMediaSelector from './components/mediaSelector';

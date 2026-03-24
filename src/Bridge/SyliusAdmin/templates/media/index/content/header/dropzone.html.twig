@@ -1,0 +1,18 @@
+{% set config = hookable_metadata.context.config %}
+{% set create_media_form = hookable_metadata.context.create_media_form %}
+
+<div class="row">
+    <div class="dropzone-container">
+        {{ form_start(create_media_form, { attr: {
+            class: 'dropzone',
+            'data-component': 'dropzone',
+            'data-dropzone-config': config.uploadOptions|json_encode(constant('JSON_THROW_ON_ERROR')),
+        } }) }}
+        {{ form_widget(create_media_form.path) }}
+        {{ form_widget(create_media_form._token) }}
+        <div class="dz-preview-template">
+            {{ include('@JoliMediaSyliusAdmin/uploaded_file_preview.html.twig') }}
+        </div>
+        {{ form_end(create_media_form) }}
+    </div>
+</div>
