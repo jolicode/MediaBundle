@@ -10,6 +10,7 @@ browser:
 directory:
     label: 'Directory'
 media:
+    label: 'Media'
     type:
         audio: 'Audio'
         csv: 'CSV'

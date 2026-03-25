@@ -44,9 +44,6 @@ return static function (ContainerConfigurator $container): void {
                         'title' => 'Media',
                     ],
                 ],
-//                'dropzone' => [
-//                    'template' => '@JoliMediaSyliusAdmin/media/index/content/header/dropzone.html.twig',
-//                ],
             ],
 
             'joli_media_sylius_admin.media.index.content.body' => [
