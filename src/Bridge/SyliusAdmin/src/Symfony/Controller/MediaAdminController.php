@@ -186,6 +186,8 @@ class MediaAdminController extends AbstractController
             'current_key' => $currentKey,
             'directories' => $directories ?? [],
             'medias' => $medias,
+            'create_media_form' => $this->createUploadForm($currentKey)->createView(),
+            'config' => $this->config,
         ]));
     }
 

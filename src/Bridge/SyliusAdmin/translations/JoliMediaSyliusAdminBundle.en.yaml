@@ -10,6 +10,7 @@ browser:
 directory:
     label: 'Directory'
 media:
+    add: 'Add media'
     label: 'Media'
     type:
         audio: 'Audio'

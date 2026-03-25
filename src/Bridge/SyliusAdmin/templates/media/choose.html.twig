@@ -1,6 +1,29 @@
 {% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
 
 <div class="joli-media-choose-container">
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <a
+            class="btn btn-primary"
+            data-component="media-add"
+        >
+            {{ ux_icon('tabler:plus') }} {{ 'media.add'|trans }}
+        </a>
+    </div>
+
+    <div class="dropzone-container">
+        {{ form_start(create_media_form, { attr: {
+            class: 'dropzone',
+            'data-component': 'dropzone',
+            'data-dropzone-config': config.uploadOptions|json_encode(constant('JSON_THROW_ON_ERROR')),
+        } }) }}
+        {{ form_widget(create_media_form.path) }}
+        {{ form_widget(create_media_form._token) }}
+        <div class="dz-preview-template">
+            {{ include('@JoliMediaSyliusAdmin/uploaded_file_preview.html.twig') }}
+        </div>
+        {{ form_end(create_media_form) }}
+    </div>
+
     <div class="gallery">
         {% if current_key %}
             <ul class="gallery-grid gallery-grid--folders">
@@ -53,7 +76,7 @@
         {% if medias is empty and directories is empty %}
             <li class="gallery-grid-item">
                 <div class="alert alert-info mb-0">
-                    <i class="fas fa-info-circle"></i> {{ 'no_file_found'|trans }}
+                    {{ ux_icon('tabler:info-circle') }} {{ 'no_file_found'|trans }}
                 </div>
             </li>
         {% endif %}

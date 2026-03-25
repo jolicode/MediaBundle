@@ -7,15 +7,20 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const editButton = mediaChoiceContainer.querySelector(".joli-media-choice-edit");
     const inputElement = document.getElementById(id);
     const modal = document.getElementById(`modal-media-choice_${id}`);
+
+    if (!modal || !deleteButton || !editButton) {
+        return;
+    }
+
     document.body.appendChild(modal);
-    const modalContent = document.querySelector(
-        `#modal-media-choice_${id} .modal-body`,
-    );
+    const modalContent = modal.querySelector('.modal-body');
 
     const fetchFolder = (url) => fetch(url).then((response) => response.text());
 
     const configureModal = (html) => {
-        modalContent.innerHTML = html;
+        if (modalContent) {
+            modalContent.innerHTML = html;
+        }
     };
 
     const closeModal = () => {

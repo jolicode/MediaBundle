@@ -12,13 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('click', (e) => {
         const mediaAddButton = e.target.closest('[data-component="media-add"]');
-        debugger;
 
         if (mediaAddButton) {
             e.preventDefault();
             e.stopPropagation();
 
-            const dropzoneContainer = mediaAddButton.closest('.joli-media-header-tools')?.querySelector('.dropzone-container');
+            const dropzoneContainer = mediaAddButton.closest('.joli-media-choose-container, .joli-media-header-tools')?.querySelector('.dropzone-container');
             if (!dropzoneContainer) {
                 return;
             }
