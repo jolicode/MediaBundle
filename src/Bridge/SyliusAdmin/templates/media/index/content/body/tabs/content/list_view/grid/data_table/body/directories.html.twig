@@ -2,7 +2,7 @@
 {% set directories = hookable_metadata.context.directories %}
 
 {% for directory in directories %}
-    <tr class="item">
+    <tr class="item position-relative">
         {% for field in definition.enabledFields|sylius_sort_by('position') %}
             <td {% if field.options.vars.td_class is defined %}  class="{{ field.options.vars.td_class }}"{% endif %}>
                 <a class="stretched-link text-decoration-none" href="{{ path('joli_media_sylius_admin_explore', {'key': directory}) }}">
