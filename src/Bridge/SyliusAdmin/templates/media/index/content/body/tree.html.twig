@@ -66,7 +66,7 @@
                     {% if parent_key is not empty %}
                     <li class="nav-item" style="padding-left: 16px;">
                         <a href="{{ path('joli_media_sylius_admin_explore', { 'key': parent_key }) }}" class="nav-link text-decoration-none text-dark">
-                            {{ ux_icon('mdi:arrow-up-bold') }}
+                            {{ ux_icon('mdi:arrow-left-bold') }}
                             Back to {{ parent_key|split('/')|last }}
                         </a>
                     </li>

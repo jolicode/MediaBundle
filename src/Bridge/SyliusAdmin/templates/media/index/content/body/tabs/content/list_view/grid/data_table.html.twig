@@ -2,10 +2,12 @@
 {% import '@SyliusBootstrapAdminUi/shared/helper/pagination.html.twig' as pagination %}
 
 {% set resources = hookable_metadata.context.resources %}
+{% set directories = hookable_metadata.context.directories %}
 {% set data = resources.data|default([]) %}
 {% set definition = resources.definition|default(null) %}
+{% set current_key = hookable_metadata.context.current_key %}
 
-{% if data|length > 0 %}
+{% if data|length > 0 or directories|length > 0 or not current_key == '' %}
     <div class="card">
         <div class="card-body border-bottom py-3">
             <div class="d-flex">
@@ -16,9 +18,11 @@
                         {% endfor %}
                     </div>
                 {% endif %}
+                {% if data|length > 0 %}
                 <div class="ms-auto">
                     {{ pagination.number_of_results_selector(data, definition.limits) }}
                 </div>
+                {% endif %}
             </div>
         </div>
         <div class="table-responsive">
@@ -26,6 +30,7 @@
                 {% hook 'data_table' %}
             </table>
         </div>
+        {% if data|length > 0 %}
         <div class="card-footer d-flex align-items-center gap-2 flex-wrap">
             <div class="text-muted">
                 {{ pagination.results_count(data) }}
@@ -34,5 +39,6 @@
                 {{ pagination.simple(data) }}
             </div>
         </div>
+        {% endif %}
     </div>
 {% endif %}
