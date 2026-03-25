@@ -302,6 +302,10 @@ class MediaAdminController extends AbstractController
             'action' => $this->generateUrl('joli_media_sylius_admin_upload'),
         ]);
 
+        if (null !== $path) {
+            $form->setData(['path' => $path]);
+        }
+
         return $form;
     }
 }
