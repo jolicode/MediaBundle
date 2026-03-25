@@ -14,8 +14,7 @@
         <span class="media-choice__actions">
             <span class="btn-group">
                 <a
-                    href="{{ path('joli_media_sylius_admin_choose') }}&key="
-                    data-folder="{{ folder }}"
+                    href="{{ path('joli_media_sylius_admin_choose', { key: folder }) }}"
                     class="btn btn-sm btn-link text-primary joli-media-choice-edit"
                 >
                     <i class="fas fa-plus"></i> {{ 'action.choose_a_file'|trans(domain: 'JoliMediaSyliusAdminBundle') }}
@@ -36,7 +35,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
-                        <span class="btn-label">{{ 'action.cancel'|trans(domain: 'SyliusUiBundle') }}</span>
+                        <span class="btn-label">{{ 'action.cancel'|trans(domain: 'JoliMediaSyliusAdminBundle') }}</span>
                     </button>
                 </div>
             </div>

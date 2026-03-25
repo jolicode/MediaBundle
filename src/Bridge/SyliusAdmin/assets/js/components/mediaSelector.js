@@ -19,12 +19,10 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     };
 
     const closeModal = () => {
-        const closeEvent = new Event("click");
-        const closeButtons = modal.querySelectorAll("[data-bs-dismiss='modal']");
-        if (closeButtons.length > 0) {
-            closeButtons.item(closeButtons.length - 1).dispatchEvent(closeEvent);
+        const bsModal = bootstrap.Modal.getInstance(modal);
+        if (bsModal) {
+            bsModal.hide();
         }
-        return;
     };
 
     const setFieldValue = (value) => {
@@ -39,28 +37,33 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
             target === null ||
             target.tagName !== "A" ||
             target.attributes.href === undefined ||
-            target.attributes.href.length === 0 ||
-            target.attributes.href.value === "#"
+            target.attributes.href.length === 0
         ) {
+            return;
+        }
+
+        const href = target.attributes.href.value;
+
+        if (
+            target.dataset.mediaTemplate !== undefined &&
+            target.dataset.mediaUrl !== undefined
+        ) {
+            event.preventDefault();
+            event.stopPropagation();
+            mediaContainer.innerHTML = target.dataset.mediaTemplate;
+            mediaChoiceContainer.classList.remove("empty");
+            setFieldValue(target.dataset.mediaUrl);
+            closeModal();
+            return;
+        }
+
+        if (href === "#") {
             return;
         }
 
         event.preventDefault();
         event.stopPropagation();
-
-        if (
-            target.dataset.mediaTemplate === undefined ||
-            target.dataset.mediaUrl === undefined
-        ) {
-            fetchFolder(target.attributes.href.value).then(configureModal);
-            return;
-        }
-
-        mediaContainer.innerHTML = target.dataset.mediaTemplate;
-        mediaChoiceContainer.classList.remove("empty");
-        setFieldValue(target.dataset.mediaUrl);
-        editButton.dataset.folder = target.dataset.mediaFolder;
-        closeModal();
+        fetchFolder(href).then(configureModal);
     };
 
     const handleDelete = (event) => {
@@ -82,9 +85,11 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         event.preventDefault();
         modalContent.innerHTML = "";
 
-        fetchFolder(
-            editButton.attributes.href.value + editButton.dataset.folder,
-        ).then(configureModal);
+        fetchFolder(editButton.attributes.href.value).then((html) => {
+            configureModal(html);
+            const bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+            bsModal.show();
+        });
 
         return false;
     };

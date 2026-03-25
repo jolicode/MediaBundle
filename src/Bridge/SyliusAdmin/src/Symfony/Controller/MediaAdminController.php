@@ -176,10 +176,7 @@ class MediaAdminController extends AbstractController
                 page: $request->query->getInt('page', 1),
                 perPage: 24,
             );
-            $medias = [];
-            foreach ($paginatedMedias as $media) {
-                $medias[] = $media;
-            }
+            $medias = $paginatedMedias['items'] ?? [];
         } catch (\OutOfRangeException) {
             $medias = [];
         }

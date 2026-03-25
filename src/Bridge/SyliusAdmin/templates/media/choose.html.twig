@@ -1,18 +1,19 @@
 {% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
 
 <div class="joli-media-choose-container">
-    <div class="mb-3">
-        <a href="{{ path('joli_media_sylius_admin_explore', { key: '' }) }}" class="btn btn-sm btn-light">
-            {{ ux_icon('tabler:home') }}Root
-        </a>
+    <div class="gallery">
         {% if current_key %}
-            <a href="{{ path('joli_media_sylius_admin_choose', { key: current_key|split('/')|slice(0, -1)|join('/') }) }}" class="btn btn-sm btn-light">
-                {{ ux_icon('mdi:arrow-left-bold') }} Parent
-            </a>
+            <ul class="gallery-grid gallery-grid--folders">
+                <li class="gallery-grid-item gallery-grid-item--back">
+                    <a href="{{ path('joli_media_sylius_admin_choose', { key: current_key|split('/')|slice(0, -1)|join('/') }) }}" class="gallery-grid-item__link">
+                        <span class="gallery-grid-item__icon">{{ ux_icon('mdi:arrow-left-bold') }}</span>
+                        <span class="gallery-grid-item__name">Parent</span>
+                    </a>
+                </li>
+            </ul>
         {% endif %}
-    </div>
 
-    <ul class="gallery-grid gallery-grid--files">
+        <ul class="gallery-grid gallery-grid--files">
         {% for media in medias %}
             {% if media.isStored %}
                 <li class="gallery-grid-item">
@@ -41,5 +42,6 @@
                 </div>
             </li>
         {% endif %}
-    </ul>
+        </ul>
+    </div>
 </div>
