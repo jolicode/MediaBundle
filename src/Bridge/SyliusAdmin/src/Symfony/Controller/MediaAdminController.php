@@ -155,6 +155,7 @@ class MediaAdminController extends AbstractController
     {
         $currentKey = Resolver::normalizePath($key);
         $request->attributes->set('currentKey', $currentKey);
+        $page = $request->query->getInt('page', 1);
 
         try {
             $trashPath = $this->getOriginalStorage()->getTrashPath();
@@ -173,12 +174,22 @@ class MediaAdminController extends AbstractController
             $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
                 $currentKey,
                 recursive: false,
-                page: $request->query->getInt('page', 1),
+                page: $page,
                 perPage: 24,
             );
             $medias = $paginatedMedias['items'] ?? [];
+            $pagination = [
+                'page' => $paginatedMedias['page'],
+                'totalPages' => $paginatedMedias['totalPages'],
+                'total' => $paginatedMedias['total'],
+            ];
         } catch (\OutOfRangeException) {
             $medias = [];
+            $pagination = [
+                'page' => 1,
+                'totalPages' => 1,
+                'total' => 0,
+            ];
         }
 
         return new Response($this->twig->render('@JoliMediaSyliusAdmin/media/choose.html.twig', [
@@ -186,6 +197,7 @@ class MediaAdminController extends AbstractController
             'current_key' => $currentKey,
             'directories' => $directories ?? [],
             'medias' => $medias,
+            'pagination' => $pagination,
             'create_media_form' => $this->createUploadForm($currentKey)->createView(),
             'config' => $this->config,
         ]));
