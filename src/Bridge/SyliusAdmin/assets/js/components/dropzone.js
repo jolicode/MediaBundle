@@ -28,7 +28,7 @@ const addDropzone = (element = null) => {
                 const linkElement = file.previewElement.querySelector(
                   "[data-dz-link]"
                 );
-                linkElement.href = fil$eInfo.link;
+                linkElement.href = fileInfo.link;
                 linkElement.setAttribute("data-media-folder", fileInfo.mediaFolder);
                 linkElement.setAttribute("data-media-url", fileInfo.mediaUrl);
                 linkElement.setAttribute("data-media-template", fileInfo.mediaTemplate);
@@ -37,6 +37,8 @@ const addDropzone = (element = null) => {
                   file.previewElement.querySelector("[data-dz-thumbnail]").remove();
                   linkElement.innerHTML = fileInfo.mediaPreview;
                 }
+
+                document.dispatchEvent(new CustomEvent('media-uploaded', { detail: { folder: fileInfo.mediaFolder } }));
               }
             }
           }

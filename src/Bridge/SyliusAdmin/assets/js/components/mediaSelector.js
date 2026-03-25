@@ -35,6 +35,10 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         inputElement.dispatchEvent(new Event("change"));
     };
 
+    const reloadModal = () => {
+        fetchFolder(editButton.href).then(configureModal);
+    };
+
     const handleModalClick = (event) => {
         const target = event.target.closest("a");
 
@@ -81,7 +85,6 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
             mediaContainer.appendChild(template.content.cloneNode(true));
         }
 
-        editButton.dataset.folder = "";
         setFieldValue("");
         return false;
     };
@@ -90,7 +93,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         event.preventDefault();
         modalContent.innerHTML = "";
 
-        fetchFolder(editButton.attributes.href.value).then((html) => {
+        fetchFolder(editButton.href).then((html) => {
             configureModal(html);
             const bsModal = bootstrap.Modal.getOrCreateInstance(modal);
             bsModal.show();
@@ -119,10 +122,15 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         ;
     };
 
+    const handleMediaUploaded = () => {
+        reloadModal();
+    };
+
     deleteButton.addEventListener("click", handleDelete);
     editButton.addEventListener("click", handleEdit);
     modal.addEventListener("click", handleModalClick);
     modal.addEventListener("submit", handleModalSubmit);
+    document.addEventListener("media-uploaded", handleMediaUploaded);
 
     mediaChoiceContainer.dataset.configured = true;
 };
