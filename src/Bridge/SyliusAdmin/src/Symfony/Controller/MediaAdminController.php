@@ -34,6 +34,7 @@ class MediaAdminController extends AbstractController
 {
     public function __construct(
         private readonly LibraryContainer $libraries,
+        private readonly Resolver $resolver,
         private readonly GridViewFactoryInterface $gridViewFactory,
         private readonly GridProviderInterface $gridProvider,
         private readonly Environment $twig,
@@ -306,6 +307,17 @@ class MediaAdminController extends AbstractController
                 'error' => 'An error occurred during upload',
             ], Response::HTTP_BAD_REQUEST);
         }
+    }
+
+    #[Route(path: '/show/{key}', name: 'show', requirements: ['key' => '.+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    public function show(Request $request, string $key): Response
+    {
+        $media = $this->resolver->resolveMedia($key);
+
+        return new Response($this->twig->render('@JoliMediaSyliusAdmin/media/show.html.twig', [
+            'config' => $this->config,
+            'media' => $media,
+        ]));
     }
 
     private function createUploadForm(?string $path = null): FormInterface

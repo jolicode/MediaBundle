@@ -1,0 +1,24 @@
+{% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
+
+{% set config = hookable_metadata.context.config %}
+{% set media = hookable_metadata.context.media %}
+
+{% if config.isVisible('show_html_code') %}
+    <div class="data-row">
+        <dt class="mb-1">HTML</dt>
+        <dd class="d-flex align-items-start jm-box">
+                            <pre class="flex-fill mb-0"><code id="media-html-code" class="long-text-break">
+                                {{- include('@JoliMediaSyliusAdmin/_as_html.html.twig')|escape -}}
+                            </code></pre>
+            <button
+                    class="btn btn-primary btn-sm clipboard-btn"
+                    data-clipboard-target="#media-html-code"
+                    role="button"
+                    tabindex="0"
+            >
+                <i class="fa-regular fa-clone"></i>
+                <span class="btn-label">{{ 'action.copy'|trans }}</span>
+            </button>
+        </dd>
+    </div>
+{% endif %}

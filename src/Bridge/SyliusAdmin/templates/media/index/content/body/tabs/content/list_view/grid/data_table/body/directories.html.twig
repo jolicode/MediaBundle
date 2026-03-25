@@ -17,6 +17,9 @@
             {% endif %}
         </td>
     {% endfor %}
+    {% if definition.actionGroups.item is defined and definition.getEnabledActions('item')|length > 0 %}
+        <td></td>
+    {% endif %}
 </tr>
 {% endif %}
 {% for directory in directories %}
@@ -35,5 +38,8 @@
                 </a>
             </td>
         {% endfor %}
+        {% if definition.actionGroups.item is defined and definition.getEnabledActions('item')|length > 0 %}
+            <td></td>
+        {% endif %}
     </tr>
 {% endfor %}

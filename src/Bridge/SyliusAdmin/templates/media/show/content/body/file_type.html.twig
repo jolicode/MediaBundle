@@ -1,0 +1,10 @@
+{% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
+
+{% set media = hookable_metadata.context.media %}
+
+<div class="data-row">
+    <dt class="mb-1">{{ 'media.type.label_long'|trans }}</dt>
+    <dd class="d-flex align-items-start">
+        {{ 'media.type.%s'|format(media.fileType)|trans }}
+    </dd>
+</div>

@@ -1,0 +1,10 @@
+{% set media = hookable_metadata.context.media %}
+
+<div class="data-row">
+    <dt class="mb-1">
+        Preview
+    </dt>
+    <dd>
+        {{ include('@JoliMediaSyliusAdmin/_preview.html.twig', { variation: 'joli_media_sylius_admin_large', className: 'media-preview' }) }}
+    </dd>
+</div>

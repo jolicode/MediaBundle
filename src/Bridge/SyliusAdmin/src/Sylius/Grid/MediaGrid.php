@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid;
 
 use Sylius\Bundle\GridBundle\Builder\Action\Action;
+use Sylius\Bundle\GridBundle\Builder\Action\CreateAction;
+use Sylius\Bundle\GridBundle\Builder\Action\ShowAction;
+use Sylius\Bundle\GridBundle\Builder\ActionGroup\ItemActionGroup;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\MainActionGroup;
 use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
 use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
@@ -47,12 +50,16 @@ final class MediaGrid extends AbstractGrid
             )
             ->withFields(
                 TwigField::create('pixelDimensions', '@JoliMediaSyliusAdmin/media/grid/field/dimensions.html.twig')
-                    ->setLabel('Dimensions')
+                    ->setLabel('Dimensions'),
             )
             ->addActionGroup(MainActionGroup::create(
                 Action::create('add_media', 'custom')
                     ->setLabel('Add media')
-                    ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/add_media.html.twig')
+                    ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/add_media.html.twig'),
+            ))
+            ->addActionGroup(ItemActionGroup::create(
+                ShowAction::create()
+                    ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/show.html.twig')
             ))
         ;
     }

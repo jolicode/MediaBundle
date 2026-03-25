@@ -1,5 +1,6 @@
 action:
     choose_a_file: 'Choisir un fichier'
+    copy: 'Copier'
     remove: 'Supprimer'
     cancel: 'Annuler'
 browser:
@@ -11,8 +12,12 @@ directory:
     label: 'Répertoire'
 media:
     add: 'Ajouter un média'
+    dimensions: 'Dimensions'
     label: 'Media'
+    size:
+        label_long: 'Taille du fichier'
     type:
+        label_long: 'Type de fichier'
         audio: 'Audio'
         csv: 'CSV'
         excel: 'Excel'
@@ -28,6 +33,8 @@ media:
         zip: 'ZIP'
     unavailable:
         simple: 'Aucun média sélectionné.'
+    url:
+        label_long: 'URL du média'
     inaccessible:
         explanation: 'Le média "%media%" n''est pas accessible. Il a peut-être été supprimé ou déplacé.'
         label: 'Média inaccessible'

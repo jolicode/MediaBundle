@@ -29,6 +29,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set('joli_media.sylius_admin.controller.media_admin', MediaAdminController::class)
         ->args([
             service('joli_media.library_container'),
+            service('joli_media.resolver'),
             service('sylius.grid.view_factory'),
             service('sylius.grid.provider'),
             service('twig'),

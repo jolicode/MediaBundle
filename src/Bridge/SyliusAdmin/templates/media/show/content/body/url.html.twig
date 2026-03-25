@@ -1,0 +1,19 @@
+{% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
+
+{% set media = hookable_metadata.context.media %}
+
+<div class="data-row">
+    <dt>{{ 'media.url.label_long'|trans }}</dt>
+    <dd class="d-flex jm-box">
+        <a href="{{ media.url }}" id="media-url" class="flex-fill"><code class="long-text-break">{{ media.url }}</code></a>
+        <button
+                class="btn btn-primary btn-sm clipboard-btn"
+                data-clipboard-target="#media-url"
+                role="button"
+                tabindex="0"
+        >
+            <i class="fa-regular fa-clone"></i>
+            <span class="btn-label">{{ 'action.copy'|trans }}</span>
+        </button>
+    </dd>
+</div>
