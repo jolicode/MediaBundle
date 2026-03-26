@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid\Provider;
 
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid\GridPageResolver;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Resolver\Resolver;
@@ -37,7 +38,7 @@ final class MediaGridProvider implements DataProviderInterface
                 $currentKey,
                 recursive: false,
                 page: $request->query->getInt('page', 1),
-                perPage: 10, //$this->config->getPaginationSize(),
+                perPage: GridPageResolver::getItemsPerPage($grid, $parameters),
             );
         } catch (\OutOfRangeException) {
             throw new BadRequestException('The requested page number is out of range.');

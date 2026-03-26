@@ -35,6 +35,15 @@ final class JoliMediaSyliusAdminBundle extends AbstractBundle
     {
         $definition->rootNode()
             ->children()
+                ->arrayNode('pagination')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('per_page')
+                            ->defaultValue([10, 25, 50])
+                            ->info('Number of media items to display per page.')
+                        ->end()
+                    ->end()
+                ->end()
                 ->arrayNode('upload')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -102,6 +111,7 @@ final class JoliMediaSyliusAdminBundle extends AbstractBundle
             ->arg('$acceptedFiles', $config['upload']['accepted_files'])
             ->arg('$maxFiles', $config['upload']['max_files'])
             ->arg('$maxFileSize', $config['upload']['max_file_size'])
+            ->arg('$paginationSizes', $config['pagination']['per_page'])
         ;
 
         $builder->prependExtensionConfig('framework', [

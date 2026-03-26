@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid;
 
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Config\Config;
 use Sylius\Bundle\GridBundle\Builder\Action\Action;
-use Sylius\Bundle\GridBundle\Builder\Action\CreateAction;
 use Sylius\Bundle\GridBundle\Builder\Action\ShowAction;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\ItemActionGroup;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\MainActionGroup;
@@ -20,9 +20,15 @@ use Sylius\Component\Grid\Attribute\AsGrid;
 )]
 final class MediaGrid extends AbstractGrid
 {
+    public function __construct(
+        private readonly Config $config,
+    ) {
+    }
+
     public function __invoke(GridBuilderInterface $gridBuilder): void
     {
         $gridBuilder
+            ->setLimits($this->config->getPaginationSizes())
             ->withFields(
                 TwigField::create('image', '@JoliMediaSyliusAdmin/media/grid/field/image.html.twig')
                     ->setPath('.')

@@ -8,6 +8,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 readonly class Config
 {
+    /**
+     * @param int[] $paginationSizes
+     */
     public function __construct(
         private TranslatorInterface $translator,
         /**
@@ -19,6 +22,7 @@ readonly class Config
          */
         private array $acceptedFiles,
         private int $maxFileSize,
+        private array $paginationSizes,
         private ?int $maxFiles = null,
     ) {
     }
@@ -62,5 +66,13 @@ readonly class Config
         }
 
         return $config;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getPaginationSizes(): array
+    {
+        return $this->paginationSizes;
     }
 }

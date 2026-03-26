@@ -216,6 +216,7 @@ class MediaAdminController extends AbstractController
             $gridDefinition,
             new Parameters([
                 'criteria' => $criteria,
+                'limit' => $limit ?? $gridDefinition->getLimits()[0] ?? 10,
                 'sorting' => [] !== $sorting ? $sorting : $gridDefinition->getSorting(),
             ]),
         );
