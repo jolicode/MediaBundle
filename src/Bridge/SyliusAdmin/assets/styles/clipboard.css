@@ -1,0 +1,9 @@
+.clipboard-btn.is-copied,
+.clipboard-btn.is-copied:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):active,
+.clipboard-btn.is-copied:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):active:focus,
+.clipboard-btn.is-copied:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):focus,
+.clipboard-btn.is-copied:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):hover {
+  --button-bg: var(--jm-color-green);
+  --button-hover-bg: var(--jm-color-green);
+  --button-focus-outline-color: var(--jm-color-green);
+}

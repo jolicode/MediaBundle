@@ -2,10 +2,10 @@
   "entrypoints": {
     "joli-media-sylius-admin": {
       "css": [
-        "./joli-media-sylius-admin.bde71ac0.css"
+        "./joli-media-sylius-admin.dea95e09.css"
       ],
       "js": [
-        "./joli-media-sylius-admin.0978f765.js"
+        "./joli-media-sylius-admin.9548bc8d.js"
       ]
     }
   }
