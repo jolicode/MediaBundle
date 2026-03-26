@@ -2,7 +2,7 @@
 
 {% set currentKey = hookable_metadata.context.current_key|default('') %}
 {% set breadcrumbsItems = [{ 'name': 'sylius.ui.dashboard'|trans, 'url': path('sylius_admin_ui_dashboard'), 'active': false }] %}
-{% set breadcrumbsItems = breadcrumbsItems|merge([{ 'name': 'Media', 'url': path('joli_media_sylius_admin_explore'), 'active': currentKey is empty }]) %}
+{% set breadcrumbsItems = breadcrumbsItems|merge([{ 'name': 'media_library'|trans(domain: 'JoliMediaSyliusAdminBundle'), 'url': path('joli_media_sylius_admin_explore'), 'active': currentKey is empty }]) %}
 
 {% if currentKey is not empty %}
     {% set parts = currentKey|split('/') %}

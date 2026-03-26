@@ -7,15 +7,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 return static function (ContainerConfigurator $container): void {
     $container->extension('sylius_twig_hooks', [
         'hooks' => [
-            'joli_media_sylius_admin.media.index' => [
-                'title' => [
-                    'template' => '@SyliusBootstrapAdminUi/shared/crud/common/content/header/title_block/title.html.twig',
-                    'configuration' => [
-                        'title' => 'Media',
-                    ],
-                ],
-            ],
-
             'joli_media_sylius_admin.media.index.content' => [
                 'header' => [
                     'template' => '@JoliMediaSyliusAdmin/media/index/content/header.html.twig',
@@ -39,9 +30,9 @@ return static function (ContainerConfigurator $container): void {
 
             'joli_media_sylius_admin.media.index.content.header.title_block' => [
                 'title' => [
-                    'template' => '@SyliusBootstrapAdminUi/shared/crud/common/content/header/title_block/title.html.twig',
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/header/title_block/title.html.twig',
                     'configuration' => [
-                        'title' => 'Media',
+                        'title' => 'media_library',
                     ],
                 ],
             ],

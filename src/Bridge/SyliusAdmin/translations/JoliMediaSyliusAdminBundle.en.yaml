@@ -14,7 +14,6 @@ directory:
 media:
     add: 'Add media'
     dimensions: 'Dimensions'
-    label: 'Media'
     size:
         label_long: 'File size'
     type:
@@ -58,3 +57,4 @@ root: 'Root'
 variation:
     label: 'Variation'
     stored: 'Stored?'
+media_library: 'Media library'
