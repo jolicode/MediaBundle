@@ -2,7 +2,7 @@
   "entrypoints": {
     "joli-media-sylius-admin": {
       "css": [
-        "./joli-media-sylius-admin.dea95e09.css"
+        "./joli-media-sylius-admin.b384993f.css"
       ],
       "js": [
         "./joli-media-sylius-admin.9548bc8d.js"

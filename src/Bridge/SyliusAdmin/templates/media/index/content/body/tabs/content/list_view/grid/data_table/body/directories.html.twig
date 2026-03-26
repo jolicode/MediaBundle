@@ -26,7 +26,7 @@
     <tr class="item position-relative">
         {% for field in definition.enabledFields|sylius_sort_by('position') %}
             <td {% if field.options.vars.td_class is defined %}  class="{{ field.options.vars.td_class }}"{% endif %}>
-                <a class="stretched-link text-decoration-none" href="{{ path('joli_media_sylius_admin_explore', {'key': directory}) }}">
+                <a class="text-decoration-none" href="{{ path('joli_media_sylius_admin_explore', {'key': directory}) }}">
                     {% if field.name == 'image' %}
                         {{ ux_icon('tabler:folder') }}
                     {% elseif field.name == 'path' %}
