@@ -3,6 +3,7 @@ import '../styles/dropzone.css';
 import '../styles/gallery.css';
 import '../styles/media-choice.css';
 import '../styles/media-preview.css';
+import '../styles/box.css';
 import './components/mediaSelector';
 import addDropzone from './components/dropzone';
 import './folder-tree';

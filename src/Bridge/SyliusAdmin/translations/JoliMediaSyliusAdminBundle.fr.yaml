@@ -54,3 +54,5 @@ no_file_found: 'Aucun fichier trouvé'
 preview:
     unavailable: 'Aperçu non disponible.'
 root: 'Racine'
+variation:
+    label: 'Variation'

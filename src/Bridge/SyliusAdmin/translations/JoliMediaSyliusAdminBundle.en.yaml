@@ -54,3 +54,5 @@ no_file_found: 'No file found'
 preview:
     unavailable: 'Preview not available.'
 root: 'Root'
+variation:
+    label: 'Variation'
