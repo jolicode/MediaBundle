@@ -1,7 +1,7 @@
 {% extends '@SyliusAdminUi/base.html.twig' %}
 
 {% block title %}
-    {{ 'media.label'|trans(domain: 'JoliMediaSyliusAdminBundle') }} | {{ parent() }}
+    {{ media.path|joli_media_admin_basename }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}

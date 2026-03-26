@@ -314,6 +314,23 @@ class MediaAdminController extends AbstractController
     {
         $media = $this->resolver->resolveMedia($key);
 
+        if ($this->resolver->isMediaProcessable($media)) {
+            $variations = $this->getLibrary()->getVariationContainer()->list();
+
+            foreach ($variations as $variation) {
+                if (!$this->config->isVisible('show_variations_list_admin_variations')
+                    && (str_starts_with($variation->getName(), 'joli-media-easy-admin')
+                        || str_starts_with($variation->getName(), 'joli-media-sonata-admin'))
+                ) {
+                    continue;
+                }
+
+                if ($variation->canBeAppliedTo($media)) {
+                    $this->resolver->resolveMediaVariation($media, $variation, $this->getLibrary()->getName());
+                }
+            }
+        }
+
         return new Response($this->twig->render('@JoliMediaSyliusAdmin/media/show.html.twig', [
             'config' => $this->config,
             'media' => $media,

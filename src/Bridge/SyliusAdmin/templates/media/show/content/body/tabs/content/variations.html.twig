@@ -1,3 +1,7 @@
-<div class="tab-pane show" id="tabs-variations">
-    {% hook 'variations' %}
-</div>
+{% set config = hookable_metadata.context.config %}
+
+{% if config.isVisible('show_variations_list') %}
+    <div class="tab-pane show" id="tabs-variations">
+        {% hook 'variations' %}
+    </div>
+{% endif %}

@@ -1,3 +1,7 @@
-<li class="nav-item">
-    <a href="#tabs-variations" class="nav-link" data-bs-toggle="tab">Variations</a>
-</li>
+{% set config = hookable_metadata.context.config %}
+
+{% if config.isVisible('show_variations_list') %}
+    <li class="nav-item">
+        <a href="#tabs-variations" class="nav-link" data-bs-toggle="tab">Variations</a>
+    </li>
+{% endif %}

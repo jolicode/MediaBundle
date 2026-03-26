@@ -1,5 +1,7 @@
 {% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
 
+{% import "@SyliusBootstrapAdminUi/shared/helper/field/boolean.html.twig" as boolean %}
+
 {% set config = hookable_metadata.context.config %}
 {% set media = hookable_metadata.context.media %}
 
@@ -24,11 +26,7 @@
                         <th data-column="name" data-label="name" class="text-left" dir="ltr">{{ variation.variation.name }}</th>
                         {% if config.isVisible('show_variations_stored') %}
                             <td data-column="stored" data-label="stored" class="text-left text-lowercase" dir="ltr">
-                                {% if variation.isStored %}
-                                    <span class="badge badge-success">{{ 'label.true'|trans(domain: 'EasyAdminBundle') }}</span>
-                                {% else %}
-                                    <span class="badge badge-danger">{{ 'label.false'|trans(domain: 'EasyAdminBundle') }}</span>
-                                {% endif %}
+                                {{ boolean.default(variation.isStored) }}
                             </td>
                         {% endif %}
                         <td data-column="file-size" data-label="file-size" class="text-left" dir="ltr">
@@ -50,21 +48,30 @@
                                 <span class="badge badge-secondary">N/A</span>
                             {% endif %}
                         </td>
-                        <td data-column="url" data-label="url" class="text-left" dir="ltr">
+                        <td data-column="url" data-label="url" class="text-left" dggir="ltr">
                             <a href="{{ variation.url }}" id="media-{{ variation.variation.name }}-url"><code class="long-text-break">{{ variation.url }}</code></a>
                         </td>
                         <td data-column="actions" data-label="actions" class="text-left" dir="ltr">
-                            <a href="{{ variation.url }}" class="btn btn-sm btn-default btn-secondary clipboard-btn" data-clipboard-target="#media-{{ variation.variation.name }}-url">
-                                <i class="fa-regular fa-clone" aria-hidden="true"></i>
-                                <span class="btn-label">{{ 'action.copy'|trans }}</span>
+                            <div class="btn-group" role="group">
+                            <a href="{{ variation.url }}"
+                               class="btn btn-icon"
+                               data-bs-toggle="tooltip"
+                               data-bs-title="{{ 'action.copy'|trans }}"
+                               data-clipboard-target="#media-{{ variation.variation.name }}-url"
+                            >
+                                {{ ux_icon('tabler:copy') }}
                             </a>
 
                             {% if config.isVisible('show_variations_action_regenerate') and joli_media_admin_is_granted('REGENERATE_VARIATION', path: media.path, variation: variation.variation.name) %}
-                                <a href="{{ ea_url().setRoute('joli_media_easy_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}" class="btn btn-sm btn-secondary clipboard-btn">
-                                    <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
-                                    <span class="btn-label">{{ 'action.regenerate'|trans }}</span>
+                                <a href="{{ ea_url().setRoute('joli_media_easy_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}"
+                                   class="btn btn-icon"
+                                   data-bs-toggle="tooltip"
+                                   data-bs-title="{{ 'action.regenerate'|trans }}"
+                                >
+                                    {{ ux_icon('tabler:refresh') }}
                                 </a>
                             {% endif %}
+                            </div>
                         </td>
                     </tr>
                 {% endif %}

@@ -5,10 +5,10 @@ joli_media_sylius_admin:
 #    pagination:
 #        per_page: 25
     visibility:
-#        show_variations_list: true
-#        show_variations_list_admin_variations: true
-#        show_variations_stored: true
-#        show_variations_action_regenerate: true
+        show_variations_list: true
+        show_variations_list_admin_variations: true
+        show_variations_stored: true
+        show_variations_action_regenerate: true
         show_html_code: true
         show_markdown_code: true
     upload:

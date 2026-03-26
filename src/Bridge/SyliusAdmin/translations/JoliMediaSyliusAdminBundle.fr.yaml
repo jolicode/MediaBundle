@@ -1,6 +1,7 @@
 action:
     choose_a_file: 'Choisir un fichier'
     copy: 'Copier'
+    regenerate: 'Régénérer'
     remove: 'Supprimer'
     cancel: 'Annuler'
 browser:
@@ -56,3 +57,4 @@ preview:
 root: 'Racine'
 variation:
     label: 'Variation'
+    stored: 'Stockée ?'
