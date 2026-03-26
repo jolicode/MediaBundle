@@ -26,7 +26,7 @@ return static function (ContainerConfigurator $container): void {
         ])
     ;
 
-    $services->set('joli_media.sylius_admin.controller.media_admin', MediaAdminController::class)
+    $services->set('joli_media_sylius_admin.controller.media_admin', MediaAdminController::class)
         ->args([
             service('joli_media.library_container'),
             service('joli_media.resolver'),
@@ -38,18 +38,18 @@ return static function (ContainerConfigurator $container): void {
         ])
         ->call('setContainer', [service('service_container')])
         ->tag('controller.service_arguments')
-        ->alias(MediaAdminController::class, 'joli_media.sylius_admin.controller.media_admin')
+        ->alias(MediaAdminController::class, 'joli_media_sylius_admin.controller.media_admin')
         ->public()
     ;
 
-    $services->set('joli_media.sylius_admin.grid.media_admin', MediaGrid::class)
+    $services->set('joli_media_sylius_admin.grid.media_admin', MediaGrid::class)
         ->args([
             service('joli_media_sylius_admin.config'),
         ])
         ->tag('sylius.grid')
     ;
 
-    $services->set('joli_media.sylius_admin.grid_provider.media', MediaGridProvider::class)
+    $services->set('joli_media_sylius_admin.grid_provider.media', MediaGridProvider::class)
         ->args([
             service('joli_media.library_container'),
             service('request_stack'),
@@ -57,22 +57,22 @@ return static function (ContainerConfigurator $container): void {
         ->tag('sylius.grid_data_provider')
     ;
 
-    $services->set('joli_media.sylius_admin.form.media_transformer', MediaTransformer::class)
+    $services->set('joli_media_sylius_admin.form.media_transformer', MediaTransformer::class)
         ->args([
             service('joli_media.resolver'),
         ])
     ;
 
-    $services->set('joli_media.sylius_admin.form.media_choice', MediaChoiceType::class)
+    $services->set('joli_media_sylius_admin.form.media_choice', MediaChoiceType::class)
         ->args([
             service('joli_media.resolver'),
             service('joli_media.library_container'),
-            service('joli_media.sylius_admin.form.media_transformer'),
+            service('joli_media_sylius_admin.form.media_transformer'),
         ])
         ->tag('form.type')
     ;
 
-    $services->set('joli_media.sylius_admin.form.upload', UploadType::class)
+    $services->set('joli_media_sylius_admin.form.upload', UploadType::class)
         ->args([
             service('joli_media_sylius_admin.config'),
         ])

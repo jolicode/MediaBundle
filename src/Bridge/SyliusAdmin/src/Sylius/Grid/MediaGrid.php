@@ -16,7 +16,7 @@ use Sylius\Component\Grid\Attribute\AsGrid;
 
 #[AsGrid(
     name: 'joli_media_explore',
-    provider: 'joli_media.sylius_admin.grid_provider.media',
+    provider: 'joli_media_sylius_admin.grid_provider.media',
 )]
 final class MediaGrid extends AbstractGrid
 {
