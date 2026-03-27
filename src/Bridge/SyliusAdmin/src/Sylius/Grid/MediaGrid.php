@@ -7,6 +7,7 @@ namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Config\Config;
 use Sylius\Bundle\GridBundle\Builder\Action\Action;
 use Sylius\Bundle\GridBundle\Builder\Action\ShowAction;
+use Sylius\Bundle\GridBundle\Builder\Action\UpdateAction;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\ItemActionGroup;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\MainActionGroup;
 use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
@@ -71,7 +72,9 @@ final class MediaGrid extends AbstractGrid
             ))
             ->addActionGroup(ItemActionGroup::create(
                 ShowAction::create()
-                    ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/show.html.twig')
+                    ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/show.html.twig'),
+                UpdateAction::create()
+                    ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/update.html.twig'),
             ))
         ;
     }

@@ -9,11 +9,13 @@ import './components/mediaSelector';
 import addDropzone from './components/dropzone';
 import configureClipboard from './components/clipboard';
 import configureDirectoryCreate from './components/directoryCreate';
+import configureDirectoryRename from './components/directoryRename';
 import './folder-tree';
 
 document.addEventListener('DOMContentLoaded', () => {
     configureClipboard();
     configureDirectoryCreate();
+    configureDirectoryRename();
 
     let dropzoneInstance = null;
 
