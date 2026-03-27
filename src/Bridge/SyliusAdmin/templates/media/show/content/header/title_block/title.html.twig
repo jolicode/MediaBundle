@@ -1,9 +1,0 @@
-{% import '@SyliusBootstrapAdminUi/shared/helper/header.html.twig' as header %}
-
-{% set media = hookable_metadata.context.media %}
-
-<div class="col-12 col-md-6">
-    <div class="d-md-flex gap-2 align-items-center">
-        {{ header.h1(media.path|joli_media_admin_basename) }}
-    </div>
-</div>

@@ -15,9 +15,9 @@ return static function (ContainerConfigurator $container): void {
 
             'joli_media_sylius_admin.media.show.content.header.title_block' => [
                 'title' => [
-                    'template' => '@JoliMediaSyliusAdmin/media/show/content/header/title_block/title.html.twig',
+                    'template' => '@SyliusBootstrapAdminUi/shared/crud/show/content/header/title_block/title.html.twig',
                     'configuration' => [
-                        'title' => '@=_context.media.getPath()',
+                        'title' => '@=_context.media.getFilename()',
                     ],
                 ],
             ],

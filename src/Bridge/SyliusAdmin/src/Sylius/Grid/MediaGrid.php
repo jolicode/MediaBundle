@@ -43,6 +43,7 @@ final class MediaGrid extends AbstractGrid
             )
             ->withFields(
                 TwigField::create('path', '@JoliMediaSyliusAdmin/media/grid/field/path.html.twig')
+                    ->setPath('filename')
                     ->setLabel($this->trans('media.name')),
             )
             ->withFields(
