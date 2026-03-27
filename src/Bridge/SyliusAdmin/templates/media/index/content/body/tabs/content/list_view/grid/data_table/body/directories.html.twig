@@ -23,11 +23,11 @@
 </tr>
 {% endif %}
 {% for directory in directories %}
-    <tr class="item" data-directory="{{ directory }}">
+    {% set path = path('joli_media_sylius_admin_explore', {'key': directory}) %}
+
+    <tr class="item" data-directory="{{ directory }}" data-delete-directory-path="{{ path('joli_media_sylius_admin_delete_directory') }}">
         {% for field in definition.enabledFields|sylius_sort_by('position') %}
             <td {% if field.options.vars.td_class is defined %}  class="{{ field.options.vars.td_class }}"{% endif %}>
-                {% set path = path('joli_media_sylius_admin_explore', {'key': directory}) %}
-
                 {% if field.name == 'image' %}
                     {{ ux_icon('tabler:folder') }}
                 {% elseif field.name == 'fileType' %}
@@ -52,9 +52,17 @@
         {% endfor %}
         {% if definition.actionGroups.item is defined and definition.getEnabledActions('item')|length > 0 %}
             <td>
-                <button type="button" class="btn btn-icon directory-rename-btn" data-component="directory-rename" data-bs-toggle="tooltip" title="{{ 'Rename'|trans }}">
-                    {{ ux_icon('tabler:pencil') }}
-                </button>
+                <div class="btn-group">
+                    <a href="{{ path }}" class="btn btn-icon" data-bs-toggle="tooltip" title="{{ 'sylius.ui.show'|trans }}">
+                        {{ ux_icon('tabler:eye') }}
+                    </a>
+                    <button type="button" class="btn btn-icon directory-rename-btn" data-component="directory-rename" data-bs-toggle="tooltip" title="{{ 'Rename'|trans }}">
+                        {{ ux_icon('tabler:pencil') }}
+                    </button>
+                    <button type="button" class="btn btn-icon directory-delete-btn btn-danger" data-component="directory-delete" data-bs-toggle="tooltip" title="{{ 'Delete'|trans }}">
+                        {{ ux_icon('tabler:trash-x') }}
+                    </button>
+                </div>
             </td>
         {% endif %}
     </tr>

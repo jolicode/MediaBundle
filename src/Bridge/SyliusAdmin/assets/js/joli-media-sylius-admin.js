@@ -10,12 +10,14 @@ import addDropzone from './components/dropzone';
 import configureClipboard from './components/clipboard';
 import configureDirectoryCreate from './components/directoryCreate';
 import configureDirectoryRename from './components/directoryRename';
+import configureDirectoryDelete from './components/directoryDelete';
 import './folder-tree';
 
 document.addEventListener('DOMContentLoaded', () => {
     configureClipboard();
     configureDirectoryCreate();
     configureDirectoryRename();
+    configureDirectoryDelete();
 
     let dropzoneInstance = null;
 
