@@ -41,9 +41,6 @@ return static function (ContainerConfigurator $container): void {
             ],
 
             'joli_media_sylius_admin.media.index.content.body' => [
-                'tree' => [
-                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tree.html.twig',
-                ],
                 'tabs' => [
                     'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs.html.twig',
                 ],
