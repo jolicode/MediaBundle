@@ -101,6 +101,39 @@ class MediaAdminController extends AbstractController
         }
     }
 
+    #[Route(path: '/delete', name: 'delete', methods: [Request::METHOD_POST])]
+    public function delete(Request $request): Response
+    {
+        $key = $request->query->get('key');
+
+        $csrfToken = $request->request->get('_csrf_token');
+
+        if (!$this->isCsrfTokenValid($key, $csrfToken ?? '')) {
+            $this->addFlash('error', 'Invalid CSRF token');
+        }
+
+        if (!isset($key)) {
+            $this->addFlash('error', 'Missing path parameter');
+        }
+
+        try {
+            $this->getOriginalStorage()->delete($key);
+
+            $this->addFlash('success', $this->translator->trans('sylius.resource.delete', ['%resource%' => $key], domain: 'flashes'));
+        } catch (\Throwable $e) {
+            $this->addFlash('error', $e->getMessage());
+        }
+
+        /** @var string|null $referer */
+        $referer = $request->headers->get('referer');
+
+        if (null !== $referer && $this->isValidReferer($referer, $request)) {
+            return $this->redirect($referer);
+        }
+
+        return $this->redirectToRoute('joli_media_sylius_admin_explore');
+    }
+
     #[Route(path: '/delete-directory', name: 'delete_directory', methods: [Request::METHOD_POST])]
     public function deleteDirectory(Request $request): Response
     {
@@ -124,10 +157,11 @@ class MediaAdminController extends AbstractController
             $this->addFlash('error', $e->getMessage());
         }
 
+        /** @var string|null $referer */
         $referer = $request->headers->get('referer');
 
-        if ($referer) {
-            $this->redirect($referer);
+        if (null !== $referer && $this->isValidReferer($referer, $request)) {
+            return $this->redirect($referer);
         }
 
         return $this->redirectToRoute('joli_media_sylius_admin_explore');
@@ -359,5 +393,21 @@ class MediaAdminController extends AbstractController
         }
 
         return $form;
+    }
+
+    private function isValidReferer(string $referer, Request $request): bool
+    {
+        $parsed = parse_url($referer);
+        if ($parsed === false) {
+            return false;
+        }
+
+        // Relative URL → OK
+        if (!isset($parsed['host'])) {
+            return true;
+        }
+
+        // Same host only
+        return $parsed['host'] === $request->getHost();
     }
 }

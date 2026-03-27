@@ -1,0 +1,5 @@
+{{ component('sylius_bootstrap_admin_ui:delete_modal', {
+    id: data.path,
+    modal_id: 'delete-directory-modal-' ~ random(),
+    path: path('joli_media_sylius_admin_delete', {'key': data.path})
+}) }}
