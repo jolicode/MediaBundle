@@ -45,6 +45,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set('joli_media_sylius_admin.grid.media_admin', MediaGrid::class)
         ->args([
             service('joli_media_sylius_admin.config'),
+            service('translator'),
         ])
         ->tag('sylius.grid')
     ;

@@ -171,6 +171,17 @@ final class JoliMediaSyliusAdminBundle extends AbstractBundle
                                 ],
                             ],
                         ],
+                        'joli_media_sylius_admin_small' => [
+                            'enable_auto_webp' => false,
+                            'pixel_ratios' => [1],
+                            'transformers' => [
+                                'thumbnail' => [
+                                    'width' => 20,
+                                    'height' => 24,
+                                    'allow_upscale' => true,
+                                ],
+                            ],
+                        ],
                     ],
                 ],
             ],

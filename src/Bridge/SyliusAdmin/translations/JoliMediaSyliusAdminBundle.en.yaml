@@ -14,9 +14,11 @@ directory:
 media:
     add: 'Add media'
     dimensions: 'Dimensions'
+    name: 'Name'
     size:
         label_long: 'File size'
     type:
+        label: 'Type'
         label_long: 'File type'
         audio: 'Audio'
         csv: 'CSV'

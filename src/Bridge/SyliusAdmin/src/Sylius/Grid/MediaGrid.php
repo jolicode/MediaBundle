@@ -13,6 +13,7 @@ use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
 use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
 use Sylius\Bundle\GridBundle\Grid\AbstractGrid;
 use Sylius\Component\Grid\Attribute\AsGrid;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsGrid(
     name: 'joli_media_explore',
@@ -22,6 +23,7 @@ final class MediaGrid extends AbstractGrid
 {
     public function __construct(
         private readonly Config $config,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -32,23 +34,23 @@ final class MediaGrid extends AbstractGrid
             ->withFields(
                 TwigField::create('image', '@JoliMediaSyliusAdmin/media/grid/field/image.html.twig')
                     ->setPath('.')
-                    ->setLabel('Image')
+                    ->setLabel('')
                     ->withOptions(['vars' => [
-                        'th_class' => 'w-1 text-center',
+                        'th_class' => 'text-center',
                         'td_class' => 'text-center',
                     ]])
             )
             ->withFields(
                 TwigField::create('path', '@JoliMediaSyliusAdmin/media/grid/field/path.html.twig')
-                    ->setLabel('Name'),
+                    ->setLabel($this->trans('media.name')),
             )
             ->withFields(
                 TwigField::create('fileType', '@JoliMediaSyliusAdmin/media/grid/field/file_type.html.twig')
-                    ->setLabel('Type'),
+                    ->setLabel($this->trans('media.type.label')),
             )
             ->withFields(
                 TwigField::create('fileSize', '@JoliMediaSyliusAdmin/media/grid/field/file_size.html.twig')
-                    ->setLabel('File size')
+                    ->setLabel($this->trans('media.size.label_long'))
                     ->withOptions(['vars' => [
                         'th_class' => 'w-20 text-center',
                         'td_class' => 'text-center',
@@ -56,7 +58,7 @@ final class MediaGrid extends AbstractGrid
             )
             ->withFields(
                 TwigField::create('pixelDimensions', '@JoliMediaSyliusAdmin/media/grid/field/dimensions.html.twig')
-                    ->setLabel('Dimensions'),
+                    ->setLabel($this->trans('media.dimensions')),
             )
             ->addActionGroup(MainActionGroup::create(
                 Action::create('add_media', 'custom')
@@ -68,5 +70,10 @@ final class MediaGrid extends AbstractGrid
                     ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/show.html.twig')
             ))
         ;
+    }
+
+    private function trans(string $message): string
+    {
+        return $this->translator->trans($message, domain: 'JoliMediaSyliusAdminBundle');
     }
 }
