@@ -8,10 +8,12 @@ import '../styles/media-preview.css';
 import './components/mediaSelector';
 import addDropzone from './components/dropzone';
 import configureClipboard from './components/clipboard';
+import configureDirectoryCreate from './components/directoryCreate';
 import './folder-tree';
 
 document.addEventListener('DOMContentLoaded', () => {
     configureClipboard();
+    configureDirectoryCreate();
 
     let dropzoneInstance = null;
 

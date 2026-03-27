@@ -11,6 +11,7 @@ browser:
         unsupported: 'Votre navigateur ne supporte pas cet élément vidéo.'
 directory:
     label: 'Répertoire'
+    create: 'Créer un nouveau dossier'
 media:
     add: 'Ajouter un média'
     dimensions: 'Dimensions'

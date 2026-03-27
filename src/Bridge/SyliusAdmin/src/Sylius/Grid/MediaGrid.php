@@ -61,8 +61,12 @@ final class MediaGrid extends AbstractGrid
                     ->setLabel($this->trans('media.dimensions')),
             )
             ->addActionGroup(MainActionGroup::create(
+                Action::create('create_directory', 'custom')
+                    ->setLabel($this->trans('directory.create'))
+                    ->setIcon('tabler:folder-plus')
+                    ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/create_directory.html.twig'),
                 Action::create('add_media', 'custom')
-                    ->setLabel('Add media')
+                    ->setLabel($this->trans('media.add'))
                     ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/add_media.html.twig'),
             ))
             ->addActionGroup(ItemActionGroup::create(
