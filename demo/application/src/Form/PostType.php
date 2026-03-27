@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Post;
 use App\Entity\User;
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type\MediaChoiceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,7 +17,7 @@ class PostType extends AbstractType
         $builder
             ->add('title')
             ->add('body')
-//            ->add('coverMedia')
+            ->add('coverMedia', MediaChoiceType::class)
             ->add('isPublished')
             ->add('publishedAt', null, [
                 'widget' => 'single_text',
