@@ -11,8 +11,10 @@ import configureClipboard from './components/clipboard';
 import configureDirectoryCreate from './components/directoryCreate';
 import configureDirectoryRename from './components/directoryRename';
 import configureDirectoryDelete from './components/directoryDelete';
+import configureTabsState from './components/tabsState';
 
 document.addEventListener('DOMContentLoaded', () => {
+    configureTabsState();
     configureClipboard();
     configureDirectoryCreate();
     configureDirectoryRename();
