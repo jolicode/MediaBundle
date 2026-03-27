@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 #[Route(name: 'joli_media_sylius_admin_')]
@@ -40,6 +41,7 @@ class MediaAdminController extends AbstractController
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
         private readonly Config $config,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -102,25 +104,33 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/delete-directory', name: 'delete_directory', methods: [Request::METHOD_POST])]
     public function deleteDirectory(Request $request): Response
     {
-        $data = json_decode($request->getContent(), true);
+        $key = $request->query->get('key');
 
-        if (!$this->isCsrfTokenValid('media_delete_directory', $data['_csrf_token'] ?? '')) {
-            return $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 400);
+        $csrfToken = $request->request->get('_csrf_token');
+
+        if (!$this->isCsrfTokenValid($key, $csrfToken ?? '')) {
+            $this->addFlash('error', 'Invalid CSRF token');
         }
 
-        unset($data['_csrf_token']);
-
-        if (!isset($data['path'])) {
-            return $this->json(['success' => false, 'error' => 'Missing path parameter'], 400);
+        if (!isset($key)) {
+            $this->addFlash('error', 'Missing path parameter');
         }
 
         try {
-            $this->getOriginalStorage()->deleteDirectory($data['path']);
+            $this->getOriginalStorage()->deleteDirectory($key);
 
-            return $this->json(['success' => true]);
+            $this->addFlash('success', $this->translator->trans('sylius.resource.delete', ['%resource%' => $key], domain: 'flashes'));
         } catch (\Throwable $e) {
-            return $this->json(['success' => false, 'error' => $e->getMessage()], 400);
+            $this->addFlash('error', $e->getMessage());
         }
+
+        $referer = $request->headers->get('referer');
+
+        if ($referer) {
+            $this->redirect($referer);
+        }
+
+        return $this->redirectToRoute('joli_media_sylius_admin_explore');
     }
 
     #[Route(path: '/explore/{key}', name: 'explore', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]

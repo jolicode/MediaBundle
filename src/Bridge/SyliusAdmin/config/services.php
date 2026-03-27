@@ -35,6 +35,7 @@ return static function (ContainerConfigurator $container): void {
             service('twig'),
             service('form.factory'),
             service('joli_media_sylius_admin.config'),
+            service('translator'),
         ])
         ->call('setContainer', [service('service_container')])
         ->tag('controller.service_arguments')

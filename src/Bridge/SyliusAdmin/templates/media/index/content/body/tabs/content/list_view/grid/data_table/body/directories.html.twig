@@ -52,16 +52,18 @@
         {% endfor %}
         {% if definition.actionGroups.item is defined and definition.getEnabledActions('item')|length > 0 %}
             <td>
-                <div class="btn-group">
+                <div class="d-flex gap-1 justify-content-end">
                     <a href="{{ path }}" class="btn btn-icon" data-bs-toggle="tooltip" title="{{ 'sylius.ui.show'|trans }}">
                         {{ ux_icon('tabler:eye') }}
                     </a>
                     <button type="button" class="btn btn-icon directory-rename-btn" data-component="directory-rename" data-bs-toggle="tooltip" title="{{ 'Rename'|trans }}">
                         {{ ux_icon('tabler:pencil') }}
                     </button>
-                    <button type="button" class="btn btn-icon directory-delete-btn btn-danger" data-component="directory-delete" data-bs-toggle="tooltip" title="{{ 'Delete'|trans }}">
-                        {{ ux_icon('tabler:trash-x') }}
-                    </button>
+                    {{ component('sylius_bootstrap_admin_ui:delete_modal', {
+                        id: directory,
+                        modal_id: 'delete-directory-modal-' ~ loop.index ,
+                        path: path('joli_media_sylius_admin_delete_directory', {'key': directory})
+                    }) }}
                 </div>
             </td>
         {% endif %}
