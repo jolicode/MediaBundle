@@ -40,6 +40,12 @@ return static function (ContainerConfigurator $container): void {
                 ],
             ],
 
+            'joli_media_sylius_admin.media.index.content.header.title_block.actions' => [
+                'back' => [
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/header/title_block/actions/back.html.twig',
+                ],
+            ],
+
             'joli_media_sylius_admin.media.index.content.body' => [
                 'tabs' => [
                     'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs.html.twig',

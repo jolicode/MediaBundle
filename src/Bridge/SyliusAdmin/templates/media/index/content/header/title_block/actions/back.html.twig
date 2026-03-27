@@ -1,0 +1,12 @@
+{% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
+
+{% set key = hookable_metadata.context.key %}
+{% set current_key = hookable_metadata.context.current_key %}
+{% set parent_key = current_key is empty ? '' : (('/' in current_key) ? current_key|split('/')|slice(0, -1)|join('/') : '') %}
+
+{% if not current_key == '' %}
+    <a href="{{ path('joli_media_sylius_admin_explore', {'key': parent_key}) }}" class="btn">
+        {{ ux_icon('mdi:arrow-left-bold', {'class': 'icon dropdown-item-icon'}) }}
+        {{ 'back'|trans }}
+    </a>
+{% endif %}
