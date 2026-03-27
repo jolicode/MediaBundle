@@ -9,16 +9,12 @@ return static function (ContainerConfigurator $container): void {
         'hooks' => [
             'joli_media_sylius_admin.media.show.content.header' =>  [
                 'breadcrumbs' => [
-                    'template' => '@SyliusBootstrapAdminUi/shared/crud/show/content/header/breadcrumbs.html.twig',
-                    'configuration' => [
-                        'title' => '@=_context.media.getPath()',
-                    ],
+                    'template' => '@JoliMediaSyliusAdmin/media/show/content/header/breadcrumbs.html.twig',
                 ],
             ],
 
             'joli_media_sylius_admin.media.show.content.header.title_block' => [
                 'title' => [
-                    //'template' => '@SyliusBootstrapAdminUi/shared/crud/show/content/header/title_block/title.html.twig',
                     'template' => '@JoliMediaSyliusAdmin/media/show/content/header/title_block/title.html.twig',
                     'configuration' => [
                         'title' => '@=_context.media.getPath()',
@@ -29,6 +25,7 @@ return static function (ContainerConfigurator $container): void {
             'joli_media_sylius_admin.media.show.content' => [
                 'body' => [
                     'template' => '@JoliMediaSyliusAdmin/media/show/content/body.html.twig',
+                    'priority' => -10,
                 ],
             ],
 
@@ -41,9 +38,11 @@ return static function (ContainerConfigurator $container): void {
             'joli_media_sylius_admin.media.show.content.body.tabs' => [
                 'header' => [
                     'template' => '@JoliMediaSyliusAdmin/media/show/content/body/tabs/header.html.twig',
+                    'priority' => -10,
                 ],
                 'content' => [
                     'template' => '@JoliMediaSyliusAdmin/media/show/content/body/tabs/content.html.twig',
+                    'priority' => -20,
                 ],
             ],
 
@@ -54,7 +53,7 @@ return static function (ContainerConfigurator $container): void {
                 ],
                 'variations' => [
                     'template' => '@JoliMediaSyliusAdmin/media/show/content/body/tabs/header/variations.html.twig',
-                    'priority' => -10,
+                    'priority' => -20,
                 ],
             ],
 

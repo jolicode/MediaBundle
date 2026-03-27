@@ -1,0 +1,17 @@
+{% from '@SyliusBootstrapAdminUi/shared/helper/breadcrumbs.html.twig' import breadcrumbs %}
+
+{% set currentKey = hookable_metadata.context.media.path|default('') %}
+{% set breadcrumbsItems = [{ 'name': 'sylius.ui.dashboard'|trans, 'url': path('sylius_admin_ui_dashboard'), 'active': false }] %}
+{% set breadcrumbsItems = breadcrumbsItems|merge([{ 'name': 'media_library'|trans(domain: 'JoliMediaSyliusAdminBundle'), 'url': path('joli_media_sylius_admin_explore') }]) %}
+
+{% if currentKey is not empty %}
+    {% set parts = currentKey|split('/') %}
+    {% set fullPath = '' %}
+    {% for part in parts %}
+        {% set fullPath = fullPath ~ (fullPath is not empty ? '/' : '') ~ part %}
+        {% set isLast = loop.last %}
+        {% set breadcrumbsItems = breadcrumbsItems|merge([{ 'name': part, 'url': path('joli_media_sylius_admin_explore', { 'key': fullPath }), 'active': isLast }]) %}
+    {% endfor %}
+{% endif %}
+
+{{ breadcrumbs(breadcrumbsItems) }}
