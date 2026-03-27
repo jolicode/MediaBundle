@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     configureClipboard();
     configureDirectoryCreate();
     configureDirectoryRename();
-    configureDirectoryDelete();
 
     let dropzoneInstance = null;
 
