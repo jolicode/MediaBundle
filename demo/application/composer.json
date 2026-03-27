@@ -13,8 +13,11 @@
         "imagine/imagine": "^1.5",
         "jolicode/media-bundle": "^0.2.0",
         "nikic/php-parser": "^5.7.0",
+        "pagerfanta/doctrine-orm-adapter": "^4.8",
         "sonata-project/doctrine-orm-admin-bundle": "^4.19",
         "stof/doctrine-extensions-bundle": "^1.14",
+        "sylius/bootstrap-admin-ui": "^0.12.0",
+        "sylius/ui-translations": "^0.12.0",
         "symfony/console": "7.4.*",
         "symfony/dotenv": "7.4.*",
         "symfony/flex": "^2.10",
@@ -74,9 +77,6 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3.1",
-        "pagerfanta/doctrine-orm-adapter": "^4.8",
-        "sylius/bootstrap-admin-ui": "^0.11.0",
-        "sylius/ui-translations": "^0.11.0",
         "symfony/debug-bundle": "7.4.*",
         "symfony/maker-bundle": "^1.65.1",
         "symfony/web-profiler-bundle": "7.4.*"
