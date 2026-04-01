@@ -10,6 +10,7 @@ import addDropzone from './components/dropzone';
 import configureClipboard from './components/clipboard';
 import configureDirectoryCreate from './components/directoryCreate';
 import configureDirectoryRename from './components/directoryRename';
+import configureMediaRename from './components/mediaRename';
 import configureTabsState from './components/tabsState';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configureClipboard();
     configureDirectoryCreate();
     configureDirectoryRename();
+    configureMediaRename();
 
     let dropzoneInstance = null;
 

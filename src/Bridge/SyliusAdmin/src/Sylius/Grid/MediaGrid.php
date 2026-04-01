@@ -76,7 +76,8 @@ final class MediaGrid extends AbstractGrid
                 ShowAction::create()
                     ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/show.html.twig'),
                 UpdateAction::create()
-                    ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/update.html.twig'),
+                    ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/update.html.twig')
+                    ->setLabel($this->trans('action.rename')),
                 DeleteAction::create()
                     ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/delete.html.twig'),
             ))

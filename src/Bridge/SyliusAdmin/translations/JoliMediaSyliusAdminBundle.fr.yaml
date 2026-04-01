@@ -3,6 +3,7 @@ action:
     copy: 'Copier'
     regenerate: 'Régénérer'
     remove: 'Supprimer'
+    rename: 'Renommer'
     cancel: 'Annuler'
     entity_actions: 'Actions'
 browser:

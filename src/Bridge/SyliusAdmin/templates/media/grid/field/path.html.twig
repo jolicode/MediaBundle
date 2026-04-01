@@ -1,1 +1,14 @@
-{{ data }}
+{% set media_key = data %}
+
+<span class="media-name">{{ media_key|joli_media_admin_basename }}</span>
+<form class="media-rename-form d-none">
+    <div class="input-group input-group-sm">
+        <input type="text" class="form-control media-rename-input" value="{{ media_key|joli_media_admin_basename }}">
+        <button type="submit" class="btn btn-primary">
+            {{ ux_icon('tabler:check') }}
+        </button>
+        <button type="button" class="btn btn-secondary media-rename-cancel-btn">
+            {{ ux_icon('tabler:x') }}
+        </button>
+    </div>
+</form>

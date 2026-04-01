@@ -1,5 +1,5 @@
 const configureDirectoryRename = () => {
-    const container = document.querySelector('[data-component="directory-list"]');
+    const container = document.querySelector('[data-component*="directory-list"]');
     const renameDirectoryPath = document.querySelector('[data-rename-directory-path]')?.dataset.renameDirectoryPath;
 
     if (!container || !renameDirectoryPath) {
