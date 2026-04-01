@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Controller;
 
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Config\Config;
+use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
+use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use League\Flysystem\PathTraversalDetected;
@@ -24,6 +26,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -36,6 +39,7 @@ class MediaAdminController extends AbstractController
     public function __construct(
         private readonly LibraryContainer $libraries,
         private readonly Resolver $resolver,
+        private readonly Converter $converter,
         private readonly GridViewFactoryInterface $gridViewFactory,
         private readonly GridProviderInterface $gridProvider,
         private readonly Environment $twig,
@@ -135,7 +139,7 @@ class MediaAdminController extends AbstractController
     }
 
     #[Route(path: '/delete-directory', name: 'delete_directory', methods: [Request::METHOD_POST])]
-    public function deleteDirectory(Request $request): Response
+    public function deleteDirectory(Request $request): RedirectResponse
     {
         $key = $request->query->get('key');
 
@@ -165,6 +169,43 @@ class MediaAdminController extends AbstractController
         }
 
         return $this->redirectToRoute('joli_media_sylius_admin_explore');
+    }
+
+    #[Route(path: '/regenerate/{variation}/{key}', name: 'regenerate_variation', requirements: ['key' => '.+'], methods: [Request::METHOD_GET])]
+    public function regenerateVariation(Request $request, string $key, string $variation): RedirectResponse
+    {
+        $media = $this->resolver->resolveMedia($key);
+        $mediaVariation = $this->resolver->resolveMediaVariation($media, $variation, $this->getLibrary()->getName());
+
+        if (!$mediaVariation instanceof MediaVariation) {
+            $this->addFlash(
+                'danger',
+                $this->translator->trans(
+                    'variation.regenerated_failure',
+                    ['%variation%' => $variation, '%media%' => $media->getPath()],
+                    'JoliMediaEasyAdminBundle'
+                )
+            );
+        } else {
+            $this->converter->convertMediaVariation($mediaVariation);
+            $this->addFlash(
+                'success',
+                $this->translator->trans(
+                    'variation.regenerated_success',
+                    ['%variation%' => $variation, '%media%' => $media->getPath()],
+                    'JoliMediaEasyAdminBundle'
+                )
+            );
+        }
+
+        /** @var string|null $referer */
+        $referer = $request->headers->get('referer');
+
+        if (null !== $referer && $this->isValidReferer($referer, $request)) {
+            return $this->redirect($referer);
+        }
+
+        return $this->redirectToRoute('joli_media_sylius_admin_show', ['key' => $key]);
     }
 
     #[Route(path: '/explore/{key}', name: 'explore', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]

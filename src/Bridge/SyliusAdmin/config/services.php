@@ -31,6 +31,7 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             service('joli_media.library_container'),
             service('joli_media.resolver'),
+            service('joli_media.converter'),
             service('sylius.grid.view_factory'),
             service('sylius.grid.provider'),
             service('twig'),
