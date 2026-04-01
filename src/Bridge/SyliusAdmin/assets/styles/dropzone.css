@@ -3,8 +3,17 @@
 :root {
     --jm-dropzone-color: #293a53;
     --jm-dropzone-border-color: #aab6c8;
+    --jm-dropzone-bg-color: #f8fafc;
     --jm-color-green: #00a65a;
     --jm-color-red: #dd4b39;
+}
+
+[data-bs-theme="dark"] {
+    .dropzone {
+        --jm-dropzone-color: #c4d0e0;
+        --jm-dropzone-border-color: #4b5563;
+        --jm-dropzone-bg-color: #1f2937;
+    }
 }
 
 .dropzone-container {
@@ -26,7 +35,7 @@
     min-height: auto;
     margin-top: 1rem;
     color: var(--jm-dropzone-color);
-    background-color: #f8fafc;
+    background-color: var(--jm-dropzone-bg-color);
     border: dashed 2px var(--jm-dropzone-border-color);
     border-radius: 4px;
     z-index: 100;
