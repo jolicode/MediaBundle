@@ -89,6 +89,9 @@ return static function (ContainerConfigurator $container): void {
                 'data_table' => [
                     'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table.html.twig',
                 ],
+                'no_data_block' => [
+                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results.html.twig',
+                ],
             ],
 
             'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.grid.data_table' => [
@@ -106,6 +109,21 @@ return static function (ContainerConfigurator $container): void {
                 ],
                 'rows' => [
                     'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table/body/rows.html.twig',
+                ],
+            ],
+
+            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.grid.no_results' => [
+                'image' => [
+                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results/image.html.twig',
+                ],
+                'title' => [
+                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results/title.html.twig',
+                ],
+                'subtitle' => [
+                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results/subtitle.html.twig',
+                ],
+                'action' => [
+                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results/action.html.twig',
                 ],
             ],
         ],

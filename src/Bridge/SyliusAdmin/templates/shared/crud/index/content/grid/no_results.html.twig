@@ -1,0 +1,8 @@
+{% set directories = hookable_metadata.context.directories %}
+
+{% if directories|length == 0 %}
+    {% include [
+        '@SyliusBootstrapAdminUi/shared/crud/index/content/grid/no_results.html.twig',
+        '@SyliusAdmin/shared/crud/index/content/grid/no_results.html.twig',
+    ] %}
+{% endif %}

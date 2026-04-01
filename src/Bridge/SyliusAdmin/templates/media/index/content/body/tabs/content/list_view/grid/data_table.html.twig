@@ -7,7 +7,7 @@
 {% set definition = resources.definition|default(null) %}
 {% set current_key = hookable_metadata.context.current_key %}
 
-{% if data|length > 0 or directories|length > 0 or not current_key == '' %}
+{% if data|length > 0 or directories|length > 0 %}
     <div class="card">
         <div class="card-body border-bottom py-3">
             <div class="d-flex">
@@ -36,7 +36,9 @@
                 {{ pagination.results_count(data) }}
             </div>
             <div class="ms-auto">
-                {{ pagination.simple(data) }}
+                {% if data.haveToPaginate %}
+                    {{ pagination.simple(data) }}
+                {% endif %}
             </div>
         </div>
         {% endif %}
