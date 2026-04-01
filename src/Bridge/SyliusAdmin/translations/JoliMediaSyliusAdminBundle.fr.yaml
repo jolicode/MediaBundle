@@ -4,6 +4,7 @@ action:
     regenerate: 'Régénérer'
     remove: 'Supprimer'
     cancel: 'Annuler'
+    entity_actions: 'Actions'
 browser:
     audio:
         unsupported: 'Votre navigateur ne supporte pas cet élément audio.'
