@@ -1,0 +1,5 @@
+{% set media = data %}
+
+{% if media is not null %}
+    {% include '@JoliMediaSyliusAdmin/_as_image.html.twig' with {'variation': 'joli_media_sylius_admin_small'} %}
+{% endif %}

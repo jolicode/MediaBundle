@@ -27,6 +27,8 @@ final class PostGrid extends AbstractGrid
     {
         $gridBuilder
             ->withFields(
+                TwigField::create('coverMedia', 'post/grid/field/cover_media.html.twig')
+                    ->setLabel('Cover Media'),
                 StringField::create('title')
                     ->setLabel('Title')
                     ->setSortable(true),
