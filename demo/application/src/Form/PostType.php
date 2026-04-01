@@ -9,6 +9,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\UX\LiveComponent\Form\Type\LiveCollectionType;
 
 class PostType extends AbstractType
 {
@@ -25,6 +26,13 @@ class PostType extends AbstractType
             ->add('author', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => 'email',
+            ])
+            ->add('postMedia', LiveCollectionType::class, [
+                'required' => false,
+                'entry_type' => MediaChoiceType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
             ])
         ;
     }

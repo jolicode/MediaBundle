@@ -1,2 +1,3 @@
 imports:
     - { resource: '@SyliusBootstrapAdminUiBundle/config/app.php' }
+    - { resource: '../sylius/twig_hooks/**/**' }
