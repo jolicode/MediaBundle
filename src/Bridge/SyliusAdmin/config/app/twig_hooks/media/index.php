@@ -126,6 +126,30 @@ return static function (ContainerConfigurator $container): void {
                     'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results/action.html.twig',
                 ],
             ],
+
+            'joli_media_sylius_admin.media.index.content.body.tabs.content.grid_view' => [
+                'content' => [
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/grid_view/content.html.twig',
+                ],
+                'no_data_block' => [
+                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results.html.twig',
+                ],
+            ],
+
+            'joli_media_sylius_admin.media.index.content.body.tabs.content.grid_view.no_results' => [
+                'image' => [
+                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results/image.html.twig',
+                ],
+                'title' => [
+                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results/title.html.twig',
+                ],
+                'subtitle' => [
+                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results/subtitle.html.twig',
+                ],
+                'action' => [
+                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results/action.html.twig',
+                ],
+            ],
         ],
     ]);
 };
