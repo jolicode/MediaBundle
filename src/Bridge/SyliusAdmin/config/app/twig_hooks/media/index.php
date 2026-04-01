@@ -79,13 +79,13 @@ return static function (ContainerConfigurator $container): void {
                 ],
             ],
 
-            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view' => [
-                'grid' => [
-                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid.html.twig',
-                ],
-            ],
+//            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view' => [
+//                'grid' => [
+//                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid.html.twig',
+//                ],
+//            ],
 
-            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.grid' => [
+            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view' => [
                 'data_table' => [
                     'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table.html.twig',
                 ],
@@ -94,7 +94,7 @@ return static function (ContainerConfigurator $container): void {
                 ],
             ],
 
-            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.grid.data_table' => [
+            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.data_table' => [
                 'header' => [
                     'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table/header.html.twig',
                 ],
@@ -103,7 +103,7 @@ return static function (ContainerConfigurator $container): void {
                 ],
             ],
 
-            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.grid.data_table.body' => [
+            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.data_table.body' => [
                 'directories' => [
                     'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table/body/directories.html.twig',
                 ],
@@ -112,7 +112,7 @@ return static function (ContainerConfigurator $container): void {
                 ],
             ],
 
-            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.grid.no_results' => [
+            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.no_results' => [
                 'image' => [
                     'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results/image.html.twig',
                 ],
