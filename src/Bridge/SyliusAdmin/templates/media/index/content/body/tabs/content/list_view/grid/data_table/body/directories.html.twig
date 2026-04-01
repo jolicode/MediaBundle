@@ -15,11 +15,13 @@
                     <div class="badge bg-blue-lt">{{ 'Directory' }}</div>
                 {% elseif field.name == 'path' %}
                     <a class="text-decoration-none" href="{{ path }}">
-                        <span class="directory-name">{{ directory|joli_media_admin_basename }}</span>
+{#                        <span class="directory-name">{{ directory|joli_media_admin_basename }}</span>#}
+                        <span class="directory-name">{{ directory }}</span>
                     </a>
                     <form class="directory-rename-form d-none">
                         <div class="input-group input-group-sm">
-                            <input type="text" class="form-control directory-rename-input" value="{{ directory|joli_media_admin_basename }}">
+{#                            <input type="text" class="form-control directory-rename-input" value="{{ directory|joli_media_admin_basename }}">#}
+                            <input type="text" class="form-control directory-rename-input" value="{{ directory }}">
                             <button type="submit" class="btn btn-primary">
                                 {{ ux_icon('tabler:check') }}
                             </button>
@@ -40,11 +42,15 @@
                     <button type="button" class="btn btn-icon directory-rename-btn" data-component="directory-rename" data-bs-toggle="tooltip" title="{{ 'Rename'|trans }}">
                         {{ ux_icon('tabler:pencil') }}
                     </button>
-                    {{ component('sylius_bootstrap_admin_ui:delete_modal', {
+                    {#TODO find another way to detect the component#}
+                    {% set delete_modal = sylius_route_exists('sylius_admin_ui_dashboard') ? 'sylius_bootstrap_admin_ui:delete_modal' : 'sylius_admin:delete_modal' %}
+
+                    {{ component(delete_modal, {
                         id: directory,
                         modal_id: 'delete-directory-modal-' ~ loop.index ,
                         path: path('joli_media_sylius_admin_delete_directory', {'key': directory})
                     }) }}
+
                 </div>
             </td>
         {% endif %}

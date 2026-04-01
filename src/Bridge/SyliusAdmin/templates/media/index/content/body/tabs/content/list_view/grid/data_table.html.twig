@@ -1,5 +1,5 @@
-{% import '@SyliusBootstrapAdminUi/shared/helper/table.html.twig' as table %}
-{% import '@SyliusBootstrapAdminUi/shared/helper/pagination.html.twig' as pagination %}
+{% import ['@SyliusBootstrapAdminUi/shared/helper/table.html.twig', '@SyliusAdmin/shared/helper/table.html.twig'] as table %}
+{% import ['@SyliusBootstrapAdminUi/shared/helper/pagination.html.twig', '@SyliusAdmin/shared/helper/pagination.html.twig'] as pagination %}
 
 {% set resources = hookable_metadata.context.resources %}
 {% set directories = hookable_metadata.context.directories %}

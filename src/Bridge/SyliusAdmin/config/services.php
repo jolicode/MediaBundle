@@ -11,6 +11,7 @@ use JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type\UploadType;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid\MediaGrid;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid\Provider\MediaGridProvider;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Controller\MediaAdminController;
+use JoliCode\MediaBundle\Bridge\Twig\JoliMediaAdminExtension;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
@@ -79,5 +80,14 @@ return static function (ContainerConfigurator $container): void {
             service('joli_media_sylius_admin.config'),
         ])
         ->tag('form.type')
+    ;
+
+    // twig
+    $services->set('joli_media_admin.twig_extension', JoliMediaAdminExtension::class)
+        ->args([
+            '$libraries' => service('joli_media.library_container'),
+            '$authorizationChecker' => service('security.authorization_checker')->ignoreOnInvalid(),
+        ])
+        ->tag('twig.extension')
     ;
 };

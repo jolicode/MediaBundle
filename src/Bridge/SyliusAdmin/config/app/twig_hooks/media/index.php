@@ -81,7 +81,7 @@ return static function (ContainerConfigurator $container): void {
 
             'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view' => [
                 'grid' => [
-                    'template' => '@SyliusBootstrapAdminUi/shared/crud/index/content/grid.html.twig',
+                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid.html.twig',
                 ],
             ],
 

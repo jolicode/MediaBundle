@@ -99,8 +99,16 @@ final class JoliMediaSyliusAdminBundle extends AbstractBundle
     {
         $bundles = $builder->getParameter('kernel.bundles');
 
-        if (!isset($bundles['SyliusBootstrapAdminUiBundle'])) {
-            return;
+        if (!isset($bundles['JoliMediaBundle'])) {
+            throw new \RuntimeException(
+                'The "JoliMediaBundle" bundle needs to be registered in order to use JoliMediaSyliusAdminBundle.'
+            );
+        }
+
+        if (!isset($bundles['SyliusBootstrapAdminUiBundle']) && !isset($bundles['SyliusAdminBundle'])) {
+            throw new \RuntimeException(
+                'The "SyliusBootstrapAdminUiBundle" or the "SyliusAdminBundle" bundle needs to be registered in order to use JoliMediaSyliusAdminBundle.'
+            );
         }
 
         $container->import('../../config/services.php');

@@ -1,4 +1,4 @@
-{% extends '@SyliusAdminUi/base.html.twig' %}
+{% extends ['@SyliusAdminUi/base.html.twig', '@SyliusAdmin/shared/layout/base.html.twig'] %}
 
 {% block title %}
     {{ 'media_library'|trans(domain: 'JoliMediaSyliusAdminBundle') }} | {{ parent() }}

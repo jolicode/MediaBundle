@@ -1,6 +1,6 @@
 {% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
 
-{% import "@SyliusBootstrapAdminUi/shared/helper/field/boolean.html.twig" as boolean %}
+{% import ['@SyliusBootstrapAdminUi/shared/helper/field/boolean.html.twig', '@SyliusAdmin/shared/helper/field/boolean.html.twig'] as boolean %}
 
 {% set config = hookable_metadata.context.config %}
 {% set media = hookable_metadata.context.media %}
@@ -63,13 +63,13 @@
                             </a>
 
                             {% if config.isVisible('show_variations_action_regenerate') and joli_media_admin_is_granted('REGENERATE_VARIATION', path: media.path, variation: variation.variation.name) %}
-                                <a href="{{ ea_url().setRoute('joli_media_easy_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}"
-                                   class="btn btn-icon"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-title="{{ 'action.regenerate'|trans }}"
-                                >
-                                    {{ ux_icon('tabler:refresh') }}
-                                </a>
+{#                                <a href="{{ ea_url().setRoute('joli_media_easy_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}"#}
+{#                                   class="btn btn-icon"#}
+{#                                   data-bs-toggle="tooltip"#}
+{#                                   data-bs-title="{{ 'action.regenerate'|trans }}"#}
+{#                                >#}
+{#                                    {{ ux_icon('tabler:refresh') }}#}
+{#                                </a>#}
                             {% endif %}
                             </div>
                         </td>
