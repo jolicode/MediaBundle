@@ -15,13 +15,11 @@
                     <div class="badge bg-blue-lt">{{ 'Directory' }}</div>
                 {% elseif field.name == 'path' %}
                     <a class="text-decoration-none" href="{{ path }}">
-{#                        <span class="directory-name">{{ directory|joli_media_admin_basename }}</span>#}
-                        <span class="directory-name">{{ directory }}</span>
+                        <span class="directory-name">{{ directory|joli_media_admin_basename }}</span>
                     </a>
                     <form class="directory-rename-form d-none">
                         <div class="input-group input-group-sm">
-{#                            <input type="text" class="form-control directory-rename-input" value="{{ directory|joli_media_admin_basename }}">#}
-                            <input type="text" class="form-control directory-rename-input" value="{{ directory }}">
+                            <input type="text" class="form-control directory-rename-input" value="{{ directory|joli_media_admin_basename }}">
                             <button type="submit" class="btn btn-primary">
                                 {{ ux_icon('tabler:check') }}
                             </button>
