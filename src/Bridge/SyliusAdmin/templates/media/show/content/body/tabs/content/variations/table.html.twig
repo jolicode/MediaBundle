@@ -5,9 +5,8 @@
 {% set config = hookable_metadata.context.config %}
 {% set media = hookable_metadata.context.media %}
 
-<div class="row">
-    <table class="table datagrid file-explorer-list {{ media.variations|length == 0 ? 'datagrid-empty' }}">
-        <table class="table table-bordered table-striped table-hover">
+<div class="jm-show-panel">
+    <table class="table table-bordered table-striped table-hover">
             <thead>
             <tr>
                 <th data-column="name" class="header-for-name text-left" dir="ltr" style="width: 20%">{{ 'variation.label'|trans }}</th>

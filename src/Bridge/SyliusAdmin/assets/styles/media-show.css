@@ -1,0 +1,115 @@
+/* ==========================================================================
+   Media Show (Detail Page)
+   ========================================================================== */
+
+.long-text-break {
+    word-break: break-all;
+    white-space: normal;
+}
+
+.jm-show-panel {
+    padding: 1.5rem;
+    background-color: var(--white);
+    border: 1px solid var(--jm-border-color);
+    border-radius: 0.5rem;
+}
+
+[data-bs-theme="dark"] {
+    .jm-show-panel {
+        background-color: var(--gray-900);
+        border-color: var(--gray-700);
+    }
+}
+
+.jm-show-panel dl.datalist {
+    margin: 0;
+    padding: 0;
+}
+
+.jm-show-panel dl.datalist .data-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--jm-border-color);
+}
+
+.jm-show-panel dl.datalist .data-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.jm-show-panel dl.datalist .data-row dt {
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 0.375rem;
+}
+
+[data-bs-theme="dark"] {
+    .jm-show-panel dl.datalist .data-row dt {
+        color: var(--gray-300);
+    }
+}
+
+.jm-show-panel dl.datalist .data-row dd {
+    margin: 0;
+    color: var(--gray-900);
+}
+
+[data-bs-theme="dark"] {
+    .jm-show-panel dl.datalist .data-row dd {
+        color: var(--gray-100);
+    }
+}
+
+.jm-show-panel .media-preview {
+    max-height: 600px;
+    --media-preview-max-width: 800px;
+    margin-bottom: 1rem;
+}
+
+.jm-show-panel .jm-box {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+    border: 1px solid var(--jm-border-color);
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    background-color: var(--gray-100);
+}
+
+[data-bs-theme="dark"] {
+    .jm-show-panel .jm-box {
+        background-color: var(--gray-800);
+    }
+}
+
+.jm-show-panel .jm-box pre {
+    flex: 1;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+[data-bs-theme="dark"] {
+    .jm-show-panel .jm-box pre {
+        background-color: transparent;
+    }
+}
+
+.jm-show-panel .jm-box pre code {
+    color: var(--bs-body-color);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.8125rem;
+}
+
+[data-bs-theme="dark"] {
+    .jm-show-panel .jm-box pre code {
+        color: var(--gray-200);
+    }
+}
