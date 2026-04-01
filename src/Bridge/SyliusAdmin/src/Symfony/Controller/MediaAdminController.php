@@ -81,6 +81,30 @@ class MediaAdminController extends AbstractController
         }
     }
 
+    #[Route(path: '/rename-directory', name: 'rename_directory', methods: [Request::METHOD_POST])]
+    public function renameDirectory(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!$this->isCsrfTokenValid('media_rename', $data['_csrf_token'] ?? '')) {
+            return $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 400);
+        }
+
+        unset($data['_csrf_token']);
+
+        if (!isset($data['oldPath'], $data['newPath'])) {
+            return $this->json(['success' => false, 'error' => 'Missing parameters'], 400);
+        }
+
+        try {
+            $this->getOriginalStorage()->moveFolder($data['oldPath'], $data['newPath']);
+
+            return $this->json(['success' => true]);
+        } catch (\Throwable $e) {
+            return $this->json(['success' => false, 'error' => $e->getMessage()], 400);
+        }
+    }
+
     #[Route(path: '/rename', name: 'rename', methods: [Request::METHOD_POST])]
     public function rename(Request $request): Response
     {
@@ -97,7 +121,7 @@ class MediaAdminController extends AbstractController
         }
 
         try {
-            $this->getOriginalStorage()->moveFolder($data['oldPath'], $data['newPath']);
+            $this->getOriginalStorage()->move($data['oldPath'], $data['newPath']);
 
             return $this->json(['success' => true]);
         } catch (\Throwable $e) {
