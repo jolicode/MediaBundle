@@ -79,15 +79,9 @@ return static function (ContainerConfigurator $container): void {
                 ],
             ],
 
-//            'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view' => [
-//                'grid' => [
-//                    'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid.html.twig',
-//                ],
-//            ],
-
             'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view' => [
                 'data_table' => [
-                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table.html.twig',
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/data_table.html.twig',
                 ],
                 'no_data_block' => [
                     'template' => '@JoliMediaSyliusAdmin/shared/crud/index/content/grid/no_results.html.twig',
@@ -96,19 +90,19 @@ return static function (ContainerConfigurator $container): void {
 
             'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.data_table' => [
                 'header' => [
-                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table/header.html.twig',
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/data_table/header.html.twig',
                 ],
                 'body' => [
-                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table/body.html.twig',
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/data_table/body.html.twig',
                 ],
             ],
 
             'joli_media_sylius_admin.media.index.content.body.tabs.content.list_view.data_table.body' => [
                 'directories' => [
-                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table/body/directories.html.twig',
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/data_table/body/directories.html.twig',
                 ],
                 'rows' => [
-                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/grid/data_table/body/rows.html.twig',
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/body/tabs/content/list_view/data_table/body/rows.html.twig',
                 ],
             ],
 
