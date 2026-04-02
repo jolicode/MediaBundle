@@ -8,16 +8,12 @@
 }
 
 .jm-show-panel {
-    padding: 1.5rem;
     background-color: var(--white);
-    border: 1px solid var(--jm-border-color);
-    border-radius: 0.5rem;
 }
 
 [data-bs-theme="dark"] {
     .jm-show-panel {
         background-color: var(--gray-900);
-        border-color: var(--gray-700);
     }
 }
 
