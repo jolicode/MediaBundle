@@ -15,10 +15,16 @@ return static function (ContainerConfigurator $container): void {
 
             'joli_media_sylius_admin.media.show.content.header.title_block' => [
                 'title' => [
-                    'template' => '@JoliMediaSyliusAdmin/shared/crud/show/content/header/title_block/title.html.twig',
-                    'configuration' => [
-                        'title' => '@=_context.media.getFilename()',
-                    ],
+                    'template' => '@JoliMediaSyliusAdmin/media/show/content/header/title_block/title.html.twig',
+                ],
+                'actions' => [
+                    'template' => '@JoliMediaSyliusAdmin/shared/crud/show/content/header/title_block/actions.html.twig',
+                ],
+            ],
+
+            'joli_media_sylius_admin.media.show.content.header.title_block.actions' => [
+                'rename_media' => [
+                    'template' => '@JoliMediaSyliusAdmin/media/show/content/header/title_block/actions/rename_media.html.twig',
                 ],
             ],
 

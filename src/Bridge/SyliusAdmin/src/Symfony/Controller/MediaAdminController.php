@@ -123,7 +123,14 @@ class MediaAdminController extends AbstractController
         try {
             $this->getOriginalStorage()->move($data['oldPath'], $data['newPath']);
 
-            return $this->json(['success' => true]);
+            $referer = $request->headers->get('referer');
+            $redirectUrl = $referer ? str_replace(rawurlencode($data['oldPath']), rawurlencode($data['newPath']), $referer) : null;
+
+            return $this->json([
+                'success' => true,
+                'newPath' => $data['newPath'],
+                'redirectUrl' => $redirectUrl
+            ]);
         } catch (\Throwable $e) {
             return $this->json(['success' => false, 'error' => $e->getMessage()], 400);
         }
