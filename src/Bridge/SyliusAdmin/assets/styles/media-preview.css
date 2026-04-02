@@ -7,9 +7,20 @@
 
 .media-preview {
   --media-preview-border-color: #e2e8f0;
-  --media-preview-background-primary-color: var(--jm-color-white);
+  --media-preview-background-primary-color: rgb(0 0 0 / 9.8%);
+  --media-preview-background-secondary-color: rgb(0 0 0 / 0%);
+  --media-preview-background-base-color: var(--jm-color-white);
   --media-preview-background-color: #ebf4fe;
   --media-preview-color: var(--gallery-grid-item-hover-icon-color, #b9c6dc);
+}
+
+[data-bs-theme="dark"] .media-preview {
+  --media-preview-background-primary-color: rgb(255 255 255 / 10%);
+  --media-preview-background-secondary-color: rgb(255 255 255 / 0%);
+  --media-preview-background-color: var(--true-gray-800);
+  --media-preview-color: var(--jm-color-gray-200);
+  --media-preview-border-color: var(--true-gray-600);
+  --media-preview-background-base-color: rgb(0 0 0 / 0%);
 }
 
 /* Rules
@@ -25,21 +36,21 @@
   border-radius: 0.25rem;
   background: linear-gradient(
       45deg,
-      rgb(0 0 0 / 9.8%) 25%,
-      rgb(0 0 0 / 0%) 25%,
-      rgb(0 0 0 / 0%) 75%,
-      rgb(0 0 0 / 9.8%) 75%,
-      rgb(0 0 0 / 9.8%) 0
+      var(--media-preview-background-primary-color) 25%,
+      var(--media-preview-background-secondary-color) 25%,
+      var(--media-preview-background-secondary-color) 75%,
+      var(--media-preview-background-primary-color) 75%,
+      var(--media-preview-background-primary-color) 0
     ),
     linear-gradient(
       45deg,
-      rgb(0 0 0 / 9.8%) 25%,
-      rgb(0 0 0 / 0%) 25%,
-      rgb(0 0 0 / 0%) 75%,
-      rgb(0 0 0 / 9.8%) 75%,
-      rgb(0 0 0 / 9.8%) 0
+      var(--media-preview-background-primary-color) 25%,
+      var(--media-preview-background-secondary-color) 25%,
+      var(--media-preview-background-secondary-color) 75%,
+      var(--media-preview-background-primary-color) 75%,
+      var(--media-preview-background-primary-color) 0
     ),
-    var(--media-preview-background-primary-color);
+    var(--media-preview-background-base-color);
   background-position:
     0 0,
     0.625rem 0.625rem;
@@ -55,6 +66,26 @@
   }
 }
 
-.media-preview:not(:has(img)):not(:is(img)) {
-  background: var(--media-preview-background-color);
+[data-bs-theme="dark"] .media-preview:not(:has(img)):not(:is(img)) {
+  background: linear-gradient(
+      45deg,
+      rgb(255 255 255 / 10%) 25%,
+      rgb(255 255 255 / 0%) 25%,
+      rgb(255 255 255 / 0%) 75%,
+      rgb(255 255 255 / 10%) 75%,
+      rgb(255 255 255 / 10%) 0
+    ),
+    linear-gradient(
+      45deg,
+      rgb(255 255 255 / 10%) 25%,
+      rgb(255 255 255 / 0%) 25%,
+      rgb(255 255 255 / 0%) 75%,
+      rgb(255 255 255 / 10%) 75%,
+      rgb(255 255 255 / 10%) 0
+    ),
+    var(--true-gray-900);
+  background-position: 0 0, 0.625rem 0.625rem;
+  background-size: 1.25rem 1.25rem;
+  background-clip: border-box;
+  background-origin: padding-box;
 }
