@@ -1,3 +1,7 @@
+const getContainerForElement = (element) => {
+    return element.closest(".js-joli-media-choice-container");
+};
+
 const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const id = mediaChoiceContainer.dataset.mediaId;
     const mediaContainer = document.getElementById(`joli-media-container_${id}`);
@@ -135,6 +139,16 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     mediaChoiceContainer.dataset.configured = true;
 };
 
+document.addEventListener("click", (event) => {
+    const editButton = event.target.closest(".joli-media-choice-edit");
+    if (editButton) {
+        const container = getContainerForElement(editButton);
+        if (container && container.dataset.configured !== "true") {
+            configureMediaChoiceContainer(container);
+        }
+    }
+});
+
 const configureMediaSelector = () => {
     document.querySelectorAll(".js-joli-media-choice-container").forEach((container) => {
         if (container.dataset.configured === undefined) {
@@ -144,5 +158,20 @@ const configureMediaSelector = () => {
 };
 
 document.addEventListener("DOMContentLoaded", configureMediaSelector);
+document.addEventListener("turbo:frame-load", configureMediaSelector);
+document.addEventListener("turbo:stream-render", configureMediaSelector);
+document.addEventListener("turbo:streams:append", configureMediaSelector);
+document.addEventListener("turbo:streams:prepend", configureMediaSelector);
+document.addEventListener("turbo:before-stream-render", configureMediaSelector);
+document.addEventListener("ux:autocomplete:initialize", configureMediaSelector);
+
+let debounceTimer = null;
+const debouncedConfigure = () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(configureMediaSelector, 50);
+};
+
+const observer = new MutationObserver(debouncedConfigure);
+observer.observe(document.body, { childList: true, subtree: true });
 
 export default configureMediaSelector;
