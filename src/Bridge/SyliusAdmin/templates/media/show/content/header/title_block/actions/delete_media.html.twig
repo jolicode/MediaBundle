@@ -6,5 +6,6 @@
 {{ component(delete_modal, {
     id: media.path,
     modal_id: 'delete-directory-modal-' ~ random(),
-    path: path('joli_media_sylius_admin_delete', {'key': media.path})
+    path: path('joli_media_sylius_admin_delete', {'key': media.path}),
+    icon_only: false,
 }) }}

@@ -7,6 +7,7 @@ action:
     rename: 'Rename'
     cancel: 'Cancel'
     entity_actions: 'Actions'
+    move_file: 'Move this file'
 browser:
     audio:
         unsupported: 'Your browser does not support the audio element.'

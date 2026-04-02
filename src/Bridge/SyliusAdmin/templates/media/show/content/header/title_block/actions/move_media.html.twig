@@ -1,0 +1,8 @@
+{% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
+
+{% set message = 'action.move_file' %}
+
+<button type="button" class="btn media-move-btn" data-component="media-move" data-bs-toggle="tooltip" title="{{ message|trans }}">
+    {{ ux_icon('fa7-solid:folder-tree') }}
+    {{ message|trans }}
+</button>
