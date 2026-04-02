@@ -3,7 +3,10 @@
 .clipboard-btn.is-copied:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):active:focus,
 .clipboard-btn.is-copied:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):focus,
 .clipboard-btn.is-copied:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):hover {
-  --button-bg: var(--jm-color-green);
-  --button-hover-bg: var(--jm-color-green);
-  --button-focus-outline-color: var(--jm-color-green);
+  --button-bg: #22B99A;
+  --button-hover-bg: #22B99A;
+  --button-focus-outline-color: #22B99A;
+  background-color: #22B99A;
+  border-color: #22B99A;
+  color: #fff;
 }

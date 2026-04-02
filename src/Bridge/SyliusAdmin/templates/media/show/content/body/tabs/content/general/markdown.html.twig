@@ -11,8 +11,9 @@
                                 {{- include('@JoliMediaSyliusAdmin/_as_markdown.html.twig')|escape -}}
                             </code></pre>
             <button
-                    class="btn btn-primary btn-sm clipboard-btn"
+                    class="btn btn-sm clipboard-btn"
                     data-clipboard-target="#media-markdown-code"
+                    data-clipboard-copied="{{ 'action.copied'|trans }}"
                     role="button"
                     tabindex="0"
             >

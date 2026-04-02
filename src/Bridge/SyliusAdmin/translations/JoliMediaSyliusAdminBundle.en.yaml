@@ -1,6 +1,7 @@
 action:
     choose_a_file: 'Choose a file'
     copy: 'Copy'
+    copied: 'Copied'
     regenerate: 'Regenerate'
     remove: 'Remove'
     rename: 'Rename'
