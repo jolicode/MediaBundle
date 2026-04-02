@@ -136,6 +136,34 @@ class MediaAdminController extends AbstractController
         }
     }
 
+    #[Route(path: '/move', name: 'move', methods: [Request::METHOD_POST])]
+    public function move(Request $request): RedirectResponse
+    {
+        $from = Resolver::normalizePath($request->request->get('from', ''));
+        $to = Resolver::normalizePath($request->request->get('to', ''));
+
+        try {
+            $target = sprintf('%s/%s', $to, basename($from));
+            $this->getOriginalStorage()->move($from, $target);
+
+            $this->addFlash('success', $this->translator->trans(
+                'media.move_success',
+                ['%from%' => $from, '%to%' => $target],
+                'JoliMediaSyliusAdminBundle'
+            ));
+
+            return $this->redirectToRoute('joli_media_sylius_admin_show', ['key' => $target]);
+        } catch (\Throwable $e) {
+            $this->addFlash('danger', $this->translator->trans(
+                'media.move_failure',
+                ['%from%' => $from, '%to%' => $to, '%error%' => $e->getMessage()],
+                'JoliMediaSyliusAdminBundle'
+            ));
+
+            return $this->redirectToRoute('joli_media_sylius_admin_show', ['key' => $from]);
+        }
+    }
+
     #[Route(path: '/delete', name: 'delete', methods: [Request::METHOD_POST])]
     public function delete(Request $request): Response
     {
@@ -269,7 +297,7 @@ class MediaAdminController extends AbstractController
     {
         $currentKey = Resolver::normalizePath($key);
         $request->attributes->set('currentKey', $currentKey);
-        $page = $request->query->getInt('page', 1);
+        $parentKey = $currentKey !== '' ? (str_contains($currentKey, '/') ? substr($currentKey, 0, strrpos($currentKey, '/')) : '') : '';
 
         try {
             $trashPath = $this->getOriginalStorage()->getTrashPath();
@@ -283,6 +311,30 @@ class MediaAdminController extends AbstractController
         } catch (ForbiddenPathException|PathTraversalDetected|UnableToListContents) {
             $directories = [];
         }
+
+        if ($request->isXmlHttpRequest()) {
+            try {
+                $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
+                    $currentKey,
+                    recursive: false,
+                    page: 1,
+                    perPage: 50,
+                );
+                $medias = $paginatedMedias['items'] ?? [];
+            } catch (\OutOfRangeException) {
+                $medias = [];
+            }
+
+            return new Response($this->twig->render('@JoliMediaSyliusAdmin/media/choose_directory.html.twig', [
+                'key' => $key,
+                'current_key' => $currentKey,
+                'parent_key' => $parentKey,
+                'directories' => $directories,
+                'medias' => $medias,
+            ]));
+        }
+
+        $page = $request->query->getInt('page', 1);
 
         try {
             $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
@@ -309,7 +361,7 @@ class MediaAdminController extends AbstractController
         return new Response($this->twig->render('@JoliMediaSyliusAdmin/media/choose.html.twig', [
             'key' => $key,
             'current_key' => $currentKey,
-            'directories' => $directories ?? [],
+            'directories' => $directories,
             'medias' => $medias,
             'pagination' => $pagination,
             'create_media_form' => $this->createUploadForm($currentKey)->createView(),

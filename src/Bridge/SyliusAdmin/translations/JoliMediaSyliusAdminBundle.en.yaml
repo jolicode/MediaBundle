@@ -2,12 +2,14 @@ action:
     choose_a_file: 'Choose a file'
     copy: 'Copy'
     copied: 'Copied'
+    parent: 'Parent'
     regenerate: 'Regenerate'
     remove: 'Remove'
     rename: 'Rename'
     cancel: 'Cancel'
     entity_actions: 'Actions'
     move_file: 'Move this file'
+    move_to_this_directory: 'Move to this directory'
 browser:
     audio:
         unsupported: 'Your browser does not support the audio element.'
@@ -47,6 +49,11 @@ media:
         label: 'Inaccessible media'
     error:
         required: 'Please choose a media file.'
+    move_modal:
+        title: 'Move the media'
+        content: 'Do you really want to move this media to the directory %directory%?'
+    move_success: 'The file %from% was successfully moved to %to%.'
+    move_failure: 'Failed to move the media from %from% to %to%. Error: %error%'
     upload:
         dropzone:
             default_message: 'Drop files here to upload'

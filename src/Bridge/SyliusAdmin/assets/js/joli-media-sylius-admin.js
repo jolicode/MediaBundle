@@ -13,6 +13,7 @@ import configureDirectoryCreate from './components/directoryCreate';
 import configureDirectoryRename from './components/directoryRename';
 import configureMediaRename from './components/mediaRename';
 import configureTabsState from './components/tabsState';
+import configureFolderSelector from './components/folderSelector';
 
 document.addEventListener('DOMContentLoaded', () => {
     configureTabsState();
@@ -20,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configureDirectoryCreate();
     configureDirectoryRename();
     configureMediaRename();
+    configureFolderSelector();
 
     let dropzoneInstance = null;
 
