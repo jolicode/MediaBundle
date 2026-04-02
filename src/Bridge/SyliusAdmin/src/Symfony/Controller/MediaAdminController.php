@@ -159,14 +159,11 @@ class MediaAdminController extends AbstractController
             $this->addFlash('error', $e->getMessage());
         }
 
-        /** @var string|null $referer */
-        $referer = $request->headers->get('referer');
+        $parentKey = dirname($key);
 
-        if (null !== $referer && $this->isValidReferer($referer, $request)) {
-            return $this->redirect($referer);
-        }
-
-        return $this->redirectToRoute('joli_media_sylius_admin_explore');
+        return $this->redirectToRoute('joli_media_sylius_admin_explore', [
+            'key' => $parentKey,
+        ]);
     }
 
     #[Route(path: '/delete-directory', name: 'delete_directory', methods: [Request::METHOD_POST])]

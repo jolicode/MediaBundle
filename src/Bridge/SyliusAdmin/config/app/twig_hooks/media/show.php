@@ -26,6 +26,9 @@ return static function (ContainerConfigurator $container): void {
                 'rename_media' => [
                     'template' => '@JoliMediaSyliusAdmin/media/show/content/header/title_block/actions/rename_media.html.twig',
                 ],
+                'delete_media' => [
+                    'template' => '@JoliMediaSyliusAdmin/media/show/content/header/title_block/actions/delete_media.html.twig',
+                ],
             ],
 
             'joli_media_sylius_admin.media.show.content' => [
