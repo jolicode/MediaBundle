@@ -1,5 +1,13 @@
+{% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
+
 {% set media = data %}
 
 {% if media is not null %}
-    {% include '@JoliMediaSyliusAdmin/_as_image.html.twig' with {'variation': 'joli_media_sylius_admin_small'} %}
+    {% if media.isStored %}
+        {% include '@JoliMediaSyliusAdmin/_as_image.html.twig' with {'variation': 'joli_media_sylius_admin_small'} %}
+    {% else %}
+        <span class="badge text-bg-danger" title="{{ 'media.inaccessible.explanation'|trans({ '%media%': media.filename }) }}">
+            {{ 'media.inaccessible.label'|trans }}
+        </span>
+    {% endif %}
 {% endif %}
