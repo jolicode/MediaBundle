@@ -109,17 +109,13 @@ class ConfigurationTest extends TestCase
         $bundle = new JoliMediaSonataAdminBundle();
         $treeBuilder = new TreeBuilder('joli_media_sonata_admin');
 
-        // Get the configuration tree from the bundle
-        $reflection = new \ReflectionMethod($bundle, 'configure');
-        $reflection->setAccessible(true);
-
         $configurator = $this->createMock(\Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator::class);
         $configurator->expects($this->once())
             ->method('rootNode')
             ->willReturn($treeBuilder->getRootNode())
         ;
 
-        $reflection->invoke($bundle, $configurator);
+        $bundle->configure($configurator);
 
         $processor = new Processor();
 
