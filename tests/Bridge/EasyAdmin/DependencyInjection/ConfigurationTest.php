@@ -16,7 +16,7 @@ class ConfigurationTest extends TestCase
         $this->assertArrayHasKey('pagination', $config);
         $this->assertArrayHasKey('per_page', $config['pagination']);
 
-        $this->assertEquals(50, $config['pagination']['per_page']);
+        $this->assertEquals(20, $config['pagination']['per_page']);
     }
 
     public function testCustomPaginationConfiguration(): void

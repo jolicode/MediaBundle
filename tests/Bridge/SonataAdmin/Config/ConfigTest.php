@@ -24,10 +24,9 @@ class ConfigTest extends TestCase
             [],
             20,
             null,
-            null
         );
 
-        $this->assertNull($config->getPerPage());
+        $this->assertSame(25, $config->getPaginationSize());
     }
 
     public function testGetPerPageCustomValue(): void
@@ -41,7 +40,7 @@ class ConfigTest extends TestCase
             100
         );
 
-        $this->assertEquals(100, $config->getPerPage());
+        $this->assertEquals(100, $config->getPaginationSize());
     }
 
     public function testIsVisibleReturnsTrueWhenKeyExists(): void

@@ -7,6 +7,7 @@ use JoliCode\MediaBundle\Bridge\EasyAdmin\JoliMediaEasyAdminBundle;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ServiceTest extends TestCase
 {
@@ -22,7 +23,7 @@ class ServiceTest extends TestCase
 
     public function testConfigCanBeInstantiatedWithDefaultValues(): void
     {
-        $translator = $this->createMock(\Symfony\Contracts\Translation\TranslatorInterface::class);
+        $translator = $this->createMock(TranslatorInterface::class);
 
         $config = new Config(
             $translator,
@@ -32,12 +33,12 @@ class ServiceTest extends TestCase
         );
 
         $this->assertInstanceOf(Config::class, $config);
-        $this->assertNull($config->getPerPage());
+        $this->assertSame(20, $config->getPaginationSize());
     }
 
     public function testConfigCanBeInstantiatedWithCustomPagination(): void
     {
-        $translator = $this->createMock(\Symfony\Contracts\Translation\TranslatorInterface::class);
+        $translator = $this->createMock(TranslatorInterface::class);
 
         $config = new Config(
             $translator,
@@ -48,12 +49,12 @@ class ServiceTest extends TestCase
             100
         );
 
-        $this->assertEquals(100, $config->getPerPage());
+        $this->assertEquals(100, $config->getPaginationSize());
     }
 
     public function testConfigWithAllParameters(): void
     {
-        $translator = $this->createMock(\Symfony\Contracts\Translation\TranslatorInterface::class);
+        $translator = $this->createMock(TranslatorInterface::class);
 
         $visibility = [
             'show_variations_list' => true,
@@ -76,7 +77,7 @@ class ServiceTest extends TestCase
         $this->assertEquals($acceptedFiles, $config->getUploadOption('acceptedFiles'));
         $this->assertEquals(50, $config->getUploadOption('maxFileSize'));
         $this->assertEquals(10, $config->getUploadOption('maxFiles'));
-        $this->assertEquals(25, $config->getPerPage());
+        $this->assertEquals(25, $config->getPaginationSize());
     }
 
     private function createContainer(array $config = []): ContainerBuilder
