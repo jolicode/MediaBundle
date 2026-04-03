@@ -129,7 +129,7 @@ class MediaAdminController extends AbstractController
             return $this->json([
                 'success' => true,
                 'newPath' => $data['newPath'],
-                'redirectUrl' => $redirectUrl
+                'redirectUrl' => $redirectUrl,
             ]);
         } catch (\Throwable $e) {
             return $this->json(['success' => false, 'error' => $e->getMessage()], 400);
@@ -143,7 +143,7 @@ class MediaAdminController extends AbstractController
         $to = Resolver::normalizePath($request->request->get('to', ''));
 
         try {
-            $target = sprintf('%s/%s', $to, basename($from));
+            $target = \sprintf('%s/%s', $to, basename($from));
             $this->getOriginalStorage()->move($from, $target);
 
             $this->addFlash('success', $this->translator->trans(
@@ -187,7 +187,7 @@ class MediaAdminController extends AbstractController
             $this->addFlash('error', $e->getMessage());
         }
 
-        $parentKey = dirname($key);
+        $parentKey = \dirname($key);
 
         return $this->redirectToRoute('joli_media_sylius_admin_explore', [
             'key' => $parentKey,
@@ -297,7 +297,7 @@ class MediaAdminController extends AbstractController
     {
         $currentKey = Resolver::normalizePath($key);
         $request->attributes->set('currentKey', $currentKey);
-        $parentKey = $currentKey !== '' ? (str_contains($currentKey, '/') ? substr($currentKey, 0, strrpos($currentKey, '/')) : '') : '';
+        $parentKey = '' !== $currentKey ? (str_contains($currentKey, '/') ? substr($currentKey, 0, strrpos($currentKey, '/')) : '') : '';
 
         try {
             $trashPath = $this->getOriginalStorage()->getTrashPath();
@@ -367,46 +367,6 @@ class MediaAdminController extends AbstractController
             'create_media_form' => $this->createUploadForm($currentKey)->createView(),
             'config' => $this->config,
         ]));
-    }
-
-    private function getGridView(Request $request, string $grid): GridViewInterface
-    {
-        $gridDefinition = $this->gridProvider->get($grid);
-
-        $limit = $request->query->get('limit');
-        $criteria = $request->query->all('criteria');
-        $sorting = $request->query->all('sorting');
-
-        $gridView = $this->gridViewFactory->create(
-            $gridDefinition,
-            new Parameters([
-                'criteria' => $criteria,
-                'limit' => $limit ?? $gridDefinition->getLimits()[0] ?? 10,
-                'sorting' => [] !== $sorting ? $sorting : $gridDefinition->getSorting(),
-            ]),
-        );
-
-        $data = $gridView->getData();
-
-        if ($data instanceof PagerfantaInterface) {
-            if (null !== $limit) {
-                $data->setMaxPerPage((int) $limit);
-            }
-
-            $data->setCurrentPage($request->query->getInt('page', 1));
-        }
-
-        return $gridView;
-    }
-
-    private function getOriginalStorage(): OriginalStorage
-    {
-        return $this->getLibrary()->getOriginalStorage();
-    }
-
-    private function getLibrary(): Library
-    {
-        return $this->libraries->getDefault();
     }
 
     #[Route(path: '/upload', name: 'upload', methods: [Request::METHOD_POST])]
@@ -503,6 +463,46 @@ class MediaAdminController extends AbstractController
         ]));
     }
 
+    private function getGridView(Request $request, string $grid): GridViewInterface
+    {
+        $gridDefinition = $this->gridProvider->get($grid);
+
+        $limit = $request->query->get('limit');
+        $criteria = $request->query->all('criteria');
+        $sorting = $request->query->all('sorting');
+
+        $gridView = $this->gridViewFactory->create(
+            $gridDefinition,
+            new Parameters([
+                'criteria' => $criteria,
+                'limit' => $limit ?? $gridDefinition->getLimits()[0] ?? 10,
+                'sorting' => [] !== $sorting ? $sorting : $gridDefinition->getSorting(),
+            ]),
+        );
+
+        $data = $gridView->getData();
+
+        if ($data instanceof PagerfantaInterface) {
+            if (null !== $limit) {
+                $data->setMaxPerPage((int) $limit);
+            }
+
+            $data->setCurrentPage($request->query->getInt('page', 1));
+        }
+
+        return $gridView;
+    }
+
+    private function getOriginalStorage(): OriginalStorage
+    {
+        return $this->getLibrary()->getOriginalStorage();
+    }
+
+    private function getLibrary(): Library
+    {
+        return $this->libraries->getDefault();
+    }
+
     private function createUploadForm(?string $path = null): FormInterface
     {
         $form = $this->formFactory->create(\JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type\UploadType::class, null, [
@@ -519,7 +519,7 @@ class MediaAdminController extends AbstractController
     private function isValidReferer(string $referer, Request $request): bool
     {
         $parsed = parse_url($referer);
-        if ($parsed === false) {
+        if (false === $parsed) {
             return false;
         }
 
