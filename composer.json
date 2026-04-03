@@ -53,6 +53,8 @@
         "phpunit/phpunit": "^11",
         "psr/log": "^2.0 || ^3.0",
         "sonata-project/admin-bundle": "^4.30",
+        "sylius/bootstrap-admin-ui": "^0.12.0",
+        "sylius/ui-translations": "^0.12.0",
         "symfony/browser-kit": "^7.0 || ^8.0",
         "symfony/css-selector": "^7.0 || ^8.0",
         "symfony/monolog-bundle": "^3.10",
@@ -60,7 +62,8 @@
         "symfony/yaml": "^7.2 || ^8.0"
     },
     "conflict": {
-        "easycorp/easyadmin-bundle": "<4.26 || ^6.0"
+        "easycorp/easyadmin-bundle": "<4.26 || ^6.0",
+        "sylius/bootstrap-admin-ui": "<0.12 || ^0.13"
     },
     "suggest": {
         "ext-imagick": "required to use imagine processor",
