@@ -3,10 +3,12 @@
 namespace JoliCode\MediaBundle\Tests\Bridge\SyliusAdmin\Config;
 
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Config\Config;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ConfigTest extends TestCase
+#[CoversClass(Config::class)]
+final class ConfigTest extends TestCase
 {
     private TranslatorInterface $translator;
 

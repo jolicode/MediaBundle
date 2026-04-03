@@ -38,6 +38,7 @@ return static function (ContainerConfigurator $container): void {
             service('form.factory'),
             service('joli_media_sylius_admin.config'),
             service('translator'),
+            service('security.csrf.token_manager'),
         ])
         ->call('setContainer', [service('service_container')])
         ->tag('controller.service_arguments')

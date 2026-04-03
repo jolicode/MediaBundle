@@ -6,7 +6,7 @@
 {% for directory in directories %}
     {% set path = path('joli_media_sylius_admin_explore', {'key': directory}) %}
 
-    <tr class="item" data-directory="{{ directory }}" data-delete-directory-path="{{ path('joli_media_sylius_admin_delete_directory') }}">
+    <tr class="item" {{ sylius_test_html_attribute('directory-row') }} data-directory="{{ directory }}" data-delete-directory-path="{{ path('joli_media_sylius_admin_delete_directory') }}">
         {% for field in definition.enabledFields|sylius_sort_by('position') %}
             <td {% if field.options.vars.td_class is defined %}  class="{{ field.options.vars.td_class }}"{% endif %}>
                 {% if field.name == 'image' %}

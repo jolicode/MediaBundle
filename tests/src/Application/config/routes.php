@@ -7,4 +7,6 @@ return static function (RoutingConfigurator $routes): void {
     $routes->import('.', 'easyadmin.routes');
     $routes->import('@JoliMediaBundle/config/routes.php');
     $routes->import('@JoliMediaEasyAdminBundle/src/Controller/')->prefix('/admin/media');
+    $routes->import('@JoliMediaSyliusAdminBundle/src/Symfony/Controller/')->prefix('/sylius-admin/media');
+    $routes->import('@SyliusAdminUiBundle/config/routes.php')->prefix('/sylius-admin');
 };

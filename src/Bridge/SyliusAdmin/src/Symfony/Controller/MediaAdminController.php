@@ -30,6 +30,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
@@ -46,6 +48,7 @@ class MediaAdminController extends AbstractController
         private readonly FormFactoryInterface $formFactory,
         private readonly Config $config,
         private readonly TranslatorInterface $translator,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {
     }
 
@@ -54,7 +57,7 @@ class MediaAdminController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!$this->isCsrfTokenValid('media_create_directory', $data['_csrf_token'] ?? '')) {
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('media_create_directory', $data['_csrf_token'] ?? ''))) {
             return $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 400);
         }
 
@@ -86,7 +89,7 @@ class MediaAdminController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!$this->isCsrfTokenValid('media_rename', $data['_csrf_token'] ?? '')) {
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('media_rename', $data['_csrf_token'] ?? ''))) {
             return $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 400);
         }
 
@@ -110,7 +113,7 @@ class MediaAdminController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!$this->isCsrfTokenValid('media_rename', $data['_csrf_token'] ?? '')) {
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('media_rename', $data['_csrf_token'] ?? ''))) {
             return $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 400);
         }
 
@@ -164,14 +167,14 @@ class MediaAdminController extends AbstractController
         }
     }
 
-    #[Route(path: '/delete', name: 'delete', methods: [Request::METHOD_POST])]
+    #[Route(path: '/delete', name: 'delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function delete(Request $request): Response
     {
         $key = $request->query->get('key');
 
         $csrfToken = $request->request->get('_csrf_token');
 
-        if (!$this->isCsrfTokenValid($key, $csrfToken ?? '')) {
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($key, $csrfToken ?? ''))) {
             $this->addFlash('error', 'Invalid CSRF token');
         }
 
@@ -194,14 +197,14 @@ class MediaAdminController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/delete-directory', name: 'delete_directory', methods: [Request::METHOD_POST])]
+    #[Route(path: '/delete-directory', name: 'delete_directory', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function deleteDirectory(Request $request): RedirectResponse
     {
         $key = $request->query->get('key');
 
         $csrfToken = $request->request->get('_csrf_token');
 
-        if (!$this->isCsrfTokenValid($key, $csrfToken ?? '')) {
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($key, $csrfToken ?? ''))) {
             $this->addFlash('error', 'Invalid CSRF token');
         }
 
@@ -281,7 +284,7 @@ class MediaAdminController extends AbstractController
 
         $gridView = $this->getGridView($request, 'joli_media_explore');
 
-        return $this->render('@JoliMediaSyliusAdmin/media/index.html.twig', [
+        return new Response($this->twig->render('@JoliMediaSyliusAdmin/media/index.html.twig', [
             'key' => $key,
             'current_key' => $currentKey,
             'resources' => $gridView,
@@ -289,7 +292,7 @@ class MediaAdminController extends AbstractController
             'medias' => $gridView->getData(),
             'config' => $this->config,
             'create_media_form' => $this->createUploadForm($currentKey)->createView(),
-        ]);
+        ]));
     }
 
     #[Route(path: '/choose/{key}', name: 'choose', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]

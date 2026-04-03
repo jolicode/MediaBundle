@@ -5,7 +5,10 @@
 <div class="data-row">
     <dt>{{ 'media.url.label_long'|trans }}</dt>
     <dd class="d-flex jm-box">
-        <a href="{{ media.url }}" id="media-url" class="flex-fill"><code class="long-text-break">{{ media.url }}</code></a>
+        <a href="{{ media.url }}" id="media-url" class="flex-fill">
+            <code class="long-text-break" {{ sylius_test_html_attribute('media-url') }}>{{ media.url }}
+            </code>
+        </a>
         <button
                 class="btn btn-sm clipboard-btn"
                 data-clipboard-target="#media-url"
