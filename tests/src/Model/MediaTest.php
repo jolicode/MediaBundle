@@ -160,4 +160,29 @@ class MediaTest extends BaseTestCase
 
         $media->store();
     }
+
+    public function testSerializeUnserializeRestoresMedia(): void
+    {
+        Media::$resolverInitializer = fn () => $this->resolver;
+
+        $restored = unserialize(serialize($this->media));
+
+        self::assertInstanceOf(Media::class, $restored);
+        self::assertSame('test.jpg', $restored->getPath());
+        self::assertSame('default', $restored->getLibrary()->getName());
+    }
+
+    public function testUnserializeSupportsLegacyIndexedPayload(): void
+    {
+        Media::$resolverInitializer = fn () => $this->resolver;
+
+        $restored = (new \ReflectionClass(Media::class))->newInstanceWithoutConstructor();
+        $restored->__unserialize([
+            0 => 'test.jpg',
+            1 => 'default',
+        ]);
+
+        self::assertSame('test.jpg', $restored->getPath());
+        self::assertSame('default', $restored->getLibrary()->getName());
+    }
 }
