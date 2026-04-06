@@ -7,6 +7,7 @@ namespace JoliCode\MediaBundle\Tests\Model;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
+use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
 
 class MediaTest extends BaseTestCase
@@ -163,7 +164,7 @@ class MediaTest extends BaseTestCase
 
     public function testSerializeUnserializeRestoresMedia(): void
     {
-        Media::$resolverInitializer = fn () => $this->resolver;
+        Media::$resolverInitializer = fn (): Resolver => $this->resolver;
 
         $restored = unserialize(serialize($this->media));
 
@@ -174,7 +175,7 @@ class MediaTest extends BaseTestCase
 
     public function testUnserializeSupportsLegacyIndexedPayload(): void
     {
-        Media::$resolverInitializer = fn () => $this->resolver;
+        Media::$resolverInitializer = fn (): Resolver => $this->resolver;
 
         $restored = (new \ReflectionClass(Media::class))->newInstanceWithoutConstructor();
         $restored->__unserialize([
