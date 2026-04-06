@@ -51,9 +51,9 @@ class Media implements StorableInterface
         }
 
         try {
-            $resolvedMedia = self::getResolver()->resolveMedia($path, $libraryName);
+            $resolvedMedia = $this->getResolver()->resolveMedia($path, $libraryName);
         } catch (MediaNotFoundException) {
-            $resolvedMedia = self::getResolver()->createUnresolvedMedia($path, $libraryName);
+            $resolvedMedia = $this->getResolver()->createUnresolvedMedia($path, $libraryName);
         }
 
         $this->path = $resolvedMedia->path;
@@ -249,7 +249,7 @@ class Media implements StorableInterface
         $this->stored = true;
     }
 
-    private static function getResolver(): Resolver
+    private function getResolver(): Resolver
     {
         if (!isset(self::$resolver)) {
             if (!isset(self::$resolverInitializer)) {
