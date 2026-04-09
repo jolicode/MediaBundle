@@ -142,8 +142,8 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/move', name: 'move', methods: [Request::METHOD_POST])]
     public function move(Request $request): RedirectResponse
     {
-        $from = Resolver::normalizePath($request->request->get('from', ''));
-        $to = Resolver::normalizePath($request->request->get('to', ''));
+        $from = Resolver::normalizePath($request->request->getString('from'));
+        $to = Resolver::normalizePath($request->request->getString('to'));
 
         try {
             $target = \sprintf('%s/%s', $to, basename($from));
@@ -170,15 +170,15 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/delete', name: 'delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function delete(Request $request): Response
     {
-        $key = $request->query->get('key');
+        $key = $request->query->getString('key');
 
-        $csrfToken = $request->request->get('_csrf_token');
+        $csrfToken = $request->request->getString('_csrf_token');
 
-        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($key, $csrfToken ?? ''))) {
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($key, $csrfToken))) {
             $this->addFlash('error', 'Invalid CSRF token');
         }
 
-        if (!isset($key)) {
+        if ('' === $key) {
             $this->addFlash('error', 'Missing path parameter');
         }
 
@@ -200,15 +200,15 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/delete-directory', name: 'delete_directory', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function deleteDirectory(Request $request): RedirectResponse
     {
-        $key = $request->query->get('key');
+        $key = $request->query->getString('key');
 
-        $csrfToken = $request->request->get('_csrf_token');
+        $csrfToken = $request->request->getString('_csrf_token');
 
-        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($key, $csrfToken ?? ''))) {
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($key, $csrfToken))) {
             $this->addFlash('error', 'Invalid CSRF token');
         }
 
-        if (!isset($key)) {
+        if ('' === $key) {
             $this->addFlash('error', 'Missing path parameter');
         }
 
@@ -300,7 +300,7 @@ class MediaAdminController extends AbstractController
     {
         $currentKey = Resolver::normalizePath($key);
         $request->attributes->set('currentKey', $currentKey);
-        $parentKey = '' !== $currentKey ? (str_contains($currentKey, '/') ? substr($currentKey, 0, strrpos($currentKey, '/')) : '') : '';
+        $parentKey = '' !== $currentKey ? (($pos = strrpos($currentKey, '/')) !== false ? substr($currentKey, 0, $pos) : '') : '';
 
         try {
             $trashPath = $this->getOriginalStorage()->getTrashPath();
@@ -319,11 +319,8 @@ class MediaAdminController extends AbstractController
             try {
                 $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
                     $currentKey,
-                    recursive: false,
-                    page: 1,
-                    perPage: 50,
                 );
-                $medias = $paginatedMedias['items'] ?? [];
+                $medias = $paginatedMedias['items'];
             } catch (\OutOfRangeException) {
                 $medias = [];
             }
@@ -342,11 +339,10 @@ class MediaAdminController extends AbstractController
         try {
             $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
                 $currentKey,
-                recursive: false,
                 page: $page,
                 perPage: 24,
             );
-            $medias = $paginatedMedias['items'] ?? [];
+            $medias = $paginatedMedias['items'];
             $pagination = [
                 'page' => $paginatedMedias['page'],
                 'totalPages' => $paginatedMedias['totalPages'],

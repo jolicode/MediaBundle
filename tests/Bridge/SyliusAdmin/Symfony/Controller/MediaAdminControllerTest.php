@@ -25,8 +25,8 @@ final class MediaAdminControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->client = static::createClient();
-        $container = static::getContainer();
+        $this->client = self::createClient();
+        $container = self::getContainer();
 
         /** @var EntityManagerInterface */
         $entityManager = $container->get(EntityManagerInterface::class);

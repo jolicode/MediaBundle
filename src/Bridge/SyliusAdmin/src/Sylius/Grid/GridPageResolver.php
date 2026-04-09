@@ -24,6 +24,9 @@ final class GridPageResolver
         );
     }
 
+    /**
+     * @param int[] $gridLimits
+     */
     private static function resolveMaxPerPage(?int $requestLimit, array $gridLimits = []): int
     {
         if (null === $requestLimit) {
