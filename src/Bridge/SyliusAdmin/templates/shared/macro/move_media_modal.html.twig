@@ -1,0 +1,69 @@
+{% macro render (media) %}
+    {% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
+
+    <div id="modal-folder-choice" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="d-flex align-items-center gap-3 w-100">
+                        <div class="folder-modal-breadcrumb">
+                            {% if media.folderPath %}
+                                {% set parts = media.folderPath|split('/') %}
+                                <a href="{{ path('joli_media_sylius_admin_choose') }}" data-folder-path="">
+                                    {{ ux_icon('tabler:home') }}
+                                </a>
+                                {% for part in parts %}
+                                    {% if part %}
+                                        <span class="breadcrumb-separator">/</span>
+                                        {% set path_so_far = parts|slice(0, loop.index)|join('/') %}
+                                        {% if loop.last %}
+                                            <span class="breadcrumb-current">{{ part }}</span>
+                                        {% else %}
+                                            <a href="{{ path('joli_media_sylius_admin_choose', { key: path_so_far }) }}" data-folder-path="{{ path_so_far }}">{{ part }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <a href="{{ path('joli_media_sylius_admin_choose') }}" data-folder-path="">
+                                    {{ ux_icon('tabler:home') }}
+                                </a>
+                                <span class="breadcrumb-separator">/</span>
+                                <span class="breadcrumb-current">{{ 'root'|trans }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="ms-auto d-flex gap-2">
+                            <button type="button" class="btn btn-primary btn-sm" data-component="folder-create">
+                                {{ ux_icon('tabler:folder-plus') }}
+                                {{ 'directory.create'|trans }}
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{{ path('joli_media_sylius_admin_create_directory') }}" class="folder-create-form d-none mb-3">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_create_directory') }}">
+                        <div class="input-group">
+                            <input type="text" name="name" class="form-control folder-create-input" placeholder="{{ 'directory.create'|trans }}">
+                            <button type="submit" class="btn btn-primary">{{ 'action.create'|trans }}</button>
+                            <button type="button" class="btn btn-secondary folder-create-cancel">{{ 'action.cancel'|trans }}</button>
+                        </div>
+                    </form>
+                    <div class="folder-list-container"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        {{ 'action.cancel'|trans }}
+                    </button>
+                    <a
+                            href="#"
+                            class="btn btn-primary folder-move-btn"
+                            data-folder-path=""
+                    >
+                        {{ 'action.move_to_this_directory'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

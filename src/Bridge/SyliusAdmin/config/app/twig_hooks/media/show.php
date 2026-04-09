@@ -7,6 +7,13 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 return static function (ContainerConfigurator $container): void {
     $container->extension('sylius_twig_hooks', [
         'hooks' => [
+            'joli_media_sylius_admin.media.show' => [
+                'modal' => [
+                    'template' => '@JoliMediaSyliusAdmin/media/show/modal/move_media_modal.html.twig',
+                    'priority' => 100,
+                ],
+            ],
+
             'joli_media_sylius_admin.media.show.content.header' => [
                 'breadcrumbs' => [
                     'template' => '@JoliMediaSyliusAdmin/media/show/content/header/breadcrumbs.html.twig',
