@@ -16,7 +16,7 @@ class ConfigurationTest extends TestCase
         $this->assertArrayHasKey('pagination', $config);
         $this->assertArrayHasKey('per_page', $config['pagination']);
 
-        $this->assertEquals(50, $config['pagination']['per_page']);
+        $this->assertEquals(20, $config['pagination']['per_page']);
     }
 
     public function testCustomPaginationConfiguration(): void
@@ -109,17 +109,13 @@ class ConfigurationTest extends TestCase
         $bundle = new JoliMediaEasyAdminBundle();
         $treeBuilder = new TreeBuilder('joli_media_easy_admin');
 
-        // Get the configuration tree from the bundle
-        $reflection = new \ReflectionMethod($bundle, 'configure');
-        $reflection->setAccessible(true);
-
         $configurator = $this->createMock(\Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator::class);
         $configurator->expects($this->once())
             ->method('rootNode')
             ->willReturn($treeBuilder->getRootNode())
         ;
 
-        $reflection->invoke($bundle, $configurator);
+        $bundle->configure($configurator);
 
         $processor = new Processor();
 

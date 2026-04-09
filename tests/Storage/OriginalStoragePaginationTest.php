@@ -90,6 +90,8 @@ class OriginalStoragePaginationTest extends TestCase
     {
         $this->createTestFiles(25);
 
+        $this->expectException(\OutOfRangeException::class);
+
         $result = $this->storage->listMediasPaginated(null, null, false, 999, 10);
 
         $this->assertEquals(3, $result['page']);
@@ -103,7 +105,7 @@ class OriginalStoragePaginationTest extends TestCase
         $this->assertCount(0, $result['items']);
         $this->assertEquals(0, $result['total']);
         $this->assertEquals(1, $result['page']);
-        $this->assertEquals(0, $result['totalPages']);
+        $this->assertEquals(1, $result['totalPages']);
     }
 
     public function testListMediasPaginatedDifferentPerPage(): void
