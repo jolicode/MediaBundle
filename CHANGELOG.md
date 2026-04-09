@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.3.1] - 2026-04-09
+
+- fix - Fix choose modal on Easy admin bridge
+
 ## [0.3.0] - 2026-04-09
  
 - feature - Add support for Easy admin 5
