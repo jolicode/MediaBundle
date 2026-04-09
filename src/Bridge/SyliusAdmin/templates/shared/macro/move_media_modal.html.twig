@@ -10,7 +10,7 @@
                             {% if media.folderPath %}
                                 {% set parts = media.folderPath|split('/') %}
                                 <a href="{{ path('joli_media_sylius_admin_choose') }}" data-folder-path="">
-                                    {{ ux_icon('tabler:home') }}
+                                    {{ 'media_library'|trans }}
                                 </a>
                                 {% for part in parts %}
                                     {% if part %}
@@ -25,7 +25,7 @@
                                 {% endfor %}
                             {% else %}
                                 <a href="{{ path('joli_media_sylius_admin_choose') }}" data-folder-path="">
-                                    {{ ux_icon('tabler:home') }}
+                                    {{ 'media_library'|trans }}
                                 </a>
                                 <span class="breadcrumb-separator">/</span>
                                 <span class="breadcrumb-current">{{ 'root'|trans }}</span>

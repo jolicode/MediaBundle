@@ -22,9 +22,41 @@ const openFolderChoiceModal = (folderChoiceButton) => {
 
     let currentFolderPath = folderChoiceButton.dataset.folder || '';
 
+    const updateBreadcrumb = (newFolderPath) => {
+        const breadcrumb = modal.querySelector('.folder-modal-breadcrumb');
+        if (!breadcrumb) return;
+
+        const baseUrl = folderChoiceButton.getAttribute('href') || '';
+        const rootText = 'Media Library';
+        const parts = newFolderPath ? newFolderPath.split('/').filter(p => p) : [];
+
+        let html = '';
+        html += `<a href="${baseUrl}" data-folder-path="">${rootText}</a>`;
+
+        if (parts.length > 0) {
+            let pathSoFar = '';
+            parts.forEach((part, index) => {
+                if (index > 0) {
+                    pathSoFar += '/';
+                }
+                pathSoFar += part;
+                html += '<span class="breadcrumb-separator">/</span>';
+                if (index === parts.length - 1) {
+                    html += `<span class="breadcrumb-current">${part}</span>`;
+                } else {
+                    const href = baseUrl.replace(/\/$/, '') + '/' + encodeURIComponent(pathSoFar);
+                    html += `<a href="${href}" data-folder-path="${pathSoFar}">${part}</a>`;
+                }
+            });
+        }
+
+        breadcrumb.innerHTML = html;
+    };
+
     const configureModal = (html) => {
         if (listContainer) {
             listContainer.innerHTML = html;
+            updateBreadcrumb(currentFolderPath);
             attachModalEvents();
         }
     };
@@ -45,6 +77,40 @@ const openFolderChoiceModal = (folderChoiceButton) => {
     };
 
     const attachModalEvents = () => {
+        const breadcrumb = modal.querySelector('.folder-modal-breadcrumb');
+        breadcrumb?.addEventListener('click', (e) => {
+            const link = e.target.closest('a[data-folder-path]');
+            if (!link) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+            const href = link.getAttribute('href');
+
+            if (href && !href.endsWith('#')) {
+                const url = new URL(href, window.location.origin);
+                const folderPath = url.searchParams.get('key') || '';
+                currentFolderPath = folderPath;
+                updateBreadcrumb(currentFolderPath);
+                fetchFolder(href).then(configureModal);
+            }
+        });
+
+        const folderParent = listContainer?.querySelector('.folder-parent a');
+        folderParent?.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const folderPath = folderParent.dataset.folderPath || '';
+            const href = folderParent.getAttribute('href');
+
+            console.log('folderParent clicked, folderPath:', folderPath);
+
+            if (href && !href.endsWith('#')) {
+                currentFolderPath = folderPath;
+                updateBreadcrumb(currentFolderPath);
+                fetchFolder(href).then(configureModal);
+            }
+        });
+
         const folderItems = listContainer?.querySelectorAll('a[data-folder-path]');
         folderItems?.forEach((item) => {
             item.addEventListener('click', (e) => {
@@ -55,6 +121,7 @@ const openFolderChoiceModal = (folderChoiceButton) => {
 
                 if (href && !href.endsWith('#')) {
                     currentFolderPath = folderPath;
+                    updateBreadcrumb(currentFolderPath);
                     fetchFolder(href).then(configureModal);
                 }
             });
@@ -155,6 +222,7 @@ const openFolderChoiceModal = (folderChoiceButton) => {
         fetchUrl = baseUrl.replace(/\/$/, '') + '/' + encodeURIComponent(currentFolderPath);
     }
 
+    updateBreadcrumb(currentFolderPath);
     fetchFolder(fetchUrl).then(configureModal);
 
     const modalInstance = new bootstrap.Modal(modal);
