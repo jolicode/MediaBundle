@@ -2,6 +2,27 @@
 
 <div class="joli-media-choose-container">
     <div class="mb-3 d-flex justify-content-between align-items-center">
+        <div class="folder-modal-breadcrumb">
+            {% if current_key %}
+                {% set parts = current_key|split('/') %}
+                <a href="{{ path('joli_media_sylius_admin_choose') }}" data-folder-path="">
+                    {{ 'media_library'|trans }}
+                </a>
+                {% for part in parts %}
+                    {% if part %}
+                        <span class="breadcrumb-separator">/</span>
+                        {% set path_so_far = parts|slice(0, loop.index)|join('/') %}
+                        {% if loop.last %}
+                            <span class="breadcrumb-current">{{ part }}</span>
+                        {% else %}
+                            <a href="{{ path('joli_media_sylius_admin_choose', { key: path_so_far }) }}" data-folder-path="{{ path_so_far }}">{{ part }}</a>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <span class="breadcrumb-current">{{ 'media_library'|trans }}</span>
+            {% endif %}
+        </div>
         <a
             class="btn btn-primary"
             data-component="media-add"

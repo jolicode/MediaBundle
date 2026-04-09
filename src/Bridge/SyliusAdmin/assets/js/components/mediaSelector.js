@@ -21,9 +21,60 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
 
     const fetchFolder = (url) => fetch(url).then((response) => response.text());
 
+    const updateBreadcrumb = (newFolderPath) => {
+        const breadcrumb = modalContent?.querySelector('.folder-modal-breadcrumb');
+        if (!breadcrumb) return;
+
+        const baseUrl = editButton.href.split('?')[0];
+        const rootText = 'Media Library';
+        const parts = newFolderPath ? newFolderPath.split('/').filter(p => p) : [];
+
+        let html = '';
+        html += `<a href="${baseUrl}" data-folder-path="">${rootText}</a>`;
+
+        if (parts.length > 0) {
+            let pathSoFar = '';
+            parts.forEach((part, index) => {
+                if (index > 0) {
+                    pathSoFar += '/';
+                }
+                pathSoFar += part;
+                const displayPart = decodeURIComponent(part);
+                html += '<span class="breadcrumb-separator">/</span>';
+                if (index === parts.length - 1) {
+                    html += `<span class="breadcrumb-current">${displayPart}</span>`;
+                } else {
+                    const href = `${baseUrl}?key=${encodeURIComponent(pathSoFar)}`;
+                    html += `<a href="${href}" data-folder-path="${pathSoFar}">${displayPart}</a>`;
+                }
+            });
+        }
+
+        breadcrumb.innerHTML = html;
+    };
+
+    const getCurrentFolderPath = () => {
+        const url = new URL(editButton.href, window.location.origin);
+        let folderPath = url.searchParams.get('key') || '';
+        
+        if (!folderPath) {
+            const pathMatch = editButton.href.match(/\/media\/choose(?:\/(.+))?$/);
+            if (pathMatch && pathMatch[1]) {
+                folderPath = pathMatch[1];
+            }
+        }
+        
+        return folderPath;
+    };
+
+    let currentFolderPath = getCurrentFolderPath();
+
     const configureModal = (html) => {
         if (modalContent) {
             modalContent.innerHTML = html;
+            
+            // Always update breadcrumb to ensure it's correct for current folder
+            updateBreadcrumb(currentFolderPath);
         }
     };
 
@@ -72,6 +123,21 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
 
         if (href === "#") {
             return;
+        }
+
+        if (target.closest('.folder-modal-breadcrumb') || target.closest('.gallery-grid--folders')) {
+            const url = new URL(href, window.location.origin);
+            let folderPath = url.searchParams.get('key') || '';
+            
+            if (!folderPath) {
+                const pathMatch = href.match(/\/media\/choose(?:\/(.+))?$/);
+                if (pathMatch && pathMatch[1]) {
+                    folderPath = pathMatch[1];
+                }
+            }
+            
+            currentFolderPath = folderPath;
+            updateBreadcrumb(currentFolderPath);
         }
 
         event.preventDefault();

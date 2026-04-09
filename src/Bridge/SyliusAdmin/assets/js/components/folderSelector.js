@@ -40,12 +40,13 @@ const openFolderChoiceModal = (folderChoiceButton) => {
                     pathSoFar += '/';
                 }
                 pathSoFar += part;
+                const displayPart = decodeURIComponent(part);
                 html += '<span class="breadcrumb-separator">/</span>';
                 if (index === parts.length - 1) {
-                    html += `<span class="breadcrumb-current">${part}</span>`;
+                    html += `<span class="breadcrumb-current">${displayPart}</span>`;
                 } else {
                     const href = baseUrl.replace(/\/$/, '') + '/' + encodeURIComponent(pathSoFar);
-                    html += `<a href="${href}" data-folder-path="${pathSoFar}">${part}</a>`;
+                    html += `<a href="${href}" data-folder-path="${pathSoFar}">${displayPart}</a>`;
                 }
             });
         }
