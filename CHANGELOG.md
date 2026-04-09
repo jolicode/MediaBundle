@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0] - 2026-04-09
+ 
+- feature - Add support for Easy admin 5
+- feature - updated frontend deps and compiled public assets
+- fix - Restrict Easy admin bundle version
+- fix - Fix media removal in EasyAdmin show page
+
 ## [0.2.1] - 2025-12-07
 
 - fix - even when the boolean `must_store_when_generating_url` option is set to `true`, the media is not stored when generating a URL using the twig `joli_media_url` filter
