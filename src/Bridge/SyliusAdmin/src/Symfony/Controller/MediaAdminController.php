@@ -302,6 +302,8 @@ class MediaAdminController extends AbstractController
         $request->attributes->set('currentKey', $currentKey);
         $parentKey = '' !== $currentKey ? (($pos = strrpos($currentKey, '/')) !== false ? substr($currentKey, 0, $pos) : '') : '';
 
+        $perPage = $this->config->getPaginationSizes()[0] ?? 10;
+
         try {
             $trashPath = $this->getOriginalStorage()->getTrashPath();
 
@@ -319,6 +321,7 @@ class MediaAdminController extends AbstractController
             try {
                 $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
                     $currentKey,
+                    perPage: $perPage,
                 );
                 $medias = $paginatedMedias['items'];
             } catch (\OutOfRangeException) {
@@ -340,7 +343,7 @@ class MediaAdminController extends AbstractController
             $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
                 $currentKey,
                 page: $page,
-                perPage: 24,
+                perPage: $perPage,
             );
             $medias = $paginatedMedias['items'];
             $pagination = [
