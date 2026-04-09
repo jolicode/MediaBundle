@@ -41,6 +41,9 @@ class Media implements StorableInterface
         ];
     }
 
+    /**
+     * @param array<int|string, mixed> $data
+     */
     public function __unserialize(array $data): void
     {
         $path = $data['path'] ?? $data[0] ?? null;
