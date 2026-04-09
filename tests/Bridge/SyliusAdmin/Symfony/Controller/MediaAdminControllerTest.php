@@ -14,7 +14,6 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 
 #[CoversClass(MediaAdminController::class)]
@@ -52,7 +51,7 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorTextContains('ol.breadcrumb li.breadcrumb-item.active', 'Media library');
 
         // List of directories
-        $this->assertSelectorCount(2, '[data-test-directory-row]');
+        $this->assertSelectorCount(3, '[data-test-directory-row]');
         $this->assertSelectorExists('[data-directory=a-folder-with-a-very-long-name-level-1]');
         $this->assertSelectorExists('[data-directory=sub]');
 
