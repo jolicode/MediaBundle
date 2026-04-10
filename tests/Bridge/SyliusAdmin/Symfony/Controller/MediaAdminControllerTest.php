@@ -35,7 +35,7 @@ final class MediaAdminControllerTest extends WebTestCase
 
     public function testExplore(): void
     {
-        $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
         $this->assertResponseIsSuccessful();
 
         $this->assertSelectorTextContains('title', 'Media library');
@@ -45,12 +45,12 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorTextContains('ol.breadcrumb li.breadcrumb-item.active', 'Media library');
 
         // List of directories
-        $this->assertSelectorCount(3, '[data-test-directory-row]');
+        $this->assertSame(3, $this->getDirectoryCount($crawler));
         $this->assertSelectorExists('[data-directory=a-folder-with-a-very-long-name-level-1]');
         $this->assertSelectorExists('[data-directory=sub]');
 
         // List of medias
-        $this->assertSelectorCount(3, '[data-test-row]');
+        $this->assertSame(3, $this->getMediaCount($crawler));
         $this->assertSelectorTextContains('tr.item:last-child', 'set_null.pdf');
     }
 
@@ -78,8 +78,10 @@ final class MediaAdminControllerTest extends WebTestCase
 
     public function testDeleteMedia(): void
     {
-        $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
         $this->assertResponseIsSuccessful();
+
+        $previousMediaCount = $this->getMediaCount($crawler);
 
         $deleteButton = $this->client->getCrawler()->filter('tr.item:last-child [data-test-confirm-button]');
 
@@ -87,20 +89,22 @@ final class MediaAdminControllerTest extends WebTestCase
 
         $this->assertResponseRedirects();
 
-        $this->client->request('GET', '/sylius-admin/media/explore');
+        $crawler = $this->client->request('GET', '/sylius-admin/media/explore');
 
         // Test flash message
         $this->assertSelectorExists('[data-test-sylius-flash-message]');
         $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'set_null.pdf has been successfully deleted.');
 
         // One media has been removed
-        $this->assertSelectorCount(2, '[data-test-row]');
+        $this->assertSame($previousMediaCount - 1, $this->getMediaCount($crawler));
     }
 
     public function testDeleteDirectoryNotInUse(): void
     {
-        $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
         $this->assertResponseIsSuccessful();
+
+        $previousDirectoryCount = $this->getDirectoryCount($crawler);
 
         $deleteButton = $this->client->getCrawler()->filter('[data-directory=not_used] [data-test-confirm-button]');
 
@@ -108,20 +112,22 @@ final class MediaAdminControllerTest extends WebTestCase
 
         $this->assertResponseRedirects();
 
-        $this->client->request('GET', '/sylius-admin/media/explore');
+        $crawler = $this->client->request('GET', '/sylius-admin/media/explore');
 
         // Test flash message
         $this->assertSelectorExists('[data-test-sylius-flash-message]');
         $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'not_used has been successfully deleted.');
 
         // One directory has been removed
-        $this->assertSelectorCount(2, '[data-test-directory-row]');
+        $this->assertSame($previousDirectoryCount - 1, $this->getDirectoryCount($crawler));
     }
 
     public function testDeleteDirectoryInUse(): void
     {
-        $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
         $this->assertResponseIsSuccessful();
+
+        $previousDirectoryCount = $this->getDirectoryCount($crawler);
 
         $deleteButton = $this->client->getCrawler()->filter('[data-directory=sub] [data-test-confirm-button]');
 
@@ -129,14 +135,14 @@ final class MediaAdminControllerTest extends WebTestCase
 
         $this->assertResponseRedirects();
 
-        $this->client->request('GET', '/sylius-admin/media/explore');
+        $crawler = $this->client->request('GET', '/sylius-admin/media/explore');
 
         // Test flash message
         $this->assertSelectorExists('[data-test-sylius-flash-message]');
         $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'The media "sub/folder/circle-pattern.png" is used in the "mediaRestrict" field of the "JoliCode\MediaBundle\Tests\Application\Entity\Page" entity. It cannot be deleted.');
 
-        // Still have 2 directories
-        $this->assertSelectorCount(3, '[data-test-directory-row]');
+        // No directory should have been created
+        $this->assertSame($previousDirectoryCount, $this->getDirectoryCount($crawler));
     }
 
     public function testUploadMediaOnRootDirectory(): void
@@ -233,6 +239,45 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSame('/media/cache/joli-media-sylius-admin/sub/circle-pattern.png', $response['files'][0]['thumbnailUrl']);
     }
 
+    public function testCreateNewDirectoryInRoot(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+        $previousDirectoryCount = $this->getDirectoryCount($crawler);
+
+        $this->assertResponseIsSuccessful();
+
+        $form = $this->getCreateDirectoryForm($crawler);
+
+        $phpValues = $form->getPhpValues();
+        $phpValues['parentPath'] = '';
+        $phpValues['name'] = 'New directory';
+
+        $this->client->request(
+            'POST', '/sylius-admin/media/create-directory',
+            server: ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'],
+            content: json_encode($phpValues),
+        );
+
+        $this->assertResponseFormatSame('json');
+        $this->assertResponseIsSuccessful();
+
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertIsString($responseContent);
+
+        $response = json_decode($responseContent, true);
+        $this->assertArrayHasKey('success', $response);
+        $this->assertTrue($response['success']);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+
+        // A new directory should appear
+        $this->assertSame($previousDirectoryCount + 1, $this->getDirectoryCount($crawler));
+
+        // Test flash message
+        $this->assertSelectorExists('[data-test-sylius-flash-message]');
+        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'New directory has been successfully created.');
+    }
+
     protected static function getKernelClass(): string
     {
         return Kernel::class;
@@ -245,6 +290,13 @@ final class MediaAdminControllerTest extends WebTestCase
         return $crawler->filter('form[name="upload"]')->form();
     }
 
+    private function getCreateDirectoryForm(Crawler $crawler): Form
+    {
+        $this->assertSelectorExists('form[data-component="directory-create-form"]');
+
+        return $crawler->filter('form[data-component="directory-create-form"]')->form();
+    }
+
     private function createTemporaryFile(): string
     {
         return tempnam(sys_get_temp_dir(), 'upload-test');
@@ -253,5 +305,15 @@ final class MediaAdminControllerTest extends WebTestCase
     private function copyFixtureFileContentInTemporaryFile(string $tmpFile, string $filename): void
     {
         copy(\dirname(__DIR__, 4) . '/fixtures/' . $filename, $tmpFile);
+    }
+
+    private function getDirectoryCount(Crawler $crawler): int
+    {
+        return $crawler->filter('[data-test-directory-row]')->count();
+    }
+
+    private function getMediaCount(Crawler $crawler): int
+    {
+        return $crawler->filter('[data-test-row]')->count();
     }
 }

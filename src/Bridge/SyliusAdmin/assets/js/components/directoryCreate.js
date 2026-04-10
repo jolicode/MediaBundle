@@ -38,7 +38,7 @@ const configureDirectoryCreate = () => {
             body: JSON.stringify({
                 parentPath: parentPath,
                 name: name,
-                _csrf_token: document.querySelector('meta[name="csrf-token-create"]')?.content
+                _csrf_token: createDirectoryForm.querySelector('[name="_csrf_token"]')?.value
             })
         })
             .then(response => response.json())

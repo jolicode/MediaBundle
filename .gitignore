@@ -17,3 +17,6 @@ phpunit.xml
 node_modules
 npm-debug.log
 yarn-error.log
+
+# Created in PHPUnit tests
+details.html

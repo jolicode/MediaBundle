@@ -81,6 +81,8 @@ class MediaAdminController extends AbstractController
         try {
             $this->getOriginalStorage()->createDirectory($newPath);
 
+            $this->addFlash('success', $this->translator->trans('sylius.resource.create', ['%resource%' => $newPath], domain: 'flashes'));
+
             return $this->json(['success' => true]);
         } catch (\Throwable $e) {
             return $this->json(['success' => false, 'error' => $e->getMessage()], 400);
