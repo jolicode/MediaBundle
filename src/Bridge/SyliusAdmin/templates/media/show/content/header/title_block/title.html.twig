@@ -5,7 +5,7 @@
 <div class="col-12 col-md-6" data-component="media-rename" data-media-key="{{ media.path }}" data-rename-media-path="{{ path('joli_media_sylius_admin_rename') }}">
     <div class="d-md-flex gap-2 align-items-center">
         <span class="media-name">{{ header.h1(media.fileName) }}</span>
-        <form class="media-rename-form d-none">
+        <form class="media-rename-form d-none" name="media-rename-form">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_rename') }}">
             <div class="input-group">
                 <input type="text" class="form-control media-rename-input" value="{{ media.fileName }}">

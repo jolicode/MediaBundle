@@ -145,6 +145,35 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSame($previousDirectoryCount, $this->getDirectoryCount($crawler));
     }
 
+    public function testRenameMedia(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/show/default.pdf');
+        $this->assertResponseIsSuccessful();
+
+        $form = $this->getRenameMediaForm($crawler);
+
+        $phpValues = $form->getPhpValues();
+        $phpValues['oldPath'] = 'default.pdf';
+        $phpValues['newPath'] = 'new_name.pdf';
+
+        $this->client->request(
+            'POST', '/sylius-admin/media/rename',
+            server: ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'],
+            content: json_encode($phpValues),
+        );
+
+        $this->assertResponseFormatSame('json');
+        $this->assertResponseIsSuccessful();
+
+        // Media should have been renamed
+        $this->client->request(Request::METHOD_GET, '/sylius-admin/media/show/new_name.pdf');
+        $this->assertResponseIsSuccessful();
+
+        // Test flash message
+        //        $this->assertSelectorExists('[data-test-sylius-flash-message]');
+        //        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'The file default.pdf was successfully moved to new_name.pdf.');
+    }
+
     public function testUploadMediaOnRootDirectory(): void
     {
         $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
@@ -318,6 +347,13 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorExists('form[id="move-form"]');
 
         return $crawler->filter('form[id="move-form"]')->form();
+    }
+
+    private function getRenameMediaForm(Crawler $crawler): Form
+    {
+        $this->assertSelectorExists('form[name="media-rename-form"]');
+
+        return $crawler->filter('form[name="media-rename-form"]')->form();
     }
 
     private function getCreateDirectoryForm(Crawler $crawler): Form

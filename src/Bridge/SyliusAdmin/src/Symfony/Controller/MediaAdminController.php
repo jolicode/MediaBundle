@@ -134,6 +134,8 @@ class MediaAdminController extends AbstractController
             $referer = $request->headers->get('referer');
             $redirectUrl = $referer ? str_replace(rawurlencode($data['oldPath']), rawurlencode($data['newPath']), $referer) : null;
 
+            // $this->addFlash('success', $this->translator->trans('media.move_success', ['%from%' => $data['oldPath'], '%to%' => $data['newPath']], domain: 'JoliMediaSyliusAdminBundle'));
+
             return $this->json([
                 'success' => true,
                 'newPath' => $data['newPath'],
