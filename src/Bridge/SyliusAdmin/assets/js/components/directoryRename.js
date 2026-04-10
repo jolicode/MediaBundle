@@ -1,8 +1,7 @@
 const configureDirectoryRename = () => {
     const container = document.querySelector('[data-component*="directory-list"]');
-    const renameDirectoryPath = document.querySelector('[data-rename-directory-path]')?.dataset.renameDirectoryPath;
 
-    if (!container || !renameDirectoryPath) {
+    if (!container) {
         return;
     }
 
@@ -59,27 +58,17 @@ const configureDirectoryRename = () => {
         const parentPath = directory.includes('/') ? directory.substring(0, directory.lastIndexOf('/') + 1) : '';
         const newPath = parentPath + newName;
 
-        fetch(renameDirectoryPath, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                oldPath: directory,
-                newPath: newPath,
-                _csrf_token: document.querySelector('meta[name="csrf-token"]')?.content
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert('Error renaming folder: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error renaming folder');
-            });
+        const oldPathInput = form.querySelector('input[name="oldPath"]');
+        if (oldPathInput) {
+            oldPathInput.value = directory;
+        }
+
+        const newPathInput = form.querySelector('input[name="newPath"]');
+        if (newPathInput) {
+            newPathInput.value = newPath;
+        }
+
+        form.submit();
     });
 
     container.addEventListener('keydown', (e) => {

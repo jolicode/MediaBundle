@@ -18,6 +18,7 @@ browser:
 directory:
     label: 'Répertoire'
     create: 'Créer un nouveau dossier'
+    rename_success: 'Le répertoire %from% a été renommé avec succès en %to%.'
 media:
     add: 'Ajouter un média'
     dimensions: 'Dimensions'

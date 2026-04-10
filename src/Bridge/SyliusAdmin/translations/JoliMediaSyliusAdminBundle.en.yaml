@@ -19,6 +19,7 @@ directory:
     label: 'Directory'
     create: 'Create a new directory'
     name: 'Directory name'
+    rename_success: 'The directory %from% was successfully renamed to %to%.'
 media:
     add: 'Add media'
     dimensions: 'Dimensions'

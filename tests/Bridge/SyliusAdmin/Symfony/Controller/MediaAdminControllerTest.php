@@ -167,6 +167,70 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'The file default.pdf was successfully renamed to new_name.pdf.');
     }
 
+    public function testRenameDirectory(): void
+    {
+        // Use existing directory from fixtures
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+        $this->assertResponseIsSuccessful();
+
+        $form = $this->getDirectoryRenameForm($crawler, 'a-folder-with-a-very-long-name-level-1');
+
+        $phpValues = $form->getPhpValues();
+        $phpValues['newPath'] = 'renamed_directory';
+
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues);
+
+        $this->assertResponseRedirects();
+
+        // Navigate to the renamed directory to verify
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore/renamed_directory');
+        $this->assertResponseIsSuccessful();
+
+        // Verify we're in the renamed directory
+        $this->assertSelectorTextContains('ol.breadcrumb li.breadcrumb-item.active', 'renamed_directory');
+
+        // Test flash message
+        $this->assertSelectorExists('[data-test-sylius-flash-message]');
+        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'The directory a-folder-with-a-very-long-name-level-1 was successfully renamed to renamed_directory.');
+    }
+
+    public function testRenameDirectoryFailsWhenTargetExists(): void
+    {
+        // 'sub' directory already exists in fixtures
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+        $this->assertResponseIsSuccessful();
+
+        // Create a directory to rename
+        $form = $this->getCreateDirectoryForm($crawler);
+        $phpValues = $form->getPhpValues();
+        $phpValues['parentPath'] = '';
+        $phpValues['name'] = 'dir_to_rename';
+
+        $this->client->request(
+            'POST', '/sylius-admin/media/create-directory',
+            server: ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'],
+            content: json_encode($phpValues),
+        );
+        $this->assertResponseIsSuccessful();
+
+        // Try to rename to 'sub' which already exists (should fail)
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+        $form = $this->getDirectoryRenameForm($crawler, 'dir_to_rename');
+
+        $phpValues = $form->getPhpValues();
+        $phpValues['newPath'] = 'sub';
+
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues);
+        $this->assertResponseRedirects();
+
+        // Verify we're still on the explore page and error flash is shown
+        $crawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $this->assertSelectorExists('[data-test-sylius-flash-message]');
+        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'Error');
+    }
+
     public function testUploadMediaOnRootDirectory(): void
     {
         $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
@@ -347,6 +411,19 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorExists('form[name="media-rename-form"]');
 
         return $crawler->filter('form[name="media-rename-form"]')->form();
+    }
+
+    private function getDirectoryRenameForm(Crawler $crawler, string $directoryName): Form
+    {
+        // Find the row with the directory
+        $directoryRow = $crawler->filter(\sprintf('[data-directory="%s"]', $directoryName));
+        $this->assertCount(1, $directoryRow, \sprintf('Directory row not found for "%s"', $directoryName));
+
+        // Get the form from that row
+        $form = $directoryRow->filter('.directory-rename-form');
+        $this->assertCount(1, $form, \sprintf('Directory rename form not found for "%s"', $directoryName));
+
+        return $form->form();
     }
 
     private function getCreateDirectoryForm(Crawler $crawler): Form

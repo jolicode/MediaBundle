@@ -92,24 +92,38 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/rename-directory', name: 'rename_directory', methods: [Request::METHOD_POST])]
     public function renameDirectory(Request $request): Response
     {
-        $data = json_decode($request->getContent(), true);
+        $csrfToken = $request->request->getString('_csrf_token');
+        $oldPath = Resolver::normalizePath($request->request->getString('oldPath'));
+        $newPath = Resolver::normalizePath($request->request->getString('newPath'));
 
-        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('media_rename', $data['_csrf_token'] ?? ''))) {
-            return $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 400);
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('media_rename_directory', $csrfToken))) {
+            $this->addFlash('error', 'Invalid CSRF token');
+
+            return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
         }
 
-        unset($data['_csrf_token']);
+        if (!$oldPath || !$newPath) {
+            $this->addFlash('error', 'Missing parameters');
 
-        if (!isset($data['oldPath'], $data['newPath'])) {
-            return $this->json(['success' => false, 'error' => 'Missing parameters'], 400);
+            return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
         }
 
         try {
-            $this->getOriginalStorage()->moveFolder($data['oldPath'], $data['newPath']);
+            $this->getOriginalStorage()->moveFolder($oldPath, $newPath);
 
-            return $this->json(['success' => true]);
+            $this->addFlash('success', $this->translator->trans(
+                'directory.rename_success',
+                ['%from%' => $oldPath, '%to%' => $newPath],
+                'JoliMediaSyliusAdminBundle'
+            ));
+
+            $referer = $request->headers->get('referer');
+
+            return $this->redirect($referer ? str_replace($oldPath, $newPath, $referer) : $this->generateUrl('joli_media_sylius_admin_explore'));
         } catch (\Throwable $e) {
-            return $this->json(['success' => false, 'error' => $e->getMessage()], 400);
+            $this->addFlash('error', $e->getMessage());
+
+            return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
         }
     }
 
