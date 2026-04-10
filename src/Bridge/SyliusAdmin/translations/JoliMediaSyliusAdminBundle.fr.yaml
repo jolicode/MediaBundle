@@ -18,6 +18,9 @@ browser:
 directory:
     label: 'Répertoire'
     create: 'Créer un nouveau dossier'
+    create_success: 'Répertoire "%directory%" créé avec succès'
+    create_failure: 'Échec de la création du répertoire "%directory%" : %error%'
+    name_required: 'Le nom du répertoire est requis'
     rename_success: 'Le répertoire %from% a été renommé avec succès en %to%.'
 media:
     add: 'Ajouter un média'

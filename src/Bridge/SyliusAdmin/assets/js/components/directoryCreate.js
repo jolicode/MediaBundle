@@ -1,10 +1,9 @@
 const configureDirectoryCreate = () => {
-    const createDirectoryPath = document.querySelector('[data-component="directory-create"]')?.dataset.createDirectoryPath;
     const createDirectoryForm = document.querySelector('[data-component="directory-create-form"]');
     const createDirectoryInput = createDirectoryForm?.querySelector('.directory-create-input');
     const createDirectoryCancelBtn = createDirectoryForm?.querySelector('.directory-create-cancel-btn');
 
-    if (!createDirectoryForm || !createDirectoryPath) {
+    if (!createDirectoryForm) {
         return;
     }
 
@@ -23,36 +22,13 @@ const configureDirectoryCreate = () => {
     });
 
     createDirectoryForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
         const name = createDirectoryInput.value.trim();
         if (!name) {
+            e.preventDefault();
             return;
         }
 
-        const parentPath = document.querySelector('meta[name="current-key"]')?.content || '';
-
-        fetch(createDirectoryPath, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                parentPath: parentPath,
-                name: name,
-                _csrf_token: createDirectoryForm.querySelector('[name="_csrf_token"]')?.value
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert('Error creating folder: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error creating folder');
-            });
+        // The form will submit normally via HTML
     });
 
     createDirectoryCancelBtn?.addEventListener('click', () => {

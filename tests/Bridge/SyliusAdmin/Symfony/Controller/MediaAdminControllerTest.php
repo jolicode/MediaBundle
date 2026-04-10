@@ -191,7 +191,7 @@ final class MediaAdminControllerTest extends WebTestCase
 
         // Test flash message
         $this->assertSelectorExists('[data-test-sylius-flash-message]');
-        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'The directory a-folder-with-a-very-long-name-level-1 was successfully renamed to renamed_directory.');
+        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'The directory "a-folder-with-a-very-long-name-level-1" was successfully renamed to "renamed_directory"');
     }
 
     public function testRenameDirectoryFailsWhenTargetExists(): void
@@ -203,18 +203,13 @@ final class MediaAdminControllerTest extends WebTestCase
         // Create a directory to rename
         $form = $this->getCreateDirectoryForm($crawler);
         $phpValues = $form->getPhpValues();
-        $phpValues['parentPath'] = '';
         $phpValues['name'] = 'dir_to_rename';
 
-        $this->client->request(
-            'POST', '/sylius-admin/media/create-directory',
-            server: ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'],
-            content: json_encode($phpValues),
-        );
-        $this->assertResponseIsSuccessful();
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues);
+        $this->assertResponseRedirects();
 
         // Try to rename to 'sub' which already exists (should fail)
-        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+        $crawler = $this->client->followRedirect();
         $form = $this->getDirectoryRenameForm($crawler, 'dir_to_rename');
 
         $phpValues = $form->getPhpValues();
@@ -358,33 +353,41 @@ final class MediaAdminControllerTest extends WebTestCase
         $form = $this->getCreateDirectoryForm($crawler);
 
         $phpValues = $form->getPhpValues();
-        $phpValues['parentPath'] = '';
         $phpValues['name'] = 'New directory';
 
-        $this->client->request(
-            'POST', '/sylius-admin/media/create-directory',
-            server: ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'],
-            content: json_encode($phpValues),
-        );
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues);
 
-        $this->assertResponseFormatSame('json');
-        $this->assertResponseIsSuccessful();
+        $this->assertResponseRedirects();
 
-        $responseContent = $this->client->getResponse()->getContent();
-        $this->assertIsString($responseContent);
-
-        $response = json_decode($responseContent, true);
-        $this->assertArrayHasKey('success', $response);
-        $this->assertTrue($response['success']);
-
-        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+        $crawler = $this->client->followRedirect();
 
         // A new directory should appear
         $this->assertSame($previousDirectoryCount + 1, $this->getDirectoryCount($crawler));
 
         // Test flash message
         $this->assertSelectorExists('[data-test-sylius-flash-message]');
-        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'New directory has been successfully created.');
+        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'Directory "New directory" created successfully');
+    }
+
+    public function testCreateDirectoryFailsWhenEmptyName(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+        $this->assertResponseIsSuccessful();
+
+        $form = $this->getCreateDirectoryForm($crawler);
+
+        $phpValues = $form->getPhpValues();
+        $phpValues['name'] = '';
+
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues);
+
+        $this->assertResponseRedirects();
+
+        $crawler = $this->client->followRedirect();
+
+        // Verify error flash message
+        $this->assertSelectorExists('[data-test-sylius-flash-message]');
+        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'Directory name is required');
     }
 
     protected static function getKernelClass(): string

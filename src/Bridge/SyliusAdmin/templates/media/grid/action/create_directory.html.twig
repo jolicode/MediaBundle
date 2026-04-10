@@ -3,7 +3,7 @@
     {% set message = 'sylius.ui.create' %}
 {% endif %}
 
-<a href="#" class="btn" data-component="directory-create" data-create-directory-path="{{ path('joli_media_sylius_admin_create_directory') }}">
+<a href="#" class="btn" data-component="directory-create">
     {{ ux_icon(action.icon|default('tabler:plus'), {'class': 'icon dropdown-item-icon'}) }}
     {{ message|trans }}
 </a>

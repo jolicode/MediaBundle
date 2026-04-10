@@ -1,9 +1,8 @@
 const configureMediaRename = () => {
     const mediaListContainer = document.querySelector('[data-component*="media-list"]');
     const mediaRenameContainer = document.querySelector('[data-component*="media-rename"]');
-    const renameMediaPath = document.querySelector('[data-rename-media-path]')?.dataset.renameMediaPath;
 
-    if (!renameMediaPath) {
+    if (!mediaListContainer && !mediaRenameContainer) {
         return;
     }
 

@@ -2,7 +2,7 @@
 
 {% set media = hookable_metadata.context.media %}
 
-<div class="col-12 col-md-6" data-component="media-rename" data-media-key="{{ media.path }}" data-rename-media-path="{{ path('joli_media_sylius_admin_rename') }}">
+<div class="col-12 col-md-6" data-component="media-rename" data-media-key="{{ media.path }}">
     <div class="d-md-flex gap-2 align-items-center">
         <span class="media-name">{{ header.h1(media.fileName) }}</span>
         <form class="media-rename-form d-none" name="media-rename-form" action="{{ path('joli_media_sylius_admin_rename') }}" method="POST">
