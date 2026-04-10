@@ -1,3 +1,5 @@
+{% import ['@SyliusBootstrapAdminUi/shared/helper/pagination.html.twig', '@SyliusAdmin/shared/helper/pagination.html.twig'] as pagination %}
+
 {% trans_default_domain 'JoliMediaSyliusAdminBundle' %}
 
 <meta name="csrf-token-create" content="{{ csrf_token_create }}">
@@ -124,26 +126,15 @@
         {% endif %}
         </ul>
 
-        {% if pagination.totalPages > 1 %}
-            <nav class="mt-3">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item{{ pagination.page <= 1 ? ' disabled' }}">
-                        <a class="page-link" href="{{ path('joli_media_sylius_admin_choose', { key: current_key, page: pagination.page - 1 }) }}">
-                            {{ ux_icon('tabler:chevron-left') }}
-                        </a>
-                    </li>
-                    {% for i in 1..pagination.totalPages %}
-                        <li class="page-item{{ pagination.page == i ? ' active' }}">
-                            <a class="page-link" href="{{ path('joli_media_sylius_admin_choose', { key: current_key, page: i }) }}">{{ i }}</a>
-                        </li>
-                    {% endfor %}
-                    <li class="page-item{{ pagination.page >= pagination.totalPages ? ' disabled' }}">
-                        <a class="page-link" href="{{ path('joli_media_sylius_admin_choose', { key: current_key, page: pagination.page + 1 }) }}">
-                            {{ ux_icon('tabler:chevron-right') }}
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        {% endif %}
+        <div class="card-footer d-flex align-items-center gap-2 flex-wrap">
+            <div class="text-muted">
+                {{ pagination.results_count(medias) }}
+            </div>
+            <div class="ms-auto">
+                {% if medias.haveToPaginate %}
+                    {{ pagination.simple(medias) }}
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>

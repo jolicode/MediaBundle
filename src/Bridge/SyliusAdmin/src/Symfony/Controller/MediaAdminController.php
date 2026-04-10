@@ -15,6 +15,9 @@ use JoliCode\MediaBundle\Storage\OriginalStorage;
 use League\Flysystem\PathTraversalDetected;
 use League\Flysystem\UnableToListContents;
 use League\Flysystem\UnableToWriteFile;
+use Pagerfanta\Adapter\FixedAdapter;
+use Pagerfanta\Exception\NotValidCurrentPageException;
+use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
 use Sylius\Component\Grid\Parameters;
 use Sylius\Component\Grid\Provider\GridProviderInterface;
@@ -345,19 +348,10 @@ class MediaAdminController extends AbstractController
                 page: $page,
                 perPage: $perPage,
             );
-            $medias = $paginatedMedias['items'];
-            $pagination = [
-                'page' => $paginatedMedias['page'],
-                'totalPages' => $paginatedMedias['totalPages'],
-                'total' => $paginatedMedias['total'],
-            ];
-        } catch (\OutOfRangeException) {
-            $medias = [];
-            $pagination = [
-                'page' => 1,
-                'totalPages' => 1,
-                'total' => 0,
-            ];
+            $medias = new Pagerfanta(new FixedAdapter($paginatedMedias['total'], $paginatedMedias['items']));
+            $medias->setCurrentPage($page);
+        } catch (NotValidCurrentPageException) {
+            $medias = new Pagerfanta(new FixedAdapter(0, []));
         }
 
         return new Response($this->twig->render('@JoliMediaSyliusAdmin/media/choose.html.twig', [
@@ -365,7 +359,6 @@ class MediaAdminController extends AbstractController
             'current_key' => $currentKey,
             'directories' => $directories,
             'medias' => $medias,
-            'pagination' => $pagination,
             'create_media_form' => $this->createUploadForm($currentKey)->createView(),
             'config' => $this->config,
             'csrf_token_create' => $this->csrfTokenManager->getToken('media_create_directory')->getValue(),

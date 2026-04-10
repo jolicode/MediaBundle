@@ -135,7 +135,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
             return;
         }
 
-        if (target.closest('.folder-modal-breadcrumb') || target.closest('.gallery-grid--folders')) {
+        if (target.closest('.folder-modal-breadcrumb') || target.closest('.gallery-grid--folders') || target.closest('.pagination')) {
             const url = new URL(href, window.location.origin);
             let folderPath = url.searchParams.get('key') || '';
             
@@ -146,8 +146,12 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
                 }
             }
             
-            currentFolderPath = folderPath;
-            updateBreadcrumb(currentFolderPath);
+            if (target.closest('.pagination')) {
+                currentFolderPath = folderPath;
+            } else {
+                currentFolderPath = folderPath;
+                updateBreadcrumb(currentFolderPath);
+            }
         }
 
         event.preventDefault();
