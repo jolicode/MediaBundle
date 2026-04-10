@@ -191,8 +191,8 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         event.stopPropagation();
 
         const form = event.target.closest("form");
-        const formData = new FormData(form);
         const url = form.action;
+        let formData = new FormData(form);
 
         fetch(url, {
             method: "POST",

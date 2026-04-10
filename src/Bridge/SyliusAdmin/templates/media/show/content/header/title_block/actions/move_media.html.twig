@@ -16,6 +16,7 @@
 </span>
 
 <form method="post" action="{{ path('joli_media_sylius_admin_move') }}" id="move-form" class="d-none">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_move') }}">
     <input type="hidden" name="from" value="{{ media.path }}">
     <input type="hidden" name="to" id="move_to" value="">
 </form>

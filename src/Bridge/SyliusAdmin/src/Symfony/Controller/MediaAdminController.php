@@ -150,6 +150,12 @@ class MediaAdminController extends AbstractController
         $from = Resolver::normalizePath($request->request->getString('from'));
         $to = Resolver::normalizePath($request->request->getString('to'));
 
+        $csrfToken = $request->request->getString('_csrf_token');
+
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('media_move', $csrfToken))) {
+            $this->addFlash('error', 'Invalid CSRF token');
+        }
+
         try {
             $target = \sprintf('%s/%s', $to, basename($from));
             $this->getOriginalStorage()->move($from, $target);

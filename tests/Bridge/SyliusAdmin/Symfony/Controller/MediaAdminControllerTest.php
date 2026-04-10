@@ -239,6 +239,29 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSame('/media/cache/joli-media-sylius-admin/sub/circle-pattern.png', $response['files'][0]['thumbnailUrl']);
     }
 
+    public function testMoveMediaFromRootToSubdirectory(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/show/default.pdf');
+        $this->assertResponseIsSuccessful();
+
+        $form = $this->getMoveMediaForm($crawler);
+
+        $phpValues = $form->getPhpValues();
+        $phpValues['to'] = 'sub';
+
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues);
+
+        $this->assertResponseRedirects();
+
+        // Media should have been moved in subdirectory
+        $this->client->request(Request::METHOD_GET, '/sylius-admin/media/show/sub/default.pdf');
+        $this->assertResponseIsSuccessful();
+
+        // Test flash message
+        $this->assertSelectorExists('[data-test-sylius-flash-message]');
+        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'The file default.pdf was successfully moved to sub/default.pdf.');
+    }
+
     public function testCreateNewDirectoryInRoot(): void
     {
         $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
@@ -288,6 +311,13 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorExists('form[name="upload"]');
 
         return $crawler->filter('form[name="upload"]')->form();
+    }
+
+    private function getMoveMediaForm(Crawler $crawler): Form
+    {
+        $this->assertSelectorExists('form[id="move-form"]');
+
+        return $crawler->filter('form[id="move-form"]')->form();
     }
 
     private function getCreateDirectoryForm(Crawler $crawler): Form
