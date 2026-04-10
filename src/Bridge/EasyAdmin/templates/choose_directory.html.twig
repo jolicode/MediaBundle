@@ -10,7 +10,7 @@
 
 {% block rename_directory_container %}{% endblock %}
 
-{% block page_content %}
+{% block main %}
     {% block choose_directory_button %}
         {% if joli_media_admin_is_granted('MOVE', path: current_key) %}
             <a
@@ -28,6 +28,7 @@
     {% endblock %}
 
     {% block body_breadcrumb %}
+        {% set ea = ea() %}
         {{ include(ea.templatePath('flash_messages')) }}
         <div class="mt-3">
             {% if breadcrumb|length >= 1 %}

@@ -1,3 +1,5 @@
+demo/application/config/reference.php
+
 # dependencies
 /composer.lock
 vendor
