@@ -368,6 +368,7 @@ class MediaAdminController extends AbstractController
             'pagination' => $pagination,
             'create_media_form' => $this->createUploadForm($currentKey)->createView(),
             'config' => $this->config,
+            'csrf_token_create' => $this->csrfTokenManager->getToken('media_create_directory')->getValue(),
         ]));
     }
 

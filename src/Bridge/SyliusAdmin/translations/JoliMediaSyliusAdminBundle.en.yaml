@@ -18,6 +18,7 @@ browser:
 directory:
     label: 'Directory'
     create: 'Create a new directory'
+    name: 'Directory name'
 media:
     add: 'Add media'
     dimensions: 'Dimensions'

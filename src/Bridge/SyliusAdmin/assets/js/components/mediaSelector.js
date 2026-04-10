@@ -25,12 +25,12 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         const breadcrumb = modalContent?.querySelector('.folder-modal-breadcrumb');
         if (!breadcrumb) return;
 
-        const baseUrl = editButton.href.split('?')[0];
+        const basePath = getBasePath();
         const rootText = 'Media Library';
         const parts = newFolderPath ? newFolderPath.split('/').filter(p => p) : [];
 
         let html = '';
-        html += `<a href="${baseUrl}" data-folder-path="">${rootText}</a>`;
+        html += `<a href="${basePath}" data-folder-path="">${rootText}</a>`;
 
         if (parts.length > 0) {
             let pathSoFar = '';
@@ -44,7 +44,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
                 if (index === parts.length - 1) {
                     html += `<span class="breadcrumb-current">${displayPart}</span>`;
                 } else {
-                    const href = `${baseUrl}?key=${encodeURIComponent(pathSoFar)}`;
+                    const href = `${basePath}/${pathSoFar}`;
                     html += `<a href="${href}" data-folder-path="${pathSoFar}">${displayPart}</a>`;
                 }
             });
@@ -67,6 +67,10 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         return folderPath;
     };
 
+    const getBasePath = () => {
+        return editButton.dataset.basePath || editButton.href.split('?')[0];
+    };
+
     let currentFolderPath = getCurrentFolderPath();
 
     const configureModal = (html) => {
@@ -75,6 +79,8 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
             
             // Always update breadcrumb to ensure it's correct for current folder
             updateBreadcrumb(currentFolderPath);
+            
+            setupCreateFolder();
         }
     };
 
@@ -91,7 +97,11 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     };
 
     const reloadModal = () => {
-        fetchFolder(editButton.href).then(configureModal);
+        const basePath = getBasePath();
+        const url = currentFolderPath 
+            ? `${basePath}/${currentFolderPath}` 
+            : basePath;
+        fetchFolder(url).then(configureModal);
     };
 
     const handleModalClick = (event) => {
@@ -194,6 +204,71 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
 
     const handleMediaUploaded = () => {
         reloadModal();
+    };
+
+    const setupCreateFolder = () => {
+        const createBtn = modal.querySelector('[data-component="directory-create"]');
+        const createForm = modal.querySelector('[data-component="directory-create-form"]');
+        const createInput = createForm?.querySelector('.directory-create-input');
+        const cancelBtn = createForm?.querySelector('.directory-create-cancel-btn');
+
+        createBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            createForm.classList.toggle('d-none');
+            if (!createForm.classList.contains('d-none')) {
+                createInput.focus();
+            }
+        });
+
+        cancelBtn?.addEventListener('click', () => {
+            createForm.classList.add('d-none');
+            createInput.value = '';
+        });
+
+        createForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const name = createInput.value.trim();
+            if (!name) {
+                return;
+            }
+
+            const formData = new FormData(createForm);
+            const csrfToken = formData.get('_csrf_token');
+
+            fetch(createForm.dataset.createDirectoryPath || createForm.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    parentPath: currentFolderPath,
+                    name: name,
+                    _csrf_token: csrfToken
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        createForm.classList.add('d-none');
+                        createInput.value = '';
+                        reloadModal();
+                    } else {
+                        alert('Error creating folder: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error creating folder');
+                });
+        });
+
+        createInput?.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                createForm.classList.add('d-none');
+                createInput.value = '';
+            }
+        });
     };
 
     deleteButton.addEventListener("click", handleDelete);
