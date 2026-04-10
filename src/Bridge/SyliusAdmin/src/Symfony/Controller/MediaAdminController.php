@@ -397,10 +397,17 @@ class MediaAdminController extends AbstractController
 
             unlink($uploadedFile->getRealPath());
 
+            if (str_starts_with($media->getMimeType(), 'image/')) {
+                $adminVariation = $this->getLibrary()->getVariation('joli_media_sylius_admin');
+                $thumbnailUrl = $media->createVariation($adminVariation)->getUrl();
+            } else {
+                $thumbnailUrl = null;
+            }
+
             return new JsonResponse([
                 'files' => [[
                     'url' => $media->getUrl(),
-                    'thumbnailUrl' => null,
+                    'thumbnailUrl' => $thumbnailUrl,
                     'name' => $filename,
                     'size' => $size,
                     'type' => $mime,

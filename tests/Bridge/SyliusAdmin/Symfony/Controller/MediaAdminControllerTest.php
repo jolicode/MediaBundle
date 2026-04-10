@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace JoliCode\MediaBundle\Tests\Bridge\SonataAdmin\Controller;
+namespace JoliCode\MediaBundle\Tests\Bridge\SyliusAdmin\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Controller\MediaAdminController;
-use JoliCode\MediaBundle\Tests\Application\Entity\Page;
 use JoliCode\MediaBundle\Tests\Application\Kernel;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 #[CoversClass(MediaAdminController::class)]
@@ -21,16 +21,10 @@ final class MediaAdminControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
 
-    private EntityRepository $pageRepository;
-
     protected function setUp(): void
     {
         $this->client = self::createClient();
         $container = self::getContainer();
-
-        /** @var EntityManagerInterface */
-        $entityManager = $container->get(EntityManagerInterface::class);
-        $this->pageRepository = $entityManager->getRepository(Page::class);
 
         if (self::$kernel instanceof Kernel) {
             $application = new Application(self::$kernel);
@@ -145,8 +139,119 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorCount(3, '[data-test-directory-row]');
     }
 
+    public function testUploadMediaOnRootDirectory(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore');
+        $this->assertResponseIsSuccessful();
+
+        $form = $this->getUploadForm($crawler);
+
+        $tmpFile = $this->createTemporaryFile();
+        $this->copyFixtureFileContentInTemporaryFile($tmpFile, 'circle-pattern.png');
+
+        $phpValues = $form->getPhpValues();
+
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues, [
+            'upload' => [
+                'file' => new UploadedFile(
+                    $tmpFile,
+                    'circle-pattern.png',
+                    'image/png',
+                    null,
+                    true,
+                ),
+            ],
+        ]);
+
+        $this->assertResponseFormatSame('json');
+        $this->assertResponseIsSuccessful();
+
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertIsString($responseContent);
+
+        $response = json_decode($responseContent, true);
+        $this->assertArrayHasKey('files', $response);
+        $this->assertCount(1, $response['files']);
+
+        $this->assertArrayHasKey('name', $response['files'][0]);
+        $this->assertArrayHasKey('url', $response['files'][0]);
+        $this->assertArrayHasKey('size', $response['files'][0]);
+        $this->assertArrayHasKey('type', $response['files'][0]);
+        $this->assertArrayHasKey('thumbnailUrl', $response['files'][0]);
+
+        $this->assertSame('circle-pattern.png', $response['files'][0]['name']);
+        $this->assertSame('/media/original/circle-pattern.png', $response['files'][0]['url']);
+        $this->assertSame(62563, $response['files'][0]['size']);
+        $this->assertSame('image/png', $response['files'][0]['type']);
+        $this->assertSame('/media/cache/joli-media-sylius-admin/circle-pattern.png', $response['files'][0]['thumbnailUrl']);
+    }
+
+    public function testUploadMediaOnSubDirectory(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore/sub');
+        $this->assertResponseIsSuccessful();
+
+        $form = $this->getUploadForm($crawler);
+
+        $tmpFile = $this->createTemporaryFile();
+        $this->copyFixtureFileContentInTemporaryFile($tmpFile, 'circle-pattern.png');
+
+        $phpValues = $form->getPhpValues();
+
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues, [
+            'upload' => [
+                'file' => new UploadedFile(
+                    $tmpFile,
+                    'circle-pattern.png',
+                    'image/png',
+                    null,
+                    true,
+                ),
+            ],
+        ]);
+
+        $this->assertResponseFormatSame('json');
+        $this->assertResponseIsSuccessful();
+
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertIsString($responseContent);
+
+        $response = json_decode($responseContent, true);
+        $this->assertArrayHasKey('files', $response);
+        $this->assertCount(1, $response['files']);
+
+        $this->assertArrayHasKey('name', $response['files'][0]);
+        $this->assertArrayHasKey('url', $response['files'][0]);
+        $this->assertArrayHasKey('size', $response['files'][0]);
+        $this->assertArrayHasKey('type', $response['files'][0]);
+        $this->assertArrayHasKey('thumbnailUrl', $response['files'][0]);
+
+        $this->assertSame('circle-pattern.png', $response['files'][0]['name']);
+        $this->assertSame('/media/original/sub/circle-pattern.png', $response['files'][0]['url']);
+        $this->assertSame(62563, $response['files'][0]['size']);
+        $this->assertSame('image/png', $response['files'][0]['type']);
+        $this->assertSame('/media/cache/joli-media-sylius-admin/sub/circle-pattern.png', $response['files'][0]['thumbnailUrl']);
+    }
+
     protected static function getKernelClass(): string
     {
         return Kernel::class;
+    }
+
+    private function getUploadForm(Crawler $crawler): Form
+    {
+        $this->assertSelectorExists('form[name="upload"]');
+
+        return $crawler->filter('form[name="upload"]')->form();
+    }
+
+    private function createTemporaryFile(): string
+    {
+        return tempnam(sys_get_temp_dir(), 'upload-test');
+    }
+
+    private function copyFixtureFileContentInTemporaryFile(string $tmpFile, string $filename): void
+    {
+        copy(\dirname(__DIR__, 4) . '/fixtures/' . $filename, $tmpFile);
     }
 }
