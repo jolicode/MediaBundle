@@ -55,6 +55,7 @@ media:
         content: 'Do you really want to move this media to the directory %directory%?'
     move_success: 'The file %from% was successfully moved to %to%.'
     move_failure: 'Failed to move the media from %from% to %to%. Error: %error%'
+    rename_success: 'The file %from% was successfully renamed to %to%.'
     upload:
         dropzone:
             default_message: 'Drop files here to upload'

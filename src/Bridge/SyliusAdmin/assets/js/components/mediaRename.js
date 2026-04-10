@@ -82,29 +82,17 @@ const configureMediaRename = () => {
             newPath = parentPath + newName;
         }
 
-        const csrfToken = form.querySelector('input[name="_csrf_token"]')?.value || document.querySelector('meta[name="csrf-token"]')?.content;
+        const oldPathInput = form.querySelector('input[name="oldPath"]');
+        if (oldPathInput) {
+            oldPathInput.value = oldPath;
+        }
 
-        fetch(renameMediaPath, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                oldPath: oldPath,
-                newPath: newPath,
-                _csrf_token: csrfToken
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = data.redirectUrl || window.location.href;
-                } else {
-                    alert('Error renaming media: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error renaming media');
-            });
+        const newPathInput = form.querySelector('input[name="newPath"]');
+        if (newPathInput) {
+            newPathInput.value = newPath;
+        }
+
+        form.submit();
     };
 
     const handleKeydown = (e, container, isShowPage) => {

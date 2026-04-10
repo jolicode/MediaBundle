@@ -1,7 +1,6 @@
 {% set current_key = hookable_metadata.context.current_key %}
 
 <div class="page-body">
-    <meta name="csrf-token" content="{{ csrf_token('media_rename') }}">
     <meta name="csrf-token-delete" content="{{ csrf_token('media_delete_directory') }}">
     <meta name="current-key" content="{{ current_key }}">
     <div class="container-xl">

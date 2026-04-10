@@ -153,25 +153,18 @@ final class MediaAdminControllerTest extends WebTestCase
         $form = $this->getRenameMediaForm($crawler);
 
         $phpValues = $form->getPhpValues();
-        $phpValues['oldPath'] = 'default.pdf';
         $phpValues['newPath'] = 'new_name.pdf';
 
-        $this->client->request(
-            'POST', '/sylius-admin/media/rename',
-            server: ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'],
-            content: json_encode($phpValues),
-        );
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues);
 
-        $this->assertResponseFormatSame('json');
-        $this->assertResponseIsSuccessful();
+        $this->assertResponseRedirects('/sylius-admin/media/show/new_name.pdf');
 
-        // Media should have been renamed
         $this->client->request(Request::METHOD_GET, '/sylius-admin/media/show/new_name.pdf');
         $this->assertResponseIsSuccessful();
 
         // Test flash message
-        //        $this->assertSelectorExists('[data-test-sylius-flash-message]');
-        //        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'The file default.pdf was successfully moved to new_name.pdf.');
+        $this->assertSelectorExists('[data-test-sylius-flash-message]');
+        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'The file default.pdf was successfully renamed to new_name.pdf.');
     }
 
     public function testUploadMediaOnRootDirectory(): void
