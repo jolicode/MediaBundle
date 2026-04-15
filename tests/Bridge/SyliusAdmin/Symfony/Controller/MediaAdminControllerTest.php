@@ -59,8 +59,6 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->client->request(Request::METHOD_GET, '/sylius-admin/media/show/restrict.pdf');
         $this->assertResponseIsSuccessful();
 
-        file_put_contents('details.html', $this->client->getResponse()->getContent());
-
         $this->assertSelectorTextContains('title', 'restrict.pdf');
 
         // Breadcrumbs
@@ -97,6 +95,18 @@ final class MediaAdminControllerTest extends WebTestCase
 
         // One media has been removed
         $this->assertSame($previousMediaCount - 1, $this->getMediaCount($crawler));
+    }
+
+    public function testChooseMedia(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/sylius-admin/pages/new');
+        $this->assertResponseIsSuccessful();
+
+        // buttons for the media choice
+        $this->assertSelectorExists('a.joli-media-choice-edit');
+        $this->assertSelectorTextContains('a.joli-media-choice-edit', 'Choose a file');
+        $this->assertSelectorExists('button.joli-media-choice-delete');
+        $this->assertSelectorTextContains('button.joli-media-choice-delete', 'Remove');
     }
 
     public function testDeleteDirectoryNotInUse(): void
