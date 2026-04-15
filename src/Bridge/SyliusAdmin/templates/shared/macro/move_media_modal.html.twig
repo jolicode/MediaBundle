@@ -38,6 +38,7 @@
                     </div>
                     <form method="post" action="{{ path('joli_media_sylius_admin_create_directory') }}" class="folder-create-form d-none mb-3">
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_create_directory') }}">
+                        <input type="hidden" name="parentPath" value="{{ media.folderPath|default('') }}">
                         <div class="input-group">
                             <input type="text" name="name" class="form-control folder-create-input" placeholder="{{ 'directory.create'|trans }}">
                             <button type="submit" class="btn btn-primary">{{ 'action.create'|trans }}</button>

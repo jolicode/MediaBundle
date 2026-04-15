@@ -78,18 +78,32 @@ class MediaAdminController extends AbstractController
         }
 
         $newPath = empty($parentPath) ? $name : $parentPath . '/' . $name;
+        $isAjax = $request->isXmlHttpRequest();
 
         try {
             $this->getOriginalStorage()->createDirectory($newPath);
 
-            $this->addFlash('success', $this->translator->trans('directory.create_success', [
-                '%directory%' => $newPath,
-            ], 'JoliMediaSyliusAdminBundle'));
+            if (!$isAjax) {
+                $this->addFlash('success', $this->translator->trans('directory.create_success', [
+                    '%directory%' => $newPath,
+                ], 'JoliMediaSyliusAdminBundle'));
+            }
         } catch (\Throwable $e) {
-            $this->addFlash('error', $this->translator->trans('directory.create_failure', [
-                '%directory%' => $newPath,
-                '%error%' => $e->getMessage(),
-            ], 'JoliMediaSyliusAdminBundle'));
+            if (!$isAjax) {
+                $this->addFlash('error', $this->translator->trans('directory.create_failure', [
+                    '%directory%' => $newPath,
+                    '%error%' => $e->getMessage(),
+                ], 'JoliMediaSyliusAdminBundle'));
+            }
+        }
+
+        if ($isAjax) {
+            $mode = $request->request->get('_mode', 'media_choice');
+            if ('folder_choice' === $mode) {
+                return $this->renderFolderChoiceHtml($parentPath);
+            }
+
+            return $this->renderChooseHtml($parentPath);
         }
 
         return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
@@ -498,6 +512,79 @@ class MediaAdminController extends AbstractController
         return new Response($this->twig->render('@JoliMediaSyliusAdmin/media/show.html.twig', [
             'config' => $this->config,
             'media' => $media,
+        ]));
+    }
+
+    private function renderChooseHtml(string $currentKey): Response
+    {
+        try {
+            $trashPath = $this->getOriginalStorage()->getTrashPath();
+
+            if ($trashPath === $currentKey || str_starts_with($currentKey, $trashPath . '/')) {
+                throw new ForbiddenPathException($trashPath);
+            }
+
+            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: false);
+            natcasesort($directories);
+        } catch (ForbiddenPathException|PathTraversalDetected|UnableToListContents) {
+            $directories = [];
+        }
+
+        try {
+            $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
+                $currentKey,
+                perPage: $this->config->getPaginationSizes()[0] ?? 10,
+            );
+            $medias = new Pagerfanta(new FixedAdapter($paginatedMedias['total'], $paginatedMedias['items']));
+            $medias->setCurrentPage(1);
+        } catch (NotValidCurrentPageException) {
+            $medias = new Pagerfanta(new FixedAdapter(0, []));
+        }
+
+        return new Response($this->twig->render('@JoliMediaSyliusAdmin/media/choose.html.twig', [
+            'key' => $currentKey,
+            'current_key' => $currentKey,
+            'directories' => $directories,
+            'medias' => $medias,
+            'create_media_form' => $this->createUploadForm($currentKey)->createView(),
+            'config' => $this->config,
+            'csrf_token_create' => $this->csrfTokenManager->getToken('media_create_directory')->getValue(),
+        ]));
+    }
+
+    private function renderFolderChoiceHtml(string $currentKey): Response
+    {
+        $parentKey = '' !== $currentKey ? (($pos = strrpos($currentKey, '/')) !== false ? substr($currentKey, 0, $pos) : '') : '';
+
+        try {
+            $trashPath = $this->getOriginalStorage()->getTrashPath();
+
+            if ($trashPath === $currentKey || str_starts_with($currentKey, $trashPath . '/')) {
+                throw new ForbiddenPathException($trashPath);
+            }
+
+            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: false);
+            natcasesort($directories);
+        } catch (ForbiddenPathException|PathTraversalDetected|UnableToListContents) {
+            $directories = [];
+        }
+
+        try {
+            $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
+                $currentKey,
+                perPage: $this->config->getPaginationSizes()[0] ?? 10,
+            );
+            $medias = $paginatedMedias['items'];
+        } catch (\OutOfRangeException) {
+            $medias = [];
+        }
+
+        return new Response($this->twig->render('@JoliMediaSyliusAdmin/media/choose_directory.html.twig', [
+            'key' => $currentKey,
+            'current_key' => $currentKey,
+            'parent_key' => $parentKey,
+            'directories' => $directories,
+            'medias' => $medias,
         ]));
     }
 

@@ -103,8 +103,6 @@ const openFolderChoiceModal = (folderChoiceButton) => {
             const folderPath = folderParent.dataset.folderPath || '';
             const href = folderParent.getAttribute('href');
 
-            console.log('folderParent clicked, folderPath:', folderPath);
-
             if (href && !href.endsWith('#')) {
                 currentFolderPath = folderPath;
                 updateBreadcrumb(currentFolderPath);
@@ -166,33 +164,33 @@ const openFolderChoiceModal = (folderChoiceButton) => {
                 return;
             }
 
+            const parentPathInput = createForm.querySelector('input[name="parentPath"]');
+            if (parentPathInput) {
+                parentPathInput.value = currentFolderPath;
+            }
+
             const formData = new FormData(createForm);
-            const csrfToken = formData.get('_csrf_token');
+            formData.append('_mode', 'folder_choice');
 
             fetch(createForm.action, {
                 method: 'POST',
+                body: formData,
                 headers: {
-                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
                 },
-                body: JSON.stringify({
-                    parentPath: currentFolderPath,
-                    name: name,
-                    _csrf_token: csrfToken
-                })
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        createForm.classList.add('d-none');
-                        createInput.value = '';
-                        refreshFolderList();
-                    } else {
-                        alert('Error creating folder: ' + (data.error || 'Unknown error'));
+                .then(response => response.text())
+                .then((html) => {
+                    if (listContainer) {
+                        listContainer.innerHTML = html;
+                        updateBreadcrumb(currentFolderPath);
+                        attachModalEvents();
                     }
+                    createForm.classList.add('d-none');
+                    createInput.value = '';
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error creating folder');
                 });
         });
 

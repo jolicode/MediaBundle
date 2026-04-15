@@ -29,6 +29,14 @@ Additionally, define the routes for the media library in your routing configurat
         resource: "@JoliMediaSyliusAdminBundle/src/Symfony/Controller/"
         prefix: /admin/media
 
+Then, import the bundle configuration in the ``config/packages/joli_media_easy_admin.yaml`` file.
+
+.. code-block:: yaml
+
+    # filepath: config/packages/joli_media_easy_admin.yaml
+    imports:
+        - { resource: '@JoliMediaSyliusAdminBundle/config/app.php' }
+
 Configuring the EasyAdmin Integration
 -------------------------------------
 

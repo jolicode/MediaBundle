@@ -28,7 +28,7 @@ use Sylius\Resource\Model\ResourceInterface;
     section: 'admin',
     formType: PostType::class,
     templatesDir: '@SyliusAdminUi/crud',
-    routePrefix: '/sylius',
+    routePrefix: '/sylius-admin',
     operations: [
         new Create(),
         new Update(),

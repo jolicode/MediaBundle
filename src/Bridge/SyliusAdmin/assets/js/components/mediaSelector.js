@@ -213,8 +213,14 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const setupCreateFolder = () => {
         const createBtn = modal.querySelector('[data-component="directory-create"]');
         const createForm = modal.querySelector('[data-component="directory-create-form"]');
-        const createInput = createForm?.querySelector('.directory-create-input');
-        const cancelBtn = createForm?.querySelector('.directory-create-cancel-btn');
+
+        if (!createForm) {
+            return;
+        }
+
+        const createInput = createForm.querySelector('.directory-create-input');
+        const cancelBtn = createForm.querySelector('.directory-create-cancel-btn');
+        const parentPathInput = createForm.querySelector('.directory-create-parent-path');
 
         createBtn?.addEventListener('click', (e) => {
             e.preventDefault();
@@ -229,41 +235,30 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
             createInput.value = '';
         });
 
-        createForm?.addEventListener('submit', (e) => {
+        createForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            e.stopImmediatePropagation();
 
             const name = createInput.value.trim();
             if (!name) {
                 return;
             }
 
-            const formData = new FormData(createForm);
-            const csrfToken = formData.get('_csrf_token');
+            parentPathInput.value = currentFolderPath;
 
-            fetch(createForm.dataset.createDirectoryPath || createForm.action, {
+            fetch(createForm.action, {
                 method: 'POST',
+                body: new FormData(createForm),
                 headers: {
-                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
                 },
-                body: JSON.stringify({
-                    parentPath: currentFolderPath,
-                    name: name,
-                    _csrf_token: csrfToken
-                })
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        createForm.classList.add('d-none');
-                        createInput.value = '';
-                        reloadModal();
-                    } else {
-                        alert('Error creating folder: ' + (data.error || 'Unknown error'));
-                    }
+                .then(response => response.text())
+                .then((html) => {
+                    configureModal(html);
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error creating folder');
+                .catch((error) => {
+                    console.error('Error creating directory:', error);
                 });
         });
 
