@@ -3,11 +3,11 @@ SyliusAdmin Integration
 
 The ``JoliMediaBundle`` provides seamless integration with `Sylius <https://sylius.com>`_ and `Sylius Stack <https://stack.sylius.com/>`_, enabling you to manage media directly within your Sylius interface. This integration includes features such as a media library, media browser, and media preview capabilities.
 
-.. image:: ../images/bridges/easyadmin/grid-view.png
-   :alt: The EasyAdmin media library grid view
+.. image:: ../images/bridges/sylius-admin/grid-view.png
+   :alt: The Sylius media library grid view
 
-.. image:: ../images/bridges/easyadmin/list-view.png
-   :alt: The EasyAdmin media library list view
+.. image:: ../images/bridges/sylius-admin/list-view.png
+   :alt: The Sylius media library list view
 
 Enabling the Sylius Integration
 -------------------------------
@@ -101,7 +101,7 @@ To add a link to the media library in your Sylius Admin menu, you need to add th
 On Sylius:
 ~~~~~~~~~~
 
-.. code-block:: php
+::
 
     namespace App\Menu\Admin;
 
@@ -137,7 +137,7 @@ On Sylius:
 On Sylius stack:
 ~~~~~~~~~~~~~~~~
 
-.. code-block:: php
+::
 
     namespace App\Menu\Admin;
 
@@ -184,7 +184,7 @@ Media selector widget
 
 A media selector widget is available for Sylius. You can use it in your admin classes to allow users to select media items easily from the media library.
 
-.. code-block:: php
+::
 
     namespace App\Form;
 
@@ -216,7 +216,7 @@ The ``MediaChoiceType`` field will render a media selector widget in the form, a
 
 This optional ``folder`` parameter can be passed to the field type, to specify which folder should be opened by default in the media browser. Note that, if a media was already selected, the media selector will open the folder of the selected media::
 
-.. code-block:: php
+::
 
     $builder
         // ...

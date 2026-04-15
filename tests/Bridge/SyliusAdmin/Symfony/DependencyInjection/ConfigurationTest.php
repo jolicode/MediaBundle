@@ -27,12 +27,12 @@ final class ConfigurationTest extends TestCase
         $config = $this->processConfiguration([
             [
                 'pagination' => [
-                    'per_page' => 100,
+                    'per_page' => [100],
                 ],
             ],
         ]);
 
-        $this->assertEquals(100, $config['pagination']['per_page']);
+        $this->assertEquals([100], $config['pagination']['per_page']);
     }
 
     public function testUploadConfiguration(): void
@@ -99,12 +99,12 @@ final class ConfigurationTest extends TestCase
         $config = $this->processConfiguration([
             [
                 'pagination' => [
-                    'per_page' => 25,
+                    'per_page' => [25],
                 ],
             ],
         ]);
 
-        $this->assertEquals(25, $config['pagination']['per_page']);
+        $this->assertEquals([25], $config['pagination']['per_page']);
     }
 
     private function processConfiguration(array $configs): array
