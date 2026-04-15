@@ -9,17 +9,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 readonly class Config
 {
     /**
-     * @param int[] $paginationSizes
+     * @param array<string>       $acceptedFiles
+     * @param array<string, bool> $visibility
+     * @param int[]               $paginationSizes
      */
     public function __construct(
         private TranslatorInterface $translator,
-        /**
-         * @var array<string, bool>
-         */
         private array $visibility,
-        /**
-         * @var array<string>
-         */
         private array $acceptedFiles,
         private int $maxFileSize,
         private array $paginationSizes,
