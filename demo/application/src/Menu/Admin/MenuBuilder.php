@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Menu\Admin;
 
-use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Sylius\AdminUi\Knp\Menu\MenuBuilderInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
@@ -13,13 +12,13 @@ use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 final readonly class MenuBuilder implements MenuBuilderInterface
 {
     public function __construct(
-        private FactoryInterface $factory,
+        private MenuBuilderInterface $decorated,
     ) {
     }
 
     public function createMenu(array $options): ItemInterface
     {
-        $menu = $this->factory->createItem('root');
+        $menu = $this->decorated->createMenu($options);
 
         $menu
             ->addChild('dashboard', [

@@ -67,6 +67,8 @@ The ``upload`` section of the configuration allows you to control the media uplo
 
 The ``visibility`` section of the configuration allows you to control the visibility of various features in the EasyAdmin media interface:
 
+- ``show_variations_list``: Shows the list of variations in a dedicated tab on the media show page.
+- ``show_variations_list_admin_variations``: Shows the variations defined in by the admin bridge in the variations list tab.
 - ``show_variations_stored``: Enables the display of whether media variations are stored.
 - ``show_variations_action_regenerate``: Enables the "Regenerate Variations" action for media.
 - ``show_html_code``: Displays the HTML code for embedding media.
@@ -85,8 +87,8 @@ You can configure the number of items displayed per page:
         pagination:
             per_page: 20
 
-Media libray menu item
-----------------------
+Media library menu item
+-----------------------
 
 To add a link to the media library in your EasyAdmin menu, you need to use the ``MenuItem::linkToRoute`` method, with the ``joli_media_easy_admin_explore`` route::
 
