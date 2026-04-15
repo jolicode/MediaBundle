@@ -1,9 +1,13 @@
-{% set message = action.label %}
-{% if message is empty %}
-    {% set message = 'sylius.ui.update' %}
-{% endif %}
+{% set key = app.request.attributes.get('key', '') %}
 
-<a href="#" class="btn directory-rename-header-btn" data-component="directory-rename">
-    {{ ux_icon(action.icon|default('tabler:pencil'), {'class': 'icon dropdown-item-icon'}) }}
-    {{ message|trans }}
-</a>
+{% if key != '' %}
+    {% set message = action.label %}
+    {% if message is empty %}
+        {% set message = 'sylius.ui.update' %}
+    {% endif %}
+
+    <a href="#" class="btn directory-rename-header-btn" data-component="directory-rename">
+        {{ ux_icon(action.icon|default('tabler:pencil'), {'class': 'icon dropdown-item-icon'}) }}
+        {{ message|trans }}
+    </a>
+{% endif %}
