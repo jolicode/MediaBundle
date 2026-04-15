@@ -2,8 +2,8 @@ imports:
     - { resource: '@JoliMediaSyliusAdminBundle/config/app.php' }
 
 joli_media_sylius_admin:
-#    pagination:
-#        per_page: 25
+    pagination:
+        per_page: [10, 25, 50]
     visibility:
         show_variations_list: true
         show_variations_list_admin_variations: true
