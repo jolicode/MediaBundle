@@ -26,6 +26,9 @@ return static function (ContainerConfigurator $container): void {
                 'dropzone' => [
                     'template' => '@JoliMediaSyliusAdmin/media/index/content/header/dropzone.html.twig',
                 ],
+                'rename_directory' => [
+                    'template' => '@JoliMediaSyliusAdmin/media/index/content/header/rename_directory.html.twig',
+                ],
                 'create_directory' => [
                     'template' => '@JoliMediaSyliusAdmin/media/index/content/header/create_directory.html.twig',
                 ],

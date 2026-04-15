@@ -1,6 +1,6 @@
 <form class="directory-create-form mt-2" data-component="directory-create-form" action="{{ path('joli_media_sylius_admin_create_directory') }}" method="POST">
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_create_directory') }}" />
-    <input type="hidden" name="parentPath" class="directory-create-parent-path" value="{{ app.request.get('key', '') }}">
+    <input type="hidden" name="parentPath" class="directory-create-parent-path" value="{{ app.request.attributes.get('key', '') }}">
 
     <div class="input-group input-group-sm">
         <input type="text" class="form-control directory-create-input" placeholder="New folder name">

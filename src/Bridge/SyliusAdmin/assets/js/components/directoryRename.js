@@ -1,9 +1,58 @@
 const configureDirectoryRename = () => {
     const container = document.querySelector('[data-component*="directory-list"]');
+    const headerRenameForm = document.querySelector('[data-component="directory-rename-form"]');
+    const headerRenameInput = headerRenameForm?.querySelector('.directory-rename-input');
+    const headerRenameCancelBtn = headerRenameForm?.querySelector('.directory-rename-cancel-btn');
 
     if (!container) {
         return;
     }
+
+    document.addEventListener('click', (e) => {
+        const headerRenameBtn = e.target.closest('.directory-rename-header-btn');
+
+        if (headerRenameBtn) {
+            e.preventDefault();
+            headerRenameForm?.classList.toggle('d-none');
+            if (!headerRenameForm?.classList.contains('d-none')) {
+                headerRenameInput.focus();
+                headerRenameInput.select();
+            }
+        }
+    });
+
+    headerRenameForm?.addEventListener('submit', (e) => {
+        const name = headerRenameInput.value.trim();
+        if (!name) {
+            e.preventDefault();
+            return;
+        }
+
+        const oldPath = headerRenameForm.querySelector('input[name="oldPath"]')?.value || '';
+        const parentPath = oldPath.includes('/') ? oldPath.substring(0, oldPath.lastIndexOf('/') + 1) : '';
+        const newPath = parentPath + name;
+
+        let newPathInput = headerRenameForm.querySelector('input[name="newPath"]');
+        if (!newPathInput) {
+            newPathInput = document.createElement('input');
+            newPathInput.type = 'hidden';
+            newPathInput.name = 'newPath';
+            headerRenameForm.appendChild(newPathInput);
+        }
+        newPathInput.value = newPath;
+    });
+
+    headerRenameCancelBtn?.addEventListener('click', () => {
+        headerRenameForm.classList.add('d-none');
+        headerRenameInput.value = '';
+    });
+
+    headerRenameInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            headerRenameForm.classList.add('d-none');
+            headerRenameInput.value = '';
+        }
+    });
 
     container.addEventListener('click', (e) => {
         const editBtn = e.target.closest('.directory-rename-btn');

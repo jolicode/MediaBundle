@@ -6,6 +6,7 @@ action:
     regenerate: 'Régénérer'
     remove: 'Supprimer'
     rename: 'Renommer'
+    rename_directory: 'Renommer le dossier'
     cancel: 'Annuler'
     entity_actions: 'Actions'
     move_file: 'Déplacer ce fichier'
