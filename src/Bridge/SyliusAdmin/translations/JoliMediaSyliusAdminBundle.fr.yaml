@@ -2,6 +2,7 @@ action:
     choose_a_file: 'Choisir un fichier'
     copy: 'Copier'
     copied: 'Copié'
+    delete_directory: 'Supprimer ce dossier'
     parent: 'Parent'
     regenerate: 'Régénérer'
     remove: 'Supprimer'

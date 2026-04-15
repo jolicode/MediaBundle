@@ -64,6 +64,10 @@ final class MediaGrid extends AbstractGrid
                     ->setLabel($this->trans('media.dimensions')),
             )
             ->addActionGroup(MainActionGroup::create(
+                Action::create('delete_directory', 'custom')
+                    ->setLabel($this->trans('action.delete_directory'))
+                    ->setIcon('tabler:pencil')
+                    ->setTemplate('@JoliMediaSyliusAdmin/media/grid/action/delete_directory.html.twig'),
                 Action::create('rename_directory', 'custom')
                     ->setLabel($this->trans('action.rename_directory'))
                     ->setIcon('tabler:pencil')

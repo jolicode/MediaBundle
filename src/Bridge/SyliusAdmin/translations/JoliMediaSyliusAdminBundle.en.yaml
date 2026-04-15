@@ -2,6 +2,7 @@ action:
     choose_a_file: 'Choose a file'
     copy: 'Copy'
     copied: 'Copied'
+    delete_directory: 'Delete this directory'
     parent: 'Parent'
     regenerate: 'Regenerate'
     remove: 'Remove'

@@ -1,0 +1,14 @@
+{% set key = app.request.attributes.get('key', '') %}
+
+{% if key != '' %}
+    {#TODO find another way to detect the component#}
+    {% set delete_modal = sylius_route_exists('sylius_admin_ui_dashboard') ? 'sylius_bootstrap_admin_ui:delete_modal' : 'sylius_admin:delete_modal' %}
+
+    {{ component(delete_modal, {
+        id: key,
+        modal_id: 'delete-directory-modal-' ~ random(),
+        path: path('joli_media_sylius_admin_delete_directory', {'key': key}),
+        icon_only: false,
+        label: action.label,
+    }) }}
+{% endif %}
