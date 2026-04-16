@@ -59,7 +59,7 @@ class MediaAdminController extends AbstractController
     public function createDirectory(Request $request): Response
     {
         $csrfToken = $request->request->getString('_csrf_token');
-        $parentPath = Resolver::normalizePath($request->request->getString('parentPath'));
+        $parentPath = urldecode(Resolver::normalizePath($request->request->getString('parentPath')));
         $name = trim($request->request->getString('name'));
 
         if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('media_create_directory', $csrfToken))) {

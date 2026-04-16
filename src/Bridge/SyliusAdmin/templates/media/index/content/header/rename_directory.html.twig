@@ -6,7 +6,7 @@
         <input type="hidden" name="oldPath" value="{{ key }}">
 
         <div class="input-group input-group-sm">
-            <input type="text" class="form-control directory-rename-input" placeholder="New folder name" value="{{ key }}">
+            <input type="text" class="form-control directory-rename-input" placeholder="New folder name" value="{{ key|joli_media_admin_basename }}">
             <button type="submit" class="btn btn-primary">
                 {{ ux_icon('tabler:check') }}
             </button>
