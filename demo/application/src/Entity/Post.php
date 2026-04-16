@@ -30,8 +30,8 @@ use Sylius\Resource\Model\ResourceInterface;
     templatesDir: '@SyliusAdminUi/crud',
     routePrefix: '/sylius-admin',
     operations: [
-        new Create(),
-        new Update(),
+        new Create(redirectToRoute: 'app_admin_post_update'),
+        new Update(redirectToRoute: 'app_admin_post_update'),
         new Delete(),
         new Index(grid: PostGrid::class),
         new BulkDelete(),

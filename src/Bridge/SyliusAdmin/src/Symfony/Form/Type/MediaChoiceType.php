@@ -31,11 +31,6 @@ class MediaChoiceType extends AbstractType
         return TextType::class;
     }
 
-    public function getName(): string
-    {
-        return 'media_choice';
-    }
-
     public function getBlockPrefix(): string
     {
         return 'joli_media_sylius_admin_choice';

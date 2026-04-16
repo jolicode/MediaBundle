@@ -6,7 +6,7 @@ import '../styles/gallery.css';
 import '../styles/media-choice.css';
 import '../styles/media-preview.css';
 import '../styles/media-show.css';
-import './components/mediaSelector';
+import configureMediaSelector from './components/mediaSelector';
 import addDropzone from './components/dropzone';
 import configureClipboard from './components/clipboard';
 import configureDirectoryCreate from './components/directoryCreate';
@@ -16,6 +16,7 @@ import configureTabsState from './components/tabsState';
 import configureFolderSelector from './components/folderSelector';
 
 document.addEventListener('DOMContentLoaded', () => {
+    configureMediaSelector();
     configureTabsState();
     configureClipboard();
     configureDirectoryCreate();

@@ -10,13 +10,34 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     );
     const editButton = mediaChoiceContainer.querySelector(".joli-media-choice-edit");
     const inputElement = document.getElementById(id);
-    const modal = document.getElementById(`modal-media-choice_${id}`);
+    let modal = document.getElementById(`modal-media-choice_${id}`);
 
-    if (!modal || !deleteButton || !editButton) {
+    if (!modal || !deleteButton || !editButton || !inputElement || !mediaContainer) {
+        return;
+    }
+
+    if (modal.dataset.moved === "true") {
         return;
     }
 
     document.body.appendChild(modal);
+    modal.dataset.moved = "true";
+
+    if (!mediaChoiceContainer.dataset.configured) {
+        mediaChoiceContainer.dataset.configured = "true";
+    }
+
+    if (mediaChoiceContainer.dataset.mediaValue) {
+        inputElement.value = mediaChoiceContainer.dataset.mediaValue;
+        
+        if (mediaChoiceContainer.dataset.mediaTemplate) {
+            mediaContainer.innerHTML = mediaChoiceContainer.dataset.mediaTemplate;
+            mediaChoiceContainer.classList.remove("empty");
+        }
+        
+        inputElement.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
     const modalContent = modal.querySelector('.modal-body');
 
     const fetchFolder = (url) => fetch(url).then((response) => response.text());
@@ -91,9 +112,19 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         }
     };
 
-    const setFieldValue = (value) => {
+const setFieldValue = (value, template = null) => {
         inputElement.value = value;
-        inputElement.dispatchEvent(new Event("change"));
+        mediaChoiceContainer.dataset.mediaValue = value;
+        
+        if (template) {
+            // Store template for potential restoration after LiveComponent re-render
+            const decodedTemplate = template.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'");
+            mediaChoiceContainer.dataset.mediaTemplate = decodedTemplate;
+            mediaChoiceContainer.classList.remove("empty");
+        }
+        
+        // Trigger LiveComponent re-render - the form theme will handle the preview
+        inputElement.dispatchEvent(new Event("change", { bubbles: true }));
     };
 
     const reloadModal = () => {
@@ -124,9 +155,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         ) {
             event.preventDefault();
             event.stopPropagation();
-            mediaContainer.innerHTML = target.dataset.mediaTemplate;
-            mediaChoiceContainer.classList.remove("empty");
-            setFieldValue(target.dataset.mediaUrl);
+            setFieldValue(target.dataset.mediaUrl, target.dataset.mediaTemplate);
             closeModal();
             return;
         }
@@ -162,6 +191,8 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const handleDelete = (event) => {
         event.preventDefault();
         mediaChoiceContainer.classList.add("empty");
+        mediaChoiceContainer.dataset.mediaTemplate = "";
+        mediaChoiceContainer.dataset.mediaValue = "";
 
         const template = document.getElementById(`template-null-label-${id}`);
         mediaContainer.innerHTML = "";
@@ -306,6 +337,7 @@ document.addEventListener("turbo:before-stream-render", configureMediaSelector);
 document.addEventListener("ux:autocomplete:initialize", configureMediaSelector);
 
 let debounceTimer = null;
+
 const debouncedConfigure = () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(configureMediaSelector, 50);

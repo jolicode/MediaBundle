@@ -29,7 +29,7 @@ class PostType extends AbstractType
             ])
             ->add('postMedia', LiveCollectionType::class, [
                 'required' => false,
-                'entry_type' => MediaChoiceType::class,
+                'entry_type' => PostMediaType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,

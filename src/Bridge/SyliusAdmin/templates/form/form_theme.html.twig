@@ -47,3 +47,7 @@
 {% block null_label %}
     <span class="text-muted">{{ 'media.unavailable.simple'|trans(domain: 'JoliMediaSyliusAdminBundle') }}</span>
 {% endblock %}
+
+{% block JolieMediaSyliusAdminBundle_joli_media_sylius_admin_choice_row %}
+    {{- block('form_row') -}}
+{% endblock %}
