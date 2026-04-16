@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type;
+namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Form\Type;
 
-use JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\DataTransformer\MediaTransformer;
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Form\DataTransformer\MediaTransformer;
 use JoliCode\MediaBundle\Exception\MediaNotFoundException;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Model\NullMedia;

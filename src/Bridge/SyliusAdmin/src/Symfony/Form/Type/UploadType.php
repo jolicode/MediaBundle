@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type;
+namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Form\Type;
 
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Config\Config;
 use Symfony\Component\Form\AbstractType;

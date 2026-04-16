@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Config\Config;
-use JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\DataTransformer\MediaTransformer;
-use JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type\MediaChoiceType;
-use JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type\UploadType;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid\MediaGrid;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Sylius\Grid\Provider\MediaGridProvider;
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Controller\MediaAdminController;
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Form\DataTransformer\MediaTransformer;
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Form\Type\MediaChoiceType;
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Form\Type\UploadType;
 use JoliCode\MediaBundle\Bridge\Twig\JoliMediaAdminExtension;
 
 return static function (ContainerConfigurator $container): void {

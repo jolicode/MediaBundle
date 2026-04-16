@@ -197,7 +197,7 @@ A media selector widget is available for Sylius. You can use it in your admin cl
     namespace App\Form;
 
     use App\Entity\User;
-    use JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type\MediaChoiceType;
+    use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Form\Type\MediaChoiceType;
     use Symfony\Component\Form\AbstractType;
     use Symfony\Component\Form\FormBuilderInterface;
     use Symfony\Component\OptionsResolver\OptionsResolver;

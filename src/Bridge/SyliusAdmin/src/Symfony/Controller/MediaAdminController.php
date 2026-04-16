@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Controller;
 
 use JoliCode\MediaBundle\Bridge\SyliusAdmin\Config\Config;
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Form\Type\UploadType;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Library\Library;
@@ -630,7 +631,7 @@ class MediaAdminController extends AbstractController
 
     private function createUploadForm(?string $path = null): FormInterface
     {
-        $form = $this->formFactory->create(\JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\Type\UploadType::class, null, [
+        $form = $this->formFactory->create(UploadType::class, null, [
             'action' => $this->generateUrl('joli_media_sylius_admin_upload'),
         ]);
 

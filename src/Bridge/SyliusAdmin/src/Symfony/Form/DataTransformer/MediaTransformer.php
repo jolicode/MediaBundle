@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Form\DataTransformer;
+namespace JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Form\DataTransformer;
 
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Resolver\Resolver;
@@ -16,33 +16,33 @@ readonly class MediaTransformer implements DataTransformerInterface
     ) {
     }
 
-    public function reverseTransform(mixed $path): ?Media
+    public function reverseTransform(mixed $value): ?Media
     {
-        if (null === $path) {
+        if (null === $value) {
             return null;
         }
 
         try {
-            return $this->resolver->resolveMedia($path);
+            return $this->resolver->resolveMedia($value);
         } catch (\Exception) {
-            return $this->resolver->createUnresolvedMedia($path);
+            return $this->resolver->createUnresolvedMedia($value);
         }
     }
 
-    public function transform(mixed $media): ?string
+    public function transform(mixed $value): ?string
     {
-        if (null === $media) {
+        if (null === $value) {
             return null;
         }
 
-        if (\is_string($media)) {
-            return $media;
+        if (\is_string($value)) {
+            return $value;
         }
 
-        if (!$media instanceof Media) {
+        if (!$value instanceof Media) {
             throw new TransformationFailedException('Expected a Media object.');
         }
 
-        return $media->getPath();
+        return $value->getPath();
     }
 }
