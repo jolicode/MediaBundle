@@ -16,13 +16,17 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         return;
     }
 
-    if (modal.dataset.moved === "true") {
+    if (modal.dataset.moved === "true" && mediaChoiceContainer.dataset.configured === "true") {
         return;
     }
 
-    document.body.appendChild(modal);
-    modal.dataset.moved = "true";
+    // Move modal to body only once
+    if (modal.dataset.moved !== "true") {
+        document.body.appendChild(modal);
+        modal.dataset.moved = "true";
+    }
 
+    // Only set configured flag, don't overwrite handlers
     if (!mediaChoiceContainer.dataset.configured) {
         mediaChoiceContainer.dataset.configured = "true";
     }
@@ -106,7 +110,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     };
 
     const closeModal = () => {
-        const bsModal = bootstrap.Modal.getInstance(modal);
+        const bsModal = bootstrap.Modal.getInstance(modal) || bootstrap.Modal.getOrCreateInstance(modal);
         if (bsModal) {
             bsModal.hide();
         }
@@ -121,6 +125,7 @@ const setFieldValue = (value, template = null) => {
             const decodedTemplate = template.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'");
             mediaChoiceContainer.dataset.mediaTemplate = decodedTemplate;
             mediaChoiceContainer.classList.remove("empty");
+            mediaContainer.innerHTML = decodedTemplate;
         }
         
         // Trigger LiveComponent re-render - the form theme will handle the preview
@@ -301,11 +306,14 @@ const setFieldValue = (value, template = null) => {
         });
     };
 
-    deleteButton.addEventListener("click", handleDelete);
-    editButton.addEventListener("click", handleEdit);
-    modal.addEventListener("click", handleModalClick);
-    modal.addEventListener("submit", handleModalSubmit);
-    document.addEventListener("media-uploaded", handleMediaUploaded);
+    if (!modal.dataset.handlersAttached) {
+        deleteButton.addEventListener("click", handleDelete);
+        editButton.addEventListener("click", handleEdit);
+        modal.addEventListener("click", handleModalClick);
+        modal.addEventListener("submit", handleModalSubmit);
+        document.addEventListener("media-uploaded", handleMediaUploaded);
+        modal.dataset.handlersAttached = "true";
+    }
 
     mediaChoiceContainer.dataset.configured = true;
 };
