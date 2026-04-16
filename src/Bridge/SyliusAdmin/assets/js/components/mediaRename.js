@@ -69,22 +69,9 @@ const configureMediaRename = () => {
             return;
         }
 
-        let oldPath, newPath;
-        if (isShowPage) {
-            oldPath = container.dataset.mediaKey;
-            const parentPath = oldPath.includes('/') ? oldPath.substring(0, oldPath.lastIndexOf('/') + 1) : '';
-            newPath = parentPath + newName;
-        } else {
-            const row = form.closest('tr');
-            oldPath = row.dataset.media;
-            const parentPath = oldPath.includes('/') ? oldPath.substring(0, oldPath.lastIndexOf('/') + 1) : '';
-            newPath = parentPath + newName;
-        }
-
-        const oldPathInput = form.querySelector('input[name="oldPath"]');
-        if (oldPathInput) {
-            oldPathInput.value = oldPath;
-        }
+        const oldPath = form.querySelector('input[name="oldPath"]').value;
+        const parentPath = oldPath.includes('/') ? oldPath.substring(0, oldPath.lastIndexOf('/') + 1) : '';
+        const newPath = parentPath + newName;
 
         const newPathInput = form.querySelector('input[name="newPath"]');
         if (newPathInput) {
