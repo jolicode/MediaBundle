@@ -31,15 +31,19 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         mediaChoiceContainer.dataset.configured = "true";
         
         if (mediaContainer && !mediaContainer.dataset.observerAttached) {
+            let cleanupTimeout = null;
             const duplicateCleaner = new MutationObserver(() => {
-                const existingPreviews = mediaContainer.querySelectorAll('[data-media-preview], .joli-media-preview, .media-preview');
-                if (existingPreviews.length > 1) {
-                    existingPreviews.forEach((el, i) => {
-                        if (i < existingPreviews.length - 1) el.remove();
-                    });
-                }
+                clearTimeout(cleanupTimeout);
+                cleanupTimeout = setTimeout(() => {
+                    const existingPreviews = mediaContainer.querySelectorAll('[data-media-preview], .joli-media-preview, .media-preview');
+                    if (existingPreviews.length > 1) {
+                        existingPreviews.forEach((el, i) => {
+                            if (i < existingPreviews.length - 1) el.remove();
+                        });
+                    }
+                }, 100);
             });
-            duplicateCleaner.observe(mediaContainer, { childList: true, subtree: true, attributeFilter: ['data-media-preview'] });
+            duplicateCleaner.observe(mediaContainer, { childList: true, subtree: true });
             mediaContainer.dataset.observerAttached = "true";
         }
     }
@@ -142,6 +146,10 @@ const setFieldValue = (value, template = null) => {
         if (template) {
             mediaChoiceContainer.dataset.mediaTemplate = template;
             mediaChoiceContainer.classList.remove("empty");
+            
+            if (mediaContainer) {
+                mediaContainer.innerHTML = template;
+            }
         }
         
         inputElement.dispatchEvent(new Event("change", { bubbles: true }));
