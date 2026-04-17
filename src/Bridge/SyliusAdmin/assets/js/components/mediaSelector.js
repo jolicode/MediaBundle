@@ -29,6 +29,19 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     // Only set configured flag, don't overwrite handlers
     if (!mediaChoiceContainer.dataset.configured) {
         mediaChoiceContainer.dataset.configured = "true";
+        
+        if (mediaContainer && !mediaContainer.dataset.observerAttached) {
+            const duplicateCleaner = new MutationObserver(() => {
+                const existingPreviews = mediaContainer.querySelectorAll('[data-media-preview], .joli-media-preview, .media-preview');
+                if (existingPreviews.length > 1) {
+                    existingPreviews.forEach((el, i) => {
+                        if (i < existingPreviews.length - 1) el.remove();
+                    });
+                }
+            });
+            duplicateCleaner.observe(mediaContainer, { childList: true, subtree: true, attributeFilter: ['data-media-preview'] });
+            mediaContainer.dataset.observerAttached = "true";
+        }
     }
 
     if (mediaChoiceContainer.dataset.mediaValue) {
@@ -47,7 +60,9 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const fetchFolder = (url) => fetch(url).then((response) => response.text());
 
     const updateBreadcrumb = (newFolderPath) => {
-        const breadcrumb = modalContent?.querySelector('.folder-modal-breadcrumb');
+        const currentModalEl = document.getElementById(`modal-media-choice_${id}`);
+        const currentModalContent = currentModalEl?.querySelector('.modal-body');
+        const breadcrumb = currentModalContent?.querySelector('.folder-modal-breadcrumb');
         if (!breadcrumb) return;
 
         const basePath = getBasePath();
@@ -99,18 +114,22 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     let currentFolderPath = getCurrentFolderPath();
 
     const configureModal = (html) => {
-        if (modalContent) {
-            modalContent.innerHTML = html;
-            
-            // Always update breadcrumb to ensure it's correct for current folder
-            updateBreadcrumb(currentFolderPath);
-            
-            setupCreateFolder();
-        }
+        const currentModalEl = document.getElementById(`modal-media-choice_${id}`);
+        if (!currentModalEl) return;
+        
+        const currentModalContent = currentModalEl.querySelector('.modal-body');
+        if (!currentModalContent) return;
+        
+        currentModalContent.innerHTML = html;
+        updateBreadcrumb(currentFolderPath);
+        setupCreateFolder();
     };
 
     const closeModal = () => {
-        const bsModal = bootstrap.Modal.getInstance(modal) || bootstrap.Modal.getOrCreateInstance(modal);
+        const currentModal = document.getElementById(`modal-media-choice_${id}`);
+        if (!currentModal) return;
+        
+        const bsModal = bootstrap.Modal.getInstance(currentModal) || bootstrap.Modal.getOrCreateInstance(currentModal);
         if (bsModal) {
             bsModal.hide();
         }
@@ -121,14 +140,10 @@ const setFieldValue = (value, template = null) => {
         mediaChoiceContainer.dataset.mediaValue = value;
         
         if (template) {
-            // Store template for potential restoration after LiveComponent re-render
-            const decodedTemplate = template.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'");
-            mediaChoiceContainer.dataset.mediaTemplate = decodedTemplate;
+            mediaChoiceContainer.dataset.mediaTemplate = template;
             mediaChoiceContainer.classList.remove("empty");
-            mediaContainer.innerHTML = decodedTemplate;
         }
         
-        // Trigger LiveComponent re-render - the form theme will handle the preview
         inputElement.dispatchEvent(new Event("change", { bubbles: true }));
     };
 
@@ -161,7 +176,10 @@ const setFieldValue = (value, template = null) => {
             event.preventDefault();
             event.stopPropagation();
             setFieldValue(target.dataset.mediaUrl, target.dataset.mediaTemplate);
-            closeModal();
+            const currentModalEl = document.getElementById(`modal-media-choice_${id}`);
+            if (currentModalEl?.classList.contains('show')) {
+                closeModal();
+            }
             return;
         }
 
@@ -169,7 +187,7 @@ const setFieldValue = (value, template = null) => {
             return;
         }
 
-        if (target.closest('.folder-modal-breadcrumb') || target.closest('.gallery-grid--folders') || target.closest('.pagination')) {
+        if (target.closest('.folder-modal-breadcrumb') || target.closest('.gallery-grid--folders') || target.closest('.gallery-grid-item') || target.closest('.pagination') || href.match(/\/media\/choose/)) {
             const url = new URL(href, window.location.origin);
             let folderPath = url.searchParams.get('key') || '';
             
@@ -211,11 +229,16 @@ const setFieldValue = (value, template = null) => {
 
     const handleEdit = (event) => {
         event.preventDefault();
-        modalContent.innerHTML = "";
+        
+        const modalEl = document.getElementById(`modal-media-choice_${id}`);
+        if (!modalEl) return;
+        
+        const modalBody = modalEl.querySelector('.modal-body');
+        if (modalBody) modalBody.innerHTML = "";
 
         fetchFolder(editButton.href).then((html) => {
-            configureModal(html);
-            const bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+            if (modalBody) modalBody.innerHTML = html;
+            const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
             bsModal.show();
         });
 
@@ -247,8 +270,11 @@ const setFieldValue = (value, template = null) => {
     };
 
     const setupCreateFolder = () => {
-        const createBtn = modal.querySelector('[data-component="directory-create"]');
-        const createForm = modal.querySelector('[data-component="directory-create-form"]');
+        const currentModalEl = document.getElementById(`modal-media-choice_${id}`);
+        if (!currentModalEl) return;
+        
+        const createBtn = currentModalEl.querySelector('[data-component="directory-create"]');
+        const createForm = currentModalEl.querySelector('[data-component="directory-create-form"]');
 
         if (!createForm) {
             return;
@@ -309,12 +335,11 @@ const setFieldValue = (value, template = null) => {
     if (!modal.dataset.handlersAttached) {
         deleteButton.addEventListener("click", handleDelete);
         editButton.addEventListener("click", handleEdit);
-        modal.addEventListener("click", handleModalClick);
-        modal.addEventListener("submit", handleModalSubmit);
-        document.addEventListener("media-uploaded", handleMediaUploaded);
         modal.dataset.handlersAttached = "true";
     }
 
+    mediaChoiceContainer._handleModalClick = handleModalClick;
+    mediaChoiceContainer._handleModalSubmit = handleModalSubmit;
     mediaChoiceContainer.dataset.configured = true;
 };
 
@@ -326,9 +351,44 @@ document.addEventListener("click", (event) => {
             configureMediaChoiceContainer(container);
         }
     }
+    
+    const modal = event.target.closest('[id^="modal-media-choice_"]');
+    if (modal) {
+        const match = modal.id.match(/modal-media-choice_(.+)/);
+        if (match) {
+            const id = match[1];
+            const container = document.querySelector(`.js-joli-media-choice-container[data-media-id="${id}"]`);
+            if (container && container.dataset.configured === "true" && container._handleModalClick) {
+                container._handleModalClick(event);
+            }
+        }
+    }
+});
+
+document.addEventListener("submit", (event) => {
+    const modal = event.target.closest('[id^="modal-media-choice_"]');
+    if (modal) {
+        const match = modal.id.match(/modal-media-choice_(.+)/);
+        if (match) {
+            const id = match[1];
+            const container = document.querySelector(`.js-joli-media-choice-container[data-media-id="${id}"]`);
+            if (container && container.dataset.configured === "true" && container._handleModalSubmit) {
+                container._handleModalSubmit(event);
+            }
+        }
+    }
 });
 
 const configureMediaSelector = () => {
+    const seenIds = new Set();
+    document.querySelectorAll('[id^="modal-media-choice_"]').forEach((modal) => {
+        if (seenIds.has(modal.id)) {
+            modal.remove();
+            return;
+        }
+        seenIds.add(modal.id);
+    });
+    
     document.querySelectorAll(".js-joli-media-choice-container").forEach((container) => {
         if (container.dataset.configured === undefined) {
             configureMediaChoiceContainer(container);
