@@ -2,14 +2,36 @@ const getContainerForElement = (element) => {
     return element.closest(".js-joli-media-choice-container");
 };
 
+const isLiveComponent = (element) => {
+    let current = element;
+    while (current && current !== document.body) {
+        if (current.dataset.controller && current.dataset.controller.includes('live-collection')) {
+            return true;
+        }
+        current = current.parentElement;
+    }
+    return false;
+};
+
+const hasLiveController = (element) => {
+    let current = element;
+    while (current && current !== document.body) {
+        if (current.dataset.controller && /\blive\b/.test(current.dataset.controller) && !current.dataset.controller.includes('live-collection')) {
+            return true;
+        }
+        current = current.parentElement;
+    }
+    return false;
+};
+
 const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const id = mediaChoiceContainer.dataset.mediaId;
-    const mediaContainer = document.getElementById(`joli-media-container_${id}`);
+    const mediaContainer = mediaChoiceContainer.querySelector(`[id^="joli-media-container_"]`);
     const deleteButton = mediaChoiceContainer.querySelector(
         ".joli-media-choice-delete",
     );
     const editButton = mediaChoiceContainer.querySelector(".joli-media-choice-edit");
-    const inputElement = document.getElementById(id);
+    const inputElement = mediaChoiceContainer.querySelector(`[id="${id}"]`);
     let modal = document.getElementById(`modal-media-choice_${id}`);
 
     if (!modal || !deleteButton || !editButton || !inputElement || !mediaContainer) {
@@ -30,21 +52,16 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     if (!mediaChoiceContainer.dataset.configured) {
         mediaChoiceContainer.dataset.configured = "true";
         
-        if (mediaContainer && !mediaContainer.dataset.observerAttached) {
-            let cleanupTimeout = null;
-            const duplicateCleaner = new MutationObserver(() => {
-                clearTimeout(cleanupTimeout);
-                cleanupTimeout = setTimeout(() => {
-                    const existingPreviews = mediaContainer.querySelectorAll('[data-media-preview], .joli-media-preview, .media-preview');
-                    if (existingPreviews.length > 1) {
-                        existingPreviews.forEach((el, i) => {
-                            if (i < existingPreviews.length - 1) el.remove();
-                        });
-                    }
-                }, 100);
+        if (mediaContainer && !isLiveComponent(mediaChoiceContainer)) {
+            const debugObserver = new MutationObserver(() => {
+                const previews = mediaContainer.querySelectorAll('.media-preview');
+                if (previews.length > 1) {
+                    previews.forEach((el, i) => {
+                        if (i < previews.length - 1) el.remove();
+                    });
+                }
             });
-            duplicateCleaner.observe(mediaContainer, { childList: true, subtree: true });
-            mediaContainer.dataset.observerAttached = "true";
+            debugObserver.observe(mediaContainer, { childList: true, subtree: true });
         }
     }
 
@@ -52,7 +69,6 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         inputElement.value = mediaChoiceContainer.dataset.mediaValue;
         
         if (mediaChoiceContainer.dataset.mediaTemplate) {
-            mediaContainer.innerHTML = mediaChoiceContainer.dataset.mediaTemplate;
             mediaChoiceContainer.classList.remove("empty");
         }
         
@@ -140,6 +156,11 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     };
 
 const setFieldValue = (value, template = null) => {
+        if (mediaChoiceContainer.dataset.settingValue === "true") {
+            return;
+        }
+        mediaChoiceContainer.dataset.settingValue = "true";
+        
         inputElement.value = value;
         mediaChoiceContainer.dataset.mediaValue = value;
         
@@ -147,13 +168,29 @@ const setFieldValue = (value, template = null) => {
             mediaChoiceContainer.dataset.mediaTemplate = template;
             mediaChoiceContainer.classList.remove("empty");
             
-            if (mediaContainer) {
+            if (mediaContainer && !isLiveComponent(mediaChoiceContainer)) {
                 mediaContainer.innerHTML = template;
             }
         }
         
         inputElement.dispatchEvent(new Event("change", { bubbles: true }));
+        
+        setTimeout(() => {
+            mediaChoiceContainer.dataset.settingValue = "false";
+        }, 100);
     };
+
+const getParentControllers = (element) => {
+    const controllers = [];
+    let current = element;
+    while (current && current !== document.body) {
+        if (current.dataset.controller) {
+            controllers.push(current.dataset.controller);
+        }
+        current = current.parentElement;
+    }
+    return controllers;
+};
 
     const reloadModal = () => {
         const basePath = getBasePath();
