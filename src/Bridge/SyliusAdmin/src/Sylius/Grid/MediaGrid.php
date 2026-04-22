@@ -40,26 +40,18 @@ final class MediaGrid extends AbstractGrid
                     ->withOptions(['vars' => [
                         'th_class' => 'text-center',
                         'td_class' => 'text-center',
-                    ]])
-            )
-            ->withFields(
+                    ]]),
                 TwigField::create('path', '@JoliMediaSyliusAdmin/media/grid/field/path.html.twig')
                     ->setPath('.')
                     ->setLabel($this->trans('media.name')),
-            )
-            ->withFields(
                 TwigField::create('fileType', '@JoliMediaSyliusAdmin/media/grid/field/file_type.html.twig')
                     ->setLabel($this->trans('media.type.label')),
-            )
-            ->withFields(
                 TwigField::create('fileSize', '@JoliMediaSyliusAdmin/media/grid/field/file_size.html.twig')
                     ->setLabel($this->trans('media.size.label_long'))
                     ->withOptions(['vars' => [
                         'th_class' => 'w-20 text-center',
                         'td_class' => 'text-center',
-                    ]])
-            )
-            ->withFields(
+                    ]]),
                 TwigField::create('pixelDimensions', '@JoliMediaSyliusAdmin/media/grid/field/dimensions.html.twig')
                     ->setLabel($this->trans('media.dimensions')),
             )
