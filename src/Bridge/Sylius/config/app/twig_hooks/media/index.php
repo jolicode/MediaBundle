@@ -50,6 +50,9 @@ return static function (ContainerConfigurator $container): void {
             ],
 
             'joli_media_sylius_admin.media.index.content.body' => [
+                'filters' => [
+                    'template' => '@JoliMediaSylius/admin/media/index/content/body/filters.html.twig',
+                ],
                 'tabs' => [
                     'template' => '@JoliMediaSylius/admin/media/index/content/body/tabs.html.twig',
                 ],

@@ -1,6 +1,9 @@
 {% set definition = hookable_metadata.context.resources.definition %}
 {% set directories = hookable_metadata.context.directories %}
 
+{% set criteria = app.request.query.all('criteria') %}
+{% set is_recursive = criteria['search']['value']|default('') != ''  %}
+
 {% set key = hookable_metadata.context.key %}
 
 {% for directory in directories %}
@@ -15,7 +18,7 @@
                     <div class="badge bg-blue-lt">{{ 'Directory' }}</div>
                 {% elseif field.name == 'path' %}
                     <a class="text-decoration-none" href="{{ path }}">
-                        <span class="directory-name">{{ directory|joli_media_admin_basename }}</span>
+                        <span class="directory-name">{{ is_recursive ? directory : directory|joli_media_admin_basename }}</span>
                     </a>
                     <form class="directory-rename-form d-none" action="{{ path('joli_media_sylius_admin_rename_directory') }}" method="POST">
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_rename_directory') }}">

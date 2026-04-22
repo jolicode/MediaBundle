@@ -316,33 +316,68 @@ class OriginalStorage
     /**
      * @return string[]
      */
-    public function listDirectories(?string $path = null, ?string $contains = null, bool $recursive = true): array
-    {
-        return $this->list($path, $contains, 'dir', $recursive)
+    public function listDirectories(
+        ?string $path = null,
+        ?string $contains = null,
+        bool $recursive = true,
+        ?callable $filter = null,
+        ?callable $sort = null,
+    ): array {
+        $listing = $this->list($path, $contains, 'dir', $recursive)
             ->filter(fn (StorageAttributes $attributes): bool => $this->trashPath !== $attributes->path())
             ->sortByPath()
             ->map(static fn (StorageAttributes $attributes): string => $attributes->path())
             ->toArray()
         ;
+
+        if ($filter) {
+            $listing = array_values(array_filter($listing, $filter));
+        }
+
+        if ($sort) {
+            usort($listing, $sort);
+        }
+
+        return $listing;
     }
 
     /**
      * @return string[]
      */
-    public function listFiles(?string $path = null, ?string $contains = null, bool $recursive = true): array
-    {
-        return $this->list($path, $contains, 'file', $recursive)
+    public function listFiles(
+        ?string $path = null,
+        ?string $contains = null,
+        bool $recursive = true,
+        ?callable $filter = null,
+        ?callable $sort = null,
+    ): array {
+        $listing = $this->list($path, $contains, 'file', $recursive)
             ->sortByPath()
             ->map(static fn (StorageAttributes $attributes): string => $attributes->path())
             ->toArray()
         ;
+
+        if ($filter) {
+            $listing = array_values(array_filter($listing, $filter));
+        }
+
+        if ($sort) {
+            usort($listing, $sort);
+        }
+
+        return $listing;
     }
 
     /**
      * @return Media[]
      */
-    public function listMedias(?string $path = null, ?string $contains = null, bool $recursive = true): array
-    {
+    public function listMedias(
+        ?string $path = null,
+        ?string $contains = null,
+        bool $recursive = true,
+        ?callable $filter = null,
+        ?callable $sort = null,
+    ): array {
         $listing = $this->list($path, $contains, 'file', $recursive)
             ->map(fn (StorageAttributes $attributes): Media => new Media(Resolver::normalizePath($attributes->path()), $this))
             ->toArray()
@@ -350,6 +385,14 @@ class OriginalStorage
 
         if (!$recursive) {
             usort($listing, static fn (Media $a, Media $b): int => strtolower($a->getPath()) <=> strtolower($b->getPath()));
+        }
+
+        if ($filter) {
+            $listing = array_values(array_filter($listing, $filter));
+        }
+
+        if ($sort) {
+            usort($listing, $sort);
         }
 
         return $listing;
@@ -364,8 +407,10 @@ class OriginalStorage
         bool $recursive = false,
         int $page = 1,
         int $perPage = 50,
+        ?callable $filter = null,
+        ?callable $sort = null,
     ): array {
-        $allMedias = $this->listMedias($path, $contains, $recursive);
+        $allMedias = $this->listMedias($path, $contains, $recursive, $filter, $sort);
 
         $total = \count($allMedias);
         $totalPages = max(1, (int) ceil($total / $perPage));

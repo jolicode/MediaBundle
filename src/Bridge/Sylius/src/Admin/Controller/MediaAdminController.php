@@ -42,6 +42,10 @@ use Twig\Environment;
 #[Route(name: 'joli_media_sylius_admin_')]
 class MediaAdminController extends AbstractController
 {
+    private const ASC = 'asc';
+
+    private const DESC = 'desc';
+
     public function __construct(
         private readonly LibraryContainer $libraries,
         private readonly Resolver $resolver,
@@ -332,8 +336,26 @@ class MediaAdminController extends AbstractController
             throw new ForbiddenPathException($trashPath);
         }
 
-        $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: false);
-        natcasesort($directories);
+        $sortingByPath = $request->query->all('sorting')['path'] ?? null;
+        $searchValue = $request->query->all('criteria')['search']['value'] ?? null;
+
+        $sort = null;
+
+        if (self::ASC === $sortingByPath) {
+            $sort = static fn (string $a, string $b): int => strnatcmp(strtolower($a), strtolower($b));
+        }
+
+        if (self::DESC === $sortingByPath) {
+            $sort = static fn (string $a, string $b): int => strnatcmp(strtolower($b), strtolower($a));
+        }
+
+        $filter = null;
+
+        if (null !== $searchValue) {
+            $filter = static fn (string $a): bool => str_contains(strtolower($a), strtolower((string) $searchValue));
+        }
+
+        $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: null !== $searchValue, filter: $filter, sort: $sort);
 
         $gridView = $this->getGridView($request, 'joli_media_sylius_admin_media');
 
@@ -489,7 +511,7 @@ class MediaAdminController extends AbstractController
     }
 
     #[Route(path: '/show/{key}', name: 'show', requirements: ['key' => '.+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function show(Request $request, string $key): Response
+    public function show(string $key): Response
     {
         $media = $this->resolver->resolveMedia($key);
 
