@@ -112,16 +112,6 @@ final class JoliMediaSyliusAdminBundle extends AbstractBundle
             ->arg('$maxFileSize', $config['upload']['max_file_size'])
             ->arg('$paginationSizes', $config['pagination']['per_page'])
         ;
-
-        $builder->prependExtensionConfig('framework', [
-            'assets' => [
-                'packages' => [
-                    'joli_media_sylius_admin' => [
-                        'base_path' => '/bundles/jolimediasyliusadmin',
-                    ],
-                ],
-            ],
-        ]);
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
@@ -190,5 +180,100 @@ final class JoliMediaSyliusAdminBundle extends AbstractBundle
             'enable_autoprefixing' => true,
             'hook_name_section_separator' => '#',
         ]);
+
+        $builder->prependExtensionConfig('framework', [
+            'assets' => [
+                'packages' => [
+                    'joli_media_sylius_admin' => [
+                        'base_path' => '/bundles/jolimediasyliusadmin',
+                    ],
+                ],
+            ],
+        ]);
+
+        if ($builder->hasExtension('sylius_admin')) {
+            $builder->prependExtensionConfig('joli_media', [
+                'libraries' => [
+                    $joliMediaDefaultLibrary => [
+                        'variations' => [
+                            'sylius_admin_avatar' => [
+                                'format' => 'webp',
+                                'transformers' => [
+                                    'thumbnail' => [
+                                        'width' => 200,
+                                        'height' => 200,
+                                    ],
+                                ],
+                            ],
+                            'sylius_admin_product_thumbnail' => [
+                                'format' => 'webp',
+                                'transformers' => [
+                                    'thumbnail' => [
+                                        'width' => 200,
+                                        'height' => 200,
+                                    ],
+                                ],
+                            ],
+                            'sylius_admin_product_large_thumbnail' => [
+                                'format' => 'webp',
+                                'transformers' => [
+                                    'thumbnail' => [
+                                        'width' => 600,
+                                        'height' => 800,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+        }
+
+        if ($builder->hasExtension('sylius_shop')) {
+            $builder->prependExtensionConfig('joli_media', [
+                'libraries' => [
+                    $joliMediaDefaultLibrary => [
+                        'variations' => [
+                            'sylius_shop_product_small_thumbnail' => [
+                                'format' => 'webp',
+                                'transformers' => [
+                                    'thumbnail' => [
+                                        'width' => 300,
+                                        'height' => 400,
+                                    ],
+                                ],
+                            ],
+                            'sylius_shop_product_thumbnail' => [
+                                'format' => 'webp',
+                                'transformers' => [
+                                    'thumbnail' => [
+                                        'width' => 600,
+                                        'height' => 800,
+                                    ],
+                                ],
+                            ],
+                            'sylius_shop_product_large_thumbnail' => [
+                                'format' => 'webp',
+                                'transformers' => [
+                                    'thumbnail' => [
+                                        'width' => 1200,
+                                        'height' => 1600,
+                                    ],
+                                ],
+                            ],
+                            'sylius_shop_taxon_thumbnail' => [
+                                'format' => 'webp',
+                                'transformers' => [
+                                    'thumbnail' => [
+                                        'width' => 1200,
+                                        'height' => 300,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+        }
     }
 }
