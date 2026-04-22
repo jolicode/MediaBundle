@@ -1,0 +1,25 @@
+{% macro image(product, config = {}) %}
+    {% set config = {
+        class: 'img-fluid',
+        type: 'thumbnail',
+        filter: 'sylius_admin_product_thumbnail'
+    }|merge(config) %}
+
+    {% if product.imagesByType(config.type) is not empty %}
+        {% set path = product.imagesByType(config.type).first.path %}
+    {% elseif product.images.first %}
+        {% set path = product.images.first.path %}
+    {% else %}
+        {% set path = null %}
+    {% endif %}
+
+    {% if path is not null %}
+        <twig:joli:Img
+            path="{{ path }}"
+            variation="{{ config.filter }}"
+            alt="{{ product.name }}"
+        />
+    {% else %}
+        <img src="{{ asset('bundles/syliusui/images/200x200.png') }}" alt="{{ product.name }}" class="{{ config.class }}" />
+    {% endif %}
+{% endmacro %}
