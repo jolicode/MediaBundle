@@ -1,0 +1,5 @@
+{% import '@JoliMediaSylius/admin/shared/helper/move_media_modal.html.twig' as modal %}
+
+{% set media = hookable_metadata.context.media %}
+
+{{ modal.render(media) }}

@@ -1,0 +1,25 @@
+{% trans_default_domain 'JoliMediaSyliusBundle' %}
+
+{% set config = hookable_metadata.context.config %}
+{% set media = hookable_metadata.context.media %}
+
+{% if config.isVisible('show_markdown_code') %}
+    <div class="data-row">
+        <dt class="mb-1">Markdown</dt>
+        <dd class="d-flex align-items-start jm-box">
+                            <pre class="flex-fill mb-0"><code id="media-markdown-code" class="long-text-break">
+                                {{- include('@JoliMediaSylius/_as_markdown.html.twig')|escape -}}
+                            </code></pre>
+            <button
+                    class="btn btn-sm clipboard-btn"
+                    data-clipboard-target="#media-markdown-code"
+                    data-clipboard-copied="{{ 'action.copied'|trans }}"
+                    role="button"
+                    tabindex="0"
+            >
+                {{ ux_icon('tabler:copy') }}
+                <span class="btn-label">{{ 'action.copy'|trans }}</span>
+            </button>
+        </dd>
+    </div>
+{% endif %}

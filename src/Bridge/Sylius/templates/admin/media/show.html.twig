@@ -1,0 +1,9 @@
+{% extends ['@SyliusAdminUi/base.html.twig', '@SyliusAdmin/shared/layout/base.html.twig'] %}
+
+{% block title %}
+    {{ media.filename }} | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {% hook ['joli_media_sylius_admin.media.show', 'sylius_admin.common.show'] %}
+{% endblock %}

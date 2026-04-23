@@ -4,8 +4,171 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8cfb41a510457a4d7fbd239105e3fe62",
+    "content-hash": "e72028ff27a43a7714ab3e5dbbf34d2f",
     "packages": [
+        {
+            "name": "babdev/pagerfanta-bundle",
+            "version": "v4.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/BabDev/PagerfantaBundle.git",
+                "reference": "ea3eb6a3f9d838de73254683b1a57014877d2ff3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/BabDev/PagerfantaBundle/zipball/ea3eb6a3f9d838de73254683b1a57014877d2ff3",
+                "reference": "ea3eb6a3f9d838de73254683b1a57014877d2ff3",
+                "shasum": ""
+            },
+            "require": {
+                "pagerfanta/core": "^3.7 || ^4.0",
+                "php": "^8.1",
+                "psr/container": "^1.0 || ^2.0",
+                "symfony/config": "^5.4 || ^6.4 || ^7.3 || ^8.0",
+                "symfony/dependency-injection": "^5.4 || ^6.4 || ^7.3 || ^8.0",
+                "symfony/http-foundation": "^5.4 || ^6.4 || ^7.3 || ^8.0",
+                "symfony/http-kernel": "^5.4 || ^6.4 || ^7.3 || ^8.0",
+                "symfony/property-access": "^5.4 || ^6.4 || ^7.3 || ^8.0",
+                "symfony/routing": "^5.4 || ^6.4 || ^7.3 || ^8.0"
+            },
+            "conflict": {
+                "jms/serializer": "<3.18",
+                "jms/serializer-bundle": "<4.2",
+                "pagerfanta/twig": "<3.7",
+                "symfony/serializer": "<5.4 || >=6.0,<6.4 || >=7.0,<7.3",
+                "symfony/translation": "<5.4 || >=6.0,<6.4 || >=7.0,<7.3",
+                "symfony/twig-bridge": "<5.4 || >=6.0,<6.4 || >=7.0,<7.3",
+                "symfony/twig-bundle": "<5.4 || >=6.0,<6.4 || >=7.0,<7.3",
+                "twig/twig": "<2.13",
+                "white-october/pagerfanta-bundle": "*"
+            },
+            "require-dev": {
+                "jms/serializer": "^3.18",
+                "jms/serializer-bundle": "^4.2 || ^5.0",
+                "matthiasnoback/symfony-dependency-injection-test": "^6.2",
+                "pagerfanta/twig": "^3.7 || ^4.0",
+                "phpstan/extension-installer": "^1.3",
+                "phpstan/phpstan": "2.1.32",
+                "phpstan/phpstan-phpunit": "2.0.8",
+                "phpstan/phpstan-symfony": "2.0.9",
+                "phpunit/phpunit": "10.5.58 || 11.5.44 || 12.4.4",
+                "symfony/serializer": "^5.4 || ^6.4 || ^7.3 || ^8.0",
+                "symfony/translation": "^5.4 || ^6.4 || ^7.3 || ^8.0",
+                "symfony/twig-bridge": "^5.4 || ^6.4 || ^7.3 || ^8.0",
+                "symfony/twig-bundle": "^5.4 || ^6.4 || ^7.3 || ^8.0",
+                "twig/twig": "^2.13 || ^3.0"
+            },
+            "suggest": {
+                "jms/serializer-bundle": "To use the Pagerfanta class with the JMS Serializer",
+                "symfony/serializer": "To use the Pagerfanta class with the Symfony Serializer",
+                "symfony/translation": "To use the Twig templates with translation support",
+                "twig/twig": "To integrate Pagerfanta with Twig through extensions"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "BabDev\\PagerfantaBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Bundle integrating Pagerfanta with Symfony",
+            "keywords": [
+                "pagerfanta",
+                "pagination",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/BabDev/PagerfantaBundle/issues",
+                "source": "https://github.com/BabDev/PagerfantaBundle/tree/v4.6.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/mbabker",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-11-29T13:01:51+00:00"
+        },
+        {
+            "name": "doctrine/annotations",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/annotations.git",
+                "reference": "901c2ee5d26eb64ff43c47976e114bf00843acf7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/annotations/zipball/901c2ee5d26eb64ff43c47976e114bf00843acf7",
+                "reference": "901c2ee5d26eb64ff43c47976e114bf00843acf7",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/lexer": "^2 || ^3",
+                "ext-tokenizer": "*",
+                "php": "^7.2 || ^8.0",
+                "psr/cache": "^1 || ^2 || ^3"
+            },
+            "require-dev": {
+                "doctrine/cache": "^2.0",
+                "doctrine/coding-standard": "^10",
+                "phpstan/phpstan": "^1.10.28",
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
+                "symfony/cache": "^5.4 || ^6.4 || ^7",
+                "vimeo/psalm": "^4.30 || ^5.14"
+            },
+            "suggest": {
+                "php": "PHP 8.0 or higher comes with attributes, a native replacement for annotations"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Common\\Annotations\\": "lib/Doctrine/Common/Annotations"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Johannes Schmitt",
+                    "email": "schmittjoh@gmail.com"
+                }
+            ],
+            "description": "Docblock Annotations Parser",
+            "homepage": "https://www.doctrine-project.org/projects/annotations.html",
+            "keywords": [
+                "annotations",
+                "docblock",
+                "parser"
+            ],
+            "support": {
+                "issues": "https://github.com/doctrine/annotations/issues",
+                "source": "https://github.com/doctrine/annotations/tree/2.0.2"
+            },
+            "abandoned": true,
+            "time": "2024-09-05T10:17:24+00:00"
+        },
         {
             "name": "doctrine/collections",
             "version": "2.6.0",
@@ -1815,6 +1978,65 @@
             "time": "2025-11-30T08:30:04+00:00"
         },
         {
+            "name": "laminas/laminas-stdlib",
+            "version": "3.21.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-stdlib.git",
+                "reference": "b1c81514cfe158aadf724c42b34d3d0a8164c096"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/b1c81514cfe158aadf724c42b34d3d0a8164c096",
+                "reference": "b1c81514cfe158aadf724c42b34d3d0a8164c096",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
+            },
+            "conflict": {
+                "zendframework/zend-stdlib": "*"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "^3.1.0",
+                "phpbench/phpbench": "^1.4.1",
+                "phpunit/phpunit": "^11.5.42",
+                "psalm/plugin-phpunit": "^0.19.5",
+                "vimeo/psalm": "^6.13.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Stdlib\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "SPL extensions, array utilities, error handlers, and more",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "laminas",
+                "stdlib"
+            ],
+            "support": {
+                "chat": "https://laminas.dev/chat",
+                "docs": "https://docs.laminas.dev/laminas-stdlib/",
+                "forum": "https://discourse.laminas.dev",
+                "issues": "https://github.com/laminas/laminas-stdlib/issues",
+                "rss": "https://github.com/laminas/laminas-stdlib/releases.atom",
+                "source": "https://github.com/laminas/laminas-stdlib"
+            },
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
+            "time": "2025-10-11T18:13:12+00:00"
+        },
+        {
             "name": "league/flysystem",
             "version": "3.30.2",
             "source": {
@@ -2106,6 +2328,140 @@
                 "source": "https://github.com/nikic/PHP-Parser/tree/v5.7.0"
             },
             "time": "2025-12-06T11:56:16+00:00"
+        },
+        {
+            "name": "pagerfanta/core",
+            "version": "v4.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Pagerfanta/core.git",
+                "reference": "9d014cecdfdb8f377ce4923df9603b741b7353ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Pagerfanta/core/zipball/9d014cecdfdb8f377ce4923df9603b741b7353ea",
+                "reference": "9d014cecdfdb8f377ce4923df9603b741b7353ea",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pagerfanta\\": "./"
+                },
+                "exclude-from-classmap": [
+                    "Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Core Pagerfanta API",
+            "keywords": [
+                "pagerfanta"
+            ],
+            "support": {
+                "source": "https://github.com/Pagerfanta/core/tree/v4.8.0"
+            },
+            "time": "2026-01-22T13:51:30+00:00"
+        },
+        {
+            "name": "pagerfanta/doctrine-orm-adapter",
+            "version": "v4.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Pagerfanta/doctrine-orm-adapter.git",
+                "reference": "0d7374a1dc10a5ddf8878cb791f1b220cd072714"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Pagerfanta/doctrine-orm-adapter/zipball/0d7374a1dc10a5ddf8878cb791f1b220cd072714",
+                "reference": "0d7374a1dc10a5ddf8878cb791f1b220cd072714",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/orm": "^2.14 || ^3.0",
+                "pagerfanta/core": "^3.7 || ^4.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5",
+                "symfony/cache": "^5.4 || ^6.4 || ^7.3 || ^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pagerfanta\\Doctrine\\ORM\\": "./"
+                },
+                "exclude-from-classmap": [
+                    "Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Pagerfanta adapter for Doctrine ORM",
+            "keywords": [
+                "doctrine",
+                "orm",
+                "pagerfanta"
+            ],
+            "support": {
+                "source": "https://github.com/Pagerfanta/doctrine-orm-adapter/tree/v4.8.0"
+            },
+            "time": "2026-01-22T13:44:13+00:00"
+        },
+        {
+            "name": "pagerfanta/twig",
+            "version": "v4.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Pagerfanta/twig.git",
+                "reference": "28a9b75cabd246bd27c266ba62b742d45a4183f9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Pagerfanta/twig/zipball/28a9b75cabd246bd27c266ba62b742d45a4183f9",
+                "reference": "28a9b75cabd246bd27c266ba62b742d45a4183f9",
+                "shasum": ""
+            },
+            "require": {
+                "pagerfanta/core": "^3.7 || ^4.0",
+                "php": "^8.1",
+                "twig/twig": "^2.13 || ^3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pagerfanta\\Twig\\": "./"
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Twig integration for Pagerfanta",
+            "keywords": [
+                "pagerfanta"
+            ],
+            "support": {
+                "source": "https://github.com/Pagerfanta/twig/tree/v4.8.0"
+            },
+            "time": "2025-03-08T02:17:34+00:00"
         },
         {
             "name": "psr/cache",
@@ -3213,6 +3569,711 @@
                 "source": "https://github.com/stof/StofDoctrineExtensionsBundle/tree/v1.14.0"
             },
             "time": "2025-05-01T08:00:32+00:00"
+        },
+        {
+            "name": "sylius/admin-ui",
+            "version": "v0.12.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/AdminUi.git",
+                "reference": "91d00b72358275bb3b3f6290a1be9b9067142e1e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/AdminUi/zipball/91d00b72358275bb3b3f6290a1be9b9067142e1e",
+                "reference": "91d00b72358275bb3b3f6290a1be9b9067142e1e",
+                "shasum": ""
+            },
+            "require": {
+                "knplabs/knp-menu-bundle": "^3.0",
+                "php": "^8.1",
+                "sylius/resource-bundle": "^1.13 || ^1.14@alpha",
+                "sylius/twig-hooks": "^0.12.2",
+                "symfony/http-kernel": "^6.4 || ^7.4 || ^8.0",
+                "symfony/security-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/security-http": "^6.4 || ^7.4 || ^8.0",
+                "symfony/twig-bundle": "^6.4 || ^7.4 || ^8.0",
+                "twig/twig": "^2.15 || ^3.0"
+            },
+            "require-dev": {
+                "doctrine/doctrine-bundle": "^2.13 || ^3.0 || ^4.0",
+                "doctrine/orm": "^3.3 || ^4.0",
+                "matthiasnoback/symfony-dependency-injection-test": "^6.1.0",
+                "phpunit/phpunit": "^10.5",
+                "sylius/grid-bundle": "^1.13 || ^1.15@alpha",
+                "symfony/browser-kit": "^6.4 || ^7.4 || ^8.0",
+                "symfony/config": "^6.4 || ^7.4 || ^8.0",
+                "symfony/console": "^6.4 || ^7.4 || ^8.0",
+                "symfony/css-selector": "^6.4 || ^7.4 || ^8.0",
+                "symfony/dotenv": "^6.4 || ^7.4 || ^8.0",
+                "symfony/framework-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/runtime": "^6.4 || ^7.4 || ^8.0",
+                "symfony/yaml": "^6.4 || ^7.4 || ^8.0"
+            },
+            "suggest": {
+                "sylius/bootstrap-admin-ui": "^0.5"
+            },
+            "type": "library",
+            "extra": {
+                "symfony": {
+                    "require": "7.1.*"
+                },
+                "branch-alias": {
+                    "dev-main": "0.12-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\AdminUi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Minimalist generic templates and routes for your admin panels",
+            "support": {
+                "issues": "https://github.com/Sylius/AdminUi/issues",
+                "source": "https://github.com/Sylius/AdminUi/tree/v0.12.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sylius",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-04-15T08:34:53+00:00"
+        },
+        {
+            "name": "sylius/bootstrap-admin-ui",
+            "version": "v0.12.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/BootstrapAdminUi.git",
+                "reference": "6c2fcf95258debcd5fdb338d25a820c64820f039"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/BootstrapAdminUi/zipball/6c2fcf95258debcd5fdb338d25a820c64820f039",
+                "reference": "6c2fcf95258debcd5fdb338d25a820c64820f039",
+                "shasum": ""
+            },
+            "require": {
+                "pagerfanta/twig": "^4.6",
+                "php": "^8.1",
+                "sylius/admin-ui": "^0.12.2",
+                "sylius/grid-bundle": "^1.13 || ^1.15@alpha",
+                "sylius/resource-bundle": "^1.13 || ^1.14@alpha",
+                "sylius/twig-extra": "^0.12.2",
+                "sylius/twig-hooks": "^0.12.2",
+                "symfony/asset": "^6.4 || ^7.4 || ^8.0",
+                "symfony/http-client": "^6.4 || ^7.4 || ^8.0",
+                "symfony/http-kernel": "^6.4 || ^7.4 || ^8.0",
+                "symfony/security-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/stimulus-bundle": "^2.17",
+                "symfony/ux-autocomplete": "^2.17",
+                "symfony/ux-icons": "^2.20",
+                "symfony/ux-live-component": "^2.17"
+            },
+            "require-dev": {
+                "doctrine/doctrine-bundle": "^2.13 || ^3.0 || ^4.0",
+                "doctrine/orm": "^3.3 || ^4.0",
+                "phpunit/phpunit": "^10.5",
+                "symfony/browser-kit": "^6.4 || ^7.4 || ^8.0",
+                "symfony/console": "^6.4 || ^7.4 || ^8.0",
+                "symfony/css-selector": "^6.4 || ^7.4 || ^8.0",
+                "symfony/dotenv": "^6.4 || ^7.4 || ^8.0",
+                "symfony/framework-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/runtime": "^6.4 || ^7.4 || ^8.0",
+                "symfony/yaml": "^6.4 || ^7.4 || ^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "symfony": {
+                    "require": "7.1.*"
+                },
+                "branch-alias": {
+                    "dev-main": "0.12-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\BootstrapAdminUi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Build your Bootstrap admin panels with Sylius and Symfony UX",
+            "support": {
+                "issues": "https://github.com/Sylius/BootstrapAdminUi/issues",
+                "source": "https://github.com/Sylius/BootstrapAdminUi/tree/v0.12.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sylius",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-04-15T08:34:53+00:00"
+        },
+        {
+            "name": "sylius/grid-bundle",
+            "version": "v1.15.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/SyliusGridBundle.git",
+                "reference": "e1383c0ce867bdd9e2e89f16e1b5ec976120d808"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/SyliusGridBundle/zipball/e1383c0ce867bdd9e2e89f16e1b5ec976120d808",
+                "reference": "e1383c0ce867bdd9e2e89f16e1b5ec976120d808",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2",
+                "sylius/registry": "^1.5",
+                "symfony/config": "^6.4 || ^7.2 || ^8.0",
+                "symfony/dependency-injection": "^6.4 || ^7.2 || ^8.0",
+                "symfony/deprecation-contracts": "^2.2 || ^3.1",
+                "symfony/event-dispatcher": "^6.4 || ^7.2 || ^8.0",
+                "symfony/form": "^6.4 || ^7.2 || ^8.0",
+                "symfony/framework-bundle": "^6.4 || ^7.2 || ^8.0",
+                "symfony/http-kernel": "^6.4 || ^7.2 || ^8.0",
+                "symfony/options-resolver": "^6.4 || ^7.2 || ^8.0",
+                "symfony/property-access": "^6.4 || ^7.2 || ^8.0",
+                "symfony/validator": "^6.4 || ^7.2 || ^8.0",
+                "webmozart/assert": "^1.9"
+            },
+            "conflict": {
+                "badev/pagerfanta-bundle": "<4.4",
+                "doctrine/dbal": "<2.11",
+                "doctrine/doctrine-bundle": "<2.0",
+                "doctrine/orm": "<2.8",
+                "doctrine/persistence": "<2.0",
+                "doctrine/phpcr-odm": "<1.5",
+                "jackalope/jackalope-doctrine-dbal": "<2.0",
+                "pagerfanta/core": "<3.7",
+                "pagerfanta/doctrine-dbal-adapter": "<3.7",
+                "pagerfanta/doctrine-orm-adapter": "<3.7",
+                "pagerfanta/doctrine-phpcr-odm-adapter": "<3.7",
+                "pagerfanta/pagerfanta": "<3.7",
+                "twig/twig": "<2.12"
+            },
+            "replace": {
+                "sylius/grid": "self.version"
+            },
+            "require-dev": {
+                "babdev/pagerfanta-bundle": "^4.4",
+                "doctrine/dbal": "^2.11 || ^3.0 || ^4.0",
+                "doctrine/doctrine-bundle": "^2.0 || ^3.0 || ^4.0",
+                "doctrine/orm": "^2.8 || ^3.0",
+                "doctrine/persistence": "^1.3 || ^2.0 || ^3.1 || ^4.0",
+                "doctrine/phpcr-odm": "^1.5 || ^2.0",
+                "jackalope/jackalope-doctrine-dbal": "^2.0",
+                "matthiasnoback/symfony-config-test": "^6.1",
+                "matthiasnoback/symfony-dependency-injection-test": "^6.1",
+                "pagerfanta/pagerfanta": "^3.7 || ^4.0",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-symfony": "^2.0",
+                "phpstan/phpstan-webmozart-assert": "^2.0",
+                "phpunit/phpunit": "^11.0",
+                "rector/rector": "^2.0",
+                "sylius-labs/coding-standard": "^4.0",
+                "symfony/browser-kit": "^6.4 || ^7.2 || ^8.0",
+                "symfony/console": "^6.4 || ^7.2 || ^8.0",
+                "symfony/css-selector": "^6.4 || ^7.2 || ^8.0",
+                "symfony/dotenv": "^6.4 || ^7.2 || ^8.0",
+                "symfony/maker-bundle": "^1.36",
+                "symfony/polyfill-mbstring": "<1.22.0 || >1.22.0",
+                "symfony/security-csrf": "^6.4 || ^7.2 || ^8.0",
+                "symfony/translation": "^6.4 || ^7.2 || ^8.0",
+                "symfony/twig-bundle": "^6.4 || ^7.2 || ^8.0",
+                "symplify/easy-coding-standard": "^13.0",
+                "twig/twig": "^2.12 || ^3.0",
+                "zenstruck/foundry": "^2.8"
+            },
+            "suggest": {
+                "sylius/currency-bundle": "^1.7"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "symfony": {
+                    "require": "7.4.*"
+                },
+                "branch-alias": {
+                    "dev-master": "1.11-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\Component\\Grid\\": "src/Component/",
+                    "Sylius\\Bundle\\GridBundle\\": "src/Bundle/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paweł Jędrzejewski",
+                    "homepage": "https://pjedrzejewski.com"
+                },
+                {
+                    "name": "Sylius project",
+                    "homepage": "https://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "https://github.com/Sylius/Sylius/contributors"
+                }
+            ],
+            "description": "Amazing grids with support of filters and custom fields integrated into Symfony.",
+            "homepage": "https://sylius.com",
+            "keywords": [
+                "admin",
+                "api",
+                "crud",
+                "doctrine",
+                "grid",
+                "resource",
+                "sylius"
+            ],
+            "support": {
+                "issues": "https://github.com/Sylius/SyliusGridBundle/issues",
+                "source": "https://github.com/Sylius/SyliusGridBundle/tree/v1.15.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sylius",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-01-29T15:38:54+00:00"
+        },
+        {
+            "name": "sylius/registry",
+            "version": "v1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/Registry.git",
+                "reference": "e4f44f418f48d43e1b969e878fd962e7034aa3ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/Registry/zipball/e4f44f418f48d43e1b969e878fd962e7034aa3ad",
+                "reference": "e4f44f418f48d43e1b969e878fd962e7034aa3ad",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "^7.0",
+                "sylius-labs/coding-standard": "^3.2.2",
+                "vimeo/psalm": "4.4.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.6-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\Component\\Registry\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paweł Jędrzejewski",
+                    "homepage": "http://pjedrzejewski.com"
+                },
+                {
+                    "name": "Sylius project",
+                    "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
+                }
+            ],
+            "description": "Services registry.",
+            "homepage": "http://sylius.com",
+            "keywords": [
+                "registry",
+                "services"
+            ],
+            "support": {
+                "issues": "https://github.com/Sylius/Registry/issues",
+                "source": "https://github.com/Sylius/Registry/tree/v1.6.0"
+            },
+            "time": "2021-02-01T15:36:19+00:00"
+        },
+        {
+            "name": "sylius/resource-bundle",
+            "version": "v1.14.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/SyliusResourceBundle.git",
+                "reference": "ee88684feea78d11c3d87e3ffbdd0b289313434e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/SyliusResourceBundle/zipball/ee88684feea78d11c3d87e3ffbdd0b289313434e",
+                "reference": "ee88684feea78d11c3d87e3ffbdd0b289313434e",
+                "shasum": ""
+            },
+            "require": {
+                "babdev/pagerfanta-bundle": "^4.4",
+                "doctrine/annotations": "^2.0",
+                "doctrine/collections": "^2.2",
+                "doctrine/event-manager": "^1.1 || ^2.0",
+                "doctrine/inflector": "^2.0",
+                "doctrine/persistence": "^3.3 || ^4.0",
+                "php": "^8.2",
+                "sylius/registry": "^1.2",
+                "symfony/config": "^6.4 || ^7.4 || ^8.0",
+                "symfony/deprecation-contracts": "^3.5",
+                "symfony/expression-language": "^6.4 || ^7.4 || ^8.0",
+                "symfony/form": "^6.4 || ^7.4 || ^8.0",
+                "symfony/framework-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/http-foundation": "^6.4 || ^7.4 || ^8.0",
+                "symfony/intl": "^6.4 || ^7.4 || ^8.0",
+                "symfony/routing": "^6.4 || ^7.4 || ^8.0",
+                "symfony/security-core": "^6.4 || ^7.4 || ^8.0",
+                "symfony/security-csrf": "^6.4 || ^7.4 || ^8.0",
+                "symfony/string": "^6.4 || ^7.4 || ^8.0",
+                "symfony/translation": "^6.4 || ^7.4 || ^8.0",
+                "symfony/twig-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/validator": "^6.4 || ^7.4 || ^8.0",
+                "symfony/yaml": "^6.4 || ^7.4 || ^8.0",
+                "webmozart/assert": "^1.11",
+                "willdurand/negotiation": "^3.1"
+            },
+            "conflict": {
+                "behat/transliterator": "<1.2",
+                "doctrine/doctrine-bundle": "<2.0",
+                "doctrine/orm": "<2.18",
+                "doctrine/phpcr-odm": "<2.1",
+                "friendsofsymfony/rest-bundle": "<3.7",
+                "gedmo/doctrine-extensions": "<3.17.1",
+                "jms/serializer-bundle": "<5.5",
+                "pagerfanta/pagerfanta": "<4.4",
+                "symfony/workflow": "<6.4 || >=7.0,<7.4",
+                "twig/twig": "<3.0",
+                "willdurand/hateoas-bundle": "<2.5 || ^3.0",
+                "winzou/state-machine-bundle": "<0.6.2"
+            },
+            "replace": {
+                "sylius/resource": "self.version"
+            },
+            "require-dev": {
+                "coduo/php-matcher": "^6.0",
+                "doctrine/data-fixtures": "^2.0",
+                "doctrine/doctrine-bundle": "^2.13 || ^3.0 || ^4.0",
+                "doctrine/orm": "^2.18 || ^3.3",
+                "jackalope/jackalope": "^2.0",
+                "jackalope/jackalope-doctrine-dbal": "^2.0",
+                "matthiasnoback/symfony-dependency-injection-test": "^6.1.0",
+                "openlss/lib-array2xml": "^1.0",
+                "pagerfanta/pagerfanta": "^4.4",
+                "phpcr/phpcr": "^2.1",
+                "phpstan/phpstan": "^1.12",
+                "phpstan/phpstan-phpunit": "^1.4",
+                "phpstan/phpstan-webmozart-assert": "^1.2",
+                "phpunit/phpunit": "^10.0",
+                "rector/rector": "^0.18.2",
+                "sylius-labs/coding-standard": "^4.4",
+                "sylius/grid-bundle": "^1.13 || ^1.15@alpha",
+                "symfony/browser-kit": "^6.4 || ^7.4 || ^8.0",
+                "symfony/console": "^6.4 || ^7.4 || ^8.0",
+                "symfony/css-selector": "^6.4 || ^7.4 || ^8.0",
+                "symfony/dependency-injection": "^6.4 || ^7.4 || ^8.0",
+                "symfony/dotenv": "^6.4 || ^7.4 || ^8.0",
+                "symfony/http-kernel": "^6.4 || ^7.4 || ^8.0",
+                "symfony/messenger": "^6.4 || ^7.4 || ^8.0",
+                "symfony/security-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/serializer": "^6.4 || ^7.4 || ^8.0",
+                "symfony/stopwatch": "^6.4 || ^7.4 || ^8.0",
+                "symfony/uid": "^6.4 || ^7.4 || ^8.0",
+                "twig/twig": "^3.14",
+                "zenstruck/foundry": "^2.3"
+            },
+            "suggest": {
+                "doctrine/orm": "^2.20",
+                "sylius/locale": "^1.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "symfony": {
+                    "require": "8.0.*"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\Resource\\": "src/Component/src/",
+                    "Sylius\\Component\\Resource\\": "src/Component/legacy/src/",
+                    "Sylius\\Bundle\\ResourceBundle\\": "src/Bundle/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paweł Jędrzejewski",
+                    "homepage": "https://pjedrzejewski.com"
+                },
+                {
+                    "name": "Sylius project",
+                    "homepage": "https://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "https://github.com/Sylius/Sylius/contributors"
+                }
+            ],
+            "description": "Resource component for Sylius.",
+            "homepage": "https://sylius.com",
+            "keywords": [
+                "persistence",
+                "resource",
+                "storage",
+                "sylius"
+            ],
+            "support": {
+                "issues": "https://github.com/Sylius/SyliusResourceBundle/issues",
+                "source": "https://github.com/Sylius/SyliusResourceBundle/tree/v1.14.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sylius",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-02-03T08:37:38+00:00"
+        },
+        {
+            "name": "sylius/twig-extra",
+            "version": "v0.12.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/TwigExtra.git",
+                "reference": "f8714425e35f59ad7a07ebc4a274ebbb23859665"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/TwigExtra/zipball/f8714425e35f59ad7a07ebc4a274ebbb23859665",
+                "reference": "f8714425e35f59ad7a07ebc4a274ebbb23859665",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1",
+                "symfony/http-kernel": "^6.4 || ^7.4 || ^8.0",
+                "symfony/twig-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/ux-twig-component": "^2.17"
+            },
+            "conflict": {
+                "sylius/ui-bundle": "<2.0"
+            },
+            "require-dev": {
+                "matthiasnoback/symfony-dependency-injection-test": "^6.1.0",
+                "phpunit/phpunit": "^10.5",
+                "symfony/browser-kit": "^6.4 || ^7.4 || ^8.0",
+                "symfony/console": "^6.4 || ^7.4 || ^8.0",
+                "symfony/css-selector": "^6.4 || ^7.4 || ^8.0",
+                "symfony/dotenv": "^6.4 || ^7.4 || ^8.0",
+                "symfony/framework-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/runtime": "^6.4 || ^7.4 || ^8.0",
+                "symfony/yaml": "^6.4 || ^7.4 || ^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "symfony": {
+                    "require": "7.1.*"
+                },
+                "branch-alias": {
+                    "dev-main": "0.12-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\TwigExtra\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sylius project",
+                    "homepage": "https://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "https://github.com/Sylius/Stack/contributors"
+                }
+            ],
+            "description": "Additional Twig extensions for your Symfony projects",
+            "support": {
+                "issues": "https://github.com/Sylius/TwigExtra/issues",
+                "source": "https://github.com/Sylius/TwigExtra/tree/v0.12.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sylius",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-03-05T10:45:07+00:00"
+        },
+        {
+            "name": "sylius/twig-hooks",
+            "version": "v0.12.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/TwigHooks.git",
+                "reference": "face02d4b41a27615c57824163fa97a29055d080"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/TwigHooks/zipball/face02d4b41a27615c57824163fa97a29055d080",
+                "reference": "face02d4b41a27615c57824163fa97a29055d080",
+                "shasum": ""
+            },
+            "require": {
+                "laminas/laminas-stdlib": "^3.18",
+                "php": "^8.1",
+                "symfony/config": "^6.4 || ^7.4 || ^8.0",
+                "symfony/dependency-injection": "^6.4 || ^7.4 || ^8.0",
+                "symfony/expression-language": "^6.4 || ^7.4 || ^8.0",
+                "symfony/http-kernel": "^6.4 || ^7.4 || ^8.0",
+                "symfony/stopwatch": "^6.4 || ^7.4 || ^8.0",
+                "symfony/twig-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/ux-live-component": "^2.17",
+                "symfony/ux-twig-component": "^2.17",
+                "twig/twig": "^2.15 || ^3.0",
+                "webmozart/assert": "^1.9"
+            },
+            "require-dev": {
+                "matthiasnoback/symfony-config-test": "^6.1",
+                "matthiasnoback/symfony-dependency-injection-test": "^6.1.0",
+                "phpunit/phpunit": "^10.5",
+                "symfony/console": "^6.4 || ^7.4 || ^8.0",
+                "symfony/dom-crawler": "^6.4 || ^7.4 || ^8.0",
+                "symfony/dotenv": "^6.4 || ^7.4 || ^8.0",
+                "symfony/framework-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/runtime": "^6.4 || ^7.4 || ^8.0",
+                "symfony/twig-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/web-profiler-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/yaml": "^6.4 || ^7.4 || ^8.0"
+            },
+            "suggest": {
+                "symfony/ux-twig-component": "Symfony's package providing Twig components."
+            },
+            "type": "library",
+            "extra": {
+                "symfony": {
+                    "require": "7.1.*"
+                },
+                "branch-alias": {
+                    "dev-main": "0.12-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\TwigHooks\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sylius project",
+                    "homepage": "https://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "https://github.com/Sylius/Stack/contributors"
+                }
+            ],
+            "description": "Composable Twig layouts",
+            "support": {
+                "source": "https://github.com/Sylius/TwigHooks/tree/v0.12.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sylius",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-03-24T18:52:14+00:00"
+        },
+        {
+            "name": "sylius/ui-translations",
+            "version": "v0.12.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/UiTranslations.git",
+                "reference": "01930a3458dc2c3594d75ac5d3f828e2c2fea7f1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/UiTranslations/zipball/01930a3458dc2c3594d75ac5d3f828e2c2fea7f1",
+                "reference": "01930a3458dc2c3594d75ac5d3f828e2c2fea7f1",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1",
+                "symfony/translation": "^6.4 || ^7.4 || ^8.0",
+                "symfony/yaml": "^6.4 || ^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5",
+                "symfony/browser-kit": "^6.4 || ^7.4 || ^8.0",
+                "symfony/console": "^6.4 || ^7.4 || ^8.0",
+                "symfony/css-selector": "^6.4 || ^7.4 || ^8.0",
+                "symfony/dotenv": "^6.4 || ^7.4 || ^8.0",
+                "symfony/framework-bundle": "^6.4 || ^7.4 || ^8.0",
+                "symfony/http-kernel": "^6.4 || ^7.4 || ^8.0",
+                "symfony/twig-bundle": "^6.4 || ^7.4 || ^8.0",
+                "twig/twig": "^2.15 || ^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "symfony": {
+                    "require": "7.1.*"
+                },
+                "branch-alias": {
+                    "dev-main": "0.12-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\UiTranslations\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Basic UI translations",
+            "support": {
+                "issues": "https://github.com/Sylius/UiTranslations/issues",
+                "source": "https://github.com/Sylius/UiTranslations/tree/v0.12.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sylius",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-03-25T13:55:35+00:00"
         },
         {
             "name": "symfony/asset",
@@ -4846,6 +5907,185 @@
                 }
             ],
             "time": "2026-03-06T15:39:55+00:00"
+        },
+        {
+            "name": "symfony/http-client",
+            "version": "v7.4.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/http-client.git",
+                "reference": "01933e626c3de76bea1e22641e205e78f6a34342"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/http-client/zipball/01933e626c3de76bea1e22641e205e78f6a34342",
+                "reference": "01933e626c3de76bea1e22641e205e78f6a34342",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2",
+                "psr/log": "^1|^2|^3",
+                "symfony/deprecation-contracts": "^2.5|^3",
+                "symfony/http-client-contracts": "~3.4.4|^3.5.2",
+                "symfony/polyfill-php83": "^1.29",
+                "symfony/service-contracts": "^2.5|^3"
+            },
+            "conflict": {
+                "amphp/amp": "<2.5",
+                "amphp/socket": "<1.1",
+                "php-http/discovery": "<1.15",
+                "symfony/http-foundation": "<6.4"
+            },
+            "provide": {
+                "php-http/async-client-implementation": "*",
+                "php-http/client-implementation": "*",
+                "psr/http-client-implementation": "1.0",
+                "symfony/http-client-implementation": "3.0"
+            },
+            "require-dev": {
+                "amphp/http-client": "^4.2.1|^5.0",
+                "amphp/http-tunnel": "^1.0|^2.0",
+                "guzzlehttp/promises": "^1.4|^2.0",
+                "nyholm/psr7": "^1.0",
+                "php-http/httplug": "^1.0|^2.0",
+                "psr/http-client": "^1.0",
+                "symfony/amphp-http-client-meta": "^1.0|^2.0",
+                "symfony/cache": "^6.4|^7.0|^8.0",
+                "symfony/dependency-injection": "^6.4|^7.0|^8.0",
+                "symfony/http-kernel": "^6.4|^7.0|^8.0",
+                "symfony/messenger": "^6.4|^7.0|^8.0",
+                "symfony/process": "^6.4|^7.0|^8.0",
+                "symfony/rate-limiter": "^6.4|^7.0|^8.0",
+                "symfony/stopwatch": "^6.4|^7.0|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\HttpClient\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Provides powerful methods to fetch HTTP resources synchronously or asynchronously",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "http"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/http-client/tree/v7.4.8"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-03-30T12:55:43+00:00"
+        },
+        {
+            "name": "symfony/http-client-contracts",
+            "version": "v3.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/http-client-contracts.git",
+                "reference": "75d7043853a42837e68111812f4d964b01e5101c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/http-client-contracts/zipball/75d7043853a42837e68111812f4d964b01e5101c",
+                "reference": "75d7043853a42837e68111812f4d964b01e5101c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/contracts",
+                    "name": "symfony/contracts"
+                },
+                "branch-alias": {
+                    "dev-main": "3.6-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Contracts\\HttpClient\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Test/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Generic abstractions related to HTTP clients",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "abstractions",
+                "contracts",
+                "decoupling",
+                "interfaces",
+                "interoperability",
+                "standards"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/http-client-contracts/tree/v3.6.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2025-04-29T11:18:49+00:00"
         },
         {
             "name": "symfony/http-foundation",
@@ -7948,6 +9188,296 @@
             "time": "2026-01-03T23:30:35+00:00"
         },
         {
+            "name": "symfony/ux-autocomplete",
+            "version": "v2.34.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/ux-autocomplete.git",
+                "reference": "64983e630e687ae086e09d5fc0a7b5271a7747d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/ux-autocomplete/zipball/64983e630e687ae086e09d5fc0a7b5271a7747d7",
+                "reference": "64983e630e687ae086e09d5fc0a7b5271a7747d7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/dependency-injection": "^6.3|^7.0|^8.0",
+                "symfony/deprecation-contracts": "^2.5|^3",
+                "symfony/http-foundation": "^6.3|^7.0|^8.0",
+                "symfony/http-kernel": "^6.3|^7.0|^8.0",
+                "symfony/property-access": "^6.3|^7.0|^8.0"
+            },
+            "conflict": {
+                "doctrine/orm": "2.9.0 || 2.9.1"
+            },
+            "require-dev": {
+                "doctrine/collections": "^1.6.8|^2.0",
+                "doctrine/doctrine-bundle": "^2.4.3|^3.0|^4.0",
+                "doctrine/orm": "^2.9.4|^3.0",
+                "fakerphp/faker": "^1.22",
+                "mtdowling/jmespath.php": "^2.6",
+                "symfony/form": "^6.3|^7.0|^8.0",
+                "symfony/framework-bundle": "^6.3|^7.0|^8.0",
+                "symfony/maker-bundle": "^1.40",
+                "symfony/options-resolver": "^6.3|^7.0|^8.0",
+                "symfony/phpunit-bridge": "^6.3|^7.0|^8.0",
+                "symfony/process": "^6.3|^7.0|^8.0",
+                "symfony/security-bundle": "^6.3|^7.0|^8.0",
+                "symfony/twig-bundle": "^6.3|^7.0|^8.0",
+                "symfony/uid": "^6.3|^7.0|^8.0",
+                "twig/twig": "^2.14.7|^3.0.4",
+                "zenstruck/browser": "^1.1",
+                "zenstruck/foundry": "^2.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/ux",
+                    "name": "symfony/ux"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\UX\\Autocomplete\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "JavaScript Autocomplete functionality for Symfony",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "symfony-ux"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/ux-autocomplete/tree/v2.34.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-03-21T22:29:11+00:00"
+        },
+        {
+            "name": "symfony/ux-icons",
+            "version": "v2.34.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/ux-icons.git",
+                "reference": "b587495ec81bda7779ebef092dd0d3558767a254"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/ux-icons/zipball/b587495ec81bda7779ebef092dd0d3558767a254",
+                "reference": "b587495ec81bda7779ebef092dd0d3558767a254",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/framework-bundle": "^6.4|^7.0|^8.0",
+                "symfony/twig-bundle": "^6.4|^7.0|^8.0"
+            },
+            "conflict": {
+                "symfony/flex": "<1.13",
+                "symfony/ux-twig-component": "<2.21"
+            },
+            "require-dev": {
+                "psr/log": "^2|^3",
+                "symfony/asset-mapper": "^6.4|^7.0|^8.0",
+                "symfony/console": "^6.4|^7.0|^8.0",
+                "symfony/http-client": "^6.4|^7.0|^8.0",
+                "symfony/phpunit-bridge": "^6.3|^7.0|^8.0",
+                "symfony/ux-twig-component": "^2.14",
+                "zenstruck/console-test": "^1.5"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/ux",
+                    "name": "symfony/ux"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\UX\\Icons\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Bond",
+                    "email": "kevinbond@gmail.com"
+                },
+                {
+                    "name": "Simon André",
+                    "email": "smn.andre@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Renders local and remote SVG icons in your Twig templates.",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "icons",
+                "svg",
+                "symfony-ux",
+                "twig"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/ux-icons/tree/v2.34.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-02-26T12:39:55+00:00"
+        },
+        {
+            "name": "symfony/ux-live-component",
+            "version": "v2.34.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/ux-live-component.git",
+                "reference": "f246c189192121781c267e26a64ff6942ef61ab6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/ux-live-component/zipball/f246c189192121781c267e26a64ff6942ef61ab6",
+                "reference": "f246c189192121781c267e26a64ff6942ef61ab6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/deprecation-contracts": "^2.5|^3.0",
+                "symfony/property-access": "^5.4.5|^6.0|^7.0|^8.0",
+                "symfony/property-info": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/stimulus-bundle": "^2.9",
+                "symfony/ux-twig-component": "^2.33.0",
+                "twig/twig": "^3.10.3"
+            },
+            "conflict": {
+                "symfony/config": "<5.4.0",
+                "symfony/property-info": "~7.0.0",
+                "symfony/type-info": "<7.2"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^1.0|^2.0",
+                "doctrine/collections": "^1.6.8|^2.0",
+                "doctrine/doctrine-bundle": "^2.4.3|^3.0|^4.0",
+                "doctrine/orm": "^2.9.4|^3.0",
+                "doctrine/persistence": "^2.5.2|^3.0|^4.0",
+                "phpdocumentor/reflection-docblock": "^5.6.2",
+                "symfony/config": "^6.3|^7.0|^8.0",
+                "symfony/dependency-injection": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/expression-language": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/form": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/framework-bundle": "^5.4|^6.1|^7.0|^8.0",
+                "symfony/http-kernel": "^6.1|^7.0|^8.0",
+                "symfony/options-resolver": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/phpunit-bridge": "^6.1|^7.0|^8.0",
+                "symfony/security-bundle": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/serializer": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/twig-bundle": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/uid": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/validator": "^5.4|^6.0|^7.0|^8.0",
+                "zenstruck/browser": "^1.2.0",
+                "zenstruck/foundry": "^2.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/ux",
+                    "name": "symfony/ux"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\UX\\LiveComponent\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Live components for Symfony",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "components",
+                "symfony-ux",
+                "twig"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/ux-live-component/tree/v2.34.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-03-21T22:29:11+00:00"
+        },
+        {
             "name": "symfony/ux-twig-component",
             "version": "v2.33.0",
             "source": {
@@ -8670,6 +10200,120 @@
                 }
             ],
             "time": "2026-03-17T21:31:11+00:00"
+        },
+        {
+            "name": "webmozart/assert",
+            "version": "1.12.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webmozarts/assert.git",
+                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/9be6926d8b485f55b9229203f962b51ed377ba68",
+                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-date": "*",
+                "ext-filter": "*",
+                "php": "^7.2 || ^8.0"
+            },
+            "suggest": {
+                "ext-intl": "",
+                "ext-simplexml": "",
+                "ext-spl": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.10-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webmozart\\Assert\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
+                }
+            ],
+            "description": "Assertions to validate method input/output with nice error messages.",
+            "keywords": [
+                "assert",
+                "check",
+                "validate"
+            ],
+            "support": {
+                "issues": "https://github.com/webmozarts/assert/issues",
+                "source": "https://github.com/webmozarts/assert/tree/1.12.1"
+            },
+            "time": "2025-10-29T15:56:20+00:00"
+        },
+        {
+            "name": "willdurand/negotiation",
+            "version": "3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/willdurand/Negotiation.git",
+                "reference": "68e9ea0553ef6e2ee8db5c1d98829f111e623ec2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/willdurand/Negotiation/zipball/68e9ea0553ef6e2ee8db5c1d98829f111e623ec2",
+                "reference": "68e9ea0553ef6e2ee8db5c1d98829f111e623ec2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Negotiation\\": "src/Negotiation"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William Durand",
+                    "email": "will+git@drnd.me"
+                }
+            ],
+            "description": "Content Negotiation tools for PHP provided as a standalone library.",
+            "homepage": "http://williamdurand.fr/Negotiation/",
+            "keywords": [
+                "accept",
+                "content",
+                "format",
+                "header",
+                "negotiation"
+            ],
+            "support": {
+                "issues": "https://github.com/willdurand/Negotiation/issues",
+                "source": "https://github.com/willdurand/Negotiation/tree/3.1.0"
+            },
+            "time": "2022-01-30T20:08:53+00:00"
         }
     ],
     "packages-dev": [

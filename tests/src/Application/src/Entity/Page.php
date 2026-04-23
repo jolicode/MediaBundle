@@ -7,13 +7,28 @@ use JoliCode\MediaBundle\DeleteBehavior\Attribute\MediaDeleteBehavior;
 use JoliCode\MediaBundle\DeleteBehavior\Strategy;
 use JoliCode\MediaBundle\Doctrine\Types;
 use JoliCode\MediaBundle\Model\Media;
+use JoliCode\MediaBundle\Tests\Application\Form\PageType;
 use JoliCode\MediaBundle\Validator as JoliAssert;
+use Sylius\Component\Resource\Model\ResourceInterface;
+use Sylius\Resource\Metadata\AsResource;
+use Sylius\Resource\Metadata\Create;
+use Sylius\Resource\Metadata\Index;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[UniqueEntity('slug')]
-class Page implements \Stringable
+#[AsResource(
+    section: 'sylius_admin',
+    formType: PageType::class,
+    templatesDir: '@SyliusAdminUi/crud',
+    routePrefix: '/sylius-admin',
+    operations: [
+        new Create(),
+        new Index(),
+    ],
+)]
+class Page implements \Stringable, ResourceInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::GUID)]
@@ -21,7 +36,7 @@ class Page implements \Stringable
 
     #[ORM\Column]
     #[Assert\Length(max: 255)]
-    private string $title;
+    private ?string $title = null;
 
     #[ORM\Column(unique: true)]
     #[Assert\Length(max: 255)]
@@ -48,7 +63,7 @@ class Page implements \Stringable
 
     public function __toString(): string
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
     public function getId(): string
@@ -56,7 +71,7 @@ class Page implements \Stringable
         return $this->id;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }

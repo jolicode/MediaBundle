@@ -1,0 +1,22 @@
+{% trans_default_domain 'JoliMediaSyliusBundle' %}
+
+{%- if media.fileType == 'image' -%}
+    <twig:joli:Img
+        media="{{ media }}"
+        class="{{ className|default(null) }}"
+        variation="{{ variation is defined and variation == false ? null : variation|default('joli_media_sylius_admin') }}"
+        skipAutoDimensions="{{ skipAutoDimensions|default(false) }}"
+    />
+{%- else -%}
+    {% if media.fileType == 'pdf' %}
+        {{ ux_icon('tabler:file-type-pdf', iconAttributes|default({})) }}
+    {% elseif media.fileType == 'video' %}
+        {{ ux_icon('tabler:video') }}
+    {% elseif media.fileType == 'audio' %}
+        {{ ux_icon('gridicons:audio', iconAttributes|default({})) }}
+    {% elseif media.fileType == 'text' %}
+        {{ ux_icon('fa7-solid:file-lines', iconAttributes|default({})) }}
+    {% else %}
+        {{ ux_icon('tabler:file', iconAttributes|default({})) }}
+    {% endif %}
+{%- endif -%}

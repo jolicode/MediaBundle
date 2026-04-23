@@ -11,6 +11,7 @@ $finder = PhpCsFixer\Finder::create()
         'demo',
         'src/Bridge/EasyAdmin/src/JoliMediaEasyAdminBundle.php',
         'src/Bridge/SonataAdmin/src/JoliMediaSonataAdminBundle.php',
+        'src/Bridge/Sylius/src/JoliMediaSyliusBundle.php',
         'src/JoliMediaBundle.php',
     ])
 ;

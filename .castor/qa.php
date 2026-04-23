@@ -102,7 +102,7 @@ function phpunit(?string $phpVersion = null, #[AsRawTokens] array $rawTokens = [
 
     docker_run('composer update -n --prefer-dist --optimize-autoloader', null, $phpVersion);
 
-    return docker_exit_code('vendor/bin/phpunit' . implode(' ', $filteredTokens), null, $phpVersion);
+    return docker_exit_code('vendor/bin/phpunit ' . implode(' ', $filteredTokens), null, $phpVersion);
 }
 
 #[AsTask(description: 'Run the rector upgrade')]

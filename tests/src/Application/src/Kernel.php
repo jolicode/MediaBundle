@@ -2,12 +2,22 @@
 
 namespace JoliCode\MediaBundle\Tests\Application;
 
+use BabDev\PagerfantaBundle\BabDevPagerfantaBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
 use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\JoliMediaEasyAdminBundle;
+use JoliCode\MediaBundle\Bridge\Sylius\JoliMediaSyliusBundle;
 use JoliCode\MediaBundle\JoliMediaBundle;
+use Knp\Bundle\MenuBundle\KnpMenuBundle;
 use League\FlysystemBundle\FlysystemBundle;
+use Sylius\AdminUi\Symfony\SyliusAdminUiBundle;
+use Sylius\BootstrapAdminUi\Symfony\SyliusBootstrapAdminUiBundle;
+use Sylius\Bundle\GridBundle\SyliusGridBundle;
+use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
+use Sylius\TwigExtra\Symfony\SyliusTwigExtraBundle;
+use Sylius\TwigHooks\SyliusTwigHooksBundle;
+use Sylius\UiTranslations\Symfony\SyliusUiTranslationsBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\MonologBundle\MonologBundle;
@@ -17,6 +27,8 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Symfony\UX\Icons\UXIconsBundle;
+use Symfony\UX\StimulusBundle\StimulusBundle;
 use Symfony\UX\TwigComponent\TwigComponentBundle;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
@@ -39,11 +51,23 @@ final class Kernel extends SymfonyKernel
             new FrameworkBundle(),
             new JoliMediaBundle(),
             new JoliMediaEasyAdminBundle(),
+            new JoliMediaSyliusBundle(),
+            new KnpMenuBundle(),
             new MonologBundle(),
             new SecurityBundle(),
+            new BabDevPagerfantaBundle(),
+            new SyliusAdminUiBundle(),
+            new SyliusBootstrapAdminUiBundle(),
+            new SyliusGridBundle(),
+            new SyliusResourceBundle(),
+            new SyliusTwigHooksBundle(),
+            new SyliusTwigExtraBundle(),
+            new SyliusUiTranslationsBundle(),
+            new StimulusBundle(),
             new TwigBundle(),
             new TwigComponentBundle(),
             new TwigExtraBundle(),
+            new UXIconsBundle(),
         ];
     }
 

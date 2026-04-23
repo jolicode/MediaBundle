@@ -1,0 +1,9 @@
+{% import ['@SyliusBootstrapAdminUi/shared/helper/table.html.twig', '@SyliusAdmin/shared/helper/table.html.twig'] as table %}
+
+{% set resources = hookable_metadata.context.resources %}
+
+<thead>
+    <tr>
+        {{ table.headers(resources, resources.definition, app.request.attributes) }}
+    </tr>
+</thead>

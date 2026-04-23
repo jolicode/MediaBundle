@@ -1,0 +1,81 @@
+action:
+    choose_a_file: 'Choisir un fichier'
+    copy: 'Copier'
+    copied: 'Copié'
+    delete_directory: 'Supprimer ce dossier'
+    parent: 'Parent'
+    regenerate: 'Régénérer'
+    remove: 'Supprimer'
+    rename: 'Renommer'
+    rename_directory: 'Renommer le dossier'
+    cancel: 'Annuler'
+    entity_actions: 'Actions'
+    move_file: 'Déplacer ce fichier'
+    move_to_this_directory: 'Déplacer dans ce répertoire'
+browser:
+    audio:
+        unsupported: 'Votre navigateur ne supporte pas cet élément audio.'
+    video:
+        unsupported: 'Votre navigateur ne supporte pas cet élément vidéo.'
+directory:
+    label: 'Répertoire'
+    create: 'Créer un nouveau dossier'
+    create_success: 'Répertoire "%directory%" créé avec succès'
+    create_failure: 'Échec de la création du répertoire "%directory%" : %error%'
+    name_required: 'Le nom du répertoire est requis'
+    rename_success: 'Le répertoire %from% a été renommé avec succès en %to%.'
+media:
+    add: 'Ajouter un média'
+    dimensions: 'Dimensions'
+    name: 'Nom'
+    size:
+        label_long: 'Taille du fichier'
+    type:
+        label: 'Type'
+        label_long: 'Type de fichier'
+        audio: 'Audio'
+        csv: 'CSV'
+        excel: 'Excel'
+        file: 'Fichier'
+        html: 'HTML'
+        image: 'Image'
+        pdf: 'PDF'
+        powerpoint: 'PowerPoint'
+        text: 'Texte'
+        video: 'Vidéo'
+        word: 'Word'
+        xml: 'XML'
+        zip: 'ZIP'
+    unavailable:
+        simple: 'Aucun média sélectionné.'
+    url:
+        label_long: 'URL du média'
+    inaccessible:
+        explanation: 'Le média "%media%" n''est pas accessible. Il a peut-être été supprimé ou déplacé.'
+        label: 'Média inaccessible'
+    error:
+        required: 'Veuillez choisir un fichier média.'
+    move_modal:
+        title: 'Déplacer le média'
+        content: 'Voulez-vous vraiment déplacer ce média vers le répertoire %directory% ?'
+    move_success: 'Le fichier %from% a été déplacé avec succès vers %to%.'
+    move_failure: 'Échec du déplacement du média de %from% vers %to%. Erreur : %error%'
+    rename_success: 'Le fichier %from% a été renommé avec succès en %to%.'
+    upload:
+        dropzone:
+            default_message: 'Déposez les fichiers ici pour les télécharger'
+            fallback_message: 'Votre navigateur ne supporte pas le téléchargement par glisser-déposer.'
+            fallback_text: 'Veuillez utiliser le formulaire ci-dessous pour télécharger vos fichiers.'
+            file_too_big: 'Le fichier est trop volumineux ({{filesize}}Mo). Taille maximale: {{maxFilesize}}Mo.'
+            invalid_file_type: 'Vous ne pouvez pas télécharger de fichiers de ce type.'
+            max_files_exceeded: 'Vous ne pouvez plus télécharger de fichiers.'
+document:
+    download: 'Télécharger le document'
+no_file_found: 'Aucun fichier trouvé'
+preview:
+    unavailable: 'Aperçu non disponible.'
+root: 'Racine'
+variation:
+    label: 'Variation'
+    stored: 'Stockée ?'
+media_library: 'Médiathèque'

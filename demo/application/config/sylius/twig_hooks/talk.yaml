@@ -1,0 +1,15 @@
+sylius_twig_hooks:
+    hooks:
+        'sylius_admin.post.create.content':
+            form:
+                component: 'App\Twig\Component\PostFormComponent'
+                props:
+                    form: '@=_context.form'
+                    resource: '@=_context.resource'
+
+        'sylius_admin.post.update.content':
+            form:
+                component: 'App\Twig\Component\PostFormComponent'
+                props:
+                    form: '@=_context.form'
+                    resource: '@=_context.resource'

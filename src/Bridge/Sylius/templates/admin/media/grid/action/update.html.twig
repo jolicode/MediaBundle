@@ -1,0 +1,5 @@
+{% set message = action.label|default('sylius.ui.edit') %}
+
+<button type="button" class="btn btn-icon media-rename-btn" data-component="media-rename" data-bs-toggle="tooltip" title="{{ message|trans }}">
+    {{ ux_icon('tabler:pencil') }}
+</button>

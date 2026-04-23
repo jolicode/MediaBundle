@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+
+return static function (ContainerConfigurator $container): void {
+    $container->extension('sylius_twig_hooks', [
+        'hooks' => [
+            'sylius_admin.base#stylesheets' => [
+                'joli_media_sylius_admin' => [
+                    'template' => '@JoliMediaSylius/admin/shared/layout/base/styles.html.twig',
+                ],
+            ],
+
+            'sylius_admin.base#javascripts' => [
+                'joli_media_sylius_admin' => [
+                    'template' => '@JoliMediaSylius/admin/shared/layout/base/scripts.html.twig',
+                ],
+            ],
+        ],
+    ]);
+};

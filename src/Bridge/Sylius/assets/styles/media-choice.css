@@ -1,0 +1,48 @@
+/* ==========================================================================
+   Media Choice
+   ========================================================================== */
+
+/* Custom properties
+   ========================================================================== */
+
+.media-choice {
+  --media-preview-max-width: 12.5rem;
+  --media-preview-aspect-ratio: initial;
+}
+
+.modal-media-choice {
+  --bs-modal-width: 90% !important;
+}
+
+.modal-media-choice .modal-dialog {
+  max-width: 90vw;
+}
+
+/* Rules
+   ========================================================================== */
+
+.media-choice {
+  input.form-control {
+    height: 0;
+    opacity: 0;
+    padding: 0;
+    width: 15rem
+  }
+
+  &.empty .hide-when-empty {
+    display: none;
+  }
+
+  .form-help.form-error {
+    display: none;
+}
+}
+
+.media-choice__actions {
+  display: block;
+}
+
+.has-error .media-choice .form-help.form-error {
+  display: block;
+  color: var(--red-500);
+}

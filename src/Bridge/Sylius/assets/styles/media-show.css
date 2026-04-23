@@ -1,0 +1,225 @@
+/* ==========================================================================
+   Media Show (Detail Page)
+   ========================================================================== */
+
+.long-text-break {
+    word-break: break-all;
+    white-space: normal;
+}
+
+.jm-show-panel {
+    background-color: var(--white);
+}
+
+[data-bs-theme="dark"] {
+    .jm-show-panel {
+        background-color: var(--gray-900);
+    }
+}
+
+.jm-show-panel dl.datalist {
+    margin: 0;
+    padding: 0;
+}
+
+.jm-show-panel dl.datalist .data-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--jm-border-color);
+}
+
+.jm-show-panel dl.datalist .data-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.jm-show-panel dl.datalist .data-row dt {
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 0.375rem;
+}
+
+[data-bs-theme="dark"] {
+    .jm-show-panel dl.datalist .data-row dt {
+        color: var(--gray-300);
+    }
+}
+
+.jm-show-panel dl.datalist .data-row dd {
+    margin: 0;
+    color: var(--gray-900);
+}
+
+[data-bs-theme="dark"] {
+    .jm-show-panel dl.datalist .data-row dd {
+        color: var(--gray-100);
+    }
+}
+
+.jm-show-panel .media-preview {
+    max-height: 600px;
+    --media-preview-max-width: 800px;
+    margin-bottom: 1rem;
+}
+
+.jm-show-panel .jm-box {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+    border: 1px solid var(--jm-border-color);
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    background-color: var(--gray-100);
+}
+
+[data-bs-theme="dark"] {
+    .jm-show-panel .jm-box {
+        background-color: var(--gray-800);
+    }
+}
+
+.jm-show-panel .jm-box pre {
+    flex: 1;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+[data-bs-theme="dark"] {
+    .jm-show-panel .jm-box pre {
+        background-color: transparent;
+    }
+}
+
+.jm-show-panel .jm-box pre code {
+    color: var(--bs-body-color);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.8125rem;
+}
+
+[data-bs-theme="dark"] {
+    .jm-show-panel .jm-box pre code {
+        color: var(--gray-200);
+    }
+}
+
+/* Folder Choice Modal */
+.folder-choice-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+#modal-folder-choice .modal-dialog {
+    max-width: 90%;
+    width: 90%;
+}
+
+.folder-choice-content .gallery-grid-item {
+    width: 11.25rem;
+}
+
+.folder-modal-breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--gray-700);
+}
+
+[data-bs-theme="dark"] {
+    .folder-modal-breadcrumb {
+        color: var(--gray-300);
+    }
+}
+
+.folder-modal-breadcrumb a {
+    color: var(--bs-link-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.folder-modal-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.folder-modal-breadcrumb .breadcrumb-separator {
+    color: var(--gray-500);
+}
+
+[data-bs-theme="dark"] {
+    .folder-modal-breadcrumb .breadcrumb-separator {
+        color: var(--gray-400);
+    }
+}
+
+.folder-modal-breadcrumb .breadcrumb-current {
+    color: var(--gray-900);
+    font-weight: 500;
+}
+
+[data-bs-theme="dark"] {
+    .folder-modal-breadcrumb .breadcrumb-current {
+        color: var(--gray-100);
+    }
+}
+
+.folder-parent {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+[data-bs-theme="dark"] {
+    .folder-parent {
+        border-bottom-color: var(--gray-700);
+    }
+}
+
+.folder-parent a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    background-color: var(--gray-100);
+    color: var(--gray-900);
+    text-decoration: none;
+    transition: background-color 0.15s ease-in-out;
+}
+
+[data-bs-theme="dark"] {
+    .folder-parent a {
+        background-color: var(--gray-800);
+        color: var(--gray-100);
+    }
+}
+
+.folder-parent a:hover {
+    background-color: var(--gray-200);
+    text-decoration: none;
+}
+
+[data-bs-theme="dark"] {
+    .folder-parent a:hover {
+        background-color: var(--gray-700);
+    }
+}
+
+.folder-parent .folder-icon {
+    color: var(--bs-primary);
+    flex-shrink: 0;
+}
+
+.folder-parent .folder-name {
+    flex: 1;
+    font-weight: 500;
+}

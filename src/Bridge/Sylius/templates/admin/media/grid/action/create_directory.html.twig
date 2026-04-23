@@ -1,0 +1,9 @@
+{% set message = action.label %}
+{% if message is empty %}
+    {% set message = 'sylius.ui.create' %}
+{% endif %}
+
+<a href="#" class="btn" data-component="directory-create">
+    {{ ux_icon(action.icon|default('tabler:plus'), {'class': 'icon dropdown-item-icon'}) }}
+    {{ message|trans }}
+</a>

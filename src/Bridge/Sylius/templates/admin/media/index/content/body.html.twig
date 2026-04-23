@@ -1,0 +1,8 @@
+{% set current_key = hookable_metadata.context.current_key %}
+
+<div class="page-body">
+    <meta name="current-key" content="{{ current_key }}">
+    <div class="container-xl">
+        {% hook 'body' %}
+    </div>
+</div>

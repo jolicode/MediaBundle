@@ -1,0 +1,12 @@
+{
+  "entrypoints": {
+    "joli-media-sylius-admin": {
+      "css": [
+        "./joli-media-sylius-admin.2f351929.css"
+      ],
+      "js": [
+        "./joli-media-sylius-admin.8a9dea10.js"
+      ]
+    }
+  }
+}

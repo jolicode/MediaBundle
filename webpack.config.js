@@ -6,7 +6,6 @@ Encore
     .setPublicPath('./')
     .setManifestKeyPrefix('')
     .cleanupOutputBeforeBuild()
-    .enableSourceMaps(false)
     .enableVersioning(true)
     .disableSingleRuntimeChunk()
     .enableSourceMaps(!Encore.isProduction())
@@ -22,7 +21,6 @@ Encore
     .setPublicPath('./')
     .setManifestKeyPrefix('')
     .cleanupOutputBeforeBuild()
-    .enableSourceMaps(false)
     .enableVersioning(true)
     .disableSingleRuntimeChunk()
     .enableSourceMaps(!Encore.isProduction())
@@ -32,4 +30,19 @@ const sonataAdminConfig = Encore.getWebpackConfig();
 sonataAdminConfig.name = 'sonataAdminConfig';
 Encore.reset();
 
-module.exports = [easyAdminConfig, sonataAdminConfig];
+// JoliMediaSyliusAdminBundle
+Encore
+    .setOutputPath('./src/Bridge/SyliusAdmin/public/')
+    .setPublicPath('./')
+    .setManifestKeyPrefix('')
+    .cleanupOutputBeforeBuild()
+    .enableVersioning(true)
+    .disableSingleRuntimeChunk()
+    .enableSourceMaps(!Encore.isProduction())
+    .addEntry('joli-media-sylius-admin', './src/Bridge/SyliusAdmin/assets/js/joli-media-sylius-admin.js')
+;
+const syliusAdminConfig = Encore.getWebpackConfig();
+syliusAdminConfig.name = 'syliusAdminConfig';
+Encore.reset();
+
+module.exports = [easyAdminConfig, sonataAdminConfig, syliusAdminConfig];

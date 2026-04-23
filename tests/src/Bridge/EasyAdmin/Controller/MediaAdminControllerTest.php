@@ -144,7 +144,7 @@ class MediaAdminControllerTest extends WebTestCase
 
         $gridViewLink = $crawler->selectLink('Grid view');
         $this->assertStringContainsString('active', (string) $gridViewLink->attr('class')); // grid is default
-        $this->assertSelectorCount(5, '.gallery-grid-item');
+        $this->assertSelectorCount(6, '.gallery-grid-item');
         $this->assertSelectorNotExists('.gallery-list-item');
 
         $listViewLink = $crawler->selectLink('List view');
@@ -155,7 +155,7 @@ class MediaAdminControllerTest extends WebTestCase
         $listViewLink = $crawler->selectLink('List view');
         $this->assertStringContainsString('active', (string) $listViewLink->attr('class'));
         $this->assertSelectorNotExists('.gallery-grid-item');
-        $this->assertSelectorCount(5, '.gallery-list-item');
+        $this->assertSelectorCount(6, '.gallery-list-item');
 
         $gridViewLink = $crawler->selectLink('Grid view');
         $this->assertStringNotContainsString('active', (string) $gridViewLink->attr('class'));
@@ -163,7 +163,7 @@ class MediaAdminControllerTest extends WebTestCase
         $crawler = $this->client->click($gridViewLink->link()); // back to grid
 
         $this->assertStringContainsString('active', (string) $crawler->selectLink('Grid view')->attr('class'));
-        $this->assertSelectorCount(5, '.gallery-grid-item');
+        $this->assertSelectorCount(6, '.gallery-grid-item');
         $this->assertSelectorNotExists('.gallery-list-item');
 
         // test the view mode inside a subfolder

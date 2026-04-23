@@ -1,0 +1,82 @@
+action:
+    choose_a_file: 'Choose a file'
+    copy: 'Copy'
+    copied: 'Copied'
+    delete_directory: 'Delete this directory'
+    parent: 'Parent'
+    regenerate: 'Regenerate'
+    remove: 'Remove'
+    rename: 'Rename'
+    rename_directory: 'Rename directory'
+    cancel: 'Cancel'
+    entity_actions: 'Actions'
+    move_file: 'Move this file'
+    move_to_this_directory: 'Move to this directory'
+browser:
+    audio:
+        unsupported: 'Your browser does not support the audio element.'
+    video:
+        unsupported: 'Your browser does not support the video element.'
+directory:
+    label: 'Directory'
+    create: 'Create a new directory'
+    create_success: 'Directory "%directory%" created successfully'
+    create_failure: 'Failed to create the directory "%directory%": %error%'
+    name: 'Directory name'
+    name_required: 'Directory name is required'
+    rename_success: 'The directory "%from%" was successfully renamed to "%to%"'
+media:
+    add: 'Add media'
+    dimensions: 'Dimensions'
+    name: 'Name'
+    size:
+        label_long: 'File size'
+    type:
+        label: 'Type'
+        label_long: 'File type'
+        audio: 'Audio'
+        csv: 'CSV'
+        excel: 'Excel'
+        file: 'File'
+        html: 'HTML'
+        image: 'Image'
+        pdf: 'PDF'
+        powerpoint: 'PowerPoint'
+        text: 'Text'
+        video: 'Video'
+        word: 'Word'
+        xml: 'XML'
+        zip: 'ZIP'
+    unavailable:
+        simple: 'No media selected.'
+    url:
+        label_long: 'Media URL'
+    inaccessible:
+        explanation: 'The media "%media%" is not accessible. It may have been deleted or moved.'
+        label: 'Inaccessible media'
+    error:
+        required: 'Please choose a media file.'
+    move_modal:
+        title: 'Move the media'
+        content: 'Do you really want to move this media to the directory %directory%?'
+    move_success: 'The file %from% was successfully moved to %to%.'
+    move_failure: 'Failed to move the media from %from% to %to%. Error: %error%'
+    rename_success: 'The file %from% was successfully renamed to %to%.'
+    upload:
+        dropzone:
+            default_message: 'Drop files here to upload'
+            fallback_message: 'Your browser does not support drag''n''drop file uploads.'
+            fallback_text: 'Please use the fallback form below to upload your files like in the olden days.'
+            file_too_big: 'File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.'
+            invalid_file_type: 'You can''t upload files of this type.'
+            max_files_exceeded: 'You can''t upload any more files.'
+document:
+    download: 'Download the document'
+no_file_found: 'No file found'
+preview:
+    unavailable: 'Preview not available.'
+root: 'Root'
+variation:
+    label: 'Variation'
+    stored: 'Stored?'
+media_library: 'Media library'

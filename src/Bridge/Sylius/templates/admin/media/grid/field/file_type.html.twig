@@ -1,0 +1,10 @@
+{% set file_type_badge = {
+    'audio': 'bg-orange-lt',
+    'image': 'bg-green-lt',
+    'pdf': 'bg-yellow-lt',
+    'video': 'bg-red-lt',
+} %}
+
+<span class="badge {{ file_type_badge[data]|default('bg-blue-lt') }}">
+    {{ data|title }}
+</span>

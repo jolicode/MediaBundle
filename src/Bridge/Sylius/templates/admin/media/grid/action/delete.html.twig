@@ -1,0 +1,8 @@
+{#TODO find another way to detect the component#}
+{% set delete_modal = sylius_route_exists('sylius_admin_ui_dashboard') ? 'sylius_bootstrap_admin_ui:delete_modal' : 'sylius_admin:delete_modal' %}
+
+{{ component(delete_modal, {
+    id: data.path,
+    modal_id: 'delete-directory-modal-' ~ random(),
+    path: path('joli_media_sylius_admin_delete', {'key': data.path})
+}) }}

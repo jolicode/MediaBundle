@@ -1,0 +1,59 @@
+{% set definition = hookable_metadata.context.resources.definition %}
+{% set directories = hookable_metadata.context.directories %}
+
+{% set key = hookable_metadata.context.key %}
+
+{% for directory in directories %}
+    {% set path = path('joli_media_sylius_admin_explore', {'key': directory}) %}
+
+    <tr class="item" {{ sylius_test_html_attribute('directory-row') }} data-directory="{{ directory }}" data-delete-directory-path="{{ path('joli_media_sylius_admin_delete_directory') }}">
+        {% for field in definition.enabledFields|sylius_sort_by('position') %}
+            <td {% if field.options.vars.td_class is defined %}  class="{{ field.options.vars.td_class }}"{% endif %}>
+                {% if field.name == 'image' %}
+                    {{ ux_icon('tabler:folder') }}
+                {% elseif field.name == 'fileType' %}
+                    <div class="badge bg-blue-lt">{{ 'Directory' }}</div>
+                {% elseif field.name == 'path' %}
+                    <a class="text-decoration-none" href="{{ path }}">
+                        <span class="directory-name">{{ directory|joli_media_admin_basename }}</span>
+                    </a>
+                    <form class="directory-rename-form d-none" action="{{ path('joli_media_sylius_admin_rename_directory') }}" method="POST">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_rename_directory') }}">
+                        <input type="hidden" name="oldPath" class="directory-rename-old-path" value="{{ directory }}">
+                        <input type="hidden" name="newPath" class="directory-rename-new-path" value="">
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control directory-rename-input" value="{{ directory|joli_media_admin_basename }}">
+                            <button type="submit" class="btn btn-primary">
+                                {{ ux_icon('tabler:check') }}
+                            </button>
+                            <button type="button" class="btn btn-secondary directory-rename-cancel-btn">
+                                {{ ux_icon('tabler:x') }}
+                            </button>
+                        </div>
+                    </form>
+                {% endif %}
+            </td>
+        {% endfor %}
+        {% if definition.actionGroups.item is defined and definition.getEnabledActions('item')|length > 0 %}
+            <td>
+                <div class="d-flex gap-1 justify-content-end">
+                    <a href="{{ path }}" class="btn btn-icon" data-bs-toggle="tooltip" title="{{ 'sylius.ui.show'|trans }}">
+                        {{ ux_icon('tabler:eye') }}
+                    </a>
+                    <button type="button" class="btn btn-icon directory-rename-btn" data-component="directory-rename" data-bs-toggle="tooltip" title="{{ 'Rename'|trans }}">
+                        {{ ux_icon('tabler:pencil') }}
+                    </button>
+                    {#TODO find another way to detect the component#}
+                    {% set delete_modal = sylius_route_exists('sylius_admin_ui_dashboard') ? 'sylius_bootstrap_admin_ui:delete_modal' : 'sylius_admin:delete_modal' %}
+
+                    {{ component(delete_modal, {
+                        id: directory,
+                        modal_id: 'delete-directory-modal-' ~ loop.index ,
+                        path: path('joli_media_sylius_admin_delete_directory', {'key': directory})
+                    }) }}
+
+                </div>
+            </td>
+        {% endif %}
+    </tr>
+{% endfor %}

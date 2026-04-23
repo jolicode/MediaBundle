@@ -1,0 +1,28 @@
+/* ==========================================================================
+   Box
+   ========================================================================== */
+
+/* Custom properties
+   ========================================================================== */
+
+.jm-box {
+   --jm-box-background-color: var(--gray-50);
+   --code-color: var(--jm-code-color);
+}
+
+[data-bs-theme="dark"] {
+  .jm-box {
+    --jm-box-background-color: var(--true-gray-800);
+  }
+}
+
+
+/* Rules
+   ========================================================================== */
+
+.jm-box {
+  border: solid var(--gray-200) 1px;
+  padding: 0.625rem;
+  border-radius: 0.25rem;
+  background-color: var(--jm-box-background-color);
+}

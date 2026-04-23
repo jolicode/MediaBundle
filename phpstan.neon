@@ -11,6 +11,7 @@ parameters:
         - castor.php
         - src/Bridge/EasyAdmin/src/JoliMediaEasyAdminBundle.php
         - src/Bridge/SonataAdmin/src/JoliMediaSonataAdminBundle.php
+        - src/Bridge/Sylius/src/JoliMediaSyliusBundle.php
         - src/JoliMediaBundle.php
     inferPrivatePropertyTypeFromConstructor: true
 

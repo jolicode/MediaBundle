@@ -1,0 +1,14 @@
+{% set config = hookable_metadata.context.config %}
+{% set media = hookable_metadata.context.media %}
+
+{% set show_tabs = config.isVisible('show_variations_list') and media.variations|length > 0 %}
+
+{% if show_tabs %}
+<div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+        {% hook 'header' %}
+    </ul>
+</div>
+{% else %}
+    {% hook 'header' %}
+{% endif %}

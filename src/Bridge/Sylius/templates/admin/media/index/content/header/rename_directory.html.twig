@@ -1,0 +1,18 @@
+{% set key = app.request.attributes.get('key', '') %}
+
+{% if key != '' %}
+    <form class="directory-rename-form d-none mt-2" data-component="directory-rename-form" action="{{ path('joli_media_sylius_admin_rename_directory') }}" method="POST">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_rename_directory') }}" />
+        <input type="hidden" name="oldPath" value="{{ key }}">
+
+        <div class="input-group input-group-sm">
+            <input type="text" class="form-control directory-rename-input" placeholder="New folder name" value="{{ key|joli_media_admin_basename }}">
+            <button type="submit" class="btn btn-primary">
+                {{ ux_icon('tabler:check') }}
+            </button>
+            <button type="button" class="btn btn-secondary directory-rename-cancel-btn">
+                {{ ux_icon('tabler:x') }}
+            </button>
+        </div>
+    </form>
+{% endif %}
