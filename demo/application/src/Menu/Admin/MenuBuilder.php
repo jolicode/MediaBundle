@@ -56,7 +56,7 @@ final readonly class MenuBuilder implements MenuBuilderInterface
 
         $library->addChild('media_library', ['route' => 'joli_media_sylius_admin_explore'])
             ->setLabel('media_library')
-            ->setExtra('translation_domain', 'JoliMediaSyliusAdminBundle')
+            ->setExtra('translation_domain', 'JoliMediaSyliusBundle')
         ;
     }
 }

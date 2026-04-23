@@ -10,5 +10,5 @@ _joli_media_sonata_admin:
     prefix: /sonata-admin/media
 
 _joli_media_sylius_admin:
-    resource: "@JoliMediaSyliusAdminBundle/src/Symfony/Controller/"
+    resource: "@JoliMediaSyliusBundle/src/Admin/Controller/"
     prefix: /sylius-admin/media

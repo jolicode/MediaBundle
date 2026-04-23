@@ -2,14 +2,14 @@
 
 namespace JoliCode\MediaBundle\Tests\Bridge\SyliusAdmin\DependencyInjection;
 
-use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\JoliMediaSyliusAdminBundle;
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\JoliMediaSyliusBundle;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\Config\Definition\Processor;
 
-#[CoversClass(JoliMediaSyliusAdminBundle::class)]
+#[CoversClass(JoliMediaSyliusBundle::class)]
 final class ConfigurationTest extends TestCase
 {
     public function testDefaultConfiguration(): void
@@ -109,7 +109,7 @@ final class ConfigurationTest extends TestCase
 
     private function processConfiguration(array $configs): array
     {
-        $bundle = new JoliMediaSyliusAdminBundle();
+        $bundle = new JoliMediaSyliusBundle();
         $treeBuilder = new TreeBuilder('joli_media_sylius_admin');
 
         $configurator = $this->createMock(DefinitionConfigurator::class);

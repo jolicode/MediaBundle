@@ -1,0 +1,8 @@
+{% trans_default_domain 'JoliMediaSyliusBundle' %}
+
+{% set message = 'action.rename' %}
+
+<button type="button" class="btn media-rename-btn" data-component="media-rename" data-bs-toggle="tooltip" title="{{ message|trans }}">
+    {{ ux_icon('tabler:pencil') }}
+    {{ message|trans }}
+</button>

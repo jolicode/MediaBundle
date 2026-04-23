@@ -77,7 +77,7 @@
         "psr-4": {
             "JoliCode\\MediaBundle\\Bridge\\EasyAdmin\\": "src/Bridge/EasyAdmin/src/",
             "JoliCode\\MediaBundle\\Bridge\\SonataAdmin\\": "src/Bridge/SonataAdmin/src/",
-            "JoliCode\\MediaBundle\\Bridge\\SyliusAdmin\\": "src/Bridge/SyliusAdmin/src/",
+            "JoliCode\\MediaBundle\\Bridge\\Sylius\\": "src/Bridge/Sylius/src/",
             "JoliCode\\MediaBundle\\Bridge\\": "src/Bridge/src/",
             "JoliCode\\MediaBundle\\": "src/"
         }

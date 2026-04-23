@@ -11,7 +11,7 @@ return [
     JoliCode\MediaBundle\JoliMediaBundle::class => ['all' => true],
     JoliCode\MediaBundle\Bridge\EasyAdmin\JoliMediaEasyAdminBundle::class => ['all' => true],
     JoliCode\MediaBundle\Bridge\SonataAdmin\JoliMediaSonataAdminBundle::class => ['all' => true],
-    JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\JoliMediaSyliusAdminBundle::class => ['all' => true],
+    JoliCode\MediaBundle\Bridge\Sylius\JoliMediaSyliusBundle::class => ['all' => true],
     Knp\Bundle\MenuBundle\KnpMenuBundle::class => ['all' => true],
     Sonata\Form\Bridge\Symfony\SonataFormBundle::class => ['all' => true],
     Sonata\BlockBundle\SonataBlockBundle::class => ['all' => true],

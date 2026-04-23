@@ -7,7 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
 use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\JoliMediaEasyAdminBundle;
-use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\JoliMediaSyliusAdminBundle;
+use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\JoliMediaSyliusBundle;
 use JoliCode\MediaBundle\JoliMediaBundle;
 use Knp\Bundle\MenuBundle\KnpMenuBundle;
 use League\FlysystemBundle\FlysystemBundle;
@@ -51,7 +51,7 @@ final class Kernel extends SymfonyKernel
             new FrameworkBundle(),
             new JoliMediaBundle(),
             new JoliMediaEasyAdminBundle(),
-            new JoliMediaSyliusAdminBundle(),
+            new JoliMediaSyliusBundle(),
             new KnpMenuBundle(),
             new MonologBundle(),
             new SecurityBundle(),

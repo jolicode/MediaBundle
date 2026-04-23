@@ -4,7 +4,7 @@
 
 {% if media is not null %}
     {% if media.isStored %}
-        {% include '@JoliMediaSyliusAdmin/_as_image.html.twig' with {'variation': 'joli_media_sylius_admin_small'} %}
+        {% include '@JoliMediaSylius/_as_image.html.twig' with {'variation': 'joli_media_sylius_admin_small'} %}
     {% else %}
         <span class="badge text-bg-danger" title="{{ 'media.inaccessible.explanation'|trans({ '%media%': media.filename }) }}">
             {{ 'media.inaccessible.label'|trans }}

@@ -1,0 +1,144 @@
+{% import ['@SyliusBootstrapAdminUi/shared/helper/pagination.html.twig', '@SyliusAdmin/shared/helper/pagination.html.twig'] as pagination %}
+
+{% trans_default_domain 'JoliMediaSyliusBundle' %}
+
+<meta name="current-key" content="{{ current_key }}">
+
+<div class="joli-media-choose-container">
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <div class="folder-modal-breadcrumb">
+            {% if current_key %}
+                {% set parts = current_key|split('/') %}
+                <a href="{{ path('joli_media_sylius_admin_choose') }}" data-folder-path="">
+                    {{ 'media_library'|trans }}
+                </a>
+                {% for part in parts %}
+                    {% if part %}
+                        <span class="breadcrumb-separator">/</span>
+                        {% set path_so_far = parts|slice(0, loop.index)|join('/') %}
+                        {% if loop.last %}
+                            <span class="breadcrumb-current">{{ part }}</span>
+                        {% else %}
+                            <a href="{{ path('joli_media_sylius_admin_choose', { key: path_so_far }) }}" data-folder-path="{{ path_so_far }}">{{ part }}</a>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <span class="breadcrumb-current">{{ 'media_library'|trans }}</span>
+            {% endif %}
+        </div>
+        <div class="d-flex gap-2">
+            <a
+                class="btn btn-primary"
+                data-component="media-add"
+            >
+                {{ ux_icon('tabler:plus') }} {{ 'media.add'|trans }}
+            </a>
+            <a href="#" class="btn" data-component="directory-create">
+                {{ ux_icon('tabler:folder-plus') }} {{ 'directory.create'|trans }}
+            </a>
+        </div>
+    </div>
+
+    <form class="directory-create-form d-none mt-2"
+          data-component="directory-create-form"
+          action="{{ path('joli_media_sylius_admin_create_directory') }}"
+          method="POST"
+    >
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token_create }}">
+        <input type="hidden" name="parentPath" class="directory-create-parent-path" value="{{ current_key }}">
+        <div class="input-group input-group-sm">
+            <input type="text" name="name" class="form-control directory-create-input" placeholder="{{ 'directory.name'|trans }}">
+            <button type="submit" class="btn btn-primary">
+                {{ ux_icon('tabler:check') }}
+            </button>
+            <button type="button" class="btn btn-secondary directory-create-cancel-btn">
+                {{ ux_icon('tabler:x') }}
+            </button>
+        </div>
+    </form>
+
+    <div class="dropzone-container">
+        {{ form_start(create_media_form, { attr: {
+            class: 'dropzone',
+            'data-component': 'dropzone',
+            'data-dropzone-config': config.uploadOptions|json_encode(constant('JSON_THROW_ON_ERROR')),
+        } }) }}
+        {{ form_widget(create_media_form.path) }}
+        {{ form_widget(create_media_form._token) }}
+        <div class="dz-preview-template">
+            {{ include('@JoliMediaSylius/uploaded_file_preview.html.twig') }}
+        </div>
+        {{ form_end(create_media_form) }}
+    </div>
+
+    <div class="gallery">
+        {% if current_key %}
+            <ul class="gallery-grid gallery-grid--folders">
+                <li class="gallery-grid-item gallery-grid-item--back">
+                    <a href="{{ path('joli_media_sylius_admin_choose', { key: current_key|split('/')|slice(0, -1)|join('/') }) }}" class="gallery-grid-item__link">
+                        <span class="gallery-grid-item__icon">{{ ux_icon('tabler:folder-up', {class: 'w-80 h-80'}) }}</span>
+                        <span class="gallery-grid-item__name">Parent</span>
+                    </a>
+                </li>
+            </ul>
+        {% endif %}
+
+        {% if directories|length > 0 %}
+            <ul class="gallery-grid gallery-grid--folders">
+                {% for directory in directories %}
+                    <li class="gallery-grid-item">
+                        <a href="{{ path('joli_media_sylius_admin_choose', { key: directory }) }}" class="gallery-grid-item__link">
+                            <span class="gallery-grid-item__icon">
+                                {{ ux_icon('tabler:folder', {class: 'w-80 h-80'}) }}
+                            </span>
+                            <span class="gallery-grid-item__name">{{ directory|split('/')|last }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <ul class="gallery-grid gallery-grid--files">
+        {% for media in medias %}
+            {% if media.isStored %}
+                <li class="gallery-grid-item">
+                    <a class="gallery-grid-item__link"
+                       href="#"
+                       data-media-folder="{{ current_key }}"
+                       data-media-url="{{ media.path }}"
+                       data-media-full-url="{{ media.url }}"
+                       data-media-type="{{ media.fileType }}"
+                       data-media-template="{{ include('@JoliMediaSylius/_preview.html.twig', { media: media, className: 'media-preview' })|escape }}"
+                       data-media-original-template="{{ include('@JoliMediaSylius/_preview.html.twig', { media: media, variation: false })|escape }}"
+                    >
+                        <span class="media-preview">
+                            {{ include('@JoliMediaSylius/_as_image.html.twig', { media: media, skipAutoDimensions: true }) }}
+                        </span>
+                        <span class="gallery-grid-item__name">{{ media.filename }}</span>
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if medias is empty and directories is empty %}
+            <li class="gallery-grid-item">
+                <div class="alert alert-info mb-0">
+                    {{ ux_icon('tabler:info-circle') }} {{ 'no_file_found'|trans }}
+                </div>
+            </li>
+        {% endif %}
+        </ul>
+
+        <div class="card-footer d-flex align-items-center gap-2 flex-wrap">
+            <div class="text-muted">
+                {{ pagination.results_count(medias) }}
+            </div>
+            <div class="ms-auto">
+                {% if medias.haveToPaginate %}
+                    {{ pagination.simple(medias) }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

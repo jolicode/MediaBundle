@@ -2,9 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\GameVideo;
 use App\Entity\PostMedia;
-use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Form\Type\MediaChoiceType;
+use JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Type\MediaChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
