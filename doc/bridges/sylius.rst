@@ -187,6 +187,79 @@ On Sylius stack:
 
 From the media library, you will be able to upload new files and switch between a grid or a list view to browse them. You can also organize your media by creating sub-folders, and perform CRUD operations.
 
+Configure the Sylius E-commerce image resources
+-----------------------------------------------
+
+On Sylius there are three resources which are using images: Product, Taxon & AdminUser.
+
+In order to use the full potential of the bridge, we need to update the resources to attach the media.
+
+Configure the Sylius resources
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+First, you need to update the image resources in Sylius to use the Media resource.
+
+```diff
+namespace App\Entity\Product;
+
+use Doctrine\ORM\Mapping as ORM;
++use JoliCode\MediaBundle\Bridge\Sylius\Doctrine\ORM\EntityWithMediaImageTrait;
+use Sylius\Component\Core\Model\ProductImage as BaseProductImage;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'sylius_product_image')]
+class ProductImage extends BaseProductImage
+{
+    +use EntityWithMediaImageTrait;
+}
+```
+
+```diff
+namespace App\Entity\Taxonomy;
+
+use Doctrine\ORM\Mapping as ORM;
++use JoliCode\MediaBundle\Bridge\Sylius\Doctrine\ORM\EntityWithMediaImageTrait;
+use Sylius\Component\Core\Model\TaxonImage as BaseTaxonImage;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'sylius_taxon_image')]
+class TaxonImage extends BaseTaxonImage
+{
+    +use EntityWithMediaImageTrait;
+}
+
+```
+
+```diff
+namespace App\Entity\User;
+
+use Doctrine\ORM\Mapping as ORM;
++use JoliCode\MediaBundle\Bridge\Sylius\Doctrine\ORM\EntityWithMediaImageTrait;
+use Sylius\Component\Core\Model\AvatarImage as BaseAvatarImage;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'sylius_avatar_image')]
+class AvatarImage extends BaseAvatarImage
+{
+    +use EntityWithMediaImageTrait;
+}
+```
+
+Configure the forms in the admin panel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In order to [customize a form type in Sylius](https://docs.sylius.com/the-customization-guide/customizing-forms), we just need to a Form Extension.
+
+The Sylius bridge provides three form extensions.
+
+```yaml
+# config/services.yaml
+services:
+    JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Extension\AvatarImageTypeExtension: null
+    JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Extension\ProductImageTypeExtension: null
+    JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Extension\TaxonImageTypeExtension: null
+```
+
 Media selector widget
 ---------------------
 
