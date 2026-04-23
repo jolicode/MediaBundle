@@ -2,7 +2,7 @@
 
 namespace JoliCode\MediaBundle\Tests\Application\Form;
 
-use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Form\Type\MediaChoiceType;
+use JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Type\MediaChoiceType;
 use JoliCode\MediaBundle\Tests\Application\Entity\Page;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

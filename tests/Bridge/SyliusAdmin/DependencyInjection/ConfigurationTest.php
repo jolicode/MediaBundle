@@ -2,7 +2,7 @@
 
 namespace JoliCode\MediaBundle\Tests\Bridge\SyliusAdmin\DependencyInjection;
 
-use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\JoliMediaSyliusBundle;
+use JoliCode\MediaBundle\Bridge\Sylius\JoliMediaSyliusBundle;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;

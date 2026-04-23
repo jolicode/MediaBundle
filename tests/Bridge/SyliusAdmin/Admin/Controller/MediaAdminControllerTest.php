@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JoliCode\MediaBundle\Tests\Bridge\SyliusAdmin\Controller;
 
-use JoliCode\MediaBundle\Bridge\SyliusAdmin\Symfony\Controller\MediaAdminController;
+use JoliCode\MediaBundle\Bridge\Sylius\Admin\Controller\MediaAdminController;
 use JoliCode\MediaBundle\Tests\Application\Kernel;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
