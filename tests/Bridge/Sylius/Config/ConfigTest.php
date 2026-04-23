@@ -1,6 +1,6 @@
 <?php
 
-namespace JoliCode\MediaBundle\Tests\Bridge\SyliusAdmin\Config;
+namespace JoliCode\MediaBundle\Tests\Bridge\Sylius\Config;
 
 use JoliCode\MediaBundle\Bridge\Sylius\Config\Config;
 use PHPUnit\Framework\Attributes\CoversClass;

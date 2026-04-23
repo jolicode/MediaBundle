@@ -30,10 +30,10 @@
                     {% endif %}
                     <td data-column="file-size" data-label="file-size" class="text-left" dir="ltr">
                         {% if variation.isStored %}
-                        {{ variation.fileSize|joli_media_admin_readable_filesize }}</td>
-                {% else %}
-                    <span class="badge badge-secondary">N/A</span>
-                    {% endif %}
+                            {{ variation.fileSize|joli_media_admin_readable_filesize }}
+                        {% else %}
+                            <span class="badge badge-secondary">N/A</span>
+                        {% endif %}
                     </td>
                     <td data-column="dimensions" data-label="dimensions" class="text-left" dir="ltr">
                         {% if variation.isStored %}
@@ -47,7 +47,7 @@
                             <span class="badge badge-secondary">N/A</span>
                         {% endif %}
                     </td>
-                    <td data-column="url" data-label="url" class="text-left" dggir="ltr">
+                    <td data-column="url" data-label="url" class="text-left" dir="ltr">
                         <a href="{{ variation.url }}" id="media-{{ variation.variation.name }}-url"><code class="long-text-break">{{ variation.url }}</code></a>
                     </td>
                     <td data-column="actions" data-label="actions" class="text-left" dir="ltr">

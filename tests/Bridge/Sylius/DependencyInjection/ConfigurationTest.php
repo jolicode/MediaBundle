@@ -1,6 +1,6 @@
 <?php
 
-namespace JoliCode\MediaBundle\Tests\Bridge\SyliusAdmin\DependencyInjection;
+namespace JoliCode\MediaBundle\Tests\Bridge\Sylius\DependencyInjection;
 
 use JoliCode\MediaBundle\Bridge\Sylius\JoliMediaSyliusBundle;
 use PHPUnit\Framework\Attributes\CoversClass;
