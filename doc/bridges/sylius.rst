@@ -363,3 +363,34 @@ Finally, create the Twig template used to render the image:
     <div class="thumbnail-box-image">
        {{ image(data) }}
     </div>
+
+Shop
+~~~~
+
+**Configure the product image on product card**
+
+.. code-block:: yaml
+
+    # config/packages/_sylius.yaml
+    sylius_twig_hooks:
+        hooks:
+            # ...
+            'sylius_shop.shared.product.card.details':
+                image:
+                    template: '@JoliMediaSylius/shop/shared/product/card/details/image.html.twig'
+
+**Configure the product images on product details page**
+
+.. code-block:: yaml
+
+    # config/packages/_sylius.yaml
+    sylius_twig_hooks:
+        hooks:
+            # ...
+            'sylius_shop.product.show.content.info.overview.images.thumbnails':
+                thumbnail:
+                    template: '@JoliMediaSylius/shop/product/show/content/info/overview/images/thumbnails/thumbnail.html.twig'
+
+            'sylius_shop.product.show.content.info.overview.images':
+                main_image:
+                    template: '@JoliMediaSylius/shop/product/show/content/info/overview/images/main_image.html.twig'

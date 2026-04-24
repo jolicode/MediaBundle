@@ -118,6 +118,17 @@ final class JoliMediaSyliusBundle extends AbstractBundle
             ],
         ]);
 
+        // Twig anonymous components
+        if ($builder->hasExtension('sylius_ui')) {
+            $builder->prependExtensionConfig('sylius_ui', [
+                'twig_ux' => [
+                    'anonymous_component_template_prefixes' => [
+                        'joli_media_sylius' => '@JoliMediaSylius/components/',
+                    ],
+                ],
+            ]);
+        }
+
         $builder->prependExtensionConfig('joli_media', [
             'libraries' => [
                 $joliMediaDefaultLibrary => [
