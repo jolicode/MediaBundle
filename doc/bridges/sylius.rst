@@ -340,12 +340,11 @@ Next, create the following file to override the product grid configuration:
     // config/sylius/grid/admin/product.php
     namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-    use App\Entity\Product\Product;
     use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
     use Sylius\Bundle\GridBundle\Builder\GridBuilder;
     use Sylius\Bundle\GridBundle\Config\GridConfig;
 
-    $gridBuilder = GridBuilder::create('sylius_admin_product', Product::class)
+    $gridBuilder = GridBuilder::create('sylius_admin_product')
        ->withFields(
            TwigField::create('image', template: 'admin/product/grid/field/image.html.twig'),
        )
