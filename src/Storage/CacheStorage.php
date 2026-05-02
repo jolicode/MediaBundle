@@ -88,6 +88,11 @@ class CacheStorage
         return $this->library;
     }
 
+    public function getFilesystem(): Filesystem
+    {
+        return $this->filesystem;
+    }
+
     public function getMediaVariationPropertyAccessor(): MediaVariationPropertyAccessor
     {
         return $this->mediaVariationPropertyAccessor;
