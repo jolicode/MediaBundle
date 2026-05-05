@@ -308,7 +308,7 @@ This optional ``folder`` parameter can be passed to the field type, to specify w
 Using the JoliMediaBundle to render your images
 -----------------------------------------------
 
-By default, sylius will use LiipImagine to render your product images.
+By default, Sylius will use LiipImagine to render your product images.
 
 To improve the quality of your images ([avoiding multiple transformations](https://jolicode.com/blog/jolimediabundle-a-new-media-bundle-for-your-symfony-projects#let-s-get-back-to-business-why-a-new-media-bundle-for-symfony)),
 you need to make several changes on your Sylius project.
