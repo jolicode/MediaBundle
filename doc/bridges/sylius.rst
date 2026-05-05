@@ -277,7 +277,7 @@ Upgrade your database
             $this->addSql('ALTER TABLE sylius_taxon_image ADD media VARCHAR(255) DEFAULT NULL');
             $this->addSql('COMMENT ON COLUMN sylius_taxon_image.media IS \'(DC2Type:media)\'');
 
-            // Please add this line to synchronize the media with the current path
+            // Please add these lines to synchronize the media with the current path.
             $this->addSql('UPDATE sylius_avatar_image SET media = path');
             $this->addSql('UPDATE sylius_product_image SET media = path');
             $this->addSql('UPDATE sylius_taxon_image SET media = path');
