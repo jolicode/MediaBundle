@@ -5,7 +5,7 @@ The JoliMediaBundle provides a set of tools to manage media in Symfony applicati
 
 It proposes multiple features:
 
-- `EasyAdmin <bridges/easy-admin.rst>`_ and `SonataAdmin <bridges/sonata-admin.rst>`_ integrations
+- `EasyAdmin <bridges/easy-admin.rst>`_, `SonataAdmin <bridges/sonata-admin.rst>`_ and `Sylius <bridges/sylius.rst>`_ integrations
 - abstract media storage
 - processors to transform media (crop / resize / etc.)
 - post processors to optimize the media size
