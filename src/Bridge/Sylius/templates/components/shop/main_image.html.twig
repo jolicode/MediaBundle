@@ -9,13 +9,12 @@
 {% set alt = 'sylius.ui.product'|trans ~ ' ' ~ product.name ~ ' ' ~ 'sylius.ui.image'|trans %}
 
 {% if path is not null %}
-    <twig:joli:Img
-            path="{{ path }}"
-            variation="{{ filter|default('sylius_shop_product_thumbnail') }}"
-            alt="{{ alt }}"
-            class="{{ attributes.defaults({ class: 'img-fluid' }) }} "
-            data-test-main-image=""
-    />
+    {{ component('joli:Img', attributes.defaults({
+        path: path,
+        variation: filter|default('sylius_shop_product_thumbnail'),
+        class: 'img-fluid',
+        'data-test-main-image': ''
+    }).all()) }}
 {% else %}
     <img {{ attributes.defaults({ class: 'img-fluid' }) }} src="{{ asset('bundles/syliusui/images/200x200.png') }}" {{ sylius_test_html_attribute('main-image') }} alt="{{ alt }}" />
 {% endif %}
