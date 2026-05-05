@@ -1,0 +1,13 @@
+{% set product = hookable_metadata.context.product %}
+{% set image = hookable_metadata.context.image %}
+{% set media = hookable_metadata.context.image.media %}
+
+<a href="{{ media.url }}" class="d-block overflow-auto bg-light rounded-3 spotlight">
+    <twig:joli:Img
+        path="{{ media.path }}"
+        variation="sylius_shop_product_small_thumbnail"
+        alt="{{ product.name }}"
+        class="img-fluid w-100 h-100 object-fit-cover"
+        data-test-thumbnail-image="{{ image.type }}"
+    />
+</a>

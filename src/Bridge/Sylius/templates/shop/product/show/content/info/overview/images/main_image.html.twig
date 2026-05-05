@@ -1,0 +1,24 @@
+{% set product = hookable_metadata.context.product %}
+{% set path = hookable_metadata.context.source_path|default(null) %}
+
+{% set media = product.images.first.media|default(null) %}
+{% set original_path = media.url|default(asset('bundles/syliusui/images/400x300.png')) %}
+
+<div class="col pe-lg-5 pe-xxl-5">
+    <a href="{{ original_path }}" class="d-block overflow-auto bg-light rounded-3{% if product.images|length < 2 %} spotlight{% endif %}">
+        {% if media is not null and media.isStored %}
+            <twig:joli:Img
+                    id="main-image"
+                    path="{{ path }}"
+                    variation="sylius_shop_product_large_thumbnail"
+                    alt="{{ product.name }}"
+                    class="img-fluid w-100 h-100 object-fit-cover"
+                    data-test-main-image="{{ product.images.first.type|default(null) }}"
+            />
+        {% else %}
+            <img id="main-image" src="{{ original_path }}" alt="{{ product.name }}" class="img-fluid w-100 h-100 object-fit-cover"
+                    {{ sylius_test_html_attribute('main-image') }}
+            />
+        {% endif %}
+    </a>
+</div>
