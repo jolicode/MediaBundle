@@ -199,51 +199,50 @@ Configure the Sylius resources
 
 First, you need to update the image resources in Sylius to use the Media resource.
 
-```diff
-namespace App\Entity\Product;
+.. code-block:: diff
 
-use Doctrine\ORM\Mapping as ORM;
-+use JoliCode\MediaBundle\Bridge\Sylius\Doctrine\ORM\EntityWithMediaImageTrait;
-use Sylius\Component\Core\Model\ProductImage as BaseProductImage;
+    namespace App\Entity\Product;
 
-#[ORM\Entity]
-#[ORM\Table(name: 'sylius_product_image')]
-class ProductImage extends BaseProductImage
-{
-    +use EntityWithMediaImageTrait;
-}
-```
+    use Doctrine\ORM\Mapping as ORM;
+    +use JoliCode\MediaBundle\Bridge\Sylius\Doctrine\ORM\EntityWithMediaImageTrait;
+    use Sylius\Component\Core\Model\ProductImage as BaseProductImage;
 
-```diff
-namespace App\Entity\Taxonomy;
+    #[ORM\Entity]
+    #[ORM\Table(name: 'sylius_product_image')]
+    class ProductImage extends BaseProductImage
+    {
+    +    use EntityWithMediaImageTrait;
+    }
 
-use Doctrine\ORM\Mapping as ORM;
-+use JoliCode\MediaBundle\Bridge\Sylius\Doctrine\ORM\EntityWithMediaImageTrait;
-use Sylius\Component\Core\Model\TaxonImage as BaseTaxonImage;
+.. code-block:: diff
 
-#[ORM\Entity]
-#[ORM\Table(name: 'sylius_taxon_image')]
-class TaxonImage extends BaseTaxonImage
-{
-    +use EntityWithMediaImageTrait;
-}
+    namespace App\Entity\Taxonomy;
 
-```
+    use Doctrine\ORM\Mapping as ORM;
+    +use JoliCode\MediaBundle\Bridge\Sylius\Doctrine\ORM\EntityWithMediaImageTrait;
+    use Sylius\Component\Core\Model\TaxonImage as BaseTaxonImage;
 
-```diff
-namespace App\Entity\User;
+    #[ORM\Entity]
+    #[ORM\Table(name: 'sylius_taxon_image')]
+    class TaxonImage extends BaseTaxonImage
+    {
+    +    use EntityWithMediaImageTrait;
+    }
 
-use Doctrine\ORM\Mapping as ORM;
-+use JoliCode\MediaBundle\Bridge\Sylius\Doctrine\ORM\EntityWithMediaImageTrait;
-use Sylius\Component\Core\Model\AvatarImage as BaseAvatarImage;
+.. code-block:: diff
 
-#[ORM\Entity]
-#[ORM\Table(name: 'sylius_avatar_image')]
-class AvatarImage extends BaseAvatarImage
-{
-    +use EntityWithMediaImageTrait;
-}
-```
+    namespace App\Entity\User;
+
+    use Doctrine\ORM\Mapping as ORM;
+    +use JoliCode\MediaBundle\Bridge\Sylius\Doctrine\ORM\EntityWithMediaImageTrait;
+    use Sylius\Component\Core\Model\AvatarImage as BaseAvatarImage;
+
+    #[ORM\Entity]
+    #[ORM\Table(name: 'sylius_avatar_image')]
+    class AvatarImage extends BaseAvatarImage
+    {
+        +use EntityWithMediaImageTrait;
+    }
 
 Configure the forms in the admin panel
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -252,13 +251,13 @@ In order to [customize a form type in Sylius](https://docs.sylius.com/the-custom
 
 The Sylius bridge provides three form extensions.
 
-```yaml
-# config/services.yaml
-services:
-    JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Extension\AvatarImageTypeExtension: null
-    JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Extension\ProductImageTypeExtension: null
-    JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Extension\TaxonImageTypeExtension: null
-```
+.. code-block:: yaml
+
+    # config/services.yaml
+    services:
+        JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Extension\AvatarImageTypeExtension: null
+        JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Extension\ProductImageTypeExtension: null
+        JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Extension\TaxonImageTypeExtension: null
 
 Media selector widget
 ---------------------
@@ -305,3 +304,62 @@ This optional ``folder`` parameter can be passed to the field type, to specify w
             'folder' => 'users',
         ])
     ;
+
+Using the JoliMediaBundle to render your images
+-----------------------------------------------
+
+By default, Sylius will use LiipImagine to render your product images.
+
+To improve the quality of your images ([avoiding multiple transformations](https://jolicode.com/blog/jolimediabundle-a-new-media-bundle-for-your-symfony-projects#let-s-get-back-to-business-why-a-new-media-bundle-for-symfony)),
+you need to make several changes on your Sylius project.
+
+Admin panel
+~~~~~~~~~~~
+
+**Configure the products' grid in the admin panel**
+
+To replace the product image field in the product grid, follow the steps below.
+
+1. Import external grid configuration
+
+First, update the Sylius configuration to load external grid configuration files:
+
+.. code-block:: yaml
+
+    # config/packages/_sylius.yaml
+    imports:
+       # ...
+       - { resource: "../sylius/grid/**/**" }
+
+2. Customize the product grid
+
+Next, create the following file to override the product grid configuration:
+
+::
+
+    // config/sylius/grid/admin/product.php
+    namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+
+    use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
+    use Sylius\Bundle\GridBundle\Builder\GridBuilder;
+    use Sylius\Bundle\GridBundle\Config\GridConfig;
+
+    $gridBuilder = GridBuilder::create('sylius_admin_product')
+       ->withFields(
+           TwigField::create('image', template: 'admin/product/grid/field/image.html.twig'),
+       )
+    ;
+
+    return App::config(['sylius_grid' => (new GridConfig())->addGrid($gridBuilder)->toArray()]);
+
+3. Create the Twig template
+
+Finally, create the Twig template used to render the image:
+
+.. code-block:: html+twig
+
+    {% from '@JoliMediaSylius/admin/shared/helper/product_image.html.twig' import image %}
+
+    <div class="thumbnail-box-image">
+       {{ image(data) }}
+    </div>
