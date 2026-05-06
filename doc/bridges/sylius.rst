@@ -296,8 +296,6 @@ The ``MediaChoiceType`` field will render a media selector widget in the form, a
 
 This optional ``folder`` parameter can be passed to the field type, to specify which folder should be opened by default in the media browser. Note that, if a media was already selected, the media selector will open the folder of the selected media::
 
-::
-
     $builder
         // ...
         ->add('profilePicture', MediaChoiceType::class, [
