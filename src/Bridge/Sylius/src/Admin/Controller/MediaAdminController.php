@@ -142,9 +142,7 @@ class MediaAdminController extends AbstractController
                 'JoliMediaSyliusBundle'
             ));
 
-            $referer = $request->headers->get('referer');
-
-            return $this->redirect($referer ? str_replace($oldPath, $newPath, $referer) : $this->generateUrl('joli_media_sylius_admin_explore'));
+            return $this->redirectAfterRename($request, $oldPath, $newPath);
         } catch (\Throwable $e) {
             $this->addFlash('error', $e->getMessage());
 
@@ -180,9 +178,7 @@ class MediaAdminController extends AbstractController
                 'JoliMediaSyliusBundle'
             ));
 
-            $referer = $request->headers->get('referer');
-
-            return $this->redirect($referer ? str_replace($oldPath, $newPath, $referer) : $this->generateUrl('joli_media_sylius_admin_explore'));
+            return $this->redirectAfterRename($request, $oldPath, $newPath);
         } catch (\Throwable $e) {
             $this->addFlash('error', $e->getMessage());
 
@@ -537,6 +533,21 @@ class MediaAdminController extends AbstractController
             'config' => $this->config,
             'media' => $media,
         ]));
+    }
+
+    private function redirectAfterRename(Request $request, string $oldPath, string $newPath): RedirectResponse
+    {
+        $referer = $request->headers->get('referer');
+
+        if ($referer) {
+            $encodedOldPath = implode('/', array_map('rawurlencode', explode('/', $oldPath)));
+
+            $updated = str_replace([$oldPath, $encodedOldPath], $newPath, $referer);
+
+            return $this->redirect($updated);
+        }
+
+        return $this->redirectToRoute('joli_media_sylius_admin_explore', ['key' => $newPath]);
     }
 
     private function renderChooseHtml(string $currentKey): Response
