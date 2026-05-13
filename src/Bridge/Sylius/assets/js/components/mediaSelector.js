@@ -283,6 +283,7 @@ const getParentControllers = (element) => {
 
         fetchFolder(editButton.href).then((html) => {
             if (modalBody) modalBody.innerHTML = html;
+            setupCreateFolder();
             const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
             bsModal.show();
         });
