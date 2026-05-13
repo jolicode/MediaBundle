@@ -72,6 +72,10 @@ final class MediaGrid extends AbstractGrid
                     ->setLabel($this->trans('action.rename_directory'))
                     ->setIcon('tabler:pencil')
                     ->setTemplate('@JoliMediaSylius/admin/media/grid/action/rename_directory.html.twig'),
+                Action::create('move_directory', 'custom')
+                    ->setLabel($this->trans('action.move_directory'))
+                    ->setIcon('fa7-solid:folder-tree')
+                    ->setTemplate('@JoliMediaSylius/admin/media/grid/action/move_directory.html.twig'),
                 Action::create('create_directory', 'custom')
                     ->setLabel($this->trans('directory.create'))
                     ->setIcon('tabler:folder-plus')

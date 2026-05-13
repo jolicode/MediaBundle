@@ -1,0 +1,20 @@
+{% set key = app.request.attributes.get('key', '') %}
+
+{% if key != '' %}
+    {% set message = action.label %}
+    {% if message is empty %}
+        {% set message = 'sylius.ui.update' %}
+    {% endif %}
+
+    <span data-media-key="{{ key }}">
+        <a
+            href="{{ path('joli_media_sylius_admin_choose') }}"
+            data-folder="{{ key }}"
+            class="btn"
+            data-component="media-move"
+        >
+            {{ ux_icon(action.icon|default('fa7-solid:folder-tree'), {'class': 'icon dropdown-item-icon'}) }}
+            {{ message|trans }}
+        </a>
+    </span>
+{% endif %}

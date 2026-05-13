@@ -152,6 +152,46 @@ class MediaAdminController extends AbstractController
         }
     }
 
+    #[Route(path: '/move-directory', name: 'move_directory', methods: [Request::METHOD_POST])]
+    public function moveDirectory(Request $request): Response
+    {
+        $from = Resolver::normalizePath($request->request->getString('from'));
+        $to = Resolver::normalizePath($request->request->getString('to'));
+
+        $csrfToken = $request->request->getString('_csrf_token');
+
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('media_move_directory', $csrfToken))) {
+            $this->addFlash('error', 'Invalid CSRF token');
+
+            return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
+        }
+
+        if (!$from) {
+            $this->addFlash('error', 'Missing parameters');
+
+            return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
+        }
+
+        try {
+            $target = $to ? \sprintf('%s/%s', $to, basename($from)) : basename($from);
+            $this->getOriginalStorage()->moveFolder($from, $target);
+
+            $this->addFlash('success', $this->translator->trans(
+                'directory.move_success',
+                ['%from%' => $from, '%to%' => $target],
+                'JoliMediaSyliusBundle'
+            ));
+
+            $referer = $request->headers->get('referer');
+
+            return $this->redirect($referer ? str_replace($from, $target, $referer) : $this->generateUrl('joli_media_sylius_admin_explore'));
+        } catch (\Throwable $e) {
+            $this->addFlash('error', $e->getMessage());
+
+            return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
+        }
+    }
+
     #[Route(path: '/rename', name: 'rename', methods: [Request::METHOD_POST])]
     public function rename(Request $request): Response
     {
