@@ -355,7 +355,8 @@ class MediaAdminController extends AbstractController
             $filter = static fn (string $a): bool => str_contains(strtolower($a), strtolower((string) $searchValue));
         }
 
-        $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: null !== $searchValue, filter: $filter, sort: $sort);
+        $recursive = null !== $searchValue && '' !== $searchValue;
+        $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: $recursive, filter: $filter, sort: $sort);
 
         $gridView = $this->getGridView($request, 'joli_media_sylius_admin_media');
 

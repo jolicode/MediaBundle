@@ -38,6 +38,7 @@ final readonly class MediaGridProvider implements DataProviderInterface
         $key = $request->attributes->getString('key');
         $currentKey = Resolver::normalizePath($key);
 
+        /** @var array<string, mixed> $criteria */
         $criteria = $parameters->get('criteria');
         $recursive = !empty($criteria['search']['value'] ?? null);
 
