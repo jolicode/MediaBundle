@@ -32,17 +32,17 @@ Encore.reset();
 
 // JoliMediaSyliusAdminBundle
 Encore
-    .setOutputPath('./src/Bridge/SyliusAdmin/public/')
+    .setOutputPath('./src/Bridge/Sylius/public/')
     .setPublicPath('./')
     .setManifestKeyPrefix('')
     .cleanupOutputBeforeBuild()
     .enableVersioning(true)
     .disableSingleRuntimeChunk()
     .enableSourceMaps(!Encore.isProduction())
-    .addEntry('joli-media-sylius-admin', './src/Bridge/SyliusAdmin/assets/js/joli-media-sylius-admin.js')
+    .addEntry('joli-media-sylius-admin', './src/Bridge/Sylius/assets/js/joli-media-sylius-admin.js')
 ;
-const syliusAdminConfig = Encore.getWebpackConfig();
-syliusAdminConfig.name = 'syliusAdminConfig';
+const syliusConfig = Encore.getWebpackConfig();
+syliusConfig.name = 'syliusConfig';
 Encore.reset();
 
-module.exports = [easyAdminConfig, sonataAdminConfig, syliusAdminConfig];
+module.exports = [easyAdminConfig, sonataAdminConfig, syliusConfig];
