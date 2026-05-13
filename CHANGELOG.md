@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.4.0]
+
+- feature - Add a bridge for a Joli Media Sylius Admin & Shop
+- feature - Customize the product images in the Sylius shop
+- feature - Allow to use the media on Sylius image resources
+- fix - Fix delete modal on Sylius bridge
+- docs - Upgrade the database for the sylius resource medias
+- docs - Fix a php code block in the Sylius bridge
+- docs - Add links to the new Sylius bridge docs
+- docs - Customize the product images in the Sylius shop
+- docs - Upgrade the database for the sylius resource medias
+- docs - Customize the Sylius product grid in the admin panel
+
+## [0.3.2] - 2026-04-10
+
+- fix - Fix move media modal with Easy admin 5
+
 ## [0.3.1] - 2026-04-09
 
 - fix - Fix choose modal on Easy admin bridge
