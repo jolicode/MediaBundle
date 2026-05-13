@@ -244,6 +244,52 @@ First, you need to update the image resources in Sylius to use the Media resourc
         +use EntityWithMediaImageTrait;
     }
 
+Upgrade your database
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+    php bin/console doctrine:migrations:diff
+
+::
+
+    declare(strict_types=1);
+
+    namespace DoctrineMigrations;
+
+    use Doctrine\DBAL\Schema\Schema;
+    use Doctrine\Migrations\AbstractMigration;
+
+    final class Version20260417075521 extends AbstractMigration
+    {
+        public function getDescription(): string
+        {
+            return 'Add media on Sylius image resources';
+        }
+
+        public function up(Schema $schema): void
+        {
+            // It will generate sth like that.
+            $this->addSql('ALTER TABLE sylius_product_image ADD media VARCHAR(255) DEFAULT NULL');
+            $this->addSql('COMMENT ON COLUMN sylius_product_image.media IS \'(DC2Type:media)\'');
+            $this->addSql('ALTER TABLE sylius_avatar_image ADD media VARCHAR(255) DEFAULT NULL');
+            $this->addSql('COMMENT ON COLUMN sylius_avatar_image.media IS \'(DC2Type:media)\'');
+            $this->addSql('ALTER TABLE sylius_taxon_image ADD media VARCHAR(255) DEFAULT NULL');
+            $this->addSql('COMMENT ON COLUMN sylius_taxon_image.media IS \'(DC2Type:media)\'');
+
+            // Please add these lines to synchronize the media with the current path.
+            $this->addSql('UPDATE sylius_avatar_image SET media = path');
+            $this->addSql('UPDATE sylius_product_image SET media = path');
+            $this->addSql('UPDATE sylius_taxon_image SET media = path');
+        }
+
+        public function down(Schema $schema): void
+        {
+            $this->addSql('ALTER TABLE sylius_avatar_image DROP media');
+            $this->addSql('ALTER TABLE sylius_taxon_image DROP media');
+        }
+    }
+
 Configure the forms in the admin panel
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
