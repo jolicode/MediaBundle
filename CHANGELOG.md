@@ -1,7 +1,8 @@
 # Changelog
 
-## [0.4.0]
+## [0.4.0] - 2026-05-13
 
+- feature - Filtering and sorting medias & directories
 - feature - Add a bridge for a Joli Media Sylius Admin & Shop
 - feature - Customize the product images in the Sylius shop
 - feature - Allow to use the media on Sylius image resources
