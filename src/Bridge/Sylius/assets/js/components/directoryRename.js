@@ -4,10 +4,6 @@ const configureDirectoryRename = () => {
     const headerRenameInput = headerRenameForm?.querySelector('.directory-rename-input');
     const headerRenameCancelBtn = headerRenameForm?.querySelector('.directory-rename-cancel-btn');
 
-    if (!container) {
-        return;
-    }
-
     document.addEventListener('click', (e) => {
         const headerRenameBtn = e.target.closest('.directory-rename-header-btn');
 
@@ -53,6 +49,10 @@ const configureDirectoryRename = () => {
             headerRenameInput.value = '';
         }
     });
+
+    if (!container) {
+        return;
+    }
 
     container.addEventListener('click', (e) => {
         const editBtn = e.target.closest('.directory-rename-btn');
