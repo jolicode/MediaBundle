@@ -1,0 +1,22 @@
+{% trans_default_domain 'JoliMediaSyliusBundle' %}
+
+{% set media = hookable_metadata.context.media %}
+
+<span data-media-key="{{ media.path }}">
+    <a
+        href="{{ path('joli_media_sylius_admin_choose') }}"
+        data-folder="{{ media.folderPath }}"
+        class="btn media-move-btn"
+        data-component="media-move"
+        title="{{ 'action.move_directory'|trans }}"
+    >
+        {{ ux_icon('fa7-solid:folder-tree') }}
+        {{ 'action.move_directory'|trans }}
+    </a>
+</span>
+
+<form method="post" action="{{ path('joli_media_sylius_admin_move_directory') }}" id="move-form" class="d-none">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_move_directory') }}">
+    <input type="hidden" name="from" value="{{ media.path }}">
+    <input type="hidden" name="to" id="move_to" value="">
+</form>

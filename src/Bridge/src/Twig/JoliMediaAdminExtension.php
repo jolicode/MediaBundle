@@ -21,6 +21,7 @@ class JoliMediaAdminExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
+            new TwigFilter('joli_media_admin_dirname', 'dirname'),
             new TwigFilter('joli_media_admin_basename', 'basename'),
             new TwigFilter('joli_media_admin_readable_filesize', $this->getReadableFileSize(...)),
         ];

@@ -1,0 +1,71 @@
+{% macro render(directoryPath) %}
+    {% trans_default_domain 'JoliMediaSyliusBundle' %}
+
+    <div id="modal-folder-choice" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="mb-3 d-flex justify-content-between align-items-center">
+                        <div class="folder-modal-breadcrumb">
+                            {% if directoryPath %}
+                                {% set parts = directoryPath|split('/') %}
+                                <a href="{{ path('joli_media_sylius_admin_choose') }}" data-folder-path="">
+                                    {{ 'media_library'|trans }}
+                                </a>
+                                {% for part in parts %}
+                                    {% if part %}
+                                        <span class="breadcrumb-separator">/</span>
+                                        {% set path_so_far = parts|slice(0, loop.index)|join('/') %}
+                                        {% if loop.last %}
+                                            <span class="breadcrumb-current">{{ part }}</span>
+                                        {% else %}
+                                            <a href="{{ path('joli_media_sylius_admin_choose', { key: path_so_far }) }}" data-folder-path="{{ path_so_far }}">{{ part }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <a href="{{ path('joli_media_sylius_admin_choose') }}" data-folder-path="">
+                                    {{ 'media_library'|trans }}
+                                </a>
+                                <span class="breadcrumb-separator">/</span>
+                                <span class="breadcrumb-current">{{ 'root'|trans }}</span>
+                            {% endif %}
+                        </div>
+                        <button type="button" class="btn btn-primary" data-component="folder-create">
+                            {{ ux_icon('tabler:folder-plus') }}
+                            {{ 'directory.create'|trans }}
+                        </button>
+                    </div>
+                    <form method="post" action="{{ path('joli_media_sylius_admin_create_directory') }}" class="folder-create-form d-none mb-3">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_create_directory') }}">
+                        <input type="hidden" name="parentPath" value="{{ directoryPath|default('') }}">
+                        <div class="input-group">
+                            <input type="text" name="name" class="form-control folder-create-input" placeholder="{{ 'directory.create'|trans }}">
+                            <button type="submit" class="btn btn-primary">{{ 'action.create'|trans }}</button>
+                            <button type="button" class="btn btn-secondary folder-create-cancel">{{ 'action.cancel'|trans }}</button>
+                        </div>
+                    </form>
+                    <div class="folder-list-container"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        {{ 'action.cancel'|trans }}
+                    </button>
+                    <a
+                        href="#"
+                        class="btn btn-primary folder-move-btn"
+                        data-folder-path=""
+                    >
+                        {{ 'action.move_to_this_directory'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form method="post" action="{{ path('joli_media_sylius_admin_move_directory') }}" id="move-form" class="d-none">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_move_directory') }}">
+        <input type="hidden" name="from" value="{{ directoryPath }}">
+        <input type="hidden" name="to" id="move_to" value="">
+    </form>
+{% endmacro %}

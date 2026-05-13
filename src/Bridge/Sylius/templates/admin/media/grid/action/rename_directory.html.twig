@@ -1,3 +1,5 @@
+{% import ['@SyliusBootstrapAdminUi/shared/helper/button.html.twig', '@SyliusAdmin/shared/helper/button.html.twig'] as button %}
+
 {% set key = app.request.attributes.get('key', '') %}
 
 {% if key != '' %}
@@ -6,8 +8,18 @@
         {% set message = 'sylius.ui.update' %}
     {% endif %}
 
-    <a href="#" class="btn directory-rename-header-btn" data-component="directory-rename">
-        {{ ux_icon(action.icon|default('tabler:pencil'), {'class': 'icon dropdown-item-icon'}) }}
-        {{ message|trans }}
-    </a>
+    {{ button.default({
+        url: '#',
+        icon: action.icon|default('tabler:pencil'),
+        icon_class: 'icon dropdown-item-icon',
+        icon_only: true,
+        text: message|trans,
+        class: 'directory-rename-header-btn',
+        attr: {
+            'data-bs-toggle': 'tooltip',
+            'data-bs-title': message|trans,
+            'data-component': 'directory-rename'
+        }
+    }) }}
 {% endif %}
+

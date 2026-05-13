@@ -1,0 +1,26 @@
+{% import ['@SyliusBootstrapAdminUi/shared/helper/button.html.twig', '@SyliusAdmin/shared/helper/button.html.twig'] as button %}
+
+{% set key = app.request.attributes.get('key', '') %}
+
+{% if key != '' %}
+    {% set message = action.label %}
+    {% if message is empty %}
+        {% set message = 'sylius.ui.update' %}
+    {% endif %}
+
+    <span data-media-key="{{ key }}">
+        {{ button.default({
+            url: path('joli_media_sylius_admin_choose'),
+            icon: action.icon|default('fa7-solid:folder-tree'),
+            icon_class: 'icon dropdown-item-icon',
+            icon_only: true,
+            text: message|trans,
+            attr: {
+                'data-bs-toggle': 'tooltip',
+                'data-bs-title': message|trans,
+                'data-folder': key|joli_media_admin_dirname,
+                'data-component': 'media-move'
+            }
+        }) }}
+    </span>
+{% endif %}
