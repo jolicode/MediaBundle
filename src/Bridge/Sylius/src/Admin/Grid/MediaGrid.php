@@ -12,6 +12,7 @@ use Sylius\Bundle\GridBundle\Builder\Action\UpdateAction;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\ItemActionGroup;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\MainActionGroup;
 use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
+use Sylius\Bundle\GridBundle\Builder\Filter\StringFilter;
 use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
 use Sylius\Bundle\GridBundle\Grid\AbstractGrid;
 use Sylius\Component\Grid\Attribute\AsGrid;
@@ -33,6 +34,11 @@ final class MediaGrid extends AbstractGrid
     {
         $gridBuilder
             ->setLimits($this->config->getPaginationSizes())
+            ->orderBy('path', 'asc')
+            ->withFilters(
+                StringFilter::create('search', type: 'contains')
+                    ->setLabel('sylius.ui.search'),
+            )
             ->withFields(
                 TwigField::create('image', '@JoliMediaSylius/admin/media/grid/field/image.html.twig')
                     ->setPath('.')
@@ -43,11 +49,13 @@ final class MediaGrid extends AbstractGrid
                     ]]),
                 TwigField::create('path', '@JoliMediaSylius/admin/media/grid/field/path.html.twig')
                     ->setPath('.')
-                    ->setLabel($this->trans('media.name')),
+                    ->setLabel($this->trans('media.name'))
+                    ->setSortable(true),
                 TwigField::create('fileType', '@JoliMediaSylius/admin/media/grid/field/file_type.html.twig')
                     ->setLabel($this->trans('media.type.label')),
                 TwigField::create('fileSize', '@JoliMediaSylius/admin/media/grid/field/file_size.html.twig')
                     ->setLabel($this->trans('media.size.label_long'))
+                    ->setSortable(true)
                     ->withOptions(['vars' => [
                         'th_class' => 'w-20 text-center',
                         'td_class' => 'text-center',

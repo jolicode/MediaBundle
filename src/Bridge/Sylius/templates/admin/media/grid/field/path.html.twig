@@ -1,6 +1,8 @@
 {% set media = data %}
+{% set criteria = app.request.query.all('criteria') %}
+{% set is_recursive = criteria['search']['value']|default('') != ''  %}
 
-<span class="media-name">{{ media.filename}}</span>
+<span class="media-name">{{ is_recursive ? media.path : media.filename}}</span>
 <form action="{{ path('joli_media_sylius_admin_rename') }}" class="media-rename-form d-none" method="POST">
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_rename') }}">
     <input type="hidden" name="oldPath" class="media-rename-old-path" value="{{ media.path }}">
