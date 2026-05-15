@@ -48,7 +48,7 @@ The integration can be configured in the ``config/packages/joli_media_sylius.yam
     imports:
         - { resource: '@JoliMediaSyliusBundle/config/app.php' }
 
-    joli_media_easy:
+    joli_media_sylius:
         pagination:
             per_page: [10, 25, 50]
         upload:
