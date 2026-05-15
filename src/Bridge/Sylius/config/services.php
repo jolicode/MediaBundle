@@ -11,7 +11,9 @@ use JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Type\UploadType;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Grid\MediaGrid;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Grid\Provider\MediaGridProvider;
 use JoliCode\MediaBundle\Bridge\Sylius\Config\Config;
+use JoliCode\MediaBundle\Bridge\Sylius\Uploader\ImageUploader;
 use JoliCode\MediaBundle\Bridge\Twig\JoliMediaAdminExtension;
+use Sylius\Component\Core\Uploader\ImageUploaderInterface;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
@@ -92,4 +94,14 @@ return static function (ContainerConfigurator $container): void {
         ])
         ->tag('twig.extension')
     ;
+
+    if (interface_exists(ImageUploaderInterface::class)) {
+        $services->set('joli_media_sylius_admin.uploader.image', ImageUploader::class)
+            ->decorate('sylius.uploader.image')
+            ->args([
+                service('.inner'),
+                service('joli_media.library_container'),
+            ])
+        ;
+    }
 };

@@ -14,6 +14,7 @@ parameters:
         - src/Bridge/Sylius/src/Admin/Form/Extension
         - src/Bridge/Sylius/src/Doctrine/ORM/EntityWithMediaImageTrait.php
         - src/Bridge/Sylius/src/JoliMediaSyliusBundle.php
+        - src/Bridge/Sylius/src/Uploader/ImageUploader.php
         - src/JoliMediaBundle.php
     inferPrivatePropertyTypeFromConstructor: true
 
