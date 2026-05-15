@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.1] - 2026-05-15
+
+- fix - Fix rename directory when there are no media 
+- fix - Fix create directory action when choosing a media
+
 ## [0.4.0] - 2026-05-13
 
 - feature - Filtering and sorting medias & directories
