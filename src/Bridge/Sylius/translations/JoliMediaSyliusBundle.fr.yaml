@@ -10,6 +10,7 @@ action:
     rename_directory: 'Renommer le dossier'
     cancel: 'Annuler'
     entity_actions: 'Actions'
+    move_directory: 'Déplacer ce dossier'
     move_file: 'Déplacer ce fichier'
     move_to_this_directory: 'Déplacer dans ce répertoire'
 browser:
@@ -24,6 +25,7 @@ directory:
     create_failure: 'Échec de la création du répertoire "%directory%" : %error%'
     name_required: 'Le nom du répertoire est requis'
     rename_success: 'Le répertoire %from% a été renommé avec succès en %to%.'
+    move_success: 'Le répertoire "%from%" a été déplacé avec succès vers "%to%".'
 media:
     add: 'Ajouter un média'
     dimensions: 'Dimensions'

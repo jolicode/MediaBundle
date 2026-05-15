@@ -10,6 +10,7 @@ action:
     rename_directory: 'Rename directory'
     cancel: 'Cancel'
     entity_actions: 'Actions'
+    move_directory: 'Move directory'
     move_file: 'Move this file'
     move_to_this_directory: 'Move to this directory'
 browser:
@@ -25,6 +26,7 @@ directory:
     name: 'Directory name'
     name_required: 'Directory name is required'
     rename_success: 'The directory "%from%" was successfully renamed to "%to%"'
+    move_success: 'The directory "%from%" was successfully moved to "%to%".'
 media:
     add: 'Add media'
     dimensions: 'Dimensions'
