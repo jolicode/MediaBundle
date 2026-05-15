@@ -34,4 +34,19 @@ trait EntityWithMediaImageTrait
     {
         return $this->media;
     }
+
+    public function getPath(): ?string
+    {
+        $mediaPath = $this->media?->getPath();
+
+        if (null !== $mediaPath) {
+            return $mediaPath;
+        }
+
+        if (property_exists($this, 'path')) {
+            return $this->path;
+        }
+
+        return null;
+    }
 }

@@ -6,9 +6,9 @@
     }|merge(config) %}
 
     {% if product.imagesByType(config.type) is not empty %}
-        {% set path = product.imagesByType(config.type).first.path %}
+        {% set path = product.imagesByType(config.type).first.media.path %}
     {% elseif product.images.first %}
-        {% set path = product.images.first.path %}
+        {% set path = product.images.first.media.path %}
     {% else %}
         {% set path = null %}
     {% endif %}
