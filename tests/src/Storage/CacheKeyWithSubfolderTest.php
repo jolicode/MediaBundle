@@ -34,8 +34,6 @@ class CacheKeyWithSubfolderTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
-
         $this->cache = new ArrayAdapter();
         $this->filesystem = new Filesystem(new InMemoryFilesystemAdapter());
         $this->mimeTypeGuesser = new MimeTypeGuesser(new MimeTypes(), new FileBinaryMimeTypeGuesser());

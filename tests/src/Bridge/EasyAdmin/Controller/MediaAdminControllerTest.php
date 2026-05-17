@@ -119,7 +119,7 @@ class MediaAdminControllerTest extends WebTestCase
         $responseContent = $this->client->getResponse()->getContent();
         $this->assertIsString($responseContent);
 
-        $response = json_decode($responseContent, true);
+        $response = json_decode((string) $responseContent, true);
         $this->assertArrayHasKey('files', $response);
         $this->assertCount(1, $response['files']);
 
@@ -192,7 +192,7 @@ class MediaAdminControllerTest extends WebTestCase
     private function findInGalleryFromName(Crawler $crawler, string $name): Crawler
     {
         return $crawler->filter('ul.gallery-grid--files .gallery-grid-item__link')
-            ->reduce(static fn (Crawler $node): bool => str_contains($node->filter('.gallery-grid-item__name')->text(), $name))
+            ->reduce(static fn (Crawler $node): bool => str_contains((string) $node->filter('.gallery-grid-item__name')->text(), $name))
         ;
     }
 }
