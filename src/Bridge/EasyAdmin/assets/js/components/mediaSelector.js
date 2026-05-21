@@ -12,10 +12,23 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         `#modal-media-choice_${id} .modal-body`,
     );
 
+    let currentSearchValue = '';
+    let currentFolderUrl = editButton.attributes.href.value + editButton.dataset.folder;
+
     const fetchFolder = (url) => fetch(url).then((response) => response.text());
+
+    const getSearchUrl = (baseUrl) => {
+        if (!currentSearchValue) return baseUrl;
+
+        const url = new URL(baseUrl, window.location.origin);
+        url.searchParams.set('search', currentSearchValue);
+
+        return `${url.pathname}${url.search}${url.hash}`;
+    };
 
     const configureModal = (html) => {
         modalContent.innerHTML = html;
+        setupSearch();
     };
 
     const closeModal = () => {
@@ -27,6 +40,33 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const setFieldValue = (value) => {
         inputElement.value = value;
         inputElement.dispatchEvent(new Event("change"));
+    };
+
+    const setupSearch = () => {
+        const searchForm = modalContent.querySelector('.joli-media-search-form');
+        const searchInput = modalContent.querySelector('.joli-media-search-input');
+        if (!searchForm || !searchInput) return;
+
+        currentSearchValue = searchInput.value;
+
+        const newSearchForm = searchForm.cloneNode(true);
+        searchForm.parentNode.replaceChild(newSearchForm, searchForm);
+
+        const newInput = newSearchForm.querySelector('.joli-media-search-input');
+
+        newSearchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            currentSearchValue = newInput.value.trim();
+            fetchFolder(getSearchUrl(currentFolderUrl)).then(configureModal);
+        });
+
+        newInput.addEventListener('search', () => {
+            if (!newInput.value) {
+                currentSearchValue = '';
+                fetchFolder(currentFolderUrl).then(configureModal);
+            }
+        });
     };
 
     const handleModalClick = (event) => {
@@ -50,7 +90,8 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
             target.dataset.mediaUrl === undefined
         ) {
             // this is not a selectable media
-            fetchFolder(target.attributes.href.value).then(configureModal);
+            currentFolderUrl = target.attributes.href.value;
+            fetchFolder(getSearchUrl(currentFolderUrl)).then(configureModal);
             return;
         }
 
@@ -77,10 +118,11 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const handleEdit = (event) => {
         event.preventDefault();
         modalContent.innerHTML = "";
+        currentFolderUrl = editButton.attributes.href.value + editButton.dataset.folder;
 
-        fetchFolder(
-            editButton.attributes.href.value + editButton.dataset.folder,
-        ).then(configureModal);
+        fetchFolder(currentFolderUrl).then((html) => {
+            configureModal(html);
+        });
 
         return false;
     };
@@ -90,6 +132,11 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         event.stopPropagation();
 
         const form = event.target.closest("form");
+
+        if (form.dataset.component === 'media-search') {
+            return;
+        }
+
         const formData = new FormData(form);
         const url = form.action;
 

@@ -9,6 +9,7 @@ action:
     remove: 'Remove'
     rename_directory: 'Rename directory'
     rename_file: 'Rename file'
+    search: 'Search'
 browser:
     audio:
         unsupported: 'Your browser does not support the audio element.'
@@ -42,6 +43,7 @@ media:
     add: 'Add media'
     deleted_success: 'Media "%media%" deleted successfully'
     dimensions: 'Dimensions'
+    search_label: 'Search media...'
     error:
         in_use: 'The media "%media%" is used in the "%field%" field of the "%entity%" entity. It cannot be deleted.'
         required: 'Please choose a media file.'
