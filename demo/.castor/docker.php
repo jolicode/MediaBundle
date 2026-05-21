@@ -21,7 +21,7 @@ use function Castor\open;
 use function Castor\run;
 use function Castor\variable;
 
-#[AsTask(description: 'Displays some help and available urls for the current project', namespace: 'docker')]
+#[AsTask(description: 'Displays some help and available urls for the current project', namespace: 'docker', aliases: ['about'])]
 function about(): void
 {
     io()->title('About this project');
@@ -58,7 +58,7 @@ function about(): void
     io()->listing(array_map(fn ($url) => "https://{$url}", array_unique($urls)));
 }
 
-#[AsTask(description: 'Opens the project in your browser', namespace: 'docker')]
+#[AsTask(description: 'Opens the project in your browser', namespace: 'docker', aliases: ['open-project'])]
 function open_project(): void
 {
     open('https://' . variable('root_domain'));
@@ -100,7 +100,7 @@ function build(
 /**
  * @param list<string> $profiles
  */
-#[AsTask(description: 'Builds and starts the infrastructure', namespace: 'docker')]
+#[AsTask(description: 'Builds and starts the infrastructure', namespace: 'docker', aliases: ['up'])]
 function up(
     #[AsOption(description: 'The service to start (default: all services)', autocomplete: 'demo\docker\get_service_names')]
     ?string $service = null,
@@ -131,7 +131,7 @@ function up(
 /**
  * @param list<string> $profiles
  */
-#[AsTask(description: 'Stops the infrastructure', namespace: 'docker')]
+#[AsTask(description: 'Stops the infrastructure', namespace: 'docker', aliases: ['stop'])]
 function stop(
     #[AsOption(description: 'The service to stop (default: all services)', autocomplete: 'demo\docker\get_service_names')]
     ?string $service = null,
@@ -151,7 +151,7 @@ function stop(
     docker_compose($command, profiles: $profiles);
 }
 
-#[AsTask(description: 'Opens a shell (bash) into a builder container', namespace: 'docker')]
+#[AsTask(description: 'Opens a shell (bash) into a builder container', namespace: 'docker', aliases: ['builder'])]
 function builder(): void
 {
     $c = context()
