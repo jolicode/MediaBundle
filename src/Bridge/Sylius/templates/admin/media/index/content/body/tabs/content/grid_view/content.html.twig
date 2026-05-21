@@ -5,6 +5,9 @@
 {% set key = hookable_metadata.context.key %}
 {% set current_key = hookable_metadata.context.current_key %}
 
+{% set criteria = app.request.query.all('criteria') %}
+{% set is_recursive = criteria['search']['value']|default('') != ''  %}
+
 {% if directories|length > 0 %}
     <ul class="gallery-grid gallery-grid--folders mb-2">
         {% for directory in directories %}
@@ -13,7 +16,7 @@
                         <span class="gallery-grid-item__icon">
                             {{ ux_icon('tabler:folder', {class: 'mh-100'}) }}
                         </span>
-                    <span class="gallery-grid-item__name">{{ directory|split('/')|last }}</span>
+                    <span class="gallery-grid-item__name">{{ is_recursive ? directory : directory|joli_media_admin_basename }}</span>
                 </a>
             </li>
         {% endfor %}
@@ -29,7 +32,7 @@
                         <span class="media-preview">
                             {{ include('@JoliMediaSylius/_as_image.html.twig', { media: media, skipAutoDimensions: true, iconAttributes: { class: 'mh-100' } }) }}
                         </span>
-                    <span class="gallery-grid-item__name">{{ media.filename }}</span>
+                    <span class="gallery-grid-item__name">{{ is_recursive ? media.path : media.filename}}</span>
                 </a>
             </li>
         {% endif %}
