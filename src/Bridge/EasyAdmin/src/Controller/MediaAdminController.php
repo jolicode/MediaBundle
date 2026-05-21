@@ -270,6 +270,9 @@ class MediaAdminController extends AbstractController
             path: $currentKey,
         ));
 
+        $searchValue = $request->query->getString('search', '');
+        $hasSearch = '' !== $searchValue;
+
         try {
             $trashPath = $this->getOriginalStorage()->getTrashPath();
 
@@ -277,8 +280,16 @@ class MediaAdminController extends AbstractController
                 throw new ForbiddenPathException($trashPath);
             }
 
-            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: false);
-            natcasesort($directories);
+            $dirFilter = null;
+            if ($hasSearch) {
+                $dirFilter = static fn (string $a): bool => str_contains(strtolower($a), strtolower($searchValue));
+            }
+
+            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: $hasSearch, filter: $dirFilter);
+
+            if (!$hasSearch) {
+                natcasesort($directories);
+            }
         } catch (ForbiddenPathException|PathTraversalDetected|UnableToListContents) {
             $this->addFlash(
                 'danger',
@@ -301,12 +312,18 @@ class MediaAdminController extends AbstractController
             default => 'explore',
         };
 
+        $mediaFilter = null;
+        if ($hasSearch) {
+            $mediaFilter = static fn ($media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue));
+        }
+
         try {
             $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
                 $currentKey,
-                recursive: false,
+                recursive: $hasSearch,
                 page: $request->query->getInt('page', 1),
                 perPage: $this->config->getPaginationSize(),
+                filter: $mediaFilter,
             );
         } catch (\OutOfRangeException) {
             throw new BadRequestException('The requested page number is out of range.');
@@ -328,6 +345,7 @@ class MediaAdminController extends AbstractController
             'parent_key' => \dirname($currentKey),
             'rename_directory_form' => $this->createRenameDirectoryForm($key)->createView(),
             'route_name' => $routeName,
+            'search' => $searchValue,
         ]));
     }
 

@@ -9,6 +9,17 @@
     {{ block('body_breadcrumb') }}
     {{ block('body_content_header_wrapper') }}
 
+    {% if 'choose' in base_template %}
+        <div class="joli-media-search mb-3">
+            <form class="joli-media-search-form" data-component="media-search">
+                <div class="input-group">
+                    <input type="search" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
+                    <button class="btn btn-outline-secondary joli-media-search-btn" type="submit"><i class="fas fa-search"></i> {{ 'action.search'|trans }}</button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+
     <div class="gallery">
         {% if app.session.get('view_mode') == 'list' %}
             <table class="table datagrid gallery-list {{ (directories|length + medias|length) == 0 ? 'datagrid-empty' }}">
