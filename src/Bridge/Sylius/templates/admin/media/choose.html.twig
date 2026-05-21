@@ -40,6 +40,15 @@
         </div>
     </div>
 
+    <div class="joli-media-search mb-3">
+        <form class="joli-media-search-form" data-component="media-search">
+            <div class="input-group">
+                <input type="search" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
+                <button class="btn btn-outline-secondary joli-media-search-btn" type="submit">{{ ux_icon('tabler:search') }} {{ 'action.search'|trans }}</button>
+            </div>
+        </form>
+    </div>
+
     <form class="directory-create-form d-none mt-2"
           data-component="directory-create-form"
           action="{{ path('joli_media_sylius_admin_create_directory') }}"
@@ -47,6 +56,7 @@
     >
         <input type="hidden" name="_csrf_token" value="{{ csrf_token_create }}">
         <input type="hidden" name="parentPath" class="directory-create-parent-path" value="{{ current_key }}">
+        <input type="hidden" name="_search" class="directory-create-search" value="{{ search }}">
         <div class="input-group input-group-sm">
             <input type="text" name="name" class="form-control directory-create-input" placeholder="{{ 'directory.name'|trans }}">
             <button type="submit" class="btn btn-primary">

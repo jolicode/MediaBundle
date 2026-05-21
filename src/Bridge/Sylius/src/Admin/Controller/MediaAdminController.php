@@ -66,6 +66,7 @@ class MediaAdminController extends AbstractController
         $csrfToken = $request->request->getString('_csrf_token');
         $parentPath = urldecode(Resolver::normalizePath($request->request->getString('parentPath')));
         $name = trim($request->request->getString('name'));
+        $searchValue = $request->request->getString('_search', '');
 
         if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('media_create_directory', $csrfToken))) {
             $this->addFlash('error', $this->translator->trans('directory.create_failure', [
@@ -108,7 +109,7 @@ class MediaAdminController extends AbstractController
                 return $this->renderFolderChoiceHtml($parentPath);
             }
 
-            return $this->renderChooseHtml($parentPath);
+            return $this->renderChooseHtml($parentPath, $searchValue);
         }
 
         return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
@@ -374,6 +375,9 @@ class MediaAdminController extends AbstractController
         $request->attributes->set('currentKey', $currentKey);
         $parentKey = '' !== $currentKey ? (($pos = strrpos($currentKey, '/')) !== false ? substr($currentKey, 0, $pos) : '') : '';
 
+        $searchValue = $request->query->all('criteria')['search']['value'] ?? $request->query->getString('search', '');
+        $hasSearch = '' !== $searchValue;
+
         $perPage = $this->config->getPaginationSizes()[0] ?? 10;
 
         try {
@@ -383,17 +387,32 @@ class MediaAdminController extends AbstractController
                 throw new ForbiddenPathException($trashPath);
             }
 
-            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: false);
-            natcasesort($directories);
+            $dirFilter = null;
+            if ($hasSearch) {
+                $dirFilter = static fn (string $a): bool => str_contains(strtolower($a), strtolower($searchValue));
+            }
+
+            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: $hasSearch, filter: $dirFilter);
+
+            if (!$hasSearch) {
+                natcasesort($directories);
+            }
         } catch (ForbiddenPathException|PathTraversalDetected|UnableToListContents) {
             $directories = [];
+        }
+
+        $mediaFilter = null;
+        if ($hasSearch) {
+            $mediaFilter = static fn ($media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue));
         }
 
         if ($request->isXmlHttpRequest()) {
             try {
                 $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
                     $currentKey,
+                    recursive: $hasSearch,
                     perPage: $perPage,
+                    filter: $mediaFilter,
                 );
                 $medias = $paginatedMedias['items'];
             } catch (\OutOfRangeException) {
@@ -414,8 +433,10 @@ class MediaAdminController extends AbstractController
         try {
             $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
                 $currentKey,
+                recursive: $hasSearch,
                 page: $page,
                 perPage: $perPage,
+                filter: $mediaFilter,
             );
             $medias = new Pagerfanta(new FixedAdapter($paginatedMedias['total'], $paginatedMedias['items']));
             $medias->setCurrentPage($page);
@@ -428,6 +449,7 @@ class MediaAdminController extends AbstractController
             'current_key' => $currentKey,
             'directories' => $directories,
             'medias' => $medias,
+            'search' => $searchValue,
             'create_media_form' => $this->createUploadForm($currentKey)->createView(),
             'config' => $this->config,
             'csrf_token_create' => $this->csrfTokenManager->getToken('media_create_directory')->getValue(),
@@ -550,8 +572,10 @@ class MediaAdminController extends AbstractController
         return $this->redirectToRoute('joli_media_sylius_admin_explore', ['key' => $newPath]);
     }
 
-    private function renderChooseHtml(string $currentKey): Response
+    private function renderChooseHtml(string $currentKey, string $searchValue = ''): Response
     {
+        $hasSearch = '' !== $searchValue;
+
         try {
             $trashPath = $this->getOriginalStorage()->getTrashPath();
 
@@ -559,16 +583,31 @@ class MediaAdminController extends AbstractController
                 throw new ForbiddenPathException($trashPath);
             }
 
-            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: false);
-            natcasesort($directories);
+            $dirFilter = null;
+            if ($hasSearch) {
+                $dirFilter = static fn (string $a): bool => str_contains(strtolower($a), strtolower($searchValue));
+            }
+
+            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: $hasSearch, filter: $dirFilter);
+
+            if (!$hasSearch) {
+                natcasesort($directories);
+            }
         } catch (ForbiddenPathException|PathTraversalDetected|UnableToListContents) {
             $directories = [];
+        }
+
+        $mediaFilter = null;
+        if ($hasSearch) {
+            $mediaFilter = static fn ($media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue));
         }
 
         try {
             $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
                 $currentKey,
+                recursive: $hasSearch,
                 perPage: $this->config->getPaginationSizes()[0] ?? 10,
+                filter: $mediaFilter,
             );
             $medias = new Pagerfanta(new FixedAdapter($paginatedMedias['total'], $paginatedMedias['items']));
             $medias->setCurrentPage(1);
@@ -581,6 +620,7 @@ class MediaAdminController extends AbstractController
             'current_key' => $currentKey,
             'directories' => $directories,
             'medias' => $medias,
+            'search' => $searchValue,
             'create_media_form' => $this->createUploadForm($currentKey)->createView(),
             'config' => $this->config,
             'csrf_token_create' => $this->csrfTokenManager->getToken('media_create_directory')->getValue(),

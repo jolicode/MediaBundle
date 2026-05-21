@@ -132,6 +132,51 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     };
 
     let currentFolderPath = getCurrentFolderPath();
+    let currentSearchValue = '';
+
+    const getSearchUrl = (baseUrl) => {
+        if (!currentSearchValue) return baseUrl;
+        const separator = baseUrl.includes('?') ? '&' : '?';
+        return `${baseUrl}${separator}search=${encodeURIComponent(currentSearchValue)}`;
+    };
+
+    const setupSearch = () => {
+        const currentModalEl = document.getElementById(`modal-media-choice_${id}`);
+        if (!currentModalEl) return;
+
+        const searchForm = currentModalEl.querySelector('.joli-media-search-form');
+        const searchInput = currentModalEl.querySelector('.joli-media-search-input');
+        if (!searchForm || !searchInput) return;
+
+        currentSearchValue = searchInput.value;
+
+        const newSearchForm = searchForm.cloneNode(true);
+        searchForm.parentNode.replaceChild(newSearchForm, searchForm);
+
+        const newInput = newSearchForm.querySelector('.joli-media-search-input');
+
+        newSearchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            currentSearchValue = newInput.value.trim();
+            const basePath = getBasePath();
+            const url = currentFolderPath
+                ? `${basePath}/${currentFolderPath}`
+                : basePath;
+            fetchFolder(getSearchUrl(url)).then(configureModal);
+        });
+
+        newInput.addEventListener('search', () => {
+            if (!newInput.value) {
+                currentSearchValue = '';
+                const basePath = getBasePath();
+                const url = currentFolderPath
+                    ? `${basePath}/${currentFolderPath}`
+                    : basePath;
+                fetchFolder(url).then(configureModal);
+            }
+        });
+    };
 
     const configureModal = (html) => {
         const currentModalEl = document.getElementById(`modal-media-choice_${id}`);
@@ -143,6 +188,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         currentModalContent.innerHTML = html;
         updateBreadcrumb(currentFolderPath);
         setupCreateFolder();
+        setupSearch();
     };
 
     const closeModal = () => {
@@ -197,7 +243,7 @@ const getParentControllers = (element) => {
         const url = currentFolderPath 
             ? `${basePath}/${currentFolderPath}` 
             : basePath;
-        fetchFolder(url).then(configureModal);
+        fetchFolder(getSearchUrl(url)).then(configureModal);
     };
 
     const handleModalClick = (event) => {
@@ -212,7 +258,7 @@ const getParentControllers = (element) => {
             return;
         }
 
-        const href = target.attributes.href.value;
+        let href = target.attributes.href.value;
 
         if (
             target.dataset.mediaTemplate !== undefined &&
@@ -248,6 +294,7 @@ const getParentControllers = (element) => {
             } else {
                 currentFolderPath = folderPath;
                 updateBreadcrumb(currentFolderPath);
+                href = getSearchUrl(href);
             }
         }
 
@@ -284,6 +331,7 @@ const getParentControllers = (element) => {
         fetchFolder(editButton.href).then((html) => {
             if (modalBody) modalBody.innerHTML = html;
             setupCreateFolder();
+            setupSearch();
             const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
             bsModal.show();
         });
@@ -353,6 +401,11 @@ const getParentControllers = (element) => {
             }
 
             parentPathInput.value = currentFolderPath;
+
+            const searchInput = createForm.querySelector('.directory-create-search');
+            if (searchInput) {
+                searchInput.value = currentSearchValue;
+            }
 
             fetch(createForm.action, {
                 method: 'POST',
