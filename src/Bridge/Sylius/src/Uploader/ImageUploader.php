@@ -9,10 +9,8 @@ use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use Sylius\Component\Core\Model\ImageInterface;
 use Sylius\Component\Core\Uploader\ImageUploaderInterface;
-use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\HttpFoundation\File\File;
 
-#[AsDecorator(decorates: 'sylius.uploader.image')]
 final readonly class ImageUploader implements ImageUploaderInterface
 {
     public function __construct(
@@ -31,11 +29,11 @@ final readonly class ImageUploader implements ImageUploaderInterface
             return;
         }
 
-        $media = $this->getOriginalStorage()->createMedia($image->getPath(), $file->getContent());
-
-        if (!method_exists($image, 'setMedia')) {
+        if (!\is_callable([$image, 'setMedia'])) {
             return;
         }
+
+        $media = $this->getOriginalStorage()->createMedia($image->getPath(), $file->getContent());
 
         $image->setMedia($media);
     }
