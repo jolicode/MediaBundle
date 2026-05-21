@@ -9,6 +9,7 @@ action:
     remove: 'Détacher'
     rename_directory: 'Renommer le dossier'
     rename_file: 'Renommer le fichier'
+    search: 'Rechercher'
 browser:
     audio:
         unsupported: 'Votre navigateur ne supporte pas la lecture audio.'
@@ -42,8 +43,9 @@ media:
     add: 'Ajouter un média'
     delete:
         confirm: 'Êtes-vous sûr de vouloir supprimer ce média ? Cette action ne peut pas être annulée.'
-    deleted_success: 'Le média “%media%” a été supprimé avec succès'
+    deleted_success: 'Le média "%media%" a été supprimé avec succès'
     dimensions: 'Dimensions'
+    search_label: 'Rechercher un média...'
     error:
         in_use: 'Le media "%media%" est utilisé dans le champ "%field%" de l''entité "%entity%". Il ne peut pas être supprimé.'
     inaccessible:
