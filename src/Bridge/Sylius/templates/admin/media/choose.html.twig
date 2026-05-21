@@ -42,8 +42,9 @@
 
     <div class="joli-media-search mb-3">
         <form class="joli-media-search-form" data-component="media-search">
+            <label for="joli-media-search-input" class="visually-hidden">{{ 'media.search_label'|trans }}</label>
             <div class="input-group">
-                <input type="search" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
+                <input id="joli-media-search-input" type="search" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
                 <button class="btn btn-outline-secondary joli-media-search-btn" type="submit">{{ ux_icon('tabler:search') }} {{ 'action.search'|trans }}</button>
             </div>
         </form>
