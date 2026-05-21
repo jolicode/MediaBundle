@@ -6,7 +6,7 @@
 {% set current_key = hookable_metadata.context.current_key %}
 
 {% set criteria = app.request.query.all('criteria') %}
-{% set is_recursive = criteria['search']['value']|default('') != ''  %}
+{% set is_recursive = (criteria['search']['value'] ?? '') != '' %}
 
 {% if directories|length > 0 %}
     <ul class="gallery-grid gallery-grid--folders mb-2">
@@ -32,7 +32,7 @@
                         <span class="media-preview">
                             {{ include('@JoliMediaSylius/_as_image.html.twig', { media: media, skipAutoDimensions: true, iconAttributes: { class: 'mh-100' } }) }}
                         </span>
-                    <span class="gallery-grid-item__name">{{ is_recursive ? media.path : media.filename}}</span>
+                    <span class="gallery-grid-item__name">{{ is_recursive ? media.path : media.filename }}</span>
                 </a>
             </li>
         {% endif %}
