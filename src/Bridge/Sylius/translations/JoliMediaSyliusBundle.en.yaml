@@ -12,6 +12,7 @@ action:
     entity_actions: 'Actions'
     move_file: 'Move this file'
     move_to_this_directory: 'Move to this directory'
+    search: 'Search'
 browser:
     audio:
         unsupported: 'Your browser does not support the audio element.'
@@ -62,6 +63,7 @@ media:
     move_success: 'The file %from% was successfully moved to %to%.'
     move_failure: 'Failed to move the media from %from% to %to%. Error: %error%'
     rename_success: 'The file %from% was successfully renamed to %to%.'
+    search_label: 'Search media...'
     upload:
         dropzone:
             default_message: 'Drop files here to upload'

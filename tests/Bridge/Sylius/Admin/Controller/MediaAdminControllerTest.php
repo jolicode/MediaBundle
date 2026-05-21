@@ -69,6 +69,18 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorTextContains('tr.item:last-child', 'sub/folder/deep/test.txt');
     }
 
+    public function testFilteringDirectoriesInChooseMediaModal(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/choose?search=sub');
+        $this->assertResponseIsSuccessful();
+
+        // List of directories
+        $this->assertSame(3, $this->getDirectoryCount($crawler));
+
+        // List of medias
+        $this->assertSame(2, $this->getMediaCount($crawler));
+    }
+
     public function testFilteringMedias(): void
     {
         $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore?criteria[search][value]=test.txt');
@@ -81,6 +93,20 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSame(2, $this->getMediaCount($crawler));
         $this->assertSelectorTextContains('tr.item:first-child', 'a-folder-with-a-very-long-name-level-10/test.txt');
         $this->assertSelectorTextContains('tr.item:last-child', 'sub/folder/deep/test.txt');
+    }
+
+    public function testFilteringMediasInTheChooseMediaModal(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/choose?search=test.txt');
+        $this->assertResponseIsSuccessful();
+
+        // List of directories
+        $this->assertSame(0, $this->getDirectoryCount($crawler));
+
+        // List of medias
+        $this->assertSame(2, $this->getMediaCount($crawler));
+        $this->assertSelectorTextContains('.gallery-grid-item:first-child', 'test.txt');
+        $this->assertSelectorTextContains('.gallery-grid-item:last-child', 'test.txt');
     }
 
     public function testSortingMediasByNameWithAscendingOrder(): void
