@@ -93,83 +93,6 @@
             "time": "2025-11-29T13:01:51+00:00"
         },
         {
-            "name": "doctrine/annotations",
-            "version": "2.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/doctrine/annotations.git",
-                "reference": "901c2ee5d26eb64ff43c47976e114bf00843acf7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/annotations/zipball/901c2ee5d26eb64ff43c47976e114bf00843acf7",
-                "reference": "901c2ee5d26eb64ff43c47976e114bf00843acf7",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/lexer": "^2 || ^3",
-                "ext-tokenizer": "*",
-                "php": "^7.2 || ^8.0",
-                "psr/cache": "^1 || ^2 || ^3"
-            },
-            "require-dev": {
-                "doctrine/cache": "^2.0",
-                "doctrine/coding-standard": "^10",
-                "phpstan/phpstan": "^1.10.28",
-                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
-                "symfony/cache": "^5.4 || ^6.4 || ^7",
-                "vimeo/psalm": "^4.30 || ^5.14"
-            },
-            "suggest": {
-                "php": "PHP 8.0 or higher comes with attributes, a native replacement for annotations"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Doctrine\\Common\\Annotations\\": "lib/Doctrine/Common/Annotations"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com"
-                },
-                {
-                    "name": "Roman Borschel",
-                    "email": "roman@code-factory.org"
-                },
-                {
-                    "name": "Benjamin Eberlei",
-                    "email": "kontakt@beberlei.de"
-                },
-                {
-                    "name": "Jonathan Wage",
-                    "email": "jonwage@gmail.com"
-                },
-                {
-                    "name": "Johannes Schmitt",
-                    "email": "schmittjoh@gmail.com"
-                }
-            ],
-            "description": "Docblock Annotations Parser",
-            "homepage": "https://www.doctrine-project.org/projects/annotations.html",
-            "keywords": [
-                "annotations",
-                "docblock",
-                "parser"
-            ],
-            "support": {
-                "issues": "https://github.com/doctrine/annotations/issues",
-                "source": "https://github.com/doctrine/annotations/tree/2.0.2"
-            },
-            "abandoned": true,
-            "time": "2024-09-05T10:17:24+00:00"
-        },
-        {
             "name": "doctrine/collections",
             "version": "2.6.0",
             "source": {
@@ -3572,23 +3495,23 @@
         },
         {
             "name": "sylius/admin-ui",
-            "version": "v0.12.2",
+            "version": "v0.12.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/AdminUi.git",
-                "reference": "91d00b72358275bb3b3f6290a1be9b9067142e1e"
+                "reference": "7c65210fa78ea8983416e46d0eaa2eefb84fa16c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/AdminUi/zipball/91d00b72358275bb3b3f6290a1be9b9067142e1e",
-                "reference": "91d00b72358275bb3b3f6290a1be9b9067142e1e",
+                "url": "https://api.github.com/repos/Sylius/AdminUi/zipball/7c65210fa78ea8983416e46d0eaa2eefb84fa16c",
+                "reference": "7c65210fa78ea8983416e46d0eaa2eefb84fa16c",
                 "shasum": ""
             },
             "require": {
                 "knplabs/knp-menu-bundle": "^3.0",
                 "php": "^8.1",
                 "sylius/resource-bundle": "^1.13 || ^1.14@alpha",
-                "sylius/twig-hooks": "^0.12.2",
+                "sylius/twig-hooks": "^0.12.3",
                 "symfony/http-kernel": "^6.4 || ^7.4 || ^8.0",
                 "symfony/security-bundle": "^6.4 || ^7.4 || ^8.0",
                 "symfony/security-http": "^6.4 || ^7.4 || ^8.0",
@@ -3631,7 +3554,7 @@
             "description": "Minimalist generic templates and routes for your admin panels",
             "support": {
                 "issues": "https://github.com/Sylius/AdminUi/issues",
-                "source": "https://github.com/Sylius/AdminUi/tree/v0.12.2"
+                "source": "https://github.com/Sylius/AdminUi/tree/v0.12.3"
             },
             "funding": [
                 {
@@ -3639,30 +3562,30 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-15T08:34:53+00:00"
+            "time": "2026-05-21T08:24:33+00:00"
         },
         {
             "name": "sylius/bootstrap-admin-ui",
-            "version": "v0.12.2",
+            "version": "v0.12.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/BootstrapAdminUi.git",
-                "reference": "6c2fcf95258debcd5fdb338d25a820c64820f039"
+                "reference": "2194c1fec1a3c2564766a088ad0490ae396eea05"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/BootstrapAdminUi/zipball/6c2fcf95258debcd5fdb338d25a820c64820f039",
-                "reference": "6c2fcf95258debcd5fdb338d25a820c64820f039",
+                "url": "https://api.github.com/repos/Sylius/BootstrapAdminUi/zipball/2194c1fec1a3c2564766a088ad0490ae396eea05",
+                "reference": "2194c1fec1a3c2564766a088ad0490ae396eea05",
                 "shasum": ""
             },
             "require": {
                 "pagerfanta/twig": "^4.6",
                 "php": "^8.1",
-                "sylius/admin-ui": "^0.12.2",
+                "sylius/admin-ui": "^0.12.3",
                 "sylius/grid-bundle": "^1.13 || ^1.15@alpha",
                 "sylius/resource-bundle": "^1.13 || ^1.14@alpha",
-                "sylius/twig-extra": "^0.12.2",
-                "sylius/twig-hooks": "^0.12.2",
+                "sylius/twig-extra": "^0.12.3",
+                "sylius/twig-hooks": "^0.12.3",
                 "symfony/asset": "^6.4 || ^7.4 || ^8.0",
                 "symfony/http-client": "^6.4 || ^7.4 || ^8.0",
                 "symfony/http-kernel": "^6.4 || ^7.4 || ^8.0",
@@ -3702,7 +3625,7 @@
             "description": "Build your Bootstrap admin panels with Sylius and Symfony UX",
             "support": {
                 "issues": "https://github.com/Sylius/BootstrapAdminUi/issues",
-                "source": "https://github.com/Sylius/BootstrapAdminUi/tree/v0.12.2"
+                "source": "https://github.com/Sylius/BootstrapAdminUi/tree/v0.12.3"
             },
             "funding": [
                 {
@@ -3710,20 +3633,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-15T08:34:53+00:00"
+            "time": "2026-05-21T08:24:33+00:00"
         },
         {
             "name": "sylius/grid-bundle",
-            "version": "v1.15.0",
+            "version": "v1.15.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusGridBundle.git",
-                "reference": "e1383c0ce867bdd9e2e89f16e1b5ec976120d808"
+                "reference": "e2ea6e3a5fd33b17de58af0a208f76b31fe2afbf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusGridBundle/zipball/e1383c0ce867bdd9e2e89f16e1b5ec976120d808",
-                "reference": "e1383c0ce867bdd9e2e89f16e1b5ec976120d808",
+                "url": "https://api.github.com/repos/Sylius/SyliusGridBundle/zipball/e2ea6e3a5fd33b17de58af0a208f76b31fe2afbf",
+                "reference": "e2ea6e3a5fd33b17de58af0a208f76b31fe2afbf",
                 "shasum": ""
             },
             "require": {
@@ -3840,7 +3763,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Sylius/SyliusGridBundle/issues",
-                "source": "https://github.com/Sylius/SyliusGridBundle/tree/v1.15.0"
+                "source": "https://github.com/Sylius/SyliusGridBundle/tree/v1.15.1"
             },
             "funding": [
                 {
@@ -3848,7 +3771,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-29T15:38:54+00:00"
+            "time": "2026-04-16T11:23:10+00:00"
         },
         {
             "name": "sylius/registry",
@@ -3915,21 +3838,20 @@
         },
         {
             "name": "sylius/resource-bundle",
-            "version": "v1.14.0",
+            "version": "v1.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusResourceBundle.git",
-                "reference": "ee88684feea78d11c3d87e3ffbdd0b289313434e"
+                "reference": "bae78fbc92fdb06c586085bb998a9363f36024a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusResourceBundle/zipball/ee88684feea78d11c3d87e3ffbdd0b289313434e",
-                "reference": "ee88684feea78d11c3d87e3ffbdd0b289313434e",
+                "url": "https://api.github.com/repos/Sylius/SyliusResourceBundle/zipball/bae78fbc92fdb06c586085bb998a9363f36024a6",
+                "reference": "bae78fbc92fdb06c586085bb998a9363f36024a6",
                 "shasum": ""
             },
             "require": {
                 "babdev/pagerfanta-bundle": "^4.4",
-                "doctrine/annotations": "^2.0",
                 "doctrine/collections": "^2.2",
                 "doctrine/event-manager": "^1.1 || ^2.0",
                 "doctrine/inflector": "^2.0",
@@ -4048,7 +3970,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Sylius/SyliusResourceBundle/issues",
-                "source": "https://github.com/Sylius/SyliusResourceBundle/tree/v1.14.0"
+                "source": "https://github.com/Sylius/SyliusResourceBundle/tree/v1.14.1"
             },
             "funding": [
                 {
@@ -4056,11 +3978,11 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-03T08:37:38+00:00"
+            "time": "2026-03-02T13:29:56+00:00"
         },
         {
             "name": "sylius/twig-extra",
-            "version": "v0.12.2",
+            "version": "v0.12.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/TwigExtra.git",
@@ -4123,7 +4045,7 @@
             "description": "Additional Twig extensions for your Symfony projects",
             "support": {
                 "issues": "https://github.com/Sylius/TwigExtra/issues",
-                "source": "https://github.com/Sylius/TwigExtra/tree/v0.12.2"
+                "source": "https://github.com/Sylius/TwigExtra/tree/v0.12.3"
             },
             "funding": [
                 {
@@ -4135,7 +4057,7 @@
         },
         {
             "name": "sylius/twig-hooks",
-            "version": "v0.12.2",
+            "version": "v0.12.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/TwigHooks.git",
@@ -4207,7 +4129,7 @@
             ],
             "description": "Composable Twig layouts",
             "support": {
-                "source": "https://github.com/Sylius/TwigHooks/tree/v0.12.2"
+                "source": "https://github.com/Sylius/TwigHooks/tree/v0.12.3"
             },
             "funding": [
                 {
@@ -4219,7 +4141,7 @@
         },
         {
             "name": "sylius/ui-translations",
-            "version": "v0.12.2",
+            "version": "v0.12.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/UiTranslations.git",
@@ -4265,7 +4187,7 @@
             "description": "Basic UI translations",
             "support": {
                 "issues": "https://github.com/Sylius/UiTranslations/issues",
-                "source": "https://github.com/Sylius/UiTranslations/tree/v0.12.2"
+                "source": "https://github.com/Sylius/UiTranslations/tree/v0.12.3"
             },
             "funding": [
                 {
