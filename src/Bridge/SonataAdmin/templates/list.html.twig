@@ -87,6 +87,18 @@
 
 {% block content %}
     {{ block('content_header') }}
+    {% if 'choose' in base_template %}
+        <div class="joli-media-search">
+            <form class="joli-media-search-form" data-component="media-search">
+                <div class="input-group">
+                    <input type="search" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default joli-media-search-btn" type="submit"><i class="fas fa-search"></i> {{ 'action.search'|trans }}</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    {% endif %}
     <div class="gallery">
         {% if app.session.get('view_mode') == 'list' %}
             <div class="box box-primary">

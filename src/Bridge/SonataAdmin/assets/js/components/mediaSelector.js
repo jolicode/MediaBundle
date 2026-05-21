@@ -11,6 +11,7 @@ const MediaSelector = class {
     this.modal = false;
     this.modalContent = false;
     this.currentFolder = false;
+    this.currentSearchValue = '';
   }
 
   fetchFolder = (url) => {
@@ -18,9 +19,43 @@ const MediaSelector = class {
     return fetch(url).then((response) => response.text());
   };
 
+  getSearchUrl = (baseUrl) => {
+    if (!this.currentSearchValue) return baseUrl;
+    const separator = baseUrl.includes('?') ? '&' : '?';
+    return `${baseUrl}${separator}search=${encodeURIComponent(this.currentSearchValue)}`;
+  };
+
+  setupSearch = () => {
+    const searchForm = this.modalContent.querySelector('.joli-media-search-form');
+    const searchInput = this.modalContent.querySelector('.joli-media-search-input');
+    if (!searchForm || !searchInput) return;
+
+    this.currentSearchValue = searchInput.value;
+
+    const newSearchForm = searchForm.cloneNode(true);
+    searchForm.parentNode.replaceChild(newSearchForm, searchForm);
+
+    const newInput = newSearchForm.querySelector('.joli-media-search-input');
+
+    newSearchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.currentSearchValue = newInput.value.trim();
+      this.fetchFolder(this.getSearchUrl(this.currentFolder)).then(this.configureModal);
+    });
+
+    newInput.addEventListener('search', () => {
+      if (!newInput.value) {
+        this.currentSearchValue = '';
+        this.fetchFolder(this.currentFolder).then(this.configureModal);
+      }
+    });
+  };
+
   configureModal = (html) => {
     this.modalContent.innerHTML = html;
     Admin.shared_setup(this.modal);
+    this.setupSearch();
   };
 
   handleModalClick = (event) => {
@@ -41,7 +76,7 @@ const MediaSelector = class {
 
     if (target.dataset.mediaTemplate === undefined || target.dataset.mediaUrl === undefined) {
       // this is not a selectable media
-      this.fetchFolder(target.attributes.href.value).then(this.configureModal);
+      this.fetchFolder(this.getSearchUrl(target.attributes.href.value)).then(this.configureModal);
       return;
     }
 
@@ -57,6 +92,11 @@ const MediaSelector = class {
     event.stopPropagation();
 
     const form = event.target.closest("form");
+
+    if (form && form.dataset.component === 'media-search') {
+      return;
+    }
+
     const formData = new FormData(form);
     const url = form.action;
 
@@ -98,8 +138,10 @@ const MediaSelector = class {
     }
 
     this.modalContent.innerHTML = '';
+    this.currentSearchValue = '';
+    this.currentFolder = this.editButton.attributes.href.value + '/' + this.editButton.dataset.folder;
 
-    this.fetchFolder(this.editButton.attributes.href.value + '/' + this.editButton.dataset.folder).then((html) => {
+    this.fetchFolder(this.currentFolder).then((html) => {
       this.configureModal(html);
       jQuery(this.modal).modal();
       Admin.setup_list_modal(this.modal);
