@@ -25,6 +25,14 @@ joli_media:
                             height: 30
                             allow_upscale: true
 
+                admin_list_thumbnail_medium:
+                    format: webp
+                    transformers:
+                        thumbnail:
+                            width: 70
+                            height: 70
+                            allow_upscale: true
+
                 avatar:
                     format: webp
                     transformers:
