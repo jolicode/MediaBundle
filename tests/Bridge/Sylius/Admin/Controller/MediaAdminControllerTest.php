@@ -515,6 +515,29 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'Directory name is required');
     }
 
+    public function testMoveDirectoryFromSubdirectoryToRoot(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore/sub/folder');
+        $this->assertResponseIsSuccessful();
+
+        $form = $this->getMoveDirectoryForm($crawler);
+
+        $phpValues = $form->getPhpValues();
+        $phpValues['to'] = '';
+
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues);
+
+        $this->assertResponseRedirects('/sylius-admin/media/explore/folder');
+
+        // I should be redirected to the new directory path
+        $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        // Test flash message
+        $this->assertSelectorExists('[data-test-sylius-flash-message]');
+        $this->assertSelectorTextContains('[data-test-sylius-flash-message]', 'The directory "sub/folder" was successfully moved to "folder".');
+    }
+
     protected static function getKernelClass(): string
     {
         return Kernel::class;
@@ -559,6 +582,13 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorExists('form[data-component="directory-create-form"]');
 
         return $crawler->filter('form[data-component="directory-create-form"]')->form();
+    }
+
+    private function getMoveDirectoryForm(Crawler $crawler): Form
+    {
+        $this->assertSelectorExists('form[id="move-form"]');
+
+        return $crawler->filter('form[id="move-form"]')->form();
     }
 
     private function createTemporaryFile(): string
