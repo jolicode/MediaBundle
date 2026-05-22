@@ -87,11 +87,11 @@
 
 {% block content %}
     {{ block('content_header') }}
-    {% if 'choose' in base_template %}
+    {% if 'choose' in base_template or 'explore' in base_template %}
         <div class="joli-media-search">
-            <form class="joli-media-search-form" data-component="media-search">
+            <form class="joli-media-search-form" {% if 'explore' in base_template %}method="GET" action="{{ path(app.request.attributes.get('_route'), { key: current_key }) }}"{% else %}data-component="media-search"{% endif %}>
                 <div class="input-group">
-                    <input type="search" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
+                    <input type="search" class="form-control joli-media-search-input" {% if 'explore' in base_template %}name="search"{% endif %} placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
                     <span class="input-group-btn">
                         <button class="btn btn-default joli-media-search-btn" type="submit"><i class="fas fa-search"></i> {{ 'action.search'|trans }}</button>
                     </span>
