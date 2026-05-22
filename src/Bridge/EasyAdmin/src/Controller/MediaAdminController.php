@@ -270,7 +270,7 @@ class MediaAdminController extends AbstractController
             path: $currentKey,
         ));
 
-        $searchValue = $request->query->getString('search', '');
+        $searchValue = $request->query->getString('query', '');
         $hasSearch = '' !== $searchValue;
 
         try {
