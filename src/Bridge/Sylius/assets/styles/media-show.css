@@ -132,6 +132,29 @@
     gap: 0.25rem;
     font-size: 0.875rem;
     color: var(--gray-700);
+    min-width: 0;
+}
+
+.folder-modal-breadcrumb a,
+.folder-modal-breadcrumb .breadcrumb-current {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 12ch;
+}
+
+@media (min-width: 576px) {
+    .folder-modal-breadcrumb a,
+    .folder-modal-breadcrumb .breadcrumb-current {
+        max-width: 20ch;
+    }
+}
+
+@media (min-width: 768px) {
+    .folder-modal-breadcrumb a,
+    .folder-modal-breadcrumb .breadcrumb-current {
+        max-width: 30ch;
+    }
 }
 
 [data-bs-theme="dark"] {
