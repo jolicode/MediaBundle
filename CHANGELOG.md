@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0] - 2026-06-09
+
+- feat(Sylius): Decorate the Sylius image uploader
+- feat(Sylius): Search in the choose media modal
+- fix(Sylius): Fix responsive in choose media modal
+- feature(Sylius) - Move a directory
+- fix(Sylius): Fix media get path
+
 ## [0.4.1] - 2026-05-15
 
 - fix - Fix rename directory when there are no media 
