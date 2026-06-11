@@ -73,13 +73,13 @@ The ``pagination`` section controls how media items are loaded and displayed:
 
 - ``per_page``: Number of media items to display per page (default: ``[10, 25, 50]``). This improves performance for large libraries by loading only a subset of items.
 
-The ``upload`` section of the configuration allows you to control the media upload behavior in EasyAdmin:
+The ``upload`` section of the configuration allows you to control the media upload behavior in Sylius:
 
 - ``max_files``: Sets the maximum number of files that can be uploaded at once.
 - ``max_file_size``: Sets the maximum file size for uploads (in megabytes).
 - ``accepted_files``: Specifies the MIME types of files that can be uploaded. You can use wildcards like ``image/*`` or specific types like ``application/pdf``.
 
-The ``visibility`` section of the configuration allows you to control the visibility of various features in the EasyAdmin media interface:
+The ``visibility`` section of the configuration allows you to control the visibility of various features in the Sylius media interface:
 
 - ``show_variations_list``: Shows the list of variations in a dedicated tab on the media show page.
 - ``show_variations_list_admin_variations``: Shows the variations defined in by the admin bridge in the variations list tab.
@@ -97,7 +97,7 @@ You can configure the number of items displayed per page:
 
 .. code-block:: yaml
 
-    joli_media_easy_admin:
+    joli_media_sylius:
         pagination:
             per_page: [10, 25, 50]
 
@@ -113,10 +113,11 @@ On Sylius:
 
     namespace App\Menu\Admin;
 
+    use Knp\Menu\ItemInterface;
     use Sylius\Bundle\UiBundle\Menu\Event\MenuBuilderEvent;
     use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-    #[AsEventListener(event: 'sylius.menu.admin.main']
+    #[AsEventListener(event: 'sylius.menu.admin.main')]
     final class AdminMenuListener
     {
         public function __invoke(MenuBuilderEvent $event): void
@@ -149,6 +150,7 @@ On Sylius stack:
 
     namespace App\Menu\Admin;
 
+    use Knp\Menu\ItemInterface;
     use Sylius\AdminUi\Knp\Menu\MenuBuilderInterface;
     use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 
