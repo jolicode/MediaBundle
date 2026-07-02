@@ -8,7 +8,7 @@
 
 This bundle provides a tools to manage media in Symfony applications and embed a full-featured media library in your admin.
 
-- [EasyAdmin](https://symfony.com/bundles/EasyAdminBundle/current/index.html) and [SonataAdmin](https://symfony.com/bundles/SonataAdminBundle/current/index.html) integrations
+- [EasyAdmin](https://symfony.com/bundles/EasyAdminBundle/current/index.html), [SonataAdmin](https://symfony.com/bundles/SonataAdminBundle/current/index.html) and [Sylius / Sylius Stack](https://stack.sylius.com/) integrations
 - abstract media storage
 - processors to transform media (crop / resize / etc.)
 - post processors to optimize the media size
