@@ -76,6 +76,11 @@ readonly class MediaEntityMetadataWarmer implements CacheWarmerInterface
         $this->cache->delete(self::MEDIA_DELETE_BEHAVIORS_CACHE_KEY);
         $this->cache->get(self::MEDIA_DELETE_BEHAVIORS_CACHE_KEY, static fn (): array => $mediaDeleteBehaviors);
 
+        // reset the managers so that later cache warmers (e.g. DoctrineBundle's optional metadata warmer, which requires a clean metadata factory) are not affected by the getAllMetadata() calls above
+        foreach (array_keys($this->managerRegistry->getManagers()) as $name) {
+            $this->managerRegistry->resetManager($name);
+        }
+
         return [];
     }
 }
