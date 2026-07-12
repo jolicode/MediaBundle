@@ -1,0 +1,86 @@
+action:
+    choose_a_file: 'Выбрать файл'
+    copy: 'Копировать'
+    copied: 'Скопировано'
+    delete_directory: 'Удалить эту папку'
+    parent: 'Назад'
+    regenerate: 'Пересоздать'
+    remove: 'Убрать'
+    rename: 'Переименовать'
+    rename_directory: 'Переименовать папку'
+    cancel: 'Отмена'
+    entity_actions: 'Действия'
+    move_directory: 'Переместить папку'
+    move_file: 'Переместить этот файл'
+    move_to_this_directory: 'Переместить в эту папку'
+    search: 'Поиск'
+browser:
+    audio:
+        unsupported: 'Ваш браузер не поддерживает аудио.'
+    video:
+        unsupported: 'Ваш браузер не поддерживает видео.'
+directory:
+    label: 'Папка'
+    create: 'Создать новую папку'
+    create_success: 'Папка «%directory%» создана.'
+    create_failure: 'Не удалось создать папку «%directory%»: %error%'
+    name: 'Название папки'
+    name_required: 'Название папки обязательно'
+    rename_success: 'Папка «%from%» переименована в «%to%».'
+    move_success: 'Папка «%from%» перемещена в «%to%».'
+media:
+    add: 'Добавить изображения'
+    dimensions: 'Размеры'
+    name: 'Название'
+    size:
+        label_long: 'Размер файла'
+    type:
+        label: 'Тип'
+        label_long: 'Тип файла'
+        audio: 'Аудио'
+        csv: 'CSV'
+        excel: 'Excel'
+        file: 'Файл'
+        html: 'HTML'
+        image: 'Изображение'
+        pdf: 'PDF'
+        powerpoint: 'PowerPoint'
+        text: 'Текст'
+        video: 'Видео'
+        word: 'Word'
+        xml: 'XML'
+        zip: 'ZIP'
+    unavailable:
+        simple: 'Изображение не выбрано.'
+    url:
+        label_long: 'Адрес файла'
+    inaccessible:
+        explanation: 'Файл «%media%» недоступен. Возможно, он был удалён или перемещён.'
+        label: 'Недоступный файл'
+    error:
+        required: 'Выберите файл.'
+    move_modal:
+        title: 'Перемещение файла'
+        content: 'Действительно переместить этот файл в папку %directory%?'
+    move_success: 'Файл %from% перемещён в %to%.'
+    move_failure: 'Не удалось переместить файл из %from% в %to%. Ошибка: %error%'
+    rename_success: 'Файл %from% переименован в %to%.'
+    search_label: 'Поиск изображений…'
+    upload:
+        dropzone:
+            default_message: 'Перетащите файлы сюда для загрузки'
+            fallback_message: 'Ваш браузер не поддерживает загрузку перетаскиванием.'
+            fallback_text: 'Используйте форму ниже для загрузки файлов.'
+            file_too_big: 'Файл слишком большой ({{filesize}} МиБ). Максимум: {{maxFilesize}} МиБ.'
+            invalid_file_type: 'Файлы этого типа загружать нельзя.'
+            max_files_exceeded: 'Больше файлов загрузить нельзя.'
+document:
+    download: 'Скачать документ'
+no_file_found: 'Файлы не найдены'
+preview:
+    unavailable: 'Предпросмотр недоступен.'
+root: 'Корень'
+variation:
+    label: 'Вариант'
+    stored: 'Сохранён?'
+media_library: 'Медиа'
