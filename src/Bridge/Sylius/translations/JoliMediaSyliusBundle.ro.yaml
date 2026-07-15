@@ -1,0 +1,86 @@
+action:
+    choose_a_file: 'Alege un fișier'
+    copy: 'Copiază'
+    copied: 'Copiat'
+    delete_directory: 'Șterge acest dosar'
+    parent: 'Înapoi'
+    regenerate: 'Regenerează'
+    remove: 'Elimină'
+    rename: 'Redenumește'
+    rename_directory: 'Redenumește dosarul'
+    cancel: 'Anulează'
+    entity_actions: 'Acțiuni'
+    move_directory: 'Mută dosarul'
+    move_file: 'Mută acest fișier'
+    move_to_this_directory: 'Mută în acest dosar'
+    search: 'Caută'
+browser:
+    audio:
+        unsupported: 'Browserul dvs. nu suportă redarea audio.'
+    video:
+        unsupported: 'Browserul dvs. nu suportă redarea video.'
+directory:
+    label: 'Dosar'
+    create: 'Creează un dosar nou'
+    create_success: 'Dosarul „%directory%” a fost creat.'
+    create_failure: 'Dosarul „%directory%” nu a putut fi creat: %error%'
+    name: 'Numele dosarului'
+    name_required: 'Numele dosarului este obligatoriu'
+    rename_success: 'Dosarul „%from%” a fost redenumit în „%to%”.'
+    move_success: 'Dosarul „%from%” a fost mutat în „%to%”.'
+media:
+    add: 'Adaugă imagini'
+    dimensions: 'Dimensiuni'
+    name: 'Nume'
+    size:
+        label_long: 'Mărimea fișierului'
+    type:
+        label: 'Tip'
+        label_long: 'Tipul fișierului'
+        audio: 'Audio'
+        csv: 'CSV'
+        excel: 'Excel'
+        file: 'Fișier'
+        html: 'HTML'
+        image: 'Imagine'
+        pdf: 'PDF'
+        powerpoint: 'PowerPoint'
+        text: 'Text'
+        video: 'Video'
+        word: 'Word'
+        xml: 'XML'
+        zip: 'ZIP'
+    unavailable:
+        simple: 'Nicio imagine selectată.'
+    url:
+        label_long: 'Adresa fișierului'
+    inaccessible:
+        explanation: 'Fișierul „%media%” nu este accesibil. Poate a fost șters sau mutat.'
+        label: 'Fișier inaccesibil'
+    error:
+        required: 'Alegeți un fișier.'
+    move_modal:
+        title: 'Mutarea fișierului'
+        content: 'Sigur mutați acest fișier în dosarul %directory%?'
+    move_success: 'Fișierul %from% a fost mutat în %to%.'
+    move_failure: 'Fișierul nu a putut fi mutat din %from% în %to%. Eroare: %error%'
+    rename_success: 'Fișierul %from% a fost redenumit în %to%.'
+    search_label: 'Caută imagini…'
+    upload:
+        dropzone:
+            default_message: 'Trageți fișierele aici pentru încărcare'
+            fallback_message: 'Browserul dvs. nu suportă încărcarea prin tragere.'
+            fallback_text: 'Folosiți formularul de mai jos pentru a încărca fișierele.'
+            file_too_big: 'Fișierul este prea mare ({{filesize}} MiB). Maximul: {{maxFilesize}} MiB.'
+            invalid_file_type: 'Nu puteți încărca fișiere de acest tip.'
+            max_files_exceeded: 'Nu mai puteți încărca alte fișiere.'
+document:
+    download: 'Descarcă documentul'
+no_file_found: 'Niciun fișier găsit'
+preview:
+    unavailable: 'Previzualizarea nu este disponibilă.'
+root: 'Rădăcină'
+variation:
+    label: 'Variantă'
+    stored: 'Stocată?'
+media_library: 'Media'
