@@ -1,0 +1,86 @@
+action:
+    choose_a_file: 'Datei auswählen'
+    copy: 'Kopieren'
+    copied: 'Kopiert'
+    delete_directory: 'Dieses Verzeichnis löschen'
+    parent: 'Übergeordnetes Verzeichnis'
+    regenerate: 'Neu generieren'
+    remove: 'Entfernen'
+    rename: 'Umbenennen'
+    rename_directory: 'Verzeichnis umbenennen'
+    cancel: 'Abbrechen'
+    entity_actions: 'Aktionen'
+    move_directory: 'Verzeichnis verschieben'
+    move_file: 'Diese Datei verschieben'
+    move_to_this_directory: 'In dieses Verzeichnis verschieben'
+    search: 'Suchen'
+browser:
+    audio:
+        unsupported: 'Ihr Browser unterstützt das Audio-Element nicht.'
+    video:
+        unsupported: 'Ihr Browser unterstützt das Video-Element nicht.'
+directory:
+    label: 'Verzeichnis'
+    create: 'Neues Verzeichnis erstellen'
+    create_success: 'Verzeichnis "%directory%" erfolgreich erstellt'
+    create_failure: 'Das Verzeichnis "%directory%" konnte nicht erstellt werden: %error%'
+    name: 'Verzeichnisname'
+    name_required: 'Verzeichnisname ist erforderlich'
+    rename_success: 'Das Verzeichnis "%from%" wurde erfolgreich in "%to%" umbenannt'
+    move_success: 'Das Verzeichnis "%from%" wurde erfolgreich nach "%to%" verschoben.'
+media:
+    add: 'Medien hinzufügen'
+    dimensions: 'Abmessungen'
+    name: 'Name'
+    size:
+        label_long: 'Dateigröße'
+    type:
+        label: 'Typ'
+        label_long: 'Dateityp'
+        audio: 'Audio'
+        csv: 'CSV'
+        excel: 'Excel'
+        file: 'Datei'
+        html: 'HTML'
+        image: 'Bild'
+        pdf: 'PDF'
+        powerpoint: 'PowerPoint'
+        text: 'Text'
+        video: 'Video'
+        word: 'Word'
+        xml: 'XML'
+        zip: 'ZIP'
+    unavailable:
+        simple: 'Keine Medien ausgewählt.'
+    url:
+        label_long: 'Medien-URL'
+    inaccessible:
+        explanation: 'Die Mediendatei "%media%" ist nicht verfügbar. Möglicherweise wurde sie gelöscht oder verschoben.'
+        label: 'Nicht verfügbare Mediendatei'
+    error:
+        required: 'Bitte wählen Sie eine Mediendatei aus.'
+    move_modal:
+        title: 'Mediendatei verschieben'
+        content: 'Möchten Sie diese Mediendatei wirklich in das Verzeichnis %directory% verschieben?'
+    move_success: 'Die Datei %from% wurde erfolgreich nach %to% verschoben.'
+    move_failure: 'Die Datei konnte nicht von %from% nach %to% verschoben werden. Fehler: %error%'
+    rename_success: 'Die Datei %from% wurde erfolgreich in %to% umbenannt.'
+    search_label: 'Medien suchen …'
+    upload:
+        dropzone:
+            default_message: 'Dateien zum Hochladen hier ablegen'
+            fallback_message: 'Ihr Browser unterstützt das Hochladen von Dateien per Drag & Drop nicht.'
+            fallback_text: 'Bitte verwenden Sie das untenstehende Formular, um Ihre Dateien wie früher hochzuladen.'
+            file_too_big: 'Die Datei ist zu groß ({{filesize}} MiB). Maximale Dateigröße: {{maxFilesize}} MiB.'
+            invalid_file_type: 'Dateien dieses Typs können nicht hochgeladen werden.'
+            max_files_exceeded: 'Es können keine weiteren Dateien hochgeladen werden.'
+document:
+    download: 'Dokument herunterladen'
+no_file_found: 'Keine Datei gefunden'
+preview:
+    unavailable: 'Vorschau nicht verfügbar.'
+root: 'Stammverzeichnis'
+variation:
+    label: 'Variante'
+    stored: 'Gespeichert?'
+media_library: 'Medienbibliothek'
