@@ -15,12 +15,12 @@ class MediaEntityMetadataWarmerTest extends KernelTestCase
 {
     public function testDoctrineMetadataCacheWarmerCanRunAfterwards(): void
     {
-        self::bootKernel();
+        $kernel = self::bootKernel();
         $container = static::getContainer();
 
         /** @var MediaEntityMetadataWarmer $warmer */
         $warmer = $container->get('joli_media.cache_warmer.media_entity_metadata');
-        $cacheDir = static::$kernel->getCacheDir();
+        $cacheDir = $kernel->getCacheDir();
 
         $warmer->warmUp($cacheDir);
 
