@@ -11,19 +11,40 @@
 {% endblock %}
 
 {% block search %}
-    {% if breadcrumb|length >= 1 %}
-        <ul class="breadcrumb m-0 p-0 bg-transparent">
-            {% for element in breadcrumb %}
-                <li class="breadcrumb-item breadcrumb-item--ellipsis{{ loop.last ? ' active' : '' }}">
-                    {% if loop.last %}
-                        {{ element.name }}
-                    {% else %}
-                        <a href="{{ element.url }}">{{ element.name }}</a>
+    <div class="d-md-flex align-items-center w-100">
+        {% if breadcrumb|length >= 1 %}
+            <ul class="breadcrumb m-0 p-0 bg-transparent flex-shrink-0">
+                {% for element in breadcrumb %}
+                    <li class="breadcrumb-item breadcrumb-item--ellipsis{{ loop.last ? ' active' : '' }}">
+                        {% if loop.last %}
+                            {{ element.name }}
+                        {% else %}
+                            <a href="{{ element.url }}">{{ element.name }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <form method="get" class="joli-media-search-form ms-md-3" data-component="media-search">
+            <input type="hidden" name="routeName" value="{{ route_name }}">
+            <input type="hidden" name="routeParams[key]" value="{{ current_key }}">
+            <div class="form-group">
+                <div class="form-widget">
+                    <twig:ea:Icon name="internal:search" class="content-search-icon" />
+
+                    <label class="content-search-label" data-value="{{ search }}">
+                        <input class="form-control {{ search ? '' : 'is-blank' }}" type="search" name="query" value="{{ search }}" placeholder="{{ 'action.search'|trans({ }, 'EasyAdminBundle') }}" spellcheck="false" autocorrect="off" oninput="this.parentNode.dataset.value=this.value">
+                    </label>
+
+                    {% if search %}
+                        <a href="{{ ea_url().setRoute(route_name, '.' != current_key ? { key: current_key } : { }) }}" class="content-search-reset">
+                            <twig:ea:Icon name="internal:xmark" />
+                        </a>
                     {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
 {% endblock %}
 
 {% block body_breadcrumb %}{% endblock %}

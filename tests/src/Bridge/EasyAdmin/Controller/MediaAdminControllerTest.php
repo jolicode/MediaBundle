@@ -184,6 +184,90 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorCount(3, '.gallery-list-item');
     }
 
+    public function testSearchFormDisplay(): void
+    {
+        // the choose media modal has a toggable search panel
+        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('[data-component="search"]');
+        $this->assertSelectorExists('.search-container .joli-media-search-input');
+
+        // the media library has an always visible search bar next to the breadcrumb
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_explore');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorNotExists('[data-component="search"]');
+        $this->assertSelectorNotExists('.joli-media-search-input');
+        $this->assertSelectorExists('form.joli-media-search-form input[name="query"]');
+        $this->assertSame('joli_media_easy_admin_explore', $crawler->filter('form.joli-media-search-form input[name="routeName"]')->attr('value'));
+
+        // the folder picker modal has no JS support for the search form, it must not be displayed there
+        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose_directory');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorNotExists('[data-component="search"]');
+        $this->assertSelectorNotExists('.joli-media-search-input');
+    }
+
+    public function testSearch(): void
+    {
+        // matches both directories and medias, recursively
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&query=deep');
+        $this->assertResponseIsSuccessful();
+        $this->assertSame('deep', $crawler->filter('.joli-media-search-input')->attr('value'));
+        $this->assertSelectorCount(1, 'ul.gallery-grid--folders .gallery-grid-item');
+        $this->assertSelectorTextContains('ul.gallery-grid--folders .gallery-grid-item__name', 'deep');
+        $this->assertSelectorCount(1, 'ul.gallery-grid--files .gallery-grid-item');
+        $this->assertSame('sub/folder/deep/test.txt', $crawler->filter('ul.gallery-grid--files .gallery-grid-item__link')->attr('data-media-url'));
+
+        // the search is case-insensitive
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&query=DEEP');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorCount(1, 'ul.gallery-grid--folders .gallery-grid-item');
+        $this->assertSelectorCount(1, 'ul.gallery-grid--files .gallery-grid-item');
+        $this->assertSame('sub/folder/deep/test.txt', $crawler->filter('ul.gallery-grid--files .gallery-grid-item__link')->attr('data-media-url'));
+
+        // the search is scoped to the current directory
+        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&routeParams%5Bkey%5D=/sub&query=circle');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorCount(1, 'ul.gallery-grid--files .gallery-grid-item');
+
+        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&routeParams%5Bkey%5D=/not_used&query=circle');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorCount(0, 'ul.gallery-grid--files .gallery-grid-item');
+
+        // a search without any match displays empty results
+        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&query=doesnotexist');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorCount(0, 'ul.gallery-grid--folders .gallery-grid-item');
+        $this->assertSelectorCount(0, 'ul.gallery-grid--files .gallery-grid-item');
+    }
+
+    public function testSearchResultsAreSorted(): void
+    {
+        // recursive listings are not sorted by the storage, the controller must
+        // sort them to guarantee a stable pagination
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&query=pdf');
+        $this->assertResponseIsSuccessful();
+
+        $paths = $crawler->filter('ul.gallery-grid--files .gallery-grid-item__link')
+            ->each(static fn (Crawler $node): string => (string) $node->attr('data-media-url'))
+        ;
+        $this->assertSame([
+            'default.pdf',
+            'not_used/default.pdf',
+            'restrict.pdf',
+            'set_null.pdf',
+        ], $paths);
+    }
+
+    public function testSearchWithAnOutOfRangePageNumber(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&query=pdf&page=1');
+        $this->assertResponseIsSuccessful();
+
+        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&query=pdf&page=2');
+        $this->assertResponseStatusCodeSame(400);
+    }
+
     protected static function getKernelClass(): string
     {
         return Kernel::class;

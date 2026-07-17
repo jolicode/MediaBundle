@@ -31,6 +31,8 @@ class MediaPaginator implements EntityPaginatorInterface
 
     private string $currentKey;
 
+    private string $searchValue = '';
+
     public function __construct(
         private readonly AdminUrlGenerator $adminUrlGenerator,
     ) {
@@ -44,7 +46,7 @@ class MediaPaginator implements EntityPaginatorInterface
     /**
      * @param array{items: array<Media>, total: int, page: int, perPage: int} $paginationData
      */
-    public function paginateMedias(array $paginationData, string $routeName, string $currentKey): self
+    public function paginateMedias(array $paginationData, string $routeName, string $currentKey, string $searchValue = ''): self
     {
         $this->currentPage = $paginationData['page'];
         $this->pageSize = $paginationData['perPage'];
@@ -52,17 +54,23 @@ class MediaPaginator implements EntityPaginatorInterface
         $this->results = $paginationData['items'];
         $this->routeName = $routeName;
         $this->currentKey = $currentKey;
+        $this->searchValue = $searchValue;
 
         return $this;
     }
 
     public function generateUrlForPage(int $page): string
     {
-        return $this->adminUrlGenerator
+        $url = $this->adminUrlGenerator
             ->setRoute($this->routeName, ['key' => $this->currentKey])
             ->set('page', $page)
-            ->generateUrl()
         ;
+
+        if ('' !== $this->searchValue) {
+            $url->set('query', $this->searchValue);
+        }
+
+        return $url->generateUrl();
     }
 
     public function getCurrentPage(): int

@@ -20,6 +20,7 @@ use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Exception\MediaInUseException;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
+use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
@@ -270,6 +271,12 @@ class MediaAdminController extends AbstractController
             path: $currentKey,
         ));
 
+        // the search is only supported by the explore view and the media picker modal
+        $searchValue = 'joli_media_easy_admin_choose_directory' !== $routeName
+            ? $request->query->getString('query', '')
+            : '';
+        $hasSearch = '' !== $searchValue;
+
         try {
             $trashPath = $this->getOriginalStorage()->getTrashPath();
 
@@ -277,7 +284,15 @@ class MediaAdminController extends AbstractController
                 throw new ForbiddenPathException($trashPath);
             }
 
-            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: false);
+            $dirFilter = null;
+            if ($hasSearch) {
+                // recursive listings must not expose the trash contents
+                $dirFilter = static fn (string $directory): bool => str_contains(strtolower($directory), strtolower($searchValue))
+                    && $trashPath !== $directory
+                    && !str_starts_with($directory, $trashPath . '/');
+            }
+
+            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: $hasSearch, filter: $dirFilter);
             natcasesort($directories);
         } catch (ForbiddenPathException|PathTraversalDetected|UnableToListContents) {
             $this->addFlash(
@@ -301,18 +316,33 @@ class MediaAdminController extends AbstractController
             default => 'explore',
         };
 
+        $mediaFilter = null;
+        $mediaSort = null;
+
+        if ($hasSearch) {
+            // recursive listings must not expose the trash contents
+            $mediaFilter = static fn (Media $media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue))
+                && !str_starts_with($media->getPath(), $trashPath . '/');
+
+            // recursive listings are not sorted by default and depend on the storage
+            // adapter's traversal order, which would make pagination unstable
+            $mediaSort = static fn (Media $a, Media $b): int => strtolower($a->getPath()) <=> strtolower($b->getPath());
+        }
+
         try {
             $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
                 $currentKey,
-                recursive: false,
+                recursive: $hasSearch,
                 page: $request->query->getInt('page', 1),
                 perPage: $this->config->getPaginationSize(),
+                filter: $mediaFilter,
+                sort: $mediaSort,
             );
         } catch (\OutOfRangeException) {
             throw new BadRequestException('The requested page number is out of range.');
         }
 
-        $paginator = $this->mediaPaginator->paginateMedias($paginatedMedias, $routeName, $currentKey);
+        $paginator = $this->mediaPaginator->paginateMedias($paginatedMedias, $routeName, $currentKey, $searchValue);
 
         return new Response($this->twig->render('@JoliMediaEasyAdmin/list.html.twig', [
             'base_template' => \sprintf('@JoliMediaEasyAdmin/%s.html.twig', $template),
@@ -328,6 +358,7 @@ class MediaAdminController extends AbstractController
             'parent_key' => \dirname($currentKey),
             'rename_directory_form' => $this->createRenameDirectoryForm($key)->createView(),
             'route_name' => $routeName,
+            'search' => $searchValue,
         ]));
     }
 

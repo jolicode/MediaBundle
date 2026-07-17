@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const headerTools = target.closest('.joli-media-header-tools');
     let activeTool = null;
 
-    for (const tool of ['dropzone', 'new-directory', 'rename-directory']) {
+    for (const tool of ['dropzone', 'new-directory', 'rename-directory', 'search']) {
       const toolContainer = headerTools.querySelector('.' + tool + '-container');
 
       if (toolContainer) {
@@ -58,6 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
       event.stopPropagation();
       const folderCreateForm = switchTool(component, 'new-directory');
       folderCreateForm.querySelector('input[type=text]').focus();
+    }
+
+    if (component.matches('[data-component=search]')) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const searchPanel = switchTool(component, 'search');
+      searchPanel.querySelector('input[type=search]').focus();
     }
 
     if (component.matches('[data-component=folder-rename]')) {

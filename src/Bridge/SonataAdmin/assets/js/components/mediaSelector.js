@@ -11,16 +11,81 @@ const MediaSelector = class {
     this.modal = false;
     this.modalContent = false;
     this.currentFolder = false;
+    this.currentSearchValue = '';
   }
 
   fetchFolder = (url) => {
-    this.currentFolder = url;
     return fetch(url).then((response) => response.text());
+  };
+
+  getSearchUrl = (baseUrl) => {
+    if (!this.currentSearchValue) return baseUrl;
+
+    const url = new URL(baseUrl, window.location.origin);
+    url.searchParams.set('query', this.currentSearchValue);
+
+    return `${url.pathname}${url.search}${url.hash}`;
+  };
+
+  // the folder URL must not retain pagination or search parameters, so that
+  // a new search (or clearing the search) always starts back at page 1
+  getFolderUrl = (href) => {
+    const url = new URL(href, window.location.origin);
+    url.searchParams.delete('page');
+    url.searchParams.delete('query');
+
+    return `${url.pathname}${url.search}${url.hash}`;
+  };
+
+  openSearchPanel = () => {
+    const searchContainer = this.modalContent.querySelector('.search-container');
+
+    if (searchContainer) {
+      searchContainer.classList.add('search-active');
+      searchContainer.querySelector('.joli-media-search-input').focus();
+    }
+  };
+
+  setupSearch = () => {
+    const searchForm = this.modalContent.querySelector('.joli-media-search-form');
+    const searchInput = this.modalContent.querySelector('.joli-media-search-input');
+    if (!searchForm || !searchInput) return;
+
+    this.currentSearchValue = searchInput.value;
+
+    const newSearchForm = searchForm.cloneNode(true);
+    searchForm.parentNode.replaceChild(newSearchForm, searchForm);
+
+    const newInput = newSearchForm.querySelector('.joli-media-search-input');
+
+    // the modal content is re-rendered on every fetch: keep the search
+    // panel visible as long as a search is active
+    if (this.currentSearchValue) {
+      this.openSearchPanel();
+    }
+
+    newSearchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.currentSearchValue = newInput.value.trim();
+      this.fetchFolder(this.getSearchUrl(this.currentFolder)).then(this.configureModal);
+    });
+
+    newInput.addEventListener('search', () => {
+      if (!newInput.value) {
+        this.currentSearchValue = '';
+        this.fetchFolder(this.currentFolder).then((html) => {
+          this.configureModal(html);
+          this.openSearchPanel();
+        });
+      }
+    });
   };
 
   configureModal = (html) => {
     this.modalContent.innerHTML = html;
     Admin.shared_setup(this.modal);
+    this.setupSearch();
   };
 
   handleModalClick = (event) => {
@@ -41,7 +106,8 @@ const MediaSelector = class {
 
     if (target.dataset.mediaTemplate === undefined || target.dataset.mediaUrl === undefined) {
       // this is not a selectable media
-      this.fetchFolder(target.attributes.href.value).then(this.configureModal);
+      this.currentFolder = this.getFolderUrl(target.attributes.href.value);
+      this.fetchFolder(this.getSearchUrl(target.attributes.href.value)).then(this.configureModal);
       return;
     }
 
@@ -57,6 +123,11 @@ const MediaSelector = class {
     event.stopPropagation();
 
     const form = event.target.closest("form");
+
+    if (form && form.dataset.component === 'media-search') {
+      return;
+    }
+
     const formData = new FormData(form);
     const url = form.action;
 
@@ -98,8 +169,10 @@ const MediaSelector = class {
     }
 
     this.modalContent.innerHTML = '';
+    this.currentSearchValue = '';
+    this.currentFolder = this.editButton.attributes.href.value + '/' + this.editButton.dataset.folder;
 
-    this.fetchFolder(this.editButton.attributes.href.value + '/' + this.editButton.dataset.folder).then((html) => {
+    this.fetchFolder(this.currentFolder).then((html) => {
       this.configureModal(html);
       jQuery(this.modal).modal();
       Admin.setup_list_modal(this.modal);

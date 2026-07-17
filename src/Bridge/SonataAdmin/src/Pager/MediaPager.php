@@ -27,6 +27,8 @@ class MediaPager extends Pager
 
     private ?string $currentKey = null;
 
+    private string $searchValue = '';
+
     public function init(): void
     {
         // Nothing to initialize for array-based pagination
@@ -35,7 +37,7 @@ class MediaPager extends Pager
     /**
      * @param array{items: array<Media>, total: int, page: int, perPage: int} $paginationData
      */
-    public function paginate(array $paginationData, string $routeName, string $currentKey): self
+    public function paginate(array $paginationData, string $routeName, string $currentKey, string $searchValue = ''): self
     {
         $this->setPage($paginationData['page']);
         $this->setMaxPerPage($paginationData['perPage']);
@@ -43,6 +45,7 @@ class MediaPager extends Pager
         $this->results = $paginationData['items'];
         $this->routeName = $routeName;
         $this->currentKey = $currentKey;
+        $this->searchValue = $searchValue;
 
         // Calculate and set last page
         $lastPage = $this->maxPerPage > 0 ? (int) ceil($this->countResults / $this->maxPerPage) : 1;
@@ -69,5 +72,10 @@ class MediaPager extends Pager
     public function getCurrentKey(): string
     {
         return $this->currentKey ?? '';
+    }
+
+    public function getSearchValue(): string
+    {
+        return $this->searchValue;
     }
 }
