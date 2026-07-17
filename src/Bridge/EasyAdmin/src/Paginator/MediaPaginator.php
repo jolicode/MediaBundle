@@ -2,15 +2,19 @@
 
 namespace JoliCode\MediaBundle\Bridge\EasyAdmin\Paginator;
 
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityPaginatorInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\PaginatorDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use JoliCode\MediaBundle\Model\Media;
 
 /**
  * Paginator adapter for media files to work with EasyAdmin's pagination template.
- * This adapter provides the same interface as EasyAdmin's EntityPaginator
- * but works with array data instead of Doctrine entities.
+ * This adapter implements EasyAdmin's EntityPaginatorInterface (required by the
+ * pagination Twig component since EasyAdmin 5) but works with array data instead
+ * of Doctrine entities: media must be paginated with paginateMedias(), not paginate().
  */
-class MediaPaginator
+class MediaPaginator implements EntityPaginatorInterface
 {
     private int $currentPage;
 
@@ -32,10 +36,15 @@ class MediaPaginator
     ) {
     }
 
+    public function paginate(PaginatorDto $paginatorDto, QueryBuilder $queryBuilder): self
+    {
+        throw new \BadMethodCallException('MediaPaginator does not paginate Doctrine entities, use paginateMedias() instead.');
+    }
+
     /**
      * @param array{items: array<Media>, total: int, page: int, perPage: int} $paginationData
      */
-    public function paginate(array $paginationData, string $routeName, string $currentKey): self
+    public function paginateMedias(array $paginationData, string $routeName, string $currentKey): self
     {
         $this->currentPage = $paginationData['page'];
         $this->pageSize = $paginationData['perPage'];
@@ -117,6 +126,15 @@ class MediaPaginator
         return $this->numResults > $this->pageSize;
     }
 
+    public function isOutOfRange(): bool
+    {
+        if (1 === $this->currentPage) {
+            return false;
+        }
+
+        return $this->currentPage < 1 || $this->currentPage > $this->getLastPage();
+    }
+
     public function getNumResults(): int
     {
         return $this->numResults;
@@ -128,5 +146,15 @@ class MediaPaginator
     public function getResults(): array
     {
         return $this->results;
+    }
+
+    public function getResultsAsJson(): string
+    {
+        return json_encode([
+            'results' => array_map(static fn (Media $media): array => [
+                'entityId' => $media->getPath(),
+                'entityAsString' => $media->getFilename(),
+            ], $this->results),
+        ], \JSON_THROW_ON_ERROR);
     }
 }
