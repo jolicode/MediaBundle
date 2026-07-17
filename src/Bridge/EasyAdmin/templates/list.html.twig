@@ -9,17 +9,6 @@
     {{ block('body_breadcrumb') }}
     {{ block('body_content_header_wrapper') }}
 
-    {% if 'choose' in base_template %}
-        <div class="joli-media-search mb-3">
-            <form class="joli-media-search-form" data-component="media-search" method="get" action="{{ ea_url().setRoute(route_name, '.' != current_key ? { key: current_key } : { }) }}">
-                <div class="input-group">
-                    <input type="search" name="search" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
-                    <button class="btn btn-outline-secondary joli-media-search-btn" type="submit"><i class="fas fa-search"></i> {{ 'action.search'|trans }}</button>
-                </div>
-            </form>
-        </div>
-    {% endif %}
-
     <div class="gallery">
         {% if app.session.get('view_mode') == 'list' %}
             <table class="table datagrid gallery-list {{ (directories|length + medias|length) == 0 ? 'datagrid-empty' }}">
@@ -171,6 +160,19 @@
                                     </a>
                                 {% endif %}
                             {% endblock %}
+                            {% block search_button %}
+                                {% if base_template ends with '/choose.html.twig' %}
+                                    <a
+                                        class="btn btn-secondary me-sm-2"
+                                        data-component="search"
+                                        role="button"
+                                        tabindex="0"
+                                    >
+                                        <span class="icon btn-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                        <span class="btn-label">{{ 'action.search'|trans }}</span>
+                                    </a>
+                                {% endif %}
+                            {% endblock %}
                             {{ block('choose_directory_button') }}
                             {% if joli_media_admin_is_granted('UPLOAD', path: current_key) %}
                                 {{ block('add_media_button') }}
@@ -199,6 +201,14 @@
                 {{ form_widget(create_directory_form.submit) }}
             {{ form_end(create_directory_form) }}
         </div>
+        {% if base_template ends with '/choose.html.twig' %}
+            <div class="search-container">
+                <form class="joli-media-search-form" data-component="media-search" method="get" action="{{ ea_url().setRoute(route_name, '.' != current_key ? { key: current_key } : { }) }}">
+                    <input type="search" name="search" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
+                    <button class="btn btn-primary joli-media-search-btn" type="submit">{{ 'action.search'|trans }}</button>
+                </form>
+            </div>
+        {% endif %}
         {{ block('rename_directory_container') }}
     </div>
 {% endblock %}
