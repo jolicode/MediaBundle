@@ -5,6 +5,11 @@
 /* Custom properties
    ========================================================================== */
 
+/* underline the top bar holding the search form, like on EasyAdmin index pages */
+body.joli-media-explore .content-top {
+  box-shadow: 0 1px 0 var(--content-top-border-color);
+}
+
 .joli-media-header-tools {
   .btn-group .btn.active {
     --button-hover-bg: linear-gradient(180deg, var(--button-secondary-color), hsl(from var(--button-secondary-color) h calc(s + 3) calc(l + 5)));

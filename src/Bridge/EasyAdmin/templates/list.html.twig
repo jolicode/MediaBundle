@@ -3,7 +3,7 @@
 
 {% block page_title %}{{ 'media_explorer'|trans }} - {{ current_key ? current_key : 'root'|trans }}{% endblock %}
 
-{% block body_class %}ea-content-width-full{% endblock %}
+{% block body_class %}ea-content-width-full joli-media-explore{% endblock %}
 
 {% block main %}
     {{ block('body_breadcrumb') }}
@@ -128,7 +128,6 @@
         <section class="content-header">
             {% block content_header %}
                 <div class="content-header-title">
-                    <h1 class="title d-none">{{ 'media_library'|trans }}</h1>
                     <div class="btn-group" role="group" aria-label="Change view mode">
                         <a href="{{ ea_url().setRoute(route_name, { key: current_key }).set('view_mode', 'list') }}" class="btn btn-secondary {{ app.session.get('view_mode', 'grid') == 'list' ? 'active disabled' }}">
                             <span>
@@ -204,7 +203,7 @@
         {% if base_template ends with '/choose.html.twig' %}
             <div class="search-container">
                 <form class="joli-media-search-form" data-component="media-search" method="get" action="{{ ea_url().setRoute(route_name, '.' != current_key ? { key: current_key } : { }) }}">
-                    <input type="search" name="search" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
+                    <input type="search" name="query" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
                     <button class="btn btn-primary joli-media-search-btn" type="submit">{{ 'action.search'|trans }}</button>
                 </form>
             </div>

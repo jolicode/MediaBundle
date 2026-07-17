@@ -21,7 +21,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         if (!currentSearchValue) return baseUrl;
 
         const url = new URL(baseUrl, window.location.origin);
-        url.searchParams.set('search', currentSearchValue);
+        url.searchParams.set('query', currentSearchValue);
 
         return `${url.pathname}${url.search}${url.hash}`;
     };
@@ -31,7 +31,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const getFolderUrl = (href) => {
         const url = new URL(href, window.location.origin);
         url.searchParams.delete('page');
-        url.searchParams.delete('search');
+        url.searchParams.delete('query');
 
         return `${url.pathname}${url.search}${url.hash}`;
     };

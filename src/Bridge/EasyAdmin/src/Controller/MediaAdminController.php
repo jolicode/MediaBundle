@@ -271,7 +271,7 @@ class MediaAdminController extends AbstractController
             path: $currentKey,
         ));
 
-        $searchValue = $request->query->getString('search', '');
+        $searchValue = $request->query->getString('query', '');
         $hasSearch = '' !== $searchValue;
 
         try {
@@ -334,7 +334,7 @@ class MediaAdminController extends AbstractController
             throw new BadRequestException('The requested page number is out of range.');
         }
 
-        $paginator = $this->mediaPaginator->paginateMedias($paginatedMedias, $routeName, $currentKey);
+        $paginator = $this->mediaPaginator->paginateMedias($paginatedMedias, $routeName, $currentKey, $searchValue);
 
         return new Response($this->twig->render('@JoliMediaEasyAdmin/list.html.twig', [
             'base_template' => \sprintf('@JoliMediaEasyAdmin/%s.html.twig', $template),
