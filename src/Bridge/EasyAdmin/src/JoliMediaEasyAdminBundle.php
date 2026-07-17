@@ -2,6 +2,9 @@
 
 namespace JoliCode\MediaBundle\Bridge\EasyAdmin;
 
+use EasyCorp\Bundle\EasyAdminBundle\Factory\FieldFactory;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Field\MediaChoiceField;
+use JoliCode\MediaBundle\Doctrine\Types;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -9,6 +12,16 @@ use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 class JoliMediaEasyAdminBundle extends AbstractBundle
 {
+    public function boot(): void
+    {
+        $reflection = new \ReflectionClass(FieldFactory::class);;
+        $doctrineTypes = array_merge($reflection->getStaticPropertyValue('doctrineTypeToFieldFqcn'), [
+            Types::MEDIA => MediaChoiceField::class,
+            Types::MEDIA_LONG => MediaChoiceField::class,
+        ]);
+        $reflection->setStaticPropertyValue('doctrineTypeToFieldFqcn', $doctrineTypes);
+    }
+
     public function configure(DefinitionConfigurator $definition): void
     {
         $definition->rootNode()
