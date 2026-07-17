@@ -312,7 +312,7 @@ class MediaAdminController extends AbstractController
             throw new BadRequestException('The requested page number is out of range.');
         }
 
-        $paginator = $this->mediaPaginator->paginate($paginatedMedias, $routeName, $currentKey);
+        $paginator = $this->mediaPaginator->paginateMedias($paginatedMedias, $routeName, $currentKey);
 
         return new Response($this->twig->render('@JoliMediaEasyAdmin/list.html.twig', [
             'base_template' => \sprintf('@JoliMediaEasyAdmin/%s.html.twig', $template),

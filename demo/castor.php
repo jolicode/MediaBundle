@@ -77,6 +77,13 @@ function demo_install($useLocalBundle = true): void
                 json_encode($composerJson, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES) . "\n",
             );
             copy("{$basePath}/symfony.lock", "{$basePath}/docker-symfony.lock");
+
+            // a docker-composer.lock generated before the last composer.lock update may
+            // not satisfy the current constraints, which makes composer install fail
+            $dockerComposerLock = "{$basePath}/docker-composer.lock";
+            if (is_file($dockerComposerLock) && filemtime($dockerComposerLock) < filemtime("{$basePath}/composer.lock")) {
+                unlink($dockerComposerLock);
+            }
         }
 
         io()->section('Installing PHP dependencies');
