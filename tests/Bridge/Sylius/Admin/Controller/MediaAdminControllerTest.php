@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace JoliCode\MediaBundle\Tests\Bridge\Sylius\Admin\Controller;
 
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Controller\MediaAdminController;

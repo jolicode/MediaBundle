@@ -24,7 +24,7 @@ readonly class Config
 
     public function isVisible(string $key): bool
     {
-        return isset($this->visibility[$key]) && true === $this->visibility[$key];
+        return isset($this->visibility[$key]) && $this->visibility[$key];
     }
 
     public function getUploadOption(string $name): mixed

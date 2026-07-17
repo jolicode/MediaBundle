@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace JoliCode\MediaBundle\Tests\Cache;
 
 use Doctrine\Bundle\DoctrineBundle\CacheWarmer\DoctrineMetadataCacheWarmer;

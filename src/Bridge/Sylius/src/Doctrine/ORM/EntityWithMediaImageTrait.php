@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace JoliCode\MediaBundle\Bridge\Sylius\Doctrine\ORM;
 
 use Doctrine\ORM\Mapping as ORM;

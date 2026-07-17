@@ -57,6 +57,7 @@ class DataCollector extends AbstractDataCollector
                         if (\in_array(
                             $prop->getName(),
                             ['width', 'height', 'startX', 'startY', 'mode', 'positionX', 'positionY', 'allowDownscale', 'allowUpscale', 'backgroundColor', 'cropPosition'],
+                            true,
                         ) && null !== $prop->getValue($transformer)) {
                             if ('mode' === $prop->getName()) {
                                 $properties[$prop->getName()] = $this->cloneVar($prop->getValue($transformer)->value);

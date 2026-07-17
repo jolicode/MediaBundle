@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace JoliCode\MediaBundle\Tests\Variation;
 
 use Imagine\Imagick\Imagine;

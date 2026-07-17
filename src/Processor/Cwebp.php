@@ -71,7 +71,7 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
         $temporaryFile = $this->writeTemporaryFile($binary);
         $fileSize = filesize($temporaryFile);
 
-        $nearLossless = !\in_array(Format::fromName($binary->getFormat()), [Format::JPEG, Format::TIFF]) && !$this->guessIsPhotoFile($temporaryFile);
+        $nearLossless = !\in_array(Format::fromName($binary->getFormat()), [Format::JPEG, Format::TIFF], true) && !$this->guessIsPhotoFile($temporaryFile);
         $transformationOptions = $transformation->getAsCwebpOptions();
         $process = $this->getCwebpProcess(
             $temporaryFile,

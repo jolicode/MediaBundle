@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace JoliCode\MediaBundle\Event\Listener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;

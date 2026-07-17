@@ -330,11 +330,11 @@ class OriginalStorage
             ->toArray()
         ;
 
-        if ($filter) {
+        if (null !== $filter) {
             $listing = array_values(array_filter($listing, $filter));
         }
 
-        if ($sort) {
+        if (null !== $sort) {
             usort($listing, $sort);
         }
 
@@ -357,11 +357,11 @@ class OriginalStorage
             ->toArray()
         ;
 
-        if ($filter) {
+        if (null !== $filter) {
             $listing = array_values(array_filter($listing, $filter));
         }
 
-        if ($sort) {
+        if (null !== $sort) {
             usort($listing, $sort);
         }
 
@@ -387,11 +387,11 @@ class OriginalStorage
             usort($listing, static fn (Media $a, Media $b): int => strtolower($a->getPath()) <=> strtolower($b->getPath()));
         }
 
-        if ($filter) {
+        if (null !== $filter) {
             $listing = array_values(array_filter($listing, $filter));
         }
 
-        if ($sort) {
+        if (null !== $sort) {
             usort($listing, $sort);
         }
 
