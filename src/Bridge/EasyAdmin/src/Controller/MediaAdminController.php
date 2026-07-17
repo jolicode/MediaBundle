@@ -287,10 +287,7 @@ class MediaAdminController extends AbstractController
             }
 
             $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: $hasSearch, filter: $dirFilter);
-
-            if (!$hasSearch) {
-                natcasesort($directories);
-            }
+            natcasesort($directories);
         } catch (ForbiddenPathException|PathTraversalDetected|UnableToListContents) {
             $this->addFlash(
                 'danger',
@@ -314,8 +311,14 @@ class MediaAdminController extends AbstractController
         };
 
         $mediaFilter = null;
+        $mediaSort = null;
+
         if ($hasSearch) {
             $mediaFilter = static fn (Media $media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue));
+
+            // recursive listings are not sorted by default and depend on the storage
+            // adapter's traversal order, which would make pagination unstable
+            $mediaSort = static fn (Media $a, Media $b): int => strtolower($a->getPath()) <=> strtolower($b->getPath());
         }
 
         try {
@@ -325,6 +328,7 @@ class MediaAdminController extends AbstractController
                 page: $request->query->getInt('page', 1),
                 perPage: $this->config->getPaginationSize(),
                 filter: $mediaFilter,
+                sort: $mediaSort,
             );
         } catch (\OutOfRangeException) {
             throw new BadRequestException('The requested page number is out of range.');
