@@ -32,13 +32,12 @@ class MediaValidatorTest extends BaseTestCase
             'root',
             new Translator('en'),
         );
-        $this->validator->initialize($this->context);
     }
 
     public function testValidateWithNullValue(): void
     {
         $constraint = new MediaConstraint();
-        $this->validator->validate(null, $constraint);
+        $this->doValidate($this->validator, null, $constraint, $this->context);
 
         self::assertCount(0, $this->context->getViolations());
     }
@@ -50,13 +49,13 @@ class MediaValidatorTest extends BaseTestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Expected argument of type "string or JoliCode\MediaBundle\Model\Media", "int" given');
 
-        $this->validator->validate(123, $constraint);
+        $this->doValidate($this->validator, 123, $constraint, $this->context);
     }
 
     public function testValidateWithUnresolvedMedia(): void
     {
         $constraint = new MediaConstraint();
-        $this->validator->validate('non-existent.jpg', $constraint);
+        $this->doValidate($this->validator, 'non-existent.jpg', $constraint, $this->context);
 
         $violations = $this->context->getViolations();
         self::assertCount(1, $violations);
@@ -70,7 +69,7 @@ class MediaValidatorTest extends BaseTestCase
         $media->store();
 
         $constraint = new MediaConstraint();
-        $this->validator->validate('test.jpg', $constraint);
+        $this->doValidate($this->validator, 'test.jpg', $constraint, $this->context);
 
         self::assertCount(0, $this->context->getViolations());
     }
@@ -82,7 +81,7 @@ class MediaValidatorTest extends BaseTestCase
         $media->store();
 
         $constraint = new MediaConstraint(allowedExtensions: ['png']);
-        $this->validator->validate('test.jpg', $constraint);
+        $this->doValidate($this->validator, 'test.jpg', $constraint, $this->context);
 
         $violations = $this->context->getViolations();
         self::assertCount(1, $violations);
@@ -96,7 +95,7 @@ class MediaValidatorTest extends BaseTestCase
         $media->store();
 
         $constraint = new MediaConstraint(allowedMimeTypes: ['image/png']);
-        $this->validator->validate('test.jpg', $constraint);
+        $this->doValidate($this->validator, 'test.jpg', $constraint, $this->context);
 
         $violations = $this->context->getViolations();
         self::assertCount(1, $violations);
@@ -110,7 +109,7 @@ class MediaValidatorTest extends BaseTestCase
         $media->store();
 
         $constraint = new MediaConstraint(allowedTypes: ['video']);
-        $this->validator->validate('test.jpg', $constraint);
+        $this->doValidate($this->validator, 'test.jpg', $constraint, $this->context);
 
         $violations = $this->context->getViolations();
         self::assertCount(1, $violations);
@@ -132,7 +131,7 @@ class MediaValidatorTest extends BaseTestCase
         $media->store();
 
         $constraint = new MediaConstraint(allowedPaths: ['foo', 'bar']);
-        $this->validator->validate('some/path/test.jpg', $constraint);
+        $this->doValidate($this->validator, 'some/path/test.jpg', $constraint, $this->context);
         $violations = $this->context->getViolations();
         self::assertCount(1, $violations);
         self::assertEquals('The file path "some/path/test.jpg" is not allowed. Allowed paths must start with one of the following: foo, bar.', $violations->get(0)->getMessage());
@@ -153,7 +152,7 @@ class MediaValidatorTest extends BaseTestCase
         $media->store();
 
         $constraint = new MediaConstraint(allowedPaths: ['foo', 'bar', 'some']);
-        $this->validator->validate('some/path/test.jpg', $constraint);
+        $this->doValidate($this->validator, 'some/path/test.jpg', $constraint, $this->context);
         $violations = $this->context->getViolations();
         self::assertCount(0, $violations);
     }
@@ -161,8 +160,7 @@ class MediaValidatorTest extends BaseTestCase
     public function testValidateWithStorageName(): void
     {
         $resolver = new Resolver($this->libraries, $this->processorContainer);
-        $context = $this->createExecutionContext();
-        $validator = $this->createValidator($resolver, $context);
+        $validator = new MediaValidator($resolver);
 
         self::assertCount(2, $this->libraries->list());
 
@@ -170,17 +168,16 @@ class MediaValidatorTest extends BaseTestCase
         $media = new Media('test.jpg', $this->originalStorage, self::getFixtureBinary(Format::JPEG->value));
         $media->store();
 
-        self::assertCount(0, $context->getViolations());
-
         // check that it is invalid in a specific storage
+        $context = $this->createExecutionContext();
         $constraint = new MediaConstraint(library: 'custom');
-        $validator->validate('test.jpg', $constraint);
+        $this->doValidate($validator, 'test.jpg', $constraint, $context);
         self::assertCount(1, $context->getViolations());
 
         // check that it is valid in the default storage
-        $validator->initialize($context = $this->createExecutionContext());
+        $context = $this->createExecutionContext();
         $constraint = new MediaConstraint(library: 'default');
-        $validator->validate('test.jpg', $constraint);
+        $this->doValidate($validator, 'test.jpg', $constraint, $context);
         self::assertCount(0, $context->getViolations());
 
         // Add another media in the custom storage
@@ -188,15 +185,15 @@ class MediaValidatorTest extends BaseTestCase
         $media->store();
 
         // check that it is valid in a specific storage
-        $validator->initialize($context = $this->createExecutionContext());
+        $context = $this->createExecutionContext();
         $constraint = new MediaConstraint(library: 'custom');
-        $validator->validate('test-2.png', $constraint);
+        $this->doValidate($validator, 'test-2.png', $constraint, $context);
         self::assertCount(0, $context->getViolations());
 
         // check that it is invalid in the default storage
-        $validator->initialize($context = $this->createExecutionContext());
+        $context = $this->createExecutionContext();
         $constraint = new MediaConstraint(library: 'default');
-        $validator->validate('test-2.png', $constraint);
+        $this->doValidate($validator, 'test-2.png', $constraint, $context);
         self::assertCount(1, $context->getViolations());
     }
 
@@ -209,11 +206,13 @@ class MediaValidatorTest extends BaseTestCase
         );
     }
 
-    protected function createValidator(Resolver $resolver, ExecutionContext $context): MediaValidator
+    protected function doValidate(MediaValidator $validator, mixed $value, MediaConstraint $constraint, ExecutionContext $context): void
     {
-        $validator = new MediaValidator($resolver);
-        $validator->initialize($context);
-
-        return $validator;
+        if (method_exists($validator, 'validateInContext')) {
+            $validator->validateInContext($value, $constraint, $context);
+        } else {
+            $validator->initialize($context);
+            $validator->validate($value, $constraint);
+        }
     }
 }
