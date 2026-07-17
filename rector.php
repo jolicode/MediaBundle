@@ -8,9 +8,11 @@ use Rector\DeadCode\Rector\If_\RemoveAlwaysTrueIfConditionRector;
 use Rector\Doctrine\Set\DoctrineSetList;
 use Rector\Symfony\CodeQuality\Rector\Class_\ControllerMethodInjectionToConstructorRector;
 use Rector\Symfony\Configs\Rector\Closure\FromServicePublicToDefaultsPublicRector;
+use Rector\Symfony\Configs\Rector\Closure\ServiceArgsToServiceNamedArgRector;
 use Rector\Symfony\Configs\Rector\Closure\ServiceTagsToDefaultsAutoconfigureRector;
 use Rector\Symfony\Set\SymfonySetList;
 use Rector\Symfony\Set\TwigSetList;
+use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
 
 return RectorConfig::configure()
     ->withCache('./tools/rector/var/cache/bundle', FileCacheStorage::class)
@@ -47,7 +49,11 @@ return RectorConfig::configure()
         ControllerMethodInjectionToConstructorRector::class => [
             __DIR__ . '/src/Bridge/EasyAdmin/src/Controller/MediaAdminController.php',
         ],
+        // crashes on string-keyed args() arrays ('$name' => ...): its
+        // resolveParameterPosition() is typed int but returns the string key
+        ServiceArgsToServiceNamedArgRector::class,
         ServiceTagsToDefaultsAutoconfigureRector::class,
         FromServicePublicToDefaultsPublicRector::class,
+        SafeDeclareStrictTypesRector::class,
     ])
 ;

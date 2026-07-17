@@ -1,7 +1,7 @@
 {
     "type": "project",
     "require": {
-        "friendsofphp/php-cs-fixer": "^3.93.0"
+        "friendsofphp/php-cs-fixer": "^3.95.15"
     },
     "config": {
         "bump-after-update": true,
