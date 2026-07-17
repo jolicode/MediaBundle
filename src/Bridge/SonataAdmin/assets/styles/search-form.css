@@ -1,0 +1,22 @@
+.search-container {
+  display: none;
+  top: 100%;
+  left: 0;
+  right: 0;
+  min-height: auto;
+  margin-top: 1rem;
+  padding: 1.5rem;
+  color: var(--jm-dropzone-color);
+  background-color: var(--jm-color-gray-100);
+  border: dashed 1px var(--jm-dropzone-border-color);
+  border-radius: 4px;
+  z-index: 100;
+
+  &.search-active {
+    display: block;
+  }
+
+  form {
+    display: block;
+  }
+}

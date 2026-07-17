@@ -3,6 +3,20 @@
 
 {% block content_header %}{% endblock %}
 
+{# on media explore pages, the sidebar search bar searches medias instead of the admin-wide search #}
+{% block sonata_sidebar_search %}
+    <form action="{{ path(app.request.attributes.get('_route'), { key: current_key }) }}" method="GET" class="sidebar-form" role="search">
+        <div class="input-group custom-search-form">
+            <input type="search" name="query" value="{{ search }}" class="form-control" placeholder="{{ 'media.search_label'|trans }}">
+            <span class="input-group-btn">
+                <button class="btn btn-flat" type="submit">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                </button>
+            </span>
+        </div>
+    </form>
+{% endblock %}
+
 {% block sonata_breadcrumb %}
     <div class="hidden-xs">
         {% if _breadcrumb is not empty or action is defined %}

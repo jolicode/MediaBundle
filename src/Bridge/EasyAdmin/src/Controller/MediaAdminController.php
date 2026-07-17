@@ -271,7 +271,10 @@ class MediaAdminController extends AbstractController
             path: $currentKey,
         ));
 
-        $searchValue = $request->query->getString('query', '');
+        // the search is only supported by the explore view and the media picker modal
+        $searchValue = 'joli_media_easy_admin_choose_directory' !== $routeName
+            ? $request->query->getString('query', '')
+            : '';
         $hasSearch = '' !== $searchValue;
 
         try {
@@ -283,7 +286,10 @@ class MediaAdminController extends AbstractController
 
             $dirFilter = null;
             if ($hasSearch) {
-                $dirFilter = static fn (string $a): bool => str_contains(strtolower($a), strtolower($searchValue));
+                // recursive listings must not expose the trash contents
+                $dirFilter = static fn (string $directory): bool => str_contains(strtolower($directory), strtolower($searchValue))
+                    && $trashPath !== $directory
+                    && !str_starts_with($directory, $trashPath . '/');
             }
 
             $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: $hasSearch, filter: $dirFilter);
@@ -314,7 +320,9 @@ class MediaAdminController extends AbstractController
         $mediaSort = null;
 
         if ($hasSearch) {
-            $mediaFilter = static fn (Media $media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue));
+            // recursive listings must not expose the trash contents
+            $mediaFilter = static fn (Media $media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue))
+                && !str_starts_with($media->getPath(), $trashPath . '/');
 
             // recursive listings are not sorted by default and depend on the storage
             // adapter's traversal order, which would make pagination unstable
