@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace JoliCode\MediaBundle\Tests\Storage;
 
 use JoliCode\MediaBundle\Binary\MimeTypeGuesser;

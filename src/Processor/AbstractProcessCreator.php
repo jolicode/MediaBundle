@@ -44,7 +44,7 @@ abstract readonly class AbstractProcessCreator
         }
 
         foreach ($errors as $string) {
-            if (false !== mb_strpos($process->getOutput(), (string) $string)) {
+            if (str_contains($process->getOutput(), (string) $string)) {
                 return false;
             }
         }

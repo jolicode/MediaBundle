@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace JoliCode\MediaBundle\Bridge\Sylius\Admin\Grid\Provider;
 
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Grid\GridPageResolver;

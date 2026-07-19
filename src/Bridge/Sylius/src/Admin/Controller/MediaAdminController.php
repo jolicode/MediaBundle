@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace JoliCode\MediaBundle\Bridge\Sylius\Admin\Controller;
 
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Type\UploadType;
@@ -77,13 +75,13 @@ class MediaAdminController extends AbstractController
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
         }
 
-        if (empty($name)) {
+        if ('' === $name || '0' === $name) {
             $this->addFlash('error', $this->translator->trans('directory.name_required', [], 'JoliMediaSyliusBundle'));
 
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
         }
 
-        $newPath = empty($parentPath) ? $name : $parentPath . '/' . $name;
+        $newPath = '' === $parentPath || '0' === $parentPath ? $name : $parentPath . '/' . $name;
         $isAjax = $request->isXmlHttpRequest();
 
         try {
@@ -94,11 +92,11 @@ class MediaAdminController extends AbstractController
                     '%directory%' => $newPath,
                 ], 'JoliMediaSyliusBundle'));
             }
-        } catch (\Throwable $e) {
+        } catch (\Throwable $throwable) {
             if (!$isAjax) {
                 $this->addFlash('error', $this->translator->trans('directory.create_failure', [
                     '%directory%' => $newPath,
-                    '%error%' => $e->getMessage(),
+                    '%error%' => $throwable->getMessage(),
                 ], 'JoliMediaSyliusBundle'));
             }
         }
@@ -144,8 +142,8 @@ class MediaAdminController extends AbstractController
             ));
 
             return $this->redirectAfterRename($request, $oldPath, $newPath);
-        } catch (\Throwable $e) {
-            $this->addFlash('error', $e->getMessage());
+        } catch (\Throwable $throwable) {
+            $this->addFlash('error', $throwable->getMessage());
 
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
         }
@@ -165,14 +163,14 @@ class MediaAdminController extends AbstractController
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
         }
 
-        if (!$from) {
+        if ('' === $from || '0' === $from) {
             $this->addFlash('error', 'Missing parameters');
 
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
         }
 
         try {
-            $target = $to ? \sprintf('%s/%s', $to, basename($from)) : basename($from);
+            $target = '' !== $to && '0' !== $to ? \sprintf('%s/%s', $to, basename($from)) : basename($from);
             $this->getOriginalStorage()->moveFolder($from, $target);
 
             $this->addFlash('success', $this->translator->trans(
@@ -182,8 +180,8 @@ class MediaAdminController extends AbstractController
             ));
 
             return $this->redirectAfterRename($request, $from, $target);
-        } catch (\Throwable $e) {
-            $this->addFlash('error', $e->getMessage());
+        } catch (\Throwable $throwable) {
+            $this->addFlash('error', $throwable->getMessage());
 
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
         }
@@ -218,8 +216,8 @@ class MediaAdminController extends AbstractController
             ));
 
             return $this->redirectAfterRename($request, $oldPath, $newPath);
-        } catch (\Throwable $e) {
-            $this->addFlash('error', $e->getMessage());
+        } catch (\Throwable $throwable) {
+            $this->addFlash('error', $throwable->getMessage());
 
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
         }
@@ -248,10 +246,10 @@ class MediaAdminController extends AbstractController
             ));
 
             return $this->redirectToRoute('joli_media_sylius_admin_show', ['key' => $target]);
-        } catch (\Throwable $e) {
+        } catch (\Throwable $throwable) {
             $this->addFlash('danger', $this->translator->trans(
                 'media.move_failure',
-                ['%from%' => $from, '%to%' => $to, '%error%' => $e->getMessage()],
+                ['%from%' => $from, '%to%' => $to, '%error%' => $throwable->getMessage()],
                 'JoliMediaSyliusBundle'
             ));
 
@@ -278,8 +276,8 @@ class MediaAdminController extends AbstractController
             $this->getOriginalStorage()->delete($key);
 
             $this->addFlash('success', $this->translator->trans('sylius.resource.delete', ['%resource%' => $key], domain: 'flashes'));
-        } catch (\Throwable $e) {
-            $this->addFlash('error', $e->getMessage());
+        } catch (\Throwable $throwable) {
+            $this->addFlash('error', $throwable->getMessage());
         }
 
         $parentKey = \dirname($key);
@@ -308,11 +306,10 @@ class MediaAdminController extends AbstractController
             $this->getOriginalStorage()->deleteDirectory($key);
 
             $this->addFlash('success', $this->translator->trans('sylius.resource.delete', ['%resource%' => $key], domain: 'flashes'));
-        } catch (\Throwable $e) {
-            $this->addFlash('error', $e->getMessage());
+        } catch (\Throwable $throwable) {
+            $this->addFlash('error', $throwable->getMessage());
         }
 
-        /** @var string|null $referer */
         $referer = $request->headers->get('referer');
 
         if (null !== $referer && $this->isValidReferer($referer, $request)) {
@@ -349,7 +346,6 @@ class MediaAdminController extends AbstractController
             );
         }
 
-        /** @var string|null $referer */
         $referer = $request->headers->get('referer');
 
         if (null !== $referer && $this->isValidReferer($referer, $request)) {
@@ -427,7 +423,7 @@ class MediaAdminController extends AbstractController
 
             $dirFilter = null;
             if ($hasSearch) {
-                $dirFilter = static fn (string $a): bool => str_contains(strtolower($a), strtolower($searchValue));
+                $dirFilter = static fn (string $a): bool => str_contains(strtolower($a), strtolower((string) $searchValue));
             }
 
             $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: $hasSearch, filter: $dirFilter);
@@ -441,7 +437,7 @@ class MediaAdminController extends AbstractController
 
         $mediaFilter = null;
         if ($hasSearch) {
-            $mediaFilter = static fn ($media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue));
+            $mediaFilter = static fn ($media): bool => str_contains(strtolower((string) $media->getPath()), strtolower((string) $searchValue));
         }
 
         if ($request->isXmlHttpRequest()) {
@@ -600,7 +596,7 @@ class MediaAdminController extends AbstractController
         $referer = $request->headers->get('referer');
 
         if ($referer) {
-            $encodedOldPath = implode('/', array_map('rawurlencode', explode('/', $oldPath)));
+            $encodedOldPath = implode('/', array_map(rawurlencode(...), explode('/', $oldPath)));
 
             $updated = str_replace([$oldPath, $encodedOldPath], $newPath, $referer);
 
@@ -637,7 +633,7 @@ class MediaAdminController extends AbstractController
 
         $mediaFilter = null;
         if ($hasSearch) {
-            $mediaFilter = static fn ($media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue));
+            $mediaFilter = static fn ($media): bool => str_contains(strtolower((string) $media->getPath()), strtolower($searchValue));
         }
 
         try {
