@@ -364,51 +364,26 @@ Admin panel
 
 **Configure the products' grid in the admin panel**
 
-To replace the product image field in the product grid, follow the steps below.
-
-1. Import external grid configuration
-
-First, update the Sylius configuration to load external grid configuration files:
+The Sylius bridge provides a grid mutator that replaces the image field of the
+product grid. Register it as a service (this requires ``sylius/grid-bundle``
+1.16 or later):
 
 .. code-block:: yaml
 
-    # config/packages/_sylius.yaml
-    imports:
-       # ...
-       - { resource: "../sylius/grid/**/**" }
+    # config/services.yaml
+    services:
+        JoliCode\MediaBundle\Bridge\Sylius\Admin\Grid\Mutator\ReplaceImageFromProductGridMutator: null
 
-2. Customize the product grid
+This relies on autoconfiguration (enabled by default in ``_defaults``). If it
+is disabled, tag the service manually:
 
-Next, create the following file to override the product grid configuration:
+.. code-block:: yaml
 
-::
-
-    // config/sylius/grid/admin/product.php
-    namespace Symfony\Component\DependencyInjection\Loader\Configurator;
-
-    use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
-    use Sylius\Bundle\GridBundle\Builder\GridBuilder;
-    use Sylius\Bundle\GridBundle\Config\GridConfig;
-
-    $gridBuilder = GridBuilder::create('sylius_admin_product')
-       ->withFields(
-           TwigField::create('image', template: 'admin/product/grid/field/image.html.twig'),
-       )
-    ;
-
-    return App::config(['sylius_grid' => (new GridConfig())->addGrid($gridBuilder)->toArray()]);
-
-3. Create the Twig template
-
-Finally, create the Twig template used to render the image:
-
-.. code-block:: html+twig
-
-    {% from '@JoliMediaSylius/admin/shared/helper/product_image.html.twig' import image %}
-
-    <div class="thumbnail-box-image">
-       {{ image(data) }}
-    </div>
+    # config/services.yaml
+    services:
+        JoliCode\MediaBundle\Bridge\Sylius\Admin\Grid\Mutator\ReplaceImageFromProductGridMutator:
+            tags:
+                - { name: sylius.grid_mutator, grid: sylius_admin_product }
 
 Shop
 ~~~~
