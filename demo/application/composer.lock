@@ -3637,16 +3637,16 @@
         },
         {
             "name": "sylius/grid-bundle",
-            "version": "v1.15.1",
+            "version": "v1.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusGridBundle.git",
-                "reference": "e2ea6e3a5fd33b17de58af0a208f76b31fe2afbf"
+                "reference": "22ca062fe16a2618a4e264f6c86162236d4ae50c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusGridBundle/zipball/e2ea6e3a5fd33b17de58af0a208f76b31fe2afbf",
-                "reference": "e2ea6e3a5fd33b17de58af0a208f76b31fe2afbf",
+                "url": "https://api.github.com/repos/Sylius/SyliusGridBundle/zipball/22ca062fe16a2618a4e264f6c86162236d4ae50c",
+                "reference": "22ca062fe16a2618a4e264f6c86162236d4ae50c",
                 "shasum": ""
             },
             "require": {
@@ -3662,7 +3662,7 @@
                 "symfony/options-resolver": "^6.4 || ^7.2 || ^8.0",
                 "symfony/property-access": "^6.4 || ^7.2 || ^8.0",
                 "symfony/validator": "^6.4 || ^7.2 || ^8.0",
-                "webmozart/assert": "^1.9"
+                "webmozart/assert": "^1.9 || ^2.3"
             },
             "conflict": {
                 "badev/pagerfanta-bundle": "<4.4",
@@ -3693,6 +3693,7 @@
                 "matthiasnoback/symfony-config-test": "^6.1",
                 "matthiasnoback/symfony-dependency-injection-test": "^6.1",
                 "pagerfanta/pagerfanta": "^3.7 || ^4.0",
+                "phparkitect/phparkitect": "^1.2",
                 "phpstan/extension-installer": "^1.4",
                 "phpstan/phpstan": "^2.0",
                 "phpstan/phpstan-phpunit": "^2.0",
@@ -3763,7 +3764,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Sylius/SyliusGridBundle/issues",
-                "source": "https://github.com/Sylius/SyliusGridBundle/tree/v1.15.1"
+                "source": "https://github.com/Sylius/SyliusGridBundle/tree/v1.16.1"
             },
             "funding": [
                 {
@@ -3771,7 +3772,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-16T11:23:10+00:00"
+            "time": "2026-07-13T09:44:06+00:00"
         },
         {
             "name": "sylius/registry",
