@@ -1,16 +1,28 @@
 # Changelog
 
+## [0.6.1] - 2026-07-27
+
+- fix - Allow to use pre-processors defined outside the bundle at the global state
+
+## [0.6.0] - 2026-07-19
+
+- doc - Add a note about the Sylius bridge integration
+- feature - Add German, Romanian and Russian translations
+- feature - Auto register the EasyAdmin media field to work with the media custom doctrine types
+- feature - Allow to search media in the EasyAdmin and Sonata Admin bridges
+- fix - Fix production cache:clear crash when DoctrineBundle's metadata warmer runs
+
 ## [0.5.0] - 2026-06-09
 
 - feat(Sylius): Decorate the Sylius image uploader
 - feat(Sylius): Search in the choose media modal
 - fix(Sylius): Fix responsive in choose media modal
-- feature(Sylius) - Move a directory
+- feat(Sylius): Move a directory
 - fix(Sylius): Fix media get path
 
 ## [0.4.1] - 2026-05-15
 
-- fix - Fix rename directory when there are no media 
+- fix - Fix rename directory when there are no media
 - fix - Fix create directory action when choosing a media
 
 ## [0.4.0] - 2026-05-13
@@ -36,7 +48,7 @@
 - fix - Fix choose modal on Easy admin bridge
 
 ## [0.3.0] - 2026-04-09
- 
+
 - feature - Add support for Easy admin 5
 - feature - updated frontend deps and compiled public assets
 - fix - Restrict Easy admin bundle version
