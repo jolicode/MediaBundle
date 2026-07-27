@@ -106,7 +106,7 @@ class JoliMediaBundle extends AbstractBundle
             array_unshift($config['pre_processors'], HeifPreProcessor::class);
         }
 
-        $this->createPreProcessorServices($container, $config['pre_processors']);
+        $this->createPreProcessorServices($container, $builder, $config['pre_processors']);
 
         // processors
         $this->createProcessorServices($container, $config['processors']);
@@ -972,7 +972,7 @@ class JoliMediaBundle extends AbstractBundle
         }
     }
 
-    private function createPreProcessorServices(ContainerConfigurator $container, array $preProcessorsConfig): void
+    private function createPreProcessorServices(ContainerConfigurator $container, ContainerBuilder $builder, array $preProcessorsConfig): void
     {
         if (in_array(HeifPreProcessor::class, $preProcessorsConfig)) {
             if (!interface_exists(ImagineInterface::class)) {
@@ -986,10 +986,18 @@ class JoliMediaBundle extends AbstractBundle
         }
 
         foreach ($preProcessorsConfig as $preProcessorClass) {
-            $container->services()
-                ->get($preProcessorClass)
-                ->tag('joli_media.pre_processor', ['name' => $preProcessorClass])
-            ;
+            if ($builder->hasDefinition($preProcessorClass)) {
+                $container->services()
+                    ->get($preProcessorClass)
+                    ->tag('joli_media.pre_processor', ['name' => $preProcessorClass])
+                ;
+            } else {
+                // pre-processors defined outside the bundle are not visible from the
+                // extension, tag them through autoconfiguration instead
+                $builder->registerForAutoconfiguration($preProcessorClass)
+                    ->addTag('joli_media.pre_processor', ['name' => $preProcessorClass])
+                ;
+            }
         }
     }
 
