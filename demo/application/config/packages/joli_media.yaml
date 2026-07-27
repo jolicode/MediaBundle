@@ -119,6 +119,7 @@ joli_media:
                             height: 100
 
     pre_processors:
+        - App\Media\PreProcessor\PassthroughPreProcessor
         - JoliCode\MediaBundle\PreProcessor\ExifRemovalPreProcessor
 
     processors: ~
