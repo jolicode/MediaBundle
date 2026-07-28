@@ -13,13 +13,14 @@ abstract readonly class AbstractProcessCreator
     protected function createProcess(array $arguments = [], array $options = []): Process
     {
         $process = new Process($arguments);
+        $timeout = $options['process']['timeout'] ?? $this->getProcessTimeout();
+
+        if (null !== $timeout) {
+            $process->setTimeout((float) $timeout);
+        }
 
         if (!isset($options['process'])) {
             return $process;
-        }
-
-        if (isset($options['process']['timeout'])) {
-            $process->setTimeout($options['process']['timeout']);
         }
 
         if (isset($options['process']['working_directory'])) {
@@ -31,6 +32,15 @@ abstract readonly class AbstractProcessCreator
         }
 
         return $process;
+    }
+
+    /**
+     * The timeout, in seconds, applied to the processes created by createProcess().
+     * Classes that expose a configurable timeout must override this method.
+     */
+    protected function getProcessTimeout(): ?float
+    {
+        return null;
     }
 
     /**

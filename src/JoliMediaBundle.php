@@ -17,6 +17,7 @@ use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\PreProcessor\HeifPreProcessor;
 use JoliCode\MediaBundle\Processor\Imagine;
 use JoliCode\MediaBundle\Transformer\Resize\Mode;
+use Symfony\Component\Config\Definition\Builder\FloatNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
@@ -58,6 +59,11 @@ class JoliMediaBundle extends AbstractBundle
                 ->scalarNode('default_library')
                     ->defaultValue(null)
                 ->end()
+                ->floatNode('process_timeout')
+                    ->min(0)
+                    ->defaultValue(60.0)
+                    ->info('Default timeout, in seconds, of the external binary processes created by the processors, pre-processors and post-processors. Use 0 to disable the timeout.')
+                ->end()
                 ->append($this->addLibrariesNode())
                 ->append($this->addPreProcessorsNode())
                 ->append($this->addProcessorsNode())
@@ -90,6 +96,8 @@ class JoliMediaBundle extends AbstractBundle
         $builder->setParameter('joli_media.binary.oxipng', '%env(JOLI_MEDIA_OXIPNG_BINARY)%');
         $builder->setParameter('joli_media.binary.pngquant', '%env(JOLI_MEDIA_PNGQUANT_BINARY)%');
 
+        $builder->setParameter('joli_media.process_timeout', $config['process_timeout']);
+
         // libraries
         foreach ($config['libraries'] as $libraryName => $libraryConfig) {
             $this->createLibraryService($container, $builder, $libraryName, $libraryConfig);
@@ -101,18 +109,18 @@ class JoliMediaBundle extends AbstractBundle
         ;
 
         // pre-processors
-        if (!in_array(HeifPreProcessor::class, $config['pre_processors']) && interface_exists(ImagineInterface::class)) {
+        if (!\array_key_exists(HeifPreProcessor::class, $config['pre_processors']) && interface_exists(ImagineInterface::class)) {
             // Automatically add the Heif pre-processor if it is not manually configured and Imagine is available
-            array_unshift($config['pre_processors'], HeifPreProcessor::class);
+            $config['pre_processors'] = [HeifPreProcessor::class => []] + $config['pre_processors'];
         }
 
         $this->createPreProcessorServices($container, $builder, $config['pre_processors']);
 
         // processors
-        $this->createProcessorServices($container, $config['processors']);
+        $this->createProcessorServices($container, $config['processors'], $config['process_timeout']);
 
         // post-processors
-        $this->createPostProcessorServices($container, $config['post_processors']);
+        $this->createPostProcessorServices($container, $config['post_processors'], $config['process_timeout']);
     }
 
     public function prependExtension(ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder): void
@@ -302,7 +310,7 @@ class JoliMediaBundle extends AbstractBundle
                         ->end()
                     ->end()
                     ->append($this->addPostProcessorOptionsNode())
-                    ->append($this->addPreProcessorsNode())
+                    ->append($this->addVariationPreProcessorsNode())
                     ->append($this->addProcessorOptionsNode())
                     ->append($this->addVotersNode())
                 ->end()
@@ -363,6 +371,51 @@ class JoliMediaBundle extends AbstractBundle
     }
 
     private function addPreProcessorsNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('pre_processors');
+        $node = $treeBuilder->getRootNode();
+
+        return $node
+            ->info('Pre-processors to register, indexed by their class name. A plain list of class names is also allowed.')
+            ->useAttributeAsKey('class')
+            ->beforeNormalization()
+                ->ifArray()
+                ->then(static function (array $values): array {
+                    $preProcessors = [];
+
+                    foreach ($values as $class => $preProcessorConfig) {
+                        if (\is_int($class) && \is_string($preProcessorConfig)) {
+                            $preProcessors[$preProcessorConfig] = [];
+                        } else {
+                            $preProcessors[$class] = $preProcessorConfig ?? [];
+                        }
+                    }
+
+                    return $preProcessors;
+                })
+            ->end()
+            ->arrayPrototype()
+                ->children()
+                    ->append($this->addProcessTimeoutNode())
+                ->end()
+            ->end()
+        ;
+    }
+
+    private function addProcessTimeoutNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('process_timeout', 'float');
+        /** @var FloatNodeDefinition $node */
+        $node = $treeBuilder->getRootNode();
+
+        return $node
+            ->min(0)
+            ->defaultNull()
+            ->info('Overrides the global "process_timeout" configuration, in seconds, for the external binary processes created by this processor. Use 0 to disable the timeout.')
+        ;
+    }
+
+    private function addVariationPreProcessorsNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('pre_processors');
         $node = $treeBuilder->getRootNode();
@@ -458,6 +511,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->scalarNode('identify_binary')
                     ->defaultValue('%joli_media.binary.identify%')
                 ->end()
+                ->append($this->addProcessTimeoutNode())
                 ->append($this->addCwebpProcessorOptionsNode('options'))
             ->end()
         ;
@@ -553,6 +607,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.gif2webp%')
                 ->end()
+                ->append($this->addProcessTimeoutNode())
                 ->append($this->addGif2webpProcessorOptionsNode('options'))
             ->end()
         ;
@@ -600,6 +655,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.gifsicle%')
                 ->end()
+                ->append($this->addProcessTimeoutNode())
                 ->append($this->addGifsicleProcessorOptionsNode('options'))
             ->end()
         ;
@@ -698,6 +754,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.gifsicle%')
                 ->end()
+                ->append($this->addProcessTimeoutNode())
                 ->append($this->addGifsiclePostProcessorOptionsNode('options'))
             ->end()
         ;
@@ -745,6 +802,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.jpegoptim%')
                 ->end()
+                ->append($this->addProcessTimeoutNode())
                 ->append($this->addJpegoptimPostProcessorOptionsNode('options'))
             ->end()
         ;
@@ -790,6 +848,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.mozjpeg%')
                 ->end()
+                ->append($this->addProcessTimeoutNode())
                 ->append($this->addMozjpegPostProcessorOptionsNode('options'))
             ->end()
         ;
@@ -835,6 +894,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.oxipng%')
                 ->end()
+                ->append($this->addProcessTimeoutNode())
                 ->append($this->addOxipngPostProcessorOptionsNode('options'))
             ->end()
         ;
@@ -884,6 +944,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.pngquant%')
                 ->end()
+                ->append($this->addProcessTimeoutNode())
                 ->append($this->addPngquantPostProcessorOptionsNode('options'))
             ->end()
         ;
@@ -915,7 +976,7 @@ class JoliMediaBundle extends AbstractBundle
         ;
     }
 
-    private function createPostProcessorServices(ContainerConfigurator $container, array $postProcessorsConfig): void
+    private function createPostProcessorServices(ContainerConfigurator $container, array $postProcessorsConfig, float $defaultProcessTimeout): void
     {
         $postProcessorContainerService = $container->services()
             ->get('joli_media.post_processor_container')
@@ -926,6 +987,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->get('.joli_media.post_processor.gifsicle')
                 ->arg('$binary', $postProcessorsConfig['gifsicle']['binary'])
                 ->arg('$options', $postProcessorsConfig['gifsicle']['options'])
+                ->arg('$processTimeout', $postProcessorsConfig['gifsicle']['process_timeout'] ?? $defaultProcessTimeout)
             ;
 
             $postProcessorContainerService->call('add', ['gifsicle', service('.joli_media.post_processor.gifsicle')]);
@@ -936,6 +998,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->get('.joli_media.post_processor.jpegoptim')
                 ->arg('$binary', $postProcessorsConfig['jpegoptim']['binary'])
                 ->arg('$options', $postProcessorsConfig['jpegoptim']['options'])
+                ->arg('$processTimeout', $postProcessorsConfig['jpegoptim']['process_timeout'] ?? $defaultProcessTimeout)
             ;
 
             $postProcessorContainerService->call('add', ['jpegoptim', service('.joli_media.post_processor.jpegoptim')]);
@@ -946,6 +1009,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->get('.joli_media.post_processor.mozjpeg')
                 ->arg('$binary', $postProcessorsConfig['mozjpeg']['binary'])
                 ->arg('$options', $postProcessorsConfig['mozjpeg']['options'])
+                ->arg('$processTimeout', $postProcessorsConfig['mozjpeg']['process_timeout'] ?? $defaultProcessTimeout)
             ;
 
             $postProcessorContainerService->call('add', ['mozjpeg', service('.joli_media.post_processor.mozjpeg')]);
@@ -956,6 +1020,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->get('.joli_media.post_processor.pngquant')
                 ->arg('$binary', $postProcessorsConfig['pngquant']['binary'])
                 ->arg('$options', $postProcessorsConfig['pngquant']['options'])
+                ->arg('$processTimeout', $postProcessorsConfig['pngquant']['process_timeout'] ?? $defaultProcessTimeout)
             ;
 
             $postProcessorContainerService->call('add', ['pngquant', service('.joli_media.post_processor.pngquant')]);
@@ -966,6 +1031,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->get('.joli_media.post_processor.oxipng')
                 ->arg('$binary', $postProcessorsConfig['oxipng']['binary'])
                 ->arg('$options', $postProcessorsConfig['oxipng']['options'])
+                ->arg('$processTimeout', $postProcessorsConfig['oxipng']['process_timeout'] ?? $defaultProcessTimeout)
             ;
 
             $postProcessorContainerService->call('add', ['oxipng', service('.joli_media.post_processor.oxipng')]);
@@ -974,7 +1040,7 @@ class JoliMediaBundle extends AbstractBundle
 
     private function createPreProcessorServices(ContainerConfigurator $container, ContainerBuilder $builder, array $preProcessorsConfig): void
     {
-        if (in_array(HeifPreProcessor::class, $preProcessorsConfig)) {
+        if (\array_key_exists(HeifPreProcessor::class, $preProcessorsConfig)) {
             if (!interface_exists(ImagineInterface::class)) {
                 throw new \LogicException('The HeifPreProcessor requires the Imagine library to be installed. Please install the "imagine/imagine" package.');
             }
@@ -985,23 +1051,34 @@ class JoliMediaBundle extends AbstractBundle
             ;
         }
 
-        foreach ($preProcessorsConfig as $preProcessorClass) {
+        foreach ($preProcessorsConfig as $preProcessorClass => $preProcessorConfig) {
+            $processTimeout = $preProcessorConfig['process_timeout'] ?? null;
+
             if ($builder->hasDefinition($preProcessorClass)) {
-                $container->services()
+                $preProcessorService = $container->services()
                     ->get($preProcessorClass)
                     ->tag('joli_media.pre_processor', ['name' => $preProcessorClass])
                 ;
+
+                if (null !== $processTimeout) {
+                    $preProcessorService->arg('$processTimeout', $processTimeout);
+                }
             } else {
                 // pre-processors defined outside the bundle are not visible from the
                 // extension, tag them through autoconfiguration instead
-                $builder->registerForAutoconfiguration($preProcessorClass)
+                $autoconfiguration = $builder->registerForAutoconfiguration($preProcessorClass)
                     ->addTag('joli_media.pre_processor', ['name' => $preProcessorClass])
                 ;
+
+                if (null !== $processTimeout) {
+                    // the pre-processor class must declare a $processTimeout constructor argument
+                    $autoconfiguration->setBindings(['$processTimeout' => $processTimeout]);
+                }
             }
         }
     }
 
-    private function createProcessorServices(ContainerConfigurator $container, array $processorsConfig): void
+    private function createProcessorServices(ContainerConfigurator $container, array $processorsConfig, float $defaultProcessTimeout): void
     {
         $processorContainerService = $container->services()->get('joli_media.processor_container');
 
@@ -1011,6 +1088,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->arg('$cwebpBinary', $processorsConfig['cwebp']['binary'])
                 ->arg('$options', $processorsConfig['cwebp']['options'])
                 ->arg('$identifyBinary', $processorsConfig['cwebp']['identify_binary'])
+                ->arg('$processTimeout', $processorsConfig['cwebp']['process_timeout'] ?? $defaultProcessTimeout)
             ;
 
             $processorContainerService->call('add', ['cwebp', service('.joli_media.processor.cwebp')]);
@@ -1021,6 +1099,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->get('.joli_media.processor.gif2webp')
                 ->arg('$gif2webpBinary', $processorsConfig['gif2webp']['binary'])
                 ->arg('$options', $processorsConfig['gif2webp']['options'])
+                ->arg('$processTimeout', $processorsConfig['gif2webp']['process_timeout'] ?? $defaultProcessTimeout)
             ;
 
             $processorContainerService->call('add', ['gif2webp', service('.joli_media.processor.gif2webp')]);
@@ -1031,6 +1110,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->get('.joli_media.processor.gifsicle')
                 ->arg('$binary', $processorsConfig['gifsicle']['binary'])
                 ->arg('$options', $processorsConfig['gifsicle']['options'])
+                ->arg('$processTimeout', $processorsConfig['gifsicle']['process_timeout'] ?? $defaultProcessTimeout)
             ;
 
             $processorContainerService->call('add', ['gifsicle', service('.joli_media.processor.gifsicle')]);

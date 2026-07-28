@@ -232,6 +232,7 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             '$exiftoolBinary' => param('joli_media.binary.exiftool'),
             '$logger' => service('logger')->ignoreOnInvalid(),
+            '$processTimeout' => param('joli_media.process_timeout'),
         ])
 
         ->set(HeifPreProcessor::class, HeifPreProcessor::class)

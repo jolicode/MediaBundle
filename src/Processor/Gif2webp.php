@@ -26,6 +26,7 @@ readonly class Gif2webp extends AbstractProcessor implements ProcessorInterface
         private ?string $gif2webpBinary = '/usr/local/bin/gif2webp',
         private array $options = [],
         private ?LoggerInterface $logger = null,
+        private ?float $processTimeout = null,
     ) {
     }
 
@@ -122,6 +123,11 @@ readonly class Gif2webp extends AbstractProcessor implements ProcessorInterface
             unlink($outputTemporaryFile);
             unlink($inputTemporaryFile);
         }
+    }
+
+    protected function getProcessTimeout(): ?float
+    {
+        return $this->processTimeout;
     }
 
     /**

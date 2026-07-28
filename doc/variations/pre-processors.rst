@@ -19,6 +19,31 @@ The pre-processors configuration is defined in the ``pre_processors`` key of the
 
 In the example above, the ``AutoRotateImagePreProcessor`` will be applied to the media before any of its variation is computed. The pre-processors are executed sequentially, in the order they are defined in the configuration file.
 
+Pre-processors that use an external binary (such as the ``ExifRemovalPreProcessor``) execute it in an external process, which times out after the duration defined in the global ``joli_media.process_timeout`` directive (60 seconds by default). To override this value for a given pre-processor, use the alternative map syntax of the ``pre_processors`` configuration and define its ``process_timeout`` key, in seconds (``0`` disables the timeout):
+
+.. code-block:: yaml
+
+    joli_media:
+        pre_processors:
+            App\Media\PreProcessor\AutoRotateImagePreProcessor: ~
+            JoliCode\MediaBundle\PreProcessor\ExifRemovalPreProcessor:
+                process_timeout: 120
+
+For pre-processors defined in your application, the ``process_timeout`` value is passed to the ``$processTimeout`` argument of the service constructor, which must hence be declared, and returned by an override of the ``getProcessTimeout()`` method::
+
+    public function __construct(
+        private ImagineInterface $imagine,
+        private ?float $processTimeout = null,
+    ) {
+    }
+
+    protected function getProcessTimeout(): ?float
+    {
+        return $this->processTimeout;
+    }
+
+Pre-processors that declare this argument without configuring a ``process_timeout`` can inherit the global value by binding the ``joli_media.process_timeout`` container parameter in their service definition.
+
 The pre-processors configuration can also be defined within a specific variation configuration, under the ``variations`` key of the ``joli_media`` configuration. For example:
 
 .. code-block:: yaml

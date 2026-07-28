@@ -25,6 +25,7 @@ readonly class Gifsicle extends AbstractProcessor implements ProcessorInterface
         private ?string $binary = null,
         private array $options = [],
         private ?LoggerInterface $logger = null,
+        private ?float $processTimeout = null,
     ) {
     }
 
@@ -86,6 +87,11 @@ readonly class Gifsicle extends AbstractProcessor implements ProcessorInterface
             unlink($outputTemporaryFile);
             unlink($inputTemporaryFile);
         }
+    }
+
+    protected function getProcessTimeout(): ?float
+    {
+        return $this->processTimeout;
     }
 
     /**
