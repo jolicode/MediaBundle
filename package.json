@@ -10,6 +10,9 @@
     },
     "license": "MIT",
     "private": true,
+    "resolutions": {
+        "serialize-javascript": "^7.0.5"
+    },
     "scripts": {
         "dev-server": "encore dev-server",
         "dev": "encore dev",

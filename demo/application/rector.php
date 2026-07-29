@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\Config\RectorConfig;
 use Rector\Doctrine\Set\DoctrineSetList;
@@ -9,6 +7,7 @@ use Rector\Symfony\Configs\Rector\Closure\FromServicePublicToDefaultsPublicRecto
 use Rector\Symfony\Configs\Rector\Closure\ServiceTagsToDefaultsAutoconfigureRector;
 use Rector\Symfony\Set\SymfonySetList;
 use Rector\Symfony\Set\TwigSetList;
+use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
 
 return RectorConfig::configure()
     ->withCache('../tools/rector/var/cache', FileCacheStorage::class)
@@ -42,5 +41,8 @@ return RectorConfig::configure()
     ->withSkip([
         ServiceTagsToDefaultsAutoconfigureRector::class,
         FromServicePublicToDefaultsPublicRector::class,
+        SafeDeclareStrictTypesRector::class,
+        // Flex-managed file, keep the inline fully qualified class names
+        __DIR__ . '/config/bundles.php',
     ])
 ;

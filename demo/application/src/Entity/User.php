@@ -65,13 +65,13 @@ class User implements \Stringable, ResourceInterface
     #[NotBlank]
     public ?Media $profilePicture = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function __toString(): string
     {
         return $this->email ?? '';
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
     }
 }

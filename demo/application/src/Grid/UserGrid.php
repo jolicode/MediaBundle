@@ -12,14 +12,13 @@ use Sylius\Bundle\GridBundle\Builder\ActionGroup\MainActionGroup;
 use Sylius\Bundle\GridBundle\Builder\Field\StringField;
 use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
 use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
-use Sylius\Bundle\GridBundle\Grid\AbstractGrid;
 use Sylius\Component\Grid\Attribute\AsGrid;
 
 #[AsGrid(
     resourceClass: User::class,
     name: 'app_user',
 )]
-final class UserGrid extends AbstractGrid
+final class UserGrid
 {
     public function __invoke(GridBuilderInterface $gridBuilder): void
     {

@@ -64,7 +64,7 @@ function phpstan(
         install();
     }
 
-    demo_install(false);
+    demo_install();
 
     io()->section('Running PHPStan...');
 

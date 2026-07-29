@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Menu\Admin;
 
 use Knp\Menu\ItemInterface;
@@ -16,6 +14,9 @@ final readonly class MenuBuilder implements MenuBuilderInterface
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function createMenu(array $options): ItemInterface
     {
         $menu = $this->decorated->createMenu($options);
