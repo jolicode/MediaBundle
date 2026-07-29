@@ -3,12 +3,12 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Controller\MediaAdminController;
-use JoliCode\MediaBundle\Bridge\Sylius\Asset\Package;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\DataTransformer\MediaTransformer;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Type\MediaChoiceType;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Type\UploadType;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Grid\MediaGrid;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Grid\Provider\MediaGridProvider;
+use JoliCode\MediaBundle\Bridge\Sylius\Asset\Package;
 use JoliCode\MediaBundle\Bridge\Sylius\Config\Config;
 use JoliCode\MediaBundle\Bridge\Sylius\Uploader\ImageUploader;
 use JoliCode\MediaBundle\Bridge\Twig\JoliMediaAdminExtension;
