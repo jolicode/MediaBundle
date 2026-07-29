@@ -3,6 +3,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Controller\MediaAdminController;
+use JoliCode\MediaBundle\Bridge\Sylius\Asset\Package;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\DataTransformer\MediaTransformer;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Type\MediaChoiceType;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Type\UploadType;
@@ -15,6 +16,12 @@ use Sylius\Component\Core\Uploader\ImageUploaderInterface;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
+
+    $services
+        ->set('joli_media_sylius_admin.assets_package', Package::class)
+        ->args([service('request_stack')])
+        ->tag('assets.package', ['package' => Package::NAME])
+    ;
 
     $services
         ->set('joli_media_sylius_admin.config', Config::class)
