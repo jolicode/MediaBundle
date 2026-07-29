@@ -3,6 +3,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use JoliCode\MediaBundle\Bridge\Form\DataTransformer\MediaTransformer;
+use JoliCode\MediaBundle\Bridge\Security\Voter\MediaVoter;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Controller\MediaAdminController;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Form\Type\MediaChoiceType;
 use JoliCode\MediaBundle\Bridge\Sylius\Admin\Grid\MediaGrid;
@@ -81,6 +82,11 @@ return static function (ContainerConfigurator $container): void {
             service('joli_media_admin.form.data_transformer.media'),
         ])
         ->tag('form.type')
+    ;
+
+    // security
+    $services->set('joli_media_admin.security.voter', MediaVoter::class)
+        ->tag('security.voter')
     ;
 
     // twig
