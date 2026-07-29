@@ -58,6 +58,7 @@ class ConvertCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $ioStyle = new SymfonyStyle($input, $output);
+        $failures = [];
 
         foreach ($input->getArgument('filename') as $filename) {
             try {
@@ -67,7 +68,8 @@ class ConvertCommand extends Command
                     $input->getOption('variation'),
                     $input->getOption('force'),
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
+                $failures[] = $filename;
                 $ioStyle->error(\sprintf('There was an exception during the conversion of the file "%s" from the library "%s"',
                     $filename,
                     $input->getOption('library'),
@@ -76,13 +78,25 @@ class ConvertCommand extends Command
                     $e->getMessage(),
                 );
 
-                return Command::FAILURE;
+                continue;
             }
 
             $ioStyle->success(\sprintf('The file "%s" from the library "%s" has been converted successfully.',
                 $filename,
                 $input->getOption('library'),
             ));
+        }
+
+        if ([] !== $failures) {
+            $ioStyle->error(\sprintf(
+                "%d of %d files could not be converted from the library \"%s\":\n - %s",
+                \count($failures),
+                \count($input->getArgument('filename')),
+                $input->getOption('library'),
+                implode("\n - ", $failures),
+            ));
+
+            return Command::FAILURE;
         }
 
         return Command::SUCCESS;
