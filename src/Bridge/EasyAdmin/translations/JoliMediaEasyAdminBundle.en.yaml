@@ -112,4 +112,5 @@ variation:
     stored: 'Stored?'
 view:
     grid: 'Grid view'
+    label: 'Change the view mode'
     list: 'List view'

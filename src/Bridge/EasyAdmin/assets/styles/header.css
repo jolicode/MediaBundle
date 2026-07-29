@@ -10,23 +10,49 @@ body.joli-media-explore .content-top {
   box-shadow: 0 1px 0 var(--content-top-border-color);
 }
 
-.joli-media-header-tools {
-  .btn-group .btn.active {
-    --button-hover-bg: linear-gradient(180deg, var(--button-secondary-color), hsl(from var(--button-secondary-color) h calc(s + 3) calc(l + 5)));
-    --button-secondary-bg: linear-gradient(180deg, var(--button-secondary-color), hsl(from var(--button-secondary-color) h calc(s + 3) calc(l + 5)));
-    --button-hover-color: var(--button-primary-active-color);
-    cursor: pointer;
+/* View mode switcher
+   ========================================================================== */
+
+/* A segmented control: a recessed track holding the available view modes, the selected one
+   being raised as a "pill". EasyAdmin has no segmented control component, so this is built
+   out of its design tokens; every token used here exists from EasyAdmin 4.26 to 5.3, and the
+   control follows the theme (including the dark one) on its own.
+
+   This replaces a plain Bootstrap button group, which read as two separate buttons instead of
+   one option selected among two, and which relied on how EasyAdmin painted disabled buttons --
+   something that changed in EasyAdmin 5.3, where they became faded instead of looking pressed. */
+.joli-media-view-switch {
+  display: inline-flex;
+  gap: var(--ea-sp-0-5, 2px);
+  padding: var(--ea-sp-0-5, 2px);
+  background: var(--secondary-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+
+  .btn {
+    --button-bg: transparent;
+    --button-border-color: transparent;
+    --button-box-shadow: none;
+    --button-color: var(--text-muted);
+    --button-hover-bg: transparent;
+    --button-hover-color: var(--text-color);
+
+    border-radius: var(--border-radius);
+  }
+
+  /* the selected view mode is rendered as "active disabled" so that it cannot be selected
+     again; raise it as a pill and cancel the opacity applied to disabled buttons */
+  .btn.active {
+    --button-bg: var(--button-secondary-bg);
+    --button-border-color: var(--button-secondary-border-color);
+    --button-color: var(--button-secondary-color);
+    --button-box-shadow: var(--button-secondary-box-shadow);
+
+    opacity: 1;
   }
 }
 
 [data-bs-theme="dark"] {
-  .joli-media-header-tools {
-    .btn-group .btn.active,
-    .btn-group .btn.disabled.active {
-      --button-active-bg: var(--true-gray-700);
-    }
-  }
-
   .modal-content .content-header {
     background-color: transparent;
   }
