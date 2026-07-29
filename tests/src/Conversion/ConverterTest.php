@@ -10,6 +10,7 @@ use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\PostProcessor\PostProcessorContainer;
+use JoliCode\MediaBundle\PreProcessor\HeifPreProcessor;
 use JoliCode\MediaBundle\Processor\Cwebp;
 use JoliCode\MediaBundle\Processor\Imagine;
 use JoliCode\MediaBundle\Processor\ProcessorContainer;
@@ -105,14 +106,14 @@ class ConverterTest extends BaseTestCase
         yield ['avif', 'png', 42562, 'image/png'];
         yield ['jpeg', 'png', 39179, 'image/png'];
         yield ['png', 'png', 24406, 'image/png'];
-        yield ['heif', 'png', 26990, 'image/png'];
+        yield ['heif', 'png', 26977, 'image/png'];
         yield ['tiff', 'png', 24513, 'image/png'];
         yield ['webp', 'png', 24244, 'image/png'];
 
         yield ['avif', 'webp', 21240, 'image/webp'];
         yield ['jpeg', 'webp', 7018, 'image/webp'];
         yield ['png', 'webp', 4368, 'image/webp'];
-        yield ['heif', 'webp', 8158, 'image/webp'];
+        yield ['heif', 'webp', 7122, 'image/webp'];
         yield ['tiff', 'webp', 7068, 'image/webp'];
         yield ['webp', 'webp', 4280, 'image/webp'];
 
@@ -122,6 +123,28 @@ class ConverterTest extends BaseTestCase
         yield ['heif', 'avif', 7860, 'image/avif'];
         yield ['tiff', 'avif', 7826, 'image/avif'];
         yield ['webp', 'avif', 7675, 'image/avif'];
+    }
+
+    public function testConvertWithoutTransformersConvertsTheFormat(): void
+    {
+        // a variation with a target format but no transformers must convert the
+        // binary format, not store the source bytes under the variation path
+        $filename = 'format-only/test.heif';
+
+        $media = new Media($filename, $this->originalStorage);
+        $media->store($this->getFixtureBinary('heif'));
+
+        $mediaVariation = $this->converter->getMediaVariation($filename, 'format-only-jpeg', $this->library->getName());
+
+        if (!$mediaVariation instanceof MediaVariation) {
+            self::fail('The media variation "format-only-jpeg" was not created.');
+        }
+
+        $this->converter->convertMediaVariation($mediaVariation, false);
+
+        self::assertTrue($mediaVariation->isStored());
+        self::assertSame('image/jpeg', $mediaVariation->getBinary()->getMimeType());
+        self::assertStringStartsWith("\xFF\xD8", $mediaVariation->getBinary()->getContent());
     }
 
     /**
@@ -140,8 +163,19 @@ class ConverterTest extends BaseTestCase
                 new TransformerChain([
                     new Resize(400, 300),
                 ]),
+                // convert HEIF medias to JPEG before applying the transformers, as
+                // getimagesize() only supports HEIF since PHP 8.5
+                preProcessors: new ServiceLocator([
+                    'heif' => static fn (): HeifPreProcessor => new HeifPreProcessor(new ImagineImagine()),
+                ]),
             );
         }
+
+        $variations['format-only-jpeg'] = static fn (): Variation => new Variation(
+            'format-only-jpeg',
+            Format::JPEG,
+            new TransformerChain([]),
+        );
 
         return $variations;
     }
