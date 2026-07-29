@@ -16,12 +16,14 @@ readonly class Thumbnail extends AbstractTransformer implements TransformerInter
 
     public function transform(Transformation $transformation): void
     {
-        if (false === $this->allowUpscale && ($transformation->targetWidth < $this->width || $transformation->targetHeight < $this->height)) {
+        $dimensions = $this->requireTargetDimensions($transformation);
+
+        if (false === $this->allowUpscale && ($dimensions['width'] < $this->width || $dimensions['height'] < $this->height)) {
             return;
         }
 
         $expectedRatio = $this->width / $this->height;
-        $currentRatio = $transformation->targetWidth / $transformation->targetHeight;
+        $currentRatio = $dimensions['width'] / $dimensions['height'];
 
         if ($expectedRatio === $currentRatio) {
             // no croping required
@@ -31,9 +33,10 @@ readonly class Thumbnail extends AbstractTransformer implements TransformerInter
             return;
         }
 
+        $binaryDimensions = $this->requireBinaryDimensions($transformation);
         $cropPosition = $this->getCropPosition();
-        $currentCropWidth = $transformation->cropWidth ?? $transformation->binaryWidth;
-        $currentCropHeight = $transformation->cropHeight ?? $transformation->binaryHeight;
+        $currentCropWidth = $transformation->cropWidth ?? $binaryDimensions['width'];
+        $currentCropHeight = $transformation->cropHeight ?? $binaryDimensions['height'];
         $currentCropX = $transformation->cropX ?? 0;
         $currentCropY = $transformation->cropY ?? 0;
 

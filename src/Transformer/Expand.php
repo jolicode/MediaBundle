@@ -19,18 +19,12 @@ use Psr\Log\LoggerInterface;
 
 readonly class Expand extends AbstractTransformer implements TransformerInterface, NeedsImmediateProcessingTransformerInterface
 {
-    /**
-     * @param int|string      $width
-     * @param int|string      $height
-     * @param int|string|null $positionX
-     * @param int|string|null $positionY
-     */
     public function __construct(
         private ImagineProcessor $imagineProcessor,
-        private mixed $width,
-        private mixed $height,
-        private mixed $positionX = null,
-        private mixed $positionY = null,
+        private int|string $width,
+        private int|string $height,
+        private int|string|null $positionX = null,
+        private int|string|null $positionY = null,
         private ?string $backgroundColor = null,
         private ?LoggerInterface $logger = null,
     ) {
@@ -57,19 +51,9 @@ readonly class Expand extends AbstractTransformer implements TransformerInterfac
         $imagineOptions = $this->imagineProcessor->parseOptions($processorOptions);
 
         $binary = $transformation->getBinary();
-        $binaryWidth = $binary->getPixelWidth();
-        $binaryHeight = $binary->getPixelHeight();
-
-        $this->logger?->info('Processing binary with the "Expand" transform.', [
-            'binaryWidth' => $binaryWidth,
-            'binaryHeight' => $binaryHeight,
-        ]);
-
-        if (null === $binaryWidth || null === $binaryHeight) {
-            $this->logger?->warning('Binary width or height is null, cannot process Expand transform.');
-
-            return;
-        }
+        $binaryDimensions = $this->requireBinaryDimensions($transformation);
+        $binaryWidth = $binaryDimensions['width'];
+        $binaryHeight = $binaryDimensions['height'];
 
         $this->logger?->info('Processing binary with the "Expand" transform.', [
             'binaryWidth' => $binaryWidth,

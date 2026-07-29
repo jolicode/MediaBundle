@@ -44,6 +44,17 @@ class BinaryTest extends BaseTestCase
         $this->assertFalse($binary->getPixelDimensions());
     }
 
+    public function testBinaryPixelDimensionsForUnreadableImage(): void
+    {
+        $binary = new Binary('image/jpeg', Format::JPEG->value, '');
+
+        $this->assertFalse($binary->getPixelDimensions());
+        // the failure is memoized, calling again does not retry the detection
+        $this->assertFalse($binary->getPixelDimensions());
+        $this->assertNull($binary->getPixelWidth());
+        $this->assertNull($binary->getPixelHeight());
+    }
+
     public function testBinaryFormatNormalization(): void
     {
         $content = BaseTestCase::getFixtureBinaryContent(BaseTestCase::PNG_FIXTURE_PATH);

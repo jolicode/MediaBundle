@@ -6,29 +6,27 @@ use JoliCode\MediaBundle\Transformation\Transformation;
 
 readonly class Heighten extends AbstractTransformer implements TransformerInterface
 {
-    /**
-     * @param int|string $height
-     */
     public function __construct(
-        private mixed $height,
+        private int|string $height,
         private bool $allowDownscale = true,
     ) {
     }
 
     public function transform(Transformation $transformation): void
     {
+        $dimensions = $this->requireTargetDimensions($transformation);
         $height = $this->height;
 
         if (\is_string($height)) {
-            $height = $this->convertPercentageValue($height, $transformation->targetHeight);
+            $height = $this->convertPercentageValue($height, $dimensions['height']);
         }
 
-        if (false === $this->allowDownscale && $height <= $transformation->targetHeight) {
+        if (false === $this->allowDownscale && $height <= $dimensions['height']) {
             return;
         }
 
-        $ratio = $height / $transformation->targetHeight;
-        $transformation->targetWidth = (int) round($transformation->targetWidth * $ratio);
+        $ratio = $height / $dimensions['height'];
+        $transformation->targetWidth = (int) round($dimensions['width'] * $ratio);
         $transformation->targetHeight = $height;
     }
 }

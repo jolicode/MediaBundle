@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Transformation;
 
 use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Exception\UnprocessableMediaException;
 use JoliCode\MediaBundle\Inspector\TransformationDataHolder;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\PostProcessor\PostProcessorContainer;
@@ -34,11 +35,19 @@ readonly class TransformationProcessor
 
         $this->runPreProcessors($transformation);
 
+        if ($transformation->hasTransformers() && !$transformation->hasKnownDimensions()) {
+            throw UnprocessableMediaException::fromTransformation($transformation, 'the pixel dimensions of the media could not be determined, hence its transformers cannot be applied');
+        }
+
         while ($transformer = $transformation->shiftTransformers()) {
             if ($transformer instanceof NeedsImmediateProcessingTransformerInterface) {
                 $transformation->setBinary(
                     $this->runTransformation($transformation)
                 );
+
+                if (!$transformation->hasKnownDimensions()) {
+                    throw UnprocessableMediaException::fromTransformation($transformation, \sprintf('the pixel dimensions of the intermediate binary produced before the "%s" transformer could not be determined', $transformer::class));
+                }
             }
 
             $transformer->transform($transformation);
@@ -89,7 +98,7 @@ readonly class TransformationProcessor
                     );
 
                     return $binary;
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     // continue with the next processor
                     $this->logger?->error(\sprintf(
                         'Could not apply the variation "%s" to the media "%s". The "%s" processor failed with the following error:%s',
@@ -116,7 +125,7 @@ readonly class TransformationProcessor
             }
         }
 
-        throw new \RuntimeException('No processor worked for this variation');
+        throw UnprocessableMediaException::fromTransformation($transformation, 'no processor worked for this variation');
     }
 
     private function runPostProcessors(Transformation $transformation, Binary $binary): Binary
@@ -148,7 +157,7 @@ readonly class TransformationProcessor
                     $transformation->getBinary(),
                     $mediaVariation,
                 ));
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->logger?->error(\sprintf(
                     'Error while processing pre-processor "%s" for media "%s": %s',
                     $preProcessor::class,
@@ -157,7 +166,7 @@ readonly class TransformationProcessor
                 ));
                 $metadata['exception'] = $e->getMessage();
 
-                return;
+                continue;
             } finally {
                 $this->transformationDataHolder?->addPreProcessorStep($mediaVariation, \sprintf(
                     'Executed the "%s" pre-processor',
