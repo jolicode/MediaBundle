@@ -11,7 +11,7 @@
         "easycorp/easyadmin-bundle": "^5.0",
         "fakerphp/faker": "^1.24.1",
         "imagine/imagine": "^1.5",
-        "jolicode/media-bundle": "^0.2.0",
+        "jolicode/media-bundle": "^0.7.0",
         "nikic/php-parser": "^5.7.0",
         "pagerfanta/doctrine-orm-adapter": "^4.8",
         "sonata-project/doctrine-orm-admin-bundle": "^4.19",

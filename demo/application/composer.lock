@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e72028ff27a43a7714ab3e5dbbf34d2f",
+    "content-hash": "b95bfdbed603ec29d3de032357a8a860",
     "packages": [
         {
             "name": "babdev/pagerfanta-bundle",
@@ -1662,16 +1662,16 @@
         },
         {
             "name": "jolicode/media-bundle",
-            "version": "v0.2.1",
+            "version": "v0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jolicode/MediaBundle.git",
-                "reference": "2b3ef65638d5de23c94bdd811d308ef5d5539056"
+                "reference": "4521986a2577406354d5f54bf8595cbca081338f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jolicode/MediaBundle/zipball/2b3ef65638d5de23c94bdd811d308ef5d5539056",
-                "reference": "2b3ef65638d5de23c94bdd811d308ef5d5539056",
+                "url": "https://api.github.com/repos/jolicode/MediaBundle/zipball/4521986a2577406354d5f54bf8595cbca081338f",
+                "reference": "4521986a2577406354d5f54bf8595cbca081338f",
                 "shasum": ""
             },
             "require": {
@@ -1707,9 +1707,15 @@
                 "symfony/validator": "^7.0 || ^8.0",
                 "twig/twig": "^3.20"
             },
+            "conflict": {
+                "easycorp/easyadmin-bundle": "<4.26 || ^6.0",
+                "sylius/admin-bundle": "<2.1.14 || >=2.2.0 <2.2.5 || ^3.0",
+                "sylius/bootstrap-admin-ui": "<0.12.2 || ^0.13",
+                "sylius/grid-bundle": "<1.15 || >=2.0"
+            },
             "require-dev": {
                 "doctrine/doctrine-fixtures-bundle": "^4.1",
-                "easycorp/easyadmin-bundle": "^4.26",
+                "easycorp/easyadmin-bundle": "^4.26 || ^5.0",
                 "ext-imagick": "*",
                 "imagine/imagine": "^1.5",
                 "league/flysystem-bundle": "^3.4",
@@ -1717,6 +1723,8 @@
                 "phpunit/phpunit": "^11",
                 "psr/log": "^2.0 || ^3.0",
                 "sonata-project/admin-bundle": "^4.30",
+                "sylius/bootstrap-admin-ui": "^0.12.0",
+                "sylius/ui-translations": "^0.12.0",
                 "symfony/browser-kit": "^7.0 || ^8.0",
                 "symfony/css-selector": "^7.0 || ^8.0",
                 "symfony/monolog-bundle": "^3.10",
@@ -1733,6 +1741,7 @@
                 "psr-4": {
                     "JoliCode\\MediaBundle\\": "src/",
                     "JoliCode\\MediaBundle\\Bridge\\": "src/Bridge/src/",
+                    "JoliCode\\MediaBundle\\Bridge\\Sylius\\": "src/Bridge/Sylius/src/",
                     "JoliCode\\MediaBundle\\Bridge\\EasyAdmin\\": "src/Bridge/EasyAdmin/src/",
                     "JoliCode\\MediaBundle\\Bridge\\SonataAdmin\\": "src/Bridge/SonataAdmin/src/"
                 }
@@ -1762,9 +1771,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jolicode/MediaBundle/issues",
-                "source": "https://github.com/jolicode/MediaBundle/tree/v0.2.1"
+                "source": "https://github.com/jolicode/MediaBundle/tree/v0.7.0"
             },
-            "time": "2025-12-07T17:02:11+00:00"
+            "time": "2026-07-29T10:20:05+00:00"
         },
         {
             "name": "knplabs/knp-menu",
