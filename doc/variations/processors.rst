@@ -66,6 +66,24 @@ All processors - except the ``imagine`` processor - have a ``binary`` key that d
 
 The ``imagine`` processor does not use a binary, it uses the Imagine library to process images. The ``driver`` key can be used to define which Imagine driver to use (e.g. ``gd``, ``imagick`` or ``gmagick``). If not set, ``gmagick`` will be used.
 
+Processes timeout
+~~~~~~~~~~~~~~~~~
+
+The processors that use a binary execute it in an external process, which times out after the duration defined in the global ``joli_media.process_timeout`` directive (60 seconds by default). Each of these processors can override this value using its ``process_timeout`` key, in seconds. Use ``0`` to disable the timeout:
+
+.. code-block:: yaml
+
+    joli_media:
+        # applies to all the external processes created by the bundle
+        process_timeout: 120
+        processors:
+            cwebp:
+                # overrides the global timeout for the cwebp processor
+                process_timeout: 300
+            gifsicle:
+                # disables the timeout for the gifsicle processor
+                process_timeout: 0
+
 cwebp processor options
 ~~~~~~~~~~~~~~~~~~~~~~~
 

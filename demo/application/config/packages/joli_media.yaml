@@ -118,8 +118,14 @@ joli_media:
                             width: 100
                             height: 100
 
+    # timeout, in seconds, of the external binary processes created by the
+    # processors, pre-processors and post-processors (use 0 to disable it)
+    process_timeout: 60
+
     pre_processors:
-        - App\Media\PreProcessor\PassthroughPreProcessor
-        - JoliCode\MediaBundle\PreProcessor\ExifRemovalPreProcessor
+        App\Media\PreProcessor\PassthroughPreProcessor: ~
+        JoliCode\MediaBundle\PreProcessor\ExifRemovalPreProcessor:
+            # overrides the global process_timeout for this pre-processor
+            process_timeout: 120
 
     processors: ~

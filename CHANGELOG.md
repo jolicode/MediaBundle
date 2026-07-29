@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- feature - Add a global `process_timeout` configuration directive to control the timeout of the external binary processes, with per processor, pre-processor and post-processor overrides
+
 ## [0.6.1] - 2026-07-27
 
 - fix - Allow to use pre-processors defined outside the bundle at the global state

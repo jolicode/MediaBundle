@@ -16,6 +16,7 @@ abstract readonly class AbstractPostProcessor extends AbstractProcessCreator imp
         protected ?string $binary = null,
         protected array $options = [],
         protected ?LoggerInterface $logger = null,
+        protected ?float $processTimeout = null,
     ) {
     }
 
@@ -40,6 +41,11 @@ abstract readonly class AbstractPostProcessor extends AbstractProcessCreator imp
         if (!$this->canProcessFormat($format)) {
             throw new \InvalidArgumentException(\sprintf('The post-processor "%s" cannot process "%s" files. Available formats are: %s', static::class, $format, implode(', ', array_map(static fn (Format $value) => $value->value, $this->getProcessableFormats()))));
         }
+    }
+
+    protected function getProcessTimeout(): ?float
+    {
+        return $this->processTimeout;
     }
 
     protected function isEnabled(): bool

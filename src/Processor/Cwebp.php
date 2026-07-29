@@ -37,6 +37,7 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
         private ?string $identifyBinary = '/usr/bin/identify',
         private array $options = [],
         private ?LoggerInterface $logger = null,
+        private ?float $processTimeout = null,
     ) {
     }
 
@@ -136,6 +137,11 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
         }
     }
 
+    protected function getProcessTimeout(): ?float
+    {
+        return $this->processTimeout;
+    }
+
     /**
      * @param array<int|string|null> $transformationOptions
      * @param string[]               $processingOptions
@@ -189,7 +195,7 @@ readonly class Cwebp extends AbstractProcessor implements ProcessorInterface
     private function guessIsPhotoFile(string $filename): bool
     {
         // if the image has more than 20k colors, it's likely a photo
-        $process = new Process([$this->identifyBinary, '-format', '%k', $filename]);
+        $process = $this->createProcess([$this->identifyBinary, '-format', '%k', $filename]);
         $process->mustRun();
 
         $output = $process->getOutput();

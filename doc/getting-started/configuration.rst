@@ -5,8 +5,10 @@ The bundle can be configured in the ``config/packages/joli_media.yaml`` file wit
 
 - ``libraries``: defines the media libraries configuration
 - ``default_library``: defines the library to use by default
+- ``pre_processors``: defines the media pre-processors configuration
 - ``processors``: defines the media processors configuration
 - ``post_processors``: defines the media post processors configuration
+- ``process_timeout``: defines the default timeout of the external processes ran by the processors
 
 Libraries configuration
 -----------------------
@@ -51,6 +53,20 @@ Post-processors configuration
 -----------------------------
 
 Post-processors can be used to optimize the media after the transformation. Read the `Post-processors documentation <../variations/post-processors.rst>`_ to learn more about how to configure them.
+
+External processes timeout
+--------------------------
+
+Most processors, pre-processors and post-processors call external binaries (``cwebp``, ``gifsicle``, ``exiftool``, etc.) in dedicated processes. The ``process_timeout`` directive defines the default timeout, in seconds, applied to these processes. It defaults to ``60`` seconds, and can be set to ``0`` to disable the timeout:
+
+.. code-block:: yaml
+
+    joli_media:
+        process_timeout: 120
+
+This value can be overridden for each processor, pre-processor or post-processor that uses an external binary - see the `Processors <../variations/processors.rst>`_, `Pre-processors <../variations/pre-processors.rst>`_ and `Post-processors <../variations/post-processors.rst>`_ documentation pages.
+
+The configured value is also exposed as the ``joli_media.process_timeout`` container parameter, so it can be re-used in your own service definitions.
 
 Example minimal configuration
 -----------------------------

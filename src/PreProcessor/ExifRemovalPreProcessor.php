@@ -12,6 +12,7 @@ readonly class ExifRemovalPreProcessor extends AbstractPreProcessor implements P
     public function __construct(
         private ?string $exiftoolBinary = '/usr/local/bin/exiftool',
         private ?LoggerInterface $logger = null,
+        private ?float $processTimeout = null,
     ) {
     }
 
@@ -58,5 +59,10 @@ readonly class ExifRemovalPreProcessor extends AbstractPreProcessor implements P
     public function supports(Binary $binary): bool
     {
         return \in_array($binary->getFormat(), [Format::JPEG->value, Format::TIFF->value], true);
+    }
+
+    protected function getProcessTimeout(): ?float
+    {
+        return $this->processTimeout;
     }
 }

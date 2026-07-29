@@ -22,6 +22,18 @@ While there are many other image optimization tools available, these are the one
 
 Each post-processor has a ``binary`` key that defines the path to the binary to use, and an ``options`` key that defines the options to use when executing the binary. The default settings provide a good balance between quality and performance to make sure that the media is optimized while keeping a good quality.
 
+Post-processors execute their binary in an external process, which times out after the duration defined in the global ``joli_media.process_timeout`` directive (60 seconds by default). Each post-processor can override this value using its ``process_timeout`` key, in seconds. Use ``0`` to disable the timeout:
+
+.. code-block:: yaml
+
+    joli_media:
+        # applies to all the external processes created by the bundle
+        process_timeout: 120
+        post_processors:
+            jpegoptim:
+                # overrides the global timeout for the jpegoptim post-processor
+                process_timeout: 30
+
 Default configuration
 ~~~~~~~~~~~~~~~~~~~~~
 
