@@ -10,7 +10,7 @@ class Binary
 
     private ?int $width = null;
 
-    private bool $dimensionsUnavailable = false;
+    private bool $allowDimensionGuess = true;
 
     public function __construct(
         private readonly string $mimeType,
@@ -69,12 +69,12 @@ class Binary
     {
         if (null === $this->width || null === $this->height) {
             // the content and mime type are immutable, so a failed detection cannot succeed later
-            if ($this->dimensionsUnavailable) {
+            if (!$this->allowDimensionGuess) {
                 return false;
             }
 
             if (!str_starts_with($this->mimeType, 'image/')) {
-                $this->dimensionsUnavailable = true;
+                $this->allowDimensionGuess = false;
 
                 return false;
             }
@@ -82,7 +82,7 @@ class Binary
             $dimensions = ImageDimensionsGuesser::guess($this->getContent());
 
             if (false === $dimensions) {
-                $this->dimensionsUnavailable = true;
+                $this->allowDimensionGuess = false;
 
                 return false;
             }
