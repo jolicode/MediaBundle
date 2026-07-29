@@ -1,6 +1,6 @@
 <?php
 
-namespace JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type;
+namespace JoliCode\MediaBundle\Bridge\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -14,11 +14,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CreateDirectoryType extends AbstractType
 {
-    public function getName(): string
-    {
-        return 'joli_media_sonata_admin_create_directory';
-    }
-
     #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -26,7 +21,6 @@ class CreateDirectoryType extends AbstractType
             'directory' => '',
             'parentDirectory' => '',
             'intent' => 'explore',
-            'translation_domain' => 'JoliMediaSonataAdminBundle',
         ]);
     }
 

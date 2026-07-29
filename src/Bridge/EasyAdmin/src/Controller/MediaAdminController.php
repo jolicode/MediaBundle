@@ -6,14 +6,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\AssetDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Config\Config;
-use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\CreateDirectoryType;
-use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\DeleteDirectoryType;
-use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\DeleteType;
-use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\MoveType;
-use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\RenameDirectoryType;
-use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\RenameType;
-use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\UploadType;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Paginator\MediaPaginator;
+use JoliCode\MediaBundle\Bridge\Form\Type\CreateDirectoryType;
+use JoliCode\MediaBundle\Bridge\Form\Type\DeleteDirectoryType;
+use JoliCode\MediaBundle\Bridge\Form\Type\DeleteType;
+use JoliCode\MediaBundle\Bridge\Form\Type\MoveType;
+use JoliCode\MediaBundle\Bridge\Form\Type\RenameDirectoryType;
+use JoliCode\MediaBundle\Bridge\Form\Type\RenameType;
+use JoliCode\MediaBundle\Bridge\Form\Type\UploadType;
 use JoliCode\MediaBundle\Bridge\Security\Voter\AdminAction;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
@@ -748,6 +748,7 @@ class MediaAdminController extends AbstractController
         $form = $this->formFactory->create(DeleteType::class, null, [
             'action' => $this->generateUrl('joli_media_easy_admin_delete'),
             'method' => Request::METHOD_POST,
+            'translation_domain' => $this->config->getTranslationDomain(),
         ]);
 
         if (null !== $path) {
@@ -762,6 +763,7 @@ class MediaAdminController extends AbstractController
         $form = $this->formFactory->create(DeleteDirectoryType::class, null, [
             'action' => $this->generateUrl('joli_media_easy_admin_delete_directory'),
             'method' => Request::METHOD_POST,
+            'translation_domain' => $this->config->getTranslationDomain(),
         ]);
 
         if (null !== $path) {
@@ -775,6 +777,7 @@ class MediaAdminController extends AbstractController
     {
         $form = $this->formFactory->create(CreateDirectoryType::class, null, [
             'method' => Request::METHOD_POST,
+            'translation_domain' => $this->config->getTranslationDomain(),
         ]);
 
         if (null !== $parentPath) {
@@ -789,6 +792,7 @@ class MediaAdminController extends AbstractController
         $form = $this->formFactory->create(MoveType::class, null, [
             'action' => $this->generateUrl('joli_media_easy_admin_move'),
             'method' => Request::METHOD_POST,
+            'translation_domain' => $this->config->getTranslationDomain(),
         ]);
 
         if (null !== $path) {
@@ -803,6 +807,7 @@ class MediaAdminController extends AbstractController
         $form = $this->formFactory->create(RenameDirectoryType::class, null, [
             'action' => $this->generateUrl('joli_media_easy_admin_rename_directory'),
             'method' => Request::METHOD_POST,
+            'translation_domain' => $this->config->getTranslationDomain(),
         ]);
 
         if (null !== $path) {
@@ -820,6 +825,7 @@ class MediaAdminController extends AbstractController
         $form = $this->formFactory->create(RenameType::class, null, [
             'action' => $this->generateUrl('joli_media_easy_admin_show', ['key' => $path]),
             'method' => Request::METHOD_POST,
+            'translation_domain' => $this->config->getTranslationDomain(),
         ]);
 
         if (null !== $path) {
@@ -836,6 +842,7 @@ class MediaAdminController extends AbstractController
         $form = $this->formFactory->create(UploadType::class, null, [
             'action' => $this->generateUrl('joli_media_easy_admin_upload'),
             'method' => Request::METHOD_POST,
+            'config' => $this->config,
         ]);
 
         if (null !== $path) {
