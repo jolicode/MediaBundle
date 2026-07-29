@@ -1,20 +1,14 @@
 <?php
 
-namespace JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type;
+namespace JoliCode\MediaBundle\Bridge\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class MoveType extends AbstractType
 {
-    public function getName(): string
-    {
-        return 'joli_media_sonata_admin_move';
-    }
-
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -29,13 +23,5 @@ class MoveType extends AbstractType
                 'required' => true,
             ])
         ;
-    }
-
-    #[\Override]
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'translation_domain' => 'JoliMediaSonataAdminBundle',
-        ]);
     }
 }

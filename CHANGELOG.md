@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- feature - Mutualize the admin bridges duplicated code into the shared `JoliCode\MediaBundle\Bridge` namespace
 - fix - The Sylius bridge admin templates no longer hardcode versioned asset filenames: assets are now resolved through a `joli-media-sylius-admin` asset package backed by the build manifest, like in the EasyAdmin and Sonata bridges
 
 ## [0.7.0] - 2026-07-29

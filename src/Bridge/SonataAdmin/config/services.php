@@ -2,14 +2,13 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use JoliCode\MediaBundle\Bridge\Form\DataTransformer\MediaTransformer;
 use JoliCode\MediaBundle\Bridge\Security\Voter\MediaVoter;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Asset\Package;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Config\Config;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Controller\MediaAdminController;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\FieldDescription\TypeGuesser;
-use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\DataTransformer\MediaTransformer;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\MediaChoiceType;
-use JoliCode\MediaBundle\Bridge\SonataAdmin\Form\Type\UploadType;
 use JoliCode\MediaBundle\Bridge\SonataAdmin\Pager\MediaPager;
 use JoliCode\MediaBundle\Bridge\Twig\JoliMediaAdminExtension;
 
@@ -56,21 +55,15 @@ return static function (ContainerConfigurator $container): void {
         ->public()
 
         // form
-        ->set('joli_media_sonata_admin.form.data_transfomer.media', MediaTransformer::class)
+        ->set('joli_media_admin.form.data_transformer.media', MediaTransformer::class)
         ->args([
             '$resolver' => service('joli_media.resolver'),
         ])
-        ->tag('form.type')
         ->set('joli_media_sonata_admin.form.type.media_choice', MediaChoiceType::class)
         ->args([
             '$resolver' => service('joli_media.resolver'),
             '$libraries' => service('joli_media.library_container'),
-            '$transformer' => service('joli_media_sonata_admin.form.data_transfomer.media'),
-        ])
-        ->tag('form.type')
-        ->set('joli_media_sonata_admin.form.type.upload', UploadType::class)
-        ->args([
-            '$config' => service('joli_media_sonata_admin.config'),
+            '$transformer' => service('joli_media_admin.form.data_transformer.media'),
         ])
         ->tag('form.type')
 

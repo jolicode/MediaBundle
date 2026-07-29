@@ -2,64 +2,31 @@
 
 namespace JoliCode\MediaBundle\Bridge\Sylius\Config;
 
+use JoliCode\MediaBundle\Bridge\Config\AbstractConfig;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-readonly class Config
+readonly class Config extends AbstractConfig
 {
     /**
-     * @param array<string>       $acceptedFiles
      * @param array<string, bool> $visibility
+     * @param array<string>       $acceptedFiles
      * @param int[]               $paginationSizes
      */
     public function __construct(
-        private TranslatorInterface $translator,
-        private array $visibility,
-        private array $acceptedFiles,
-        private int $maxFileSize,
+        TranslatorInterface $translator,
+        array $visibility,
+        array $acceptedFiles,
+        int $maxFileSize,
         private array $paginationSizes,
-        private ?int $maxFiles = null,
+        ?int $maxFiles = null,
     ) {
+        parent::__construct($translator, $visibility, $acceptedFiles, $maxFileSize, $maxFiles);
     }
 
-    public function isVisible(string $key): bool
+    #[\Override]
+    public function getTranslationDomain(): string
     {
-        return isset($this->visibility[$key]) && $this->visibility[$key];
-    }
-
-    public function getUploadOption(string $name): mixed
-    {
-        return match ($name) {
-            'acceptedFiles' => $this->acceptedFiles,
-            'maxFileSize' => $this->maxFileSize,
-            'maxFiles' => $this->maxFiles,
-            default => throw new \InvalidArgumentException(\sprintf('Unknown upload option "%s".', $name)),
-        };
-    }
-
-    /**
-     * @return array<string, int|string|array<string>>
-     */
-    public function getUploadOptions(): array
-    {
-        $config = [
-            'dictDefaultMessage' => $this->translator->trans('media.upload.dropzone.default_message', [], 'JoliMediaSyliusBundle'),
-            'dictFallbackMessage' => $this->translator->trans('media.upload.dropzone.fallback_message', [], 'JoliMediaSyliusBundle'),
-            'dictFallbackText' => $this->translator->trans('media.upload.dropzone.fallback_text', [], 'JoliMediaSyliusBundle'),
-            'dictFileTooBig' => $this->translator->trans('media.upload.dropzone.file_too_big', [], 'JoliMediaSyliusBundle'),
-            'dictInvalidFileType' => $this->translator->trans('media.upload.dropzone.invalid_file_type', [], 'JoliMediaSyliusBundle'),
-            'dictMaxFilesExceeded' => $this->translator->trans('media.upload.dropzone.max_files_exceeded', [], 'JoliMediaSyliusBundle'),
-            'maxFilesize' => $this->maxFileSize,
-        ];
-
-        if (null !== $this->maxFiles) {
-            $config['maxFiles'] = $this->maxFiles;
-        }
-
-        if ([] !== $this->acceptedFiles) {
-            $config['acceptedFiles'] = implode(',', $this->acceptedFiles);
-        }
-
-        return $config;
+        return 'JoliMediaSyliusBundle';
     }
 
     /**
