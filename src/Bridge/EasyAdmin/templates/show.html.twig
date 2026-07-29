@@ -33,40 +33,34 @@
 
 {% block page_actions %}
     {% if joli_media_admin_is_granted('MOVE', path: media.path) %}
-        <a
+        <twig:ea:Button
+            htmlElement="a"
+            icon="fa fa-folder-tree"
             href="{{ ea_url().setRoute('joli_media_easy_admin_choose_directory') }}&routeParams%5Bkey%5D="
             data-folder="{{ media.folderPath }}"
             data-bs-toggle="modal"
             data-bs-target="#modal-folder-choice"
-            class="btn btn-secondary pr-0"
             data-component="media-move"
-        >
-            <span class="icon btn-icon"><i class="fa fa-folder-tree"></i></span>
-            <span class="btn-label">{{ 'action.move_file'|trans }}</span>
-        </a>
-        <a
-            class="btn btn-secondary pr-0"
+        >{{ 'action.move_file'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
+        <twig:ea:Button
+            htmlElement="a"
+            icon="fa fa-pen-to-square"
             data-component="media-rename"
-            role="button"
             tabindex="0"
-        >
-            <span class="icon btn-icon"><i class="fa fa-pen-to-square"></i></span>
-            <span class="btn-label">{{ 'action.rename_file'|trans }}</span>
-        </a>
+        >{{ 'action.rename_file'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
     {% endif %}
 
     {% if joli_media_admin_is_granted('DELETE', path: media.path) %}
-        <a
+        <twig:ea:Button
+            htmlElement="a"
+            variant="danger"
+            icon="fa fa-fw fa-trash-o"
             href="{{ ea_url().setRoute('joli_media_easy_admin_delete') }}"
-            class="action-delete btn btn-danger pr-0"
+            class="action-delete"
             data-action-name="delete"
             data-bs-toggle="modal"
             data-bs-target="#modal-delete"
-            formaction="{{ ea_url().setRoute('joli_media_easy_admin_delete') }}"
-        >
-            <span class="icon btn-icon"><i class="action-icon fa fa-fw fa-trash-o"></i></span>
-            <span class="btn-label action-label">{{ 'action.delete_file'|trans }}</span>
-        </a>
+        >{{ 'action.delete_file'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
     {% endif %}
 
     {{ form_start(move_form, { attr: { id: 'move-form' } }) }}
@@ -79,9 +73,9 @@
                 <div class="modal-body">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
-                        <span class="btn-label">{{ 'action.cancel'|trans(domain: 'EasyAdminBundle') }}</span>
-                    </button>
+                    <twig:ea:Button type="button" data-bs-dismiss="modal">
+                        {{- 'action.cancel'|trans(domain: 'EasyAdminBundle') -}}
+                    </twig:ea:Button>
                 </div>
             </div>
         </div>
@@ -95,13 +89,13 @@
                     <p></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
-                        <span class="btn-label">{{ 'action.cancel'|trans(domain: 'EasyAdminBundle') }}</span>
-                    </button>
+                    <twig:ea:Button type="button" data-bs-dismiss="modal">
+                        {{- 'action.cancel'|trans(domain: 'EasyAdminBundle') -}}
+                    </twig:ea:Button>
 
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary" id="modal-move-button" form="move-form">
-                        <span class="btn-label">{{ 'action.move_to_this_directory'|trans }}</span>
-                    </button>
+                    <twig:ea:Button type="button" variant="primary" data-bs-dismiss="modal" id="modal-move-button" form="move-form">
+                        {{- 'action.move_to_this_directory'|trans(domain: 'JoliMediaEasyAdminBundle') -}}
+                    </twig:ea:Button>
                 </div>
             </div>
         </div>
@@ -227,16 +221,22 @@
                                                 <a href="{{ variation.url }}" id="media-{{ variation.variation.name }}-url"><code class="long-text-break">{{ variation.url }}</code></a>
                                             </td>
                                             <td data-column="actions" data-label="actions" class="text-left" dir="ltr">
-                                                <a href="{{ variation.url }}" class="btn btn-sm btn-default btn-secondary clipboard-btn" data-clipboard-target="#media-{{ variation.variation.name }}-url">
-                                                    <i class="fa-regular fa-clone" aria-hidden="true"></i>
-                                                    <span class="btn-label">{{ 'action.copy'|trans }}</span>
-                                                </a>
+                                                <twig:ea:Button
+                                                    htmlElement="a"
+                                                    size="sm"
+                                                    icon="fa-regular fa-clone"
+                                                    href="{{ variation.url }}"
+                                                    class="clipboard-btn"
+                                                    data-clipboard-target="#media-{{ variation.variation.name }}-url"
+                                                >{{ 'action.copy'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
 
                                                 {% if config.isVisible('show_variations_action_regenerate') and joli_media_admin_is_granted('REGENERATE_VARIATION', path: media.path, variation: variation.variation.name) %}
-                                                    <a href="{{ ea_url().setRoute('joli_media_easy_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}" class="btn btn-sm btn-secondary clipboard-btn">
-                                                        <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
-                                                        <span class="btn-label">{{ 'action.regenerate'|trans }}</span>
-                                                    </a>
+                                                    <twig:ea:Button
+                                                        htmlElement="a"
+                                                        size="sm"
+                                                        icon="fa-solid fa-arrows-rotate"
+                                                        href="{{ ea_url().setRoute('joli_media_easy_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}"
+                                                    >{{ 'action.regenerate'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
                                                 {% endif %}
                                             </td>
                                         </tr>
@@ -269,15 +269,14 @@
                     <dt>{{ 'media.url.label_long'|trans }}</dt>
                     <dd class="d-flex jm-box">
                         <a href="{{ media.url }}" id="media-url" class="flex-fill"><code class="long-text-break">{{ media.url }}</code></a>
-                        <button
-                            class="btn btn-primary btn-sm clipboard-btn"
+                        <twig:ea:Button
+                            type="button"
+                            variant="primary"
+                            size="sm"
+                            icon="fa-regular fa-clone"
+                            class="clipboard-btn"
                             data-clipboard-target="#media-url"
-                            role="button"
-                            tabindex="0"
-                        >
-                            <i class="fa-regular fa-clone"></i>
-                            <span class="btn-label">{{ 'action.copy'|trans }}</span>
-                        </button>
+                        >{{ 'action.copy'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
                     </dd>
                 </div>
                 {% if config.isVisible('show_markdown_code') %}
@@ -287,15 +286,14 @@
                             <pre class="flex-fill mb-0"><code id="media-markdown-code" class="long-text-break">
                                 {{- include('@JoliMediaEasyAdmin/_as_markdown.html.twig')|escape -}}
                             </code></pre>
-                            <button
-                                class="btn btn-primary btn-sm clipboard-btn"
+                            <twig:ea:Button
+                                type="button"
+                                variant="primary"
+                                size="sm"
+                                icon="fa-regular fa-clone"
+                                class="clipboard-btn"
                                 data-clipboard-target="#media-markdown-code"
-                                role="button"
-                                tabindex="0"
-                            >
-                                <i class="fa-regular fa-clone"></i>
-                                <span class="btn-label">{{ 'action.copy'|trans }}</span>
-                            </button>
+                            >{{ 'action.copy'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
                         </dd>
                     </div>
                 {% endif %}
@@ -306,15 +304,14 @@
                             <pre class="flex-fill mb-0"><code id="media-html-code" class="long-text-break">
                                 {{- include('@JoliMediaEasyAdmin/_as_html.html.twig')|escape -}}
                             </code></pre>
-                            <button
-                                class="btn btn-primary btn-sm clipboard-btn"
+                            <twig:ea:Button
+                                type="button"
+                                variant="primary"
+                                size="sm"
+                                icon="fa-regular fa-clone"
+                                class="clipboard-btn"
                                 data-clipboard-target="#media-html-code"
-                                role="button"
-                                tabindex="0"
-                            >
-                                <i class="fa-regular fa-clone"></i>
-                                <span class="btn-label">{{ 'action.copy'|trans }}</span>
-                            </button>
+                            >{{ 'action.copy'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
                         </dd>
                     </div>
                 {% endif %}

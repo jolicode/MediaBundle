@@ -4,12 +4,13 @@
 
 {% block main %}
     {% block add_media_button %}
-        <a
-            class="btn btn-primary"
+        <twig:ea:Button
+            htmlElement="a"
+            variant="primary"
+            icon="fas fa-plus-circle"
             data-component="media-add"
-        >
-            <i class="fas fa-plus-circle"></i> {{ 'media.add'|trans }}
-        </a>
+            tabindex="0"
+        >{{ 'media.add'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
     {% endblock %}
 
     {% block choose_directory_button %}{% endblock %}

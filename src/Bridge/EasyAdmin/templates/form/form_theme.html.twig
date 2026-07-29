@@ -13,20 +13,23 @@
         </span>
         <span class="media-choice__actions">
             <span class="btn-group">
-                <a
+                <twig:ea:Button
+                    htmlElement="a"
+                    variant="link"
+                    size="sm"
+                    icon="fas fa-plus"
                     href="{{ ea_url().setRoute('joli_media_easy_admin_choose') }}&routeParams%5Bkey%5D="
+                    class="joli-media-choice-edit"
                     data-folder="{{ folder }}"
                     data-bs-toggle="modal"
                     data-bs-target="#modal-media-choice_{{ id }}"
-                    class="btn btn-link btn-sm joli-media-choice-edit"
-                >
-                    <i class="fas fa-plus"></i> {{ 'action.choose_a_file'|trans(domain: 'JoliMediaEasyAdminBundle') }}
-                </a>
-                <button
-                    class="btn btn-link btn-sm ms-2 text-danger hide-when-empty joli-media-choice-delete"
-                >
-                    <i class="fas fa-minus-circle"></i> {{ 'action.remove'|trans(domain: 'JoliMediaEasyAdminBundle') }}
-                </button>
+                >{{ 'action.choose_a_file'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
+                <twig:ea:Button
+                    variant="link"
+                    size="sm"
+                    icon="fas fa-minus-circle"
+                    class="ms-2 text-danger hide-when-empty joli-media-choice-delete"
+                >{{ 'action.remove'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
             </span>
         </span>
         {{- block('form_widget_simple') -}}
@@ -38,9 +41,9 @@
                 <div class="modal-body">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
-                        <span class="btn-label">{{ 'action.cancel'|trans(domain: 'EasyAdminBundle') }}</span>
-                    </button>
+                    <twig:ea:Button type="button" data-bs-dismiss="modal">
+                        {{- 'action.cancel'|trans(domain: 'EasyAdminBundle') -}}
+                    </twig:ea:Button>
                 </div>
             </div>
         </div>
@@ -63,9 +66,9 @@
                 <div class="modal-body">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
-                        <span class="btn-label">{{ 'action.cancel'|trans(domain: 'EasyAdminBundle') }}</span>
-                    </button>
+                    <twig:ea:Button type="button" data-bs-dismiss="modal">
+                        {{- 'action.cancel'|trans(domain: 'EasyAdminBundle') -}}
+                    </twig:ea:Button>
                 </div>
             </div>
         </div>

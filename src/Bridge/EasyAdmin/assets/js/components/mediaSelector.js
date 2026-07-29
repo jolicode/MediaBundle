@@ -196,9 +196,13 @@ const configureMediaSelector = () => {
             if (target !== null && target.dataset.configured === undefined) {
                 configureMediaChoiceContainer(target);
 
-                if (event.target.classList.contains("joli-media-choice-edit")) {
+                // the click may land on the icon or the label of the button, not on the
+                // button itself, hence the "closest" lookup
+                const editButton = event.target.closest(".joli-media-choice-edit");
+
+                if (editButton !== null) {
                     // force reload the modal content
-                    event.target.dispatchEvent(new Event("click"));
+                    editButton.dispatchEvent(new Event("click"));
                 }
             }
         }),
