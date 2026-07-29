@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.7.0] - 2026-07-29
 
 - feature - Add a global `process_timeout` configuration directive to control the timeout of the external binary processes, with per processor, pre-processor and post-processor overrides
 - fix - Fix a `DivisionByZeroError` when applying transformers to a media whose pixel dimensions cannot be determined (e.g. an empty or truncated image file): a typed `UnprocessableMediaException` carrying the media path, library, variation, mime type, format and content size is now thrown instead
@@ -131,3 +131,12 @@ This is the initial release of the bundle.
 [0.1.4]: https://github.com/jolicode/mediabundle/releases/tag/v0.1.4
 [0.2.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.2.0
 [0.2.1]: https://github.com/jolicode/mediabundle/releases/tag/v0.2.1
+[0.3.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.3.0
+[0.3.1]: https://github.com/jolicode/mediabundle/releases/tag/v0.3.1
+[0.3.2]: https://github.com/jolicode/mediabundle/releases/tag/v0.3.2
+[0.4.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.4.0
+[0.4.1]: https://github.com/jolicode/mediabundle/releases/tag/v0.4.1
+[0.5.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.5.0
+[0.6.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.6.0
+[0.6.1]: https://github.com/jolicode/mediabundle/releases/tag/v0.6.1
+[0.7.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.7.0
