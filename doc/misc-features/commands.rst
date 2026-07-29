@@ -89,6 +89,8 @@ This command can be used to bulk-generate media variations. It is useful when yo
 
 If the ``--parallelization`` option is set, the command will use multiple processes to generate the variations in parallel, which can significantly speed up the process. The ``--chunk-size`` option allows you to control how many media will be processed in each process, to avoid spawning a process for each media. Under the hood, the sub-processes use the ``joli:media:convert`` command to generate the variations.
 
+When a media cannot be converted (for example, an empty or corrupted image file), the command continues with the remaining media, then lists the files that could not be converted and exits with a failure status.
+
 Options
 ~~~~~~~
 
