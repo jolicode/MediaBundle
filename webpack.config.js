@@ -1,10 +1,23 @@
 var Encore = require('@symfony/webpack-encore');
 
+// keep the manifest.json values relative to the bundle public directory, as
+// expected by the Asset\Package classes of the bridges
+const relativeManifestValues = (options) => {
+    options.publicPath = '';
+};
+
 // JoliMediaEasyAdminBundle
 Encore
     .setOutputPath('./src/Bridge/EasyAdmin/public/')
-    .setPublicPath('./')
+    .setPublicPath('/bundles/jolimediaeasyadmin')
     .setManifestKeyPrefix('')
+    .configureManifestPlugin(relativeManifestValues)
+    // postcss-calc cannot parse CSS relative color syntax channels (e.g. calc(s + 3))
+    .configureCssMinimizerPlugin((options) => {
+        options.minimizerOptions = {
+            preset: ['default', { calc: false }],
+        };
+    })
     .cleanupOutputBeforeBuild()
     .enableVersioning(true)
     .disableSingleRuntimeChunk()
@@ -18,8 +31,9 @@ Encore.reset();
 // JoliMediaSonataAdminBundle
 Encore
     .setOutputPath('./src/Bridge/SonataAdmin/public/')
-    .setPublicPath('./')
+    .setPublicPath('/bundles/jolimediasonataadmin')
     .setManifestKeyPrefix('')
+    .configureManifestPlugin(relativeManifestValues)
     .cleanupOutputBeforeBuild()
     .enableVersioning(true)
     .disableSingleRuntimeChunk()
@@ -33,8 +47,9 @@ Encore.reset();
 // JoliMediaSyliusAdminBundle
 Encore
     .setOutputPath('./src/Bridge/Sylius/public/')
-    .setPublicPath('./')
+    .setPublicPath('/bundles/jolimediasylius')
     .setManifestKeyPrefix('')
+    .configureManifestPlugin(relativeManifestValues)
     .cleanupOutputBeforeBuild()
     .enableVersioning(true)
     .disableSingleRuntimeChunk()
