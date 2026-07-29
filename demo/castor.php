@@ -51,7 +51,7 @@ function start(): void
 }
 
 #[AsTask(name: 'install', description: 'Installs the application (composer, yarn, ...)', namespace: 'app')]
-function demo_install($useLocalBundle = true): void
+function demo_install(bool $useLocalBundle = true): void
 {
     io()->title('Installing the application');
 
@@ -60,7 +60,7 @@ function demo_install($useLocalBundle = true): void
     if (is_file("{$basePath}/composer.json")) {
         if ($useLocalBundle) {
             io()->section('Build a custom composer.json file to use the local JoliMediaBundle');
-            $composerJson = json_decode(file_get_contents("{$basePath}/composer.json"), true, 512, \JSON_THROW_ON_ERROR);
+            $composerJson = json_decode((string) file_get_contents("{$basePath}/composer.json"), true, 512, \JSON_THROW_ON_ERROR);
             $composerJson['require']['jolicode/media-bundle'] = '*';
             $composerJson['minimum-stability'] = 'dev';
             $composerJson['repositories'] = [
@@ -114,7 +114,7 @@ function front_watch(): void
     \Castor\watch([
         '../src/Bridge/EasyAdmin/public/...',
         '../src/Bridge/SonataAdmin/public/...',
-    ], function (string $file, string $action) use (&$lastCallTime) {
+    ], static function (string $file, string $action) use (&$lastCallTime) {
         $currentTime = time();
 
         if ($currentTime - $lastCallTime < 2) {

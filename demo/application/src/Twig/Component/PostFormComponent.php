@@ -18,9 +18,9 @@ use Symfony\UX\LiveComponent\LiveCollectionTrait;
 )]
 class PostFormComponent extends AbstractController
 {
-    use LiveCollectionTrait;
     use DefaultActionTrait;
     use HookableLiveComponentTrait;
+    use LiveCollectionTrait;
 
     #[LiveProp]
     public Post $resource;
