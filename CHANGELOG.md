@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- fix - The Sylius bridge admin templates no longer hardcode versioned asset filenames: assets are now resolved through a `joli-media-sylius-admin` asset package backed by the build manifest, like in the EasyAdmin and Sonata bridges
+
 ## [0.7.0] - 2026-07-29
 
 - feature - Add a global `process_timeout` configuration directive to control the timeout of the external binary processes, with per processor, pre-processor and post-processor overrides
