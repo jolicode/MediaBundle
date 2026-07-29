@@ -15,6 +15,7 @@ use JoliCode\MediaBundle\Bridge\SonataAdmin\Pager\MediaPager;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Exception\MediaInUseException;
+use JoliCode\MediaBundle\Exception\UnprocessableMediaException;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Model\Media;
@@ -415,15 +416,26 @@ class MediaAdminController extends AbstractController
                 )
             );
         } else {
-            $this->converter->convertMediaVariation($mediaVariation);
-            $this->addFlash(
-                'sonata_flash_success',
-                $this->translator->trans(
-                    'variation.regenerated_success',
-                    ['%variation%' => $variation, '%media%' => $media->getPath()],
-                    'JoliMediaSonataAdminBundle'
-                )
-            );
+            try {
+                $this->converter->convertMediaVariation($mediaVariation);
+                $this->addFlash(
+                    'sonata_flash_success',
+                    $this->translator->trans(
+                        'variation.regenerated_success',
+                        ['%variation%' => $variation, '%media%' => $media->getPath()],
+                        'JoliMediaSonataAdminBundle'
+                    )
+                );
+            } catch (UnprocessableMediaException) {
+                $this->addFlash(
+                    'sonata_flash_error',
+                    $this->translator->trans(
+                        'variation.regenerated_failure',
+                        ['%variation%' => $variation, '%media%' => $media->getPath()],
+                        'JoliMediaSonataAdminBundle'
+                    )
+                );
+            }
         }
 
         return $this->redirectToRoute('joli_media_sonata_admin_show', [
