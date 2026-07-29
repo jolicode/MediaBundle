@@ -1,0 +1,16 @@
+/* ==========================================================================
+   Alerts and flash messages
+   ========================================================================== */
+
+/* Rules
+   ========================================================================== */
+
+/* Since EasyAdmin 5.3 all the backend styles live in cascade layers, and Bootstrap is loaded in
+   the "vendor" layer, which loses against the "ea" one. As a result EasyAdmin's own
+   ".btn { position: relative }" now wins over Bootstrap's
+   ".alert-dismissible .btn-close { position: absolute }", and the dismiss button of the flash
+   messages falls back into the text flow instead of being pinned to the top-right corner of the
+   alert. This rule is a no-op on the EasyAdmin versions that do not use cascade layers. */
+.alert-dismissible .btn-close {
+  position: absolute;
+}

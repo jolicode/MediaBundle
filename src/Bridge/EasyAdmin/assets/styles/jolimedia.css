@@ -5,6 +5,7 @@
 @import 'base.css';
 
 /* Components */
+@import 'alerts.css';
 @import 'box.css';
 @import 'breadcrumb.css';
 @import 'clipboard.css';
