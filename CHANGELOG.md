@@ -3,6 +3,16 @@
 ## [Unreleased]
 
 - feature - Add a global `process_timeout` configuration directive to control the timeout of the external binary processes, with per processor, pre-processor and post-processor overrides
+- fix - Fix a `DivisionByZeroError` when applying transformers to a media whose pixel dimensions cannot be determined (e.g. an empty or truncated image file): a typed `UnprocessableMediaException` carrying the media path, library, variation, mime type, format and content size is now thrown instead
+- fix - The `joli:media:convert` and `joli:media:batch-convert` commands now continue with the remaining files when the conversion of a file fails, report the failed files and exit with a failure status (previously, a parallelized `batch-convert` silently ignored crashed child processes and reported success)
+- fix - The `Imagine` processor now performs the format conversion when a variation has a target format but no dimension change, instead of storing the source bytes untouched under the variation path
+- fix - A failing pre-processor no longer prevents the remaining pre-processors of the chain from running
+- fix - `Transformation::setBinary()` no longer keeps the dimensions of the previously set binary when the new binary cannot be measured
+- fix - The `Expand` transformer now throws an `UnprocessableMediaException` instead of silently skipping the transformation when the binary dimensions are unknown
+- fix - `Binary::getPixelDimensions()` now memoizes a failed dimension detection and no longer leaks temporary files on error
+- feature - Add `Transformation::hasKnownDimensions()` and `Transformation::hasTransformers()`
+- feature - `ConversionPool` now checks the exit code of the child processes and exposes their failures; it also lives in its own autoloadable class file
+- fix - Transformer dimension options (`width`, `height`, `start_x`, `start_y`, `position_x`, `position_y`) are now validated and normalized at container compile time: numeric values are cast to integers, and invalid or missing values raise a clear configuration error. The transformer constructors are now typed `int|string` instead of `mixed` (minor BC break for subclasses or float config values)
 
 ## [0.6.1] - 2026-07-27
 

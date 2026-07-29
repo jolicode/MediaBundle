@@ -18,6 +18,7 @@ use JoliCode\MediaBundle\Bridge\Security\Voter\AdminAction;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Exception\MediaInUseException;
+use JoliCode\MediaBundle\Exception\UnprocessableMediaException;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Model\Media;
@@ -444,15 +445,26 @@ class MediaAdminController extends AbstractController
                 )
             );
         } else {
-            $this->converter->convertMediaVariation($mediaVariation);
-            $this->addFlash(
-                'success',
-                $this->translator->trans(
-                    'variation.regenerated_success',
-                    ['%variation%' => $variation, '%media%' => $media->getPath()],
-                    'JoliMediaEasyAdminBundle'
-                )
-            );
+            try {
+                $this->converter->convertMediaVariation($mediaVariation);
+                $this->addFlash(
+                    'success',
+                    $this->translator->trans(
+                        'variation.regenerated_success',
+                        ['%variation%' => $variation, '%media%' => $media->getPath()],
+                        'JoliMediaEasyAdminBundle'
+                    )
+                );
+            } catch (UnprocessableMediaException) {
+                $this->addFlash(
+                    'danger',
+                    $this->translator->trans(
+                        'variation.regenerated_failure',
+                        ['%variation%' => $variation, '%media%' => $media->getPath()],
+                        'JoliMediaEasyAdminBundle'
+                    )
+                );
+            }
         }
 
         return $this->redirect($this->adminUrlGenerator

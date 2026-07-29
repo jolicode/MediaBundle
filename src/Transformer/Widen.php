@@ -6,29 +6,27 @@ use JoliCode\MediaBundle\Transformation\Transformation;
 
 readonly class Widen extends AbstractTransformer implements TransformerInterface
 {
-    /**
-     * @param int|string $width
-     */
     public function __construct(
-        private mixed $width,
+        private int|string $width,
         private bool $allowDownscale = true,
     ) {
     }
 
     public function transform(Transformation $transformation): void
     {
+        $dimensions = $this->requireTargetDimensions($transformation);
         $width = $this->width;
 
         if (\is_string($width)) {
-            $width = $this->convertPercentageValue($width, $transformation->targetWidth);
+            $width = $this->convertPercentageValue($width, $dimensions['width']);
         }
 
-        if (false === $this->allowDownscale && $width <= $transformation->targetWidth) {
+        if (false === $this->allowDownscale && $width <= $dimensions['width']) {
             return;
         }
 
-        $ratio = $width / $transformation->targetWidth;
-        $transformation->targetHeight = (int) round($transformation->targetHeight * $ratio);
+        $ratio = $width / $dimensions['width'];
+        $transformation->targetHeight = (int) round($dimensions['height'] * $ratio);
         $transformation->targetWidth = $width;
     }
 }

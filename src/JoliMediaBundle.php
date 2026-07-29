@@ -1250,16 +1250,31 @@ class JoliMediaBundle extends AbstractBundle
             $transformerName
         );
 
+        $normalizeDimension = fn (string $option): int|string => $this->normalizeTransformerDimension(
+            $transformerConfig[$option] ?? null,
+            $option,
+            $transformerName,
+            $variationName,
+            $libraryName,
+        );
+        $normalizePosition = fn (string $option): int|string|null => $this->normalizeTransformerPosition(
+            $transformerConfig[$option] ?? null,
+            $option,
+            $transformerName,
+            $variationName,
+            $libraryName,
+        );
+
         if ('crop' === $transformerType) {
             $container->services()
                 ->set($transformerServiceId)
                 ->parent('.joli_media.transformer.crop.abstract')
                 ->private()
                 ->args([
-                    '$startX' => $transformerConfig['start_x'] ?? null,
-                    '$startY' => $transformerConfig['start_y'] ?? null,
-                    '$height' => $transformerConfig['height'],
-                    '$width' => $transformerConfig['width'],
+                    '$startX' => $normalizePosition('start_x'),
+                    '$startY' => $normalizePosition('start_y'),
+                    '$height' => $normalizeDimension('height'),
+                    '$width' => $normalizeDimension('width'),
                 ]);
         } elseif ('expand' === $transformerType) {
             if (!interface_exists(ImagineInterface::class)) {
@@ -1272,10 +1287,10 @@ class JoliMediaBundle extends AbstractBundle
                 ->private()
                 ->args([
                     '$imagineProcessor' => service('.joli_media.processor.imagine'),
-                    '$width' => $transformerConfig['width'],
-                    '$height' => $transformerConfig['height'],
-                    '$positionX' => $transformerConfig['position_x'] ?? null,
-                    '$positionY' => $transformerConfig['position_y'] ?? null,
+                    '$width' => $normalizeDimension('width'),
+                    '$height' => $normalizeDimension('height'),
+                    '$positionX' => $normalizePosition('position_x'),
+                    '$positionY' => $normalizePosition('position_y'),
                     '$backgroundColor' => $transformerConfig['background_color'] ?? null,
                     '$logger' => service('logger')->ignoreOnInvalid(),
                 ]);
@@ -1285,7 +1300,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->parent('.joli_media.transformer.heighten.abstract')
                 ->private()
                 ->args([
-                    '$height' => $transformerConfig['height'],
+                    '$height' => $normalizeDimension('height'),
                     '$allowDownscale' => $transformerConfig['allow_downscale']
                 ]);
         } elseif ('resize' === $transformerType) {
@@ -1296,8 +1311,8 @@ class JoliMediaBundle extends AbstractBundle
                 ->parent('.joli_media.transformer.resize.abstract')
                 ->private()
                 ->args([
-                    '$width' => $transformerConfig['width'],
-                    '$height' => $transformerConfig['height'],
+                    '$width' => $normalizeDimension('width'),
+                    '$height' => $normalizeDimension('height'),
                     '$mode' => Mode::from($mode),
                     '$allowUpscale' => $transformerConfig['allow_upscale'],
                     '$allowDownscale' => $transformerConfig['allow_downscale'],
@@ -1308,8 +1323,8 @@ class JoliMediaBundle extends AbstractBundle
                 ->parent('.joli_media.transformer.thumbnail.abstract')
                 ->private()
                 ->args([
-                    '$width' => $transformerConfig['width'],
-                    '$height' => $transformerConfig['height'],
+                    '$width' => $normalizeDimension('width'),
+                    '$height' => $normalizeDimension('height'),
                     '$allowUpscale' => $transformerConfig['allow_upscale'],
                     '$cropPosition' => $transformerConfig['crop_position'] ?? null,
                 ]);
@@ -1319,7 +1334,7 @@ class JoliMediaBundle extends AbstractBundle
                 ->parent('.joli_media.transformer.widen.abstract')
                 ->private()
                 ->args([
-                    '$width' => $transformerConfig['width'],
+                    '$width' => $normalizeDimension('width'),
                     '$allowDownscale' => $transformerConfig['allow_downscale']
                 ]);
         } else {
@@ -1332,6 +1347,50 @@ class JoliMediaBundle extends AbstractBundle
         }
 
         return $transformerServiceId;
+    }
+
+    private function normalizeTransformerDimension(mixed $value, string $option, string $transformerName, string $variationName, string $libraryName): int|string
+    {
+        if (\is_string($value) && 1 === preg_match('/^\d+%$/', $value)) {
+            return $value;
+        }
+
+        if (is_numeric($value)) {
+            return (int) $value;
+        }
+
+        throw new \InvalidArgumentException(sprintf(
+            'Invalid value %s for the option "%s" of the transformer "%s" (variation "%s" of the library "%s"). Expected a positive number or a percentage value such as "50%%".',
+            json_encode($value),
+            $option,
+            $transformerName,
+            $variationName,
+            $libraryName,
+        ));
+    }
+
+    private function normalizeTransformerPosition(mixed $value, string $option, string $transformerName, string $variationName, string $libraryName): int|string|null
+    {
+        if (null === $value) {
+            return null;
+        }
+
+        if (\is_string($value) && (\in_array($value, ['start', 'center', 'end'], true) || 1 === preg_match('/^\d+%$/', $value))) {
+            return $value;
+        }
+
+        if (is_numeric($value)) {
+            return (int) $value;
+        }
+
+        throw new \InvalidArgumentException(sprintf(
+            'Invalid value %s for the option "%s" of the transformer "%s" (variation "%s" of the library "%s"). Expected a number, a percentage value such as "50%%", "start", "center" or "end".',
+            json_encode($value),
+            $option,
+            $transformerName,
+            $variationName,
+            $libraryName,
+        ));
     }
 
     private function createVariationService(ContainerConfigurator $container, ContainerBuilder $builder, string $libraryName, array $libraryConfig, string $variationName, array $variationConfig): string

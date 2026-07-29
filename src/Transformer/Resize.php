@@ -7,13 +7,9 @@ use JoliCode\MediaBundle\Transformer\Resize\Mode;
 
 readonly class Resize extends AbstractTransformer implements TransformerInterface
 {
-    /**
-     * @param int|string $width
-     * @param int|string $height
-     */
     public function __construct(
-        private mixed $width,
-        private mixed $height,
+        private int|string $width,
+        private int|string $height,
         private Mode $mode = Mode::exact,
         private bool $allowDownscale = true,
         private bool $allowUpscale = true,
@@ -22,22 +18,23 @@ readonly class Resize extends AbstractTransformer implements TransformerInterfac
 
     public function transform(Transformation $transformation): void
     {
+        $dimensions = $this->requireTargetDimensions($transformation);
         $width = $this->width;
         $height = $this->height;
 
         if (\is_string($width)) {
-            $width = $this->convertPercentageValue($width, $transformation->targetWidth);
+            $width = $this->convertPercentageValue($width, $dimensions['width']);
         }
 
         if (\is_string($height)) {
-            $height = $this->convertPercentageValue($height, $transformation->targetHeight);
+            $height = $this->convertPercentageValue($height, $dimensions['height']);
         }
 
-        if (false === $this->allowUpscale && $transformation->targetWidth <= $width && $transformation->targetHeight <= $height) {
+        if (false === $this->allowUpscale && $dimensions['width'] <= $width && $dimensions['height'] <= $height) {
             return;
         }
 
-        if (false === $this->allowDownscale && $transformation->targetWidth >= $width && $transformation->targetHeight >= $height) {
+        if (false === $this->allowDownscale && $dimensions['width'] >= $width && $dimensions['height'] >= $height) {
             return;
         }
 
@@ -48,20 +45,20 @@ readonly class Resize extends AbstractTransformer implements TransformerInterfac
             return;
         }
 
-        $xRatio = $width / $transformation->targetWidth;
-        $yRatio = $height / $transformation->targetHeight;
+        $xRatio = $width / $dimensions['width'];
+        $yRatio = $height / $dimensions['height'];
 
         if (Mode::inside === $this->mode) {
             if ($xRatio < $yRatio) {
-                $height = (int) round($transformation->targetHeight * $xRatio);
+                $height = (int) round($dimensions['height'] * $xRatio);
             } else {
-                $width = (int) round($transformation->targetWidth * $yRatio);
+                $width = (int) round($dimensions['width'] * $yRatio);
             }
         } elseif (Mode::outside === $this->mode) {
             if ($xRatio > $yRatio) {
-                $height = (int) round($transformation->targetHeight * $xRatio);
+                $height = (int) round($dimensions['height'] * $xRatio);
             } else {
-                $width = (int) round($transformation->targetWidth * $yRatio);
+                $width = (int) round($dimensions['width'] * $yRatio);
             }
         }
 

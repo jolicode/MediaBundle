@@ -6,54 +6,49 @@ use JoliCode\MediaBundle\Transformation\Transformation;
 
 readonly class Crop extends AbstractTransformer implements TransformerInterface
 {
-    /**
-     * @param int|string|null $startX
-     * @param int|string|null $startY
-     * @param int|string      $width
-     * @param int|string      $height
-     */
     public function __construct(
-        private mixed $startX,
-        private mixed $startY,
-        private mixed $width,
-        private mixed $height,
+        private int|string|null $startX,
+        private int|string|null $startY,
+        private int|string $width,
+        private int|string $height,
     ) {
     }
 
     public function transform(Transformation $transformation): void
     {
+        $dimensions = $this->requireTargetDimensions($transformation);
         $startX = $this->startX;
         $startY = $this->startY;
         $width = $this->width;
         $height = $this->height;
 
         if (\is_string($width)) {
-            $width = $this->convertPercentageValue($width, $transformation->targetWidth);
+            $width = $this->convertPercentageValue($width, $dimensions['width']);
         }
 
         if (\is_string($height)) {
-            $height = $this->convertPercentageValue($height, $transformation->targetHeight);
+            $height = $this->convertPercentageValue($height, $dimensions['height']);
         }
 
         if (null === $startX) {
-            $startX = (int) round(($transformation->targetWidth - $width) / 2);
+            $startX = (int) round(($dimensions['width'] - $width) / 2);
         } elseif (\is_string($startX)) {
-            $startX = $this->convertPercentageValue($startX, $transformation->targetWidth);
+            $startX = $this->convertPercentageValue($startX, $dimensions['width']);
         }
 
         if (null === $startY) {
-            $startY = (int) round(($transformation->targetHeight - (int) $height) / 2);
+            $startY = (int) round(($dimensions['height'] - $height) / 2);
         } elseif (\is_string($startY)) {
-            $startY = $this->convertPercentageValue($startY, $transformation->targetHeight);
+            $startY = $this->convertPercentageValue($startY, $dimensions['height']);
         }
 
-        if ($startX >= $transformation->targetWidth || $startY >= $transformation->targetHeight) {
+        if ($startX >= $dimensions['width'] || $startY >= $dimensions['height']) {
             // the start coordinates are outside the image, so we do not apply the crop
             return;
         }
 
-        $width = min($width, $transformation->targetWidth);
-        $height = min($height, $transformation->targetHeight);
+        $width = min($width, $dimensions['width']);
+        $height = min($height, $dimensions['height']);
 
         if ($startX < 0) {
             $width += $startX;
@@ -70,18 +65,19 @@ readonly class Crop extends AbstractTransformer implements TransformerInterface
             return;
         }
 
-        $width = min($width, $transformation->targetWidth - $startX);
-        $height = min($height, $transformation->targetHeight - $startY);
+        $binaryDimensions = $this->requireBinaryDimensions($transformation);
+        $width = min($width, $dimensions['width'] - $startX);
+        $height = min($height, $dimensions['height'] - $startY);
 
-        $currentCropWidth = $transformation->cropWidth ?? $transformation->binaryWidth;
-        $currentCropHeight = $transformation->cropHeight ?? $transformation->binaryHeight;
+        $currentCropWidth = $transformation->cropWidth ?? $binaryDimensions['width'];
+        $currentCropHeight = $transformation->cropHeight ?? $binaryDimensions['height'];
         $currentCropX = $transformation->cropX ?? 0;
         $currentCropY = $transformation->cropY ?? 0;
 
-        $additionalCropX = (int) ($startX / $transformation->targetWidth * $currentCropWidth);
-        $additionalCropY = (int) ($startY / $transformation->targetHeight * $currentCropHeight);
-        $newCropWidth = (int) ($width / $transformation->targetWidth * $currentCropWidth);
-        $newCropHeight = (int) ($height / $transformation->targetHeight * $currentCropHeight);
+        $additionalCropX = (int) ($startX / $dimensions['width'] * $currentCropWidth);
+        $additionalCropY = (int) ($startY / $dimensions['height'] * $currentCropHeight);
+        $newCropWidth = (int) ($width / $dimensions['width'] * $currentCropWidth);
+        $newCropHeight = (int) ($height / $dimensions['height'] * $currentCropHeight);
 
         $transformation->cropX = $currentCropX + $additionalCropX;
         $transformation->cropY = $currentCropY + $additionalCropY;

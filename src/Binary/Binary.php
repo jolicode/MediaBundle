@@ -10,6 +10,8 @@ class Binary
 
     private ?int $width = null;
 
+    private bool $allowDimensionGuess = true;
+
     public function __construct(
         private readonly string $mimeType,
         private string $format,
@@ -66,21 +68,27 @@ class Binary
     public function getPixelDimensions(): array|false
     {
         if (null === $this->width || null === $this->height) {
+            // the content and mime type are immutable, so a failed detection cannot succeed later
+            if (!$this->allowDimensionGuess) {
+                return false;
+            }
+
             if (!str_starts_with($this->mimeType, 'image/')) {
+                $this->allowDimensionGuess = false;
+
                 return false;
             }
 
-            $temporaryFile = tempnam(sys_get_temp_dir(), 'image');
-            file_put_contents($temporaryFile, $this->getContent());
-            $imageSize = getimagesize($temporaryFile);
-            unlink($temporaryFile);
+            $dimensions = ImageDimensionsGuesser::guess($this->getContent());
 
-            if (!\is_array($imageSize)) {
+            if (false === $dimensions) {
+                $this->allowDimensionGuess = false;
+
                 return false;
             }
 
-            $this->width = $imageSize[0];
-            $this->height = $imageSize[1];
+            $this->width = $dimensions['width'];
+            $this->height = $dimensions['height'];
         }
 
         return [

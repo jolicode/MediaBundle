@@ -60,7 +60,7 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
         $outputFormat = $forceOutputFormat ?? $transformation->getOutputFormat();
         $this->checkOutputFormat($outputFormat);
 
-        if ($transformation->hasEffect()) {
+        if ($transformation->hasEffect() || $outputFormat !== $binary->getFormat()) {
             try {
                 $this->logger?->info('Processing image with Imagine', [
                     'original size' => $binary->getContentSize(),

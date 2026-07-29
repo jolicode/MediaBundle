@@ -242,12 +242,22 @@ class Transformation
             && $this->multiply($this->targetWidth) * $this->multiply($this->targetHeight) > $this->binaryWidth * $this->binaryHeight;
     }
 
+    public function hasKnownDimensions(): bool
+    {
+        return !\in_array(null, [$this->binaryWidth, $this->binaryHeight, $this->targetWidth, $this->targetHeight], true);
+    }
+
     public function hasReducedArea(): bool
     {
         return
             null !== $this->targetWidth
             && null !== $this->targetHeight
             && $this->multiply($this->targetWidth) * $this->multiply($this->targetHeight) < $this->binaryWidth * $this->binaryHeight;
+    }
+
+    public function hasTransformers(): bool
+    {
+        return [] !== $this->transformers;
     }
 
     public function mustRun(): bool
@@ -271,7 +281,16 @@ class Transformation
             $this->cropWidth = null;
             $this->cropHeight = null;
         } catch (\Exception) {
-            // Unable to get dimensions, leave properties as null
+            // Unable to get dimensions, reset the properties so no stale
+            // dimensions from a previously set binary leak into this one
+            $this->binaryWidth = null;
+            $this->binaryHeight = null;
+            $this->targetWidth = null;
+            $this->targetHeight = null;
+            $this->cropX = null;
+            $this->cropY = null;
+            $this->cropWidth = null;
+            $this->cropHeight = null;
         }
     }
 

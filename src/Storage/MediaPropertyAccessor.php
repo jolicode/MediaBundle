@@ -2,6 +2,7 @@
 
 namespace JoliCode\MediaBundle\Storage;
 
+use JoliCode\MediaBundle\Binary\ImageDimensionsGuesser;
 use JoliCode\MediaBundle\Binary\MimeTypeGuesser;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use League\Flysystem\Filesystem;
@@ -146,23 +147,10 @@ class MediaPropertyAccessor
             return false;
         }
 
-        $temporaryFile = tempnam(sys_get_temp_dir(), 'image');
-
         if (!$this->filesystem->has($path)) {
             return false;
         }
 
-        file_put_contents($temporaryFile, $this->filesystem->read($path));
-        $imageSize = getimagesize($temporaryFile);
-        unlink($temporaryFile);
-
-        if (!\is_array($imageSize)) {
-            return false;
-        }
-
-        return [
-            'height' => $imageSize[1],
-            'width' => $imageSize[0],
-        ];
+        return ImageDimensionsGuesser::guess($this->filesystem->read($path));
     }
 }
