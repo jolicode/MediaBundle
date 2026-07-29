@@ -25,10 +25,10 @@ return static function (ContainerConfigurator $container): void {
     $services
         ->set('joli_media_sylius_admin.config', Config::class)
         ->args([
-            '$visibility' => param('joli_media_easy_admin.visibility'),
-            '$acceptedFiles' => param('joli_media_easy_admin.upload.accepted_files'),
-            '$maxFiles' => param('joli_media_easy_admin.upload.max_files'),
-            '$maxFileSize' => param('joli_media_easy_admin.upload.max_file_size'),
+            '$visibility' => param('joli_media_sylius_admin.visibility'),
+            '$acceptedFiles' => param('joli_media_sylius_admin.upload.accepted_files'),
+            '$maxFiles' => param('joli_media_sylius_admin.upload.max_files'),
+            '$maxFileSize' => param('joli_media_sylius_admin.upload.max_file_size'),
             '$translator' => service('translator')->ignoreOnInvalid(),
         ])
     ;
