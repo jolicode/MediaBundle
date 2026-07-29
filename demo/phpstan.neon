@@ -7,8 +7,10 @@ parameters:
         - .castor/
     scanFiles:
         - .castor.stub.php
-    scanDirectories:
-        - application/vendor
+    # use the autoloader instead of scanDirectories, so phpstan does not
+    # recurse into the symlinked local jolicode/media-bundle vendor package
+    bootstrapFiles:
+        - application/vendor/autoload.php
     tmpDir: tools/phpstan/var/demo
     inferPrivatePropertyTypeFromConstructor: true
 
