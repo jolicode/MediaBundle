@@ -57,10 +57,20 @@ jobs:
       max-parallel: 15
       matrix:
         php-versions:  ['8.2', '8.3', '8.4', '8.5']
-        easyadmin-versions:  [ '5.0.*']
+        easyadmin-versions:  [ '5.3.*']
         include:
+          # the lowest and highest release of every EasyAdmin branch we support, as each of them
+          # ships a different admin theme (4.x: legacy theme, 5.0-5.2: new theme, 5.3: cascade layers)
           - php-versions: "8.3"
             easyadmin-versions: "4.26.*"
+          - php-versions: "8.3"
+            easyadmin-versions: "4.29.*"
+          - php-versions: "8.3"
+            easyadmin-versions: "5.0.*"
+          - php-versions: "8.3"
+            easyadmin-versions: "5.1.*"
+          - php-versions: "8.3"
+            easyadmin-versions: "5.2.*"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
