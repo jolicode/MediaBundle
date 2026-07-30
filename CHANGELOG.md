@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.8.0] - 2026-07-30
 
 - feature - Mutualize the admin bridges duplicated code into the shared `JoliCode\MediaBundle\Bridge` namespace
 - fix - The Sylius bridge admin templates no longer hardcode versioned asset filenames
@@ -146,3 +146,4 @@ This is the initial release of the bundle.
 [0.6.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.6.0
 [0.6.1]: https://github.com/jolicode/mediabundle/releases/tag/v0.6.1
 [0.7.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.7.0
+[0.8.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.8.0
