@@ -6,11 +6,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Router\MediaAdminRouter;
 use Symfony\Component\HttpFoundation\Response;
 
 #[AdminDashboard(routePath: '/easy-admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+    public function __construct(
+        private readonly MediaAdminRouter $mediaAdminRouter,
+    ) {
+    }
+
     public function index(): Response
     {
         return $this->redirectToRoute('admin_user_index');
@@ -38,6 +44,6 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Contents');
         yield MenuItem::linkTo(PostCrudController::class, 'Posts', 'fa fa-file-text');
-        yield MenuItem::linkToRoute('Media Library', 'fa fa-image', 'joli_media_easy_admin_explore');
+        yield MenuItem::linkToRoute('Media Library', 'fa fa-image', $this->mediaAdminRouter->getRouteName('explore'));
     }
 }

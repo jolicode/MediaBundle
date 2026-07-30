@@ -1,3 +1,5 @@
+import buildFolderUrl from "./folderUrl.js";
+
 const configureTrixToolbar = () => {
     document.querySelectorAll("trix-toolbar").forEach((toolbar) => {
         const buttonRow = toolbar.querySelector(".trix-button-row");
@@ -34,7 +36,7 @@ const configureTrixToolbar = () => {
             const folder = modal.dataset.folder || '';
 
             fetchFolder(
-                modal.dataset.href + folder,
+                buildFolderUrl(modal.dataset.href, folder),
             ).then(configureModal);
 
             return false;

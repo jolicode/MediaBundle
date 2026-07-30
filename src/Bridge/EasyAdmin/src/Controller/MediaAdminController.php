@@ -2,11 +2,12 @@
 
 namespace JoliCode\MediaBundle\Bridge\EasyAdmin\Controller;
 
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\AssetDto;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Config\Config;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Paginator\MediaPaginator;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Router\MediaAdminRouter;
 use JoliCode\MediaBundle\Bridge\Form\Type\CreateDirectoryType;
 use JoliCode\MediaBundle\Bridge\Form\Type\DeleteDirectoryType;
 use JoliCode\MediaBundle\Bridge\Form\Type\DeleteType;
@@ -46,8 +47,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 #[Route(name: 'joli_media_easy_admin_')]
+#[AdminRoute(path: '/' . MediaAdminController::PATH_PREFIX_PLACEHOLDER, name: 'joli_media')]
 class MediaAdminController extends AbstractController
 {
+    /**
+     * The path prefix of the media library is configurable, but the #[AdminRoute]
+     * attribute can only hold a static value: this placeholder is substituted with
+     * the configured prefix by the MediaAdminRouteLoader.
+     */
+    public const PATH_PREFIX_PLACEHOLDER = '__joli_media_path_prefix__';
+
     public function __construct(
         private readonly LibraryContainer $libraries,
         private readonly Config $config,
@@ -56,13 +65,14 @@ class MediaAdminController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
-        private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly MediaAdminRouter $mediaAdminRouter,
         private readonly MediaPaginator $mediaPaginator,
         private readonly ?AuthorizationCheckerInterface $authorizationChecker = null,
     ) {
     }
 
     #[Route(path: '/create-directory', name: 'create_directory', methods: [Request::METHOD_POST])]
+    #[AdminRoute(path: '/create-directory', name: 'create_directory', options: ['methods' => [Request::METHOD_POST]])]
     public function createDirectory(Request $request): RedirectResponse
     {
         $this->denyAccessUnlessGranted(AdminAction::CREATE_DIRECTORY, new AdminAction(
@@ -127,18 +137,19 @@ class MediaAdminController extends AbstractController
         }
 
         $intent = match ($form->get('intent')->getData()) {
-            'choose' => 'joli_media_easy_admin_choose',
-            'choose_directory' => 'joli_media_easy_admin_choose_directory',
-            default => 'joli_media_easy_admin_explore',
+            'choose' => 'choose',
+            'choose_directory' => 'chooseDirectory',
+            default => 'explore',
         };
 
-        return $this->redirect($this->adminUrlGenerator->setRoute(
+        return $this->redirect($this->mediaAdminRouter->generateUrl(
             $intent,
             ['key' => (string) $directory],
-        )->generateUrl());
+        ));
     }
 
     #[Route(path: '/delete', name: 'delete', methods: [Request::METHOD_POST])]
+    #[AdminRoute(path: '/delete', name: 'delete', options: ['methods' => [Request::METHOD_POST]])]
     public function delete(Request $request): RedirectResponse
     {
         $key = null;
@@ -170,10 +181,10 @@ class MediaAdminController extends AbstractController
                     )
                 );
 
-                return $this->redirect($this->adminUrlGenerator->setRoute(
-                    'joli_media_easy_admin_show',
+                return $this->redirect($this->mediaAdminRouter->generateUrl(
+                    'show',
                     ['key' => $key],
-                )->generateUrl());
+                ));
             }
 
             $this->getLibrary()->deleteAllVariations($key);
@@ -188,13 +199,14 @@ class MediaAdminController extends AbstractController
             );
         }
 
-        return $this->redirect($this->adminUrlGenerator->setRoute(
-            'joli_media_easy_admin_explore',
-            ['key' => \dirname((string) $key)],
-        )->generateUrl());
+        return $this->redirect($this->mediaAdminRouter->generateUrl(
+            'explore',
+            ['key' => $this->getParentKey((string) $key)],
+        ));
     }
 
     #[Route(path: '/delete-directory', name: 'delete_directory', methods: [Request::METHOD_POST])]
+    #[AdminRoute(path: '/delete-directory', name: 'delete_directory', options: ['methods' => [Request::METHOD_POST]])]
     public function deleteDirectory(Request $request): RedirectResponse
     {
         $key = null;
@@ -225,10 +237,10 @@ class MediaAdminController extends AbstractController
                     )
                 );
 
-                return $this->redirect($this->adminUrlGenerator->setRoute(
-                    'joli_media_easy_admin_explore',
+                return $this->redirect($this->mediaAdminRouter->generateUrl(
+                    'explore',
                     ['key' => $key],
-                )->generateUrl());
+                ));
             }
 
             $this->addFlash(
@@ -241,129 +253,45 @@ class MediaAdminController extends AbstractController
             );
         }
 
-        return $this->redirect($this->adminUrlGenerator->setRoute(
-            'joli_media_easy_admin_explore',
-            ['key' => \dirname((string) $key)],
-        )->generateUrl());
+        return $this->redirect($this->mediaAdminRouter->generateUrl(
+            'explore',
+            ['key' => $this->getParentKey((string) $key)],
+        ));
+    }
+
+    /**
+     * The media library has no landing page of its own: its root path redirects to the
+     * media explorer, so that eg. "/admin/media" is a usable entry point.
+     */
+    #[AdminRoute(path: '', name: 'index', options: ['methods' => [Request::METHOD_GET]])]
+    public function index(): RedirectResponse
+    {
+        return $this->redirect($this->mediaAdminRouter->generateUrl('explore'));
+    }
+
+    #[Route(path: '/explore/{key}', name: 'explore', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]
+    #[AdminRoute(path: '/explore/{key}', name: 'explore', options: ['defaults' => ['key' => ''], 'requirements' => ['key' => '.*'], 'methods' => [Request::METHOD_GET]])]
+    public function explore(AdminContext $adminContext, Request $request, string $key = ''): Response
+    {
+        return $this->renderList($adminContext, $request, 'explore', $key);
+    }
+
+    #[Route(path: '/choose-file/{key}', name: 'choose', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]
+    #[AdminRoute(path: '/choose-file/{key}', name: 'choose', options: ['defaults' => ['key' => ''], 'requirements' => ['key' => '.*'], 'methods' => [Request::METHOD_GET]])]
+    public function choose(AdminContext $adminContext, Request $request, string $key = ''): Response
+    {
+        return $this->renderList($adminContext, $request, 'choose', $key);
     }
 
     #[Route(path: '/choose-directory/{key}', name: 'choose_directory', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]
-    #[Route(path: '/choose-file/{key}', name: 'choose', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]
-    #[Route(path: '/explore/{key}', name: 'explore', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]
-    public function list(AdminContext $adminContext, Request $request, string $key = ''): Response
+    #[AdminRoute(path: '/choose-directory/{key}', name: 'choose_directory', options: ['defaults' => ['key' => ''], 'requirements' => ['key' => '.*'], 'methods' => [Request::METHOD_GET]])]
+    public function chooseDirectory(AdminContext $adminContext, Request $request, string $key = ''): Response
     {
-        $this->addAssets($adminContext);
-        $routeName = $request->query->get('routeName', 'joli_media_easy_admin_explore');
-
-        if ($request->query->get('view_mode')) {
-            $request->getSession()->set('view_mode', $request->query->get('view_mode'));
-
-            return $this->redirect($this->adminUrlGenerator
-                ->setRoute($routeName, [
-                    'key' => $key,
-                ])
-                ->generateUrl()
-            );
-        }
-
-        $currentKey = Resolver::normalizePath($key);
-        $this->denyAccessUnlessGranted(AdminAction::LIST, new AdminAction(
-            libraryName: $this->getLibrary()->getName(),
-            path: $currentKey,
-        ));
-
-        // the search is only supported by the explore view and the media picker modal
-        $searchValue = 'joli_media_easy_admin_choose_directory' !== $routeName
-            ? $request->query->getString('query', '')
-            : '';
-        $hasSearch = '' !== $searchValue;
-
-        try {
-            $trashPath = $this->getOriginalStorage()->getTrashPath();
-
-            if ($trashPath === $currentKey || str_starts_with($currentKey, $trashPath . '/')) {
-                throw new ForbiddenPathException($trashPath);
-            }
-
-            $dirFilter = null;
-            if ($hasSearch) {
-                // recursive listings must not expose the trash contents
-                $dirFilter = static fn (string $directory): bool => str_contains(strtolower($directory), strtolower($searchValue))
-                    && $trashPath !== $directory
-                    && !str_starts_with($directory, $trashPath . '/');
-            }
-
-            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: $hasSearch, filter: $dirFilter);
-            natcasesort($directories);
-        } catch (ForbiddenPathException|PathTraversalDetected|UnableToListContents) {
-            $this->addFlash(
-                'danger',
-                $this->translator->trans(
-                    'directory.list_failure',
-                    ['%directory%' => $currentKey],
-                    'JoliMediaEasyAdminBundle'
-                ),
-            );
-
-            return $this->redirect($this->adminUrlGenerator
-                ->setRoute($routeName, ['key' => ''])
-                ->generateUrl()
-            );
-        }
-
-        $template = match ($routeName) {
-            'joli_media_easy_admin_choose' => 'choose',
-            'joli_media_easy_admin_choose_directory' => 'choose_directory',
-            default => 'explore',
-        };
-
-        $mediaFilter = null;
-        $mediaSort = null;
-
-        if ($hasSearch) {
-            // recursive listings must not expose the trash contents
-            $mediaFilter = static fn (Media $media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue))
-                && !str_starts_with($media->getPath(), $trashPath . '/');
-
-            // recursive listings are not sorted by default and depend on the storage
-            // adapter's traversal order, which would make pagination unstable
-            $mediaSort = static fn (Media $a, Media $b): int => strtolower($a->getPath()) <=> strtolower($b->getPath());
-        }
-
-        try {
-            $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
-                $currentKey,
-                recursive: $hasSearch,
-                page: $request->query->getInt('page', 1),
-                perPage: $this->config->getPaginationSize(),
-                filter: $mediaFilter,
-                sort: $mediaSort,
-            );
-        } catch (\OutOfRangeException) {
-            throw new BadRequestException('The requested page number is out of range.');
-        }
-
-        $paginator = $this->mediaPaginator->paginateMedias($paginatedMedias, $routeName, $currentKey, $searchValue);
-
-        return new Response($this->twig->render('@JoliMediaEasyAdmin/list.html.twig', [
-            'base_template' => \sprintf('@JoliMediaEasyAdmin/%s.html.twig', $template),
-            'breadcrumb' => $this->generateBreadcrumb($currentKey, $routeName),
-            'config' => $this->config,
-            'create_directory_form' => $this->createCreateDirectoryForm($key, $template)->createView(),
-            'create_media_form' => $this->createUploadForm($currentKey)->createView(),
-            'current_key' => $currentKey,
-            'delete_directory_form' => $this->createDeleteDirectoryForm($key)->createView(),
-            'directories' => $directories,
-            'medias' => $paginator->getResults(),
-            'paginator' => $paginator,
-            'parent_key' => \dirname($currentKey),
-            'rename_directory_form' => $this->createRenameDirectoryForm($key)->createView(),
-            'route_name' => $routeName,
-            'search' => $searchValue,
-        ]));
+        return $this->renderList($adminContext, $request, 'chooseDirectory', $key);
     }
 
     #[Route(path: '/move', name: 'move', methods: [Request::METHOD_POST])]
+    #[AdminRoute(path: '/move', name: 'move', options: ['methods' => [Request::METHOD_POST]])]
     public function move(Request $request): RedirectResponse
     {
         $form = $this->createMoveFileForm();
@@ -395,10 +323,10 @@ class MediaAdminController extends AbstractController
                     )
                 );
 
-                return $this->redirect($this->adminUrlGenerator->setRoute(
-                    'joli_media_easy_admin_show',
+                return $this->redirect($this->mediaAdminRouter->generateUrl(
+                    'show',
                     ['key' => $target],
-                )->generateUrl());
+                ));
             } catch (\Exception $e) {
                 $error = $e->getMessage();
             }
@@ -417,13 +345,14 @@ class MediaAdminController extends AbstractController
             )
         );
 
-        return $this->redirect($this->adminUrlGenerator->setRoute(
-            'joli_media_easy_admin_show',
+        return $this->redirect($this->mediaAdminRouter->generateUrl(
+            'show',
             ['key' => $from],
-        )->generateUrl());
+        ));
     }
 
     #[Route(path: '/regenerate/{variation}/{key}', name: 'regenerate_variation', requirements: ['key' => '.+'], methods: [Request::METHOD_GET])]
+    #[AdminRoute(path: '/regenerate/{variation}/{key}', name: 'regenerate_variation', options: ['requirements' => ['key' => '.+'], 'methods' => [Request::METHOD_GET]])]
     public function regenerateVariation(string $key, string $variation): RedirectResponse
     {
         $this->denyAccessUnlessGranted(AdminAction::REGENERATE_VARIATION, new AdminAction(
@@ -467,15 +396,14 @@ class MediaAdminController extends AbstractController
             }
         }
 
-        return $this->redirect($this->adminUrlGenerator
-            ->setRoute('joli_media_easy_admin_show', [
-                'key' => $key,
-                '_tab' => 2,
-            ],
-            )->generateUrl());
+        return $this->redirect($this->mediaAdminRouter->generateUrl('show', [
+            'key' => $key,
+            '_tab' => 2,
+        ]));
     }
 
     #[Route(path: '/rename-directory', name: 'rename_directory', methods: [Request::METHOD_POST])]
+    #[AdminRoute(path: '/rename-directory', name: 'rename_directory', options: ['methods' => [Request::METHOD_POST]])]
     public function renameDirectory(Request $request): RedirectResponse
     {
         $form = $this->createRenameDirectoryForm();
@@ -513,10 +441,10 @@ class MediaAdminController extends AbstractController
                     )
                 );
 
-                return $this->redirect($this->adminUrlGenerator->setRoute(
-                    'joli_media_easy_admin_explore',
+                return $this->redirect($this->mediaAdminRouter->generateUrl(
+                    'explore',
                     ['key' => $target],
-                )->generateUrl());
+                ));
             } catch (\Exception $e) {
                 $error = $e->getMessage();
             }
@@ -535,13 +463,14 @@ class MediaAdminController extends AbstractController
             )
         );
 
-        return $this->redirect($this->adminUrlGenerator->setRoute(
-            'joli_media_easy_admin_explore',
+        return $this->redirect($this->mediaAdminRouter->generateUrl(
+            'explore',
             ['key' => $from],
-        )->generateUrl());
+        ));
     }
 
     #[Route(path: '/show/{key}', name: 'show', requirements: ['key' => '.+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[AdminRoute(path: '/show/{key}', name: 'show', options: ['requirements' => ['key' => '.+'], 'methods' => [Request::METHOD_GET, Request::METHOD_POST]])]
     public function show(AdminContext $adminContext, Request $request, string $key): Response
     {
         $this->denyAccessUnlessGranted(AdminAction::SHOW, new AdminAction(
@@ -553,7 +482,9 @@ class MediaAdminController extends AbstractController
         $key = $media->getPath();
         $this->addAssets($adminContext);
         $query = $request->query->all();
-        $displayedTab = $query['routeParams']['_tab'] ?? 1;
+        // with pretty URLs, the tab is a plain query parameter; otherwise it travels
+        // through the EasyAdmin "routeParams" query parameter
+        $displayedTab = $query['_tab'] ?? $query['routeParams']['_tab'] ?? 1;
 
         $renameFileForm = $this->createRenameFileForm($key);
         $renameFileForm->handleRequest($request);
@@ -580,10 +511,10 @@ class MediaAdminController extends AbstractController
                         )
                     );
 
-                    return $this->redirect($this->adminUrlGenerator->setRoute(
-                        'joli_media_easy_admin_show',
+                    return $this->redirect($this->mediaAdminRouter->generateUrl(
+                        'show',
                         ['key' => $target],
-                    )->generateUrl());
+                    ));
                 } catch (\Exception $e) {
                     $error = $e->getMessage();
                 }
@@ -621,7 +552,7 @@ class MediaAdminController extends AbstractController
         }
 
         return new Response($this->twig->render('@JoliMediaEasyAdmin/show.html.twig', [
-            'breadcrumb' => $this->generateBreadcrumb($key, 'joli_media_easy_admin_explore'),
+            'breadcrumb' => $this->generateBreadcrumb($key, 'explore'),
             'config' => $this->config,
             'delete_form' => $this->createDeleteForm($key)->createView(),
             'displayed_tab' => $displayedTab,
@@ -633,6 +564,7 @@ class MediaAdminController extends AbstractController
     }
 
     #[Route(path: '/upload', name: 'upload', methods: [Request::METHOD_POST])]
+    #[AdminRoute(path: '/upload', name: 'upload', options: ['methods' => [Request::METHOD_POST]])]
     public function upload(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(AdminAction::UPLOAD, new AdminAction(
@@ -684,7 +616,7 @@ class MediaAdminController extends AbstractController
                     'name' => $filename,
                     'size' => $size,
                     'type' => $mime,
-                    'link' => $this->adminUrlGenerator->setRoute('joli_media_easy_admin_show', ['key' => $media->getPath()])->generateUrl(),
+                    'link' => $this->mediaAdminRouter->generateUrl('show', ['key' => $media->getPath()]),
                     'mediaUrl' => $media->getPath(),
                     'mediaFullUrl' => $media->getUrl(),
                     'mediaType' => $media->getFileType(),
@@ -732,6 +664,115 @@ class MediaAdminController extends AbstractController
         }
     }
 
+    /**
+     * @param string $action the media library action being rendered: "explore", "choose" or "chooseDirectory"
+     */
+    private function renderList(AdminContext $adminContext, Request $request, string $action, string $key): Response
+    {
+        $this->addAssets($adminContext);
+
+        if ($request->query->get('view_mode')) {
+            $request->getSession()->set('view_mode', $request->query->get('view_mode'));
+
+            return $this->redirect($this->mediaAdminRouter->generateUrl($action, [
+                'key' => $key,
+            ]));
+        }
+
+        $currentKey = Resolver::normalizePath($key);
+        $this->denyAccessUnlessGranted(AdminAction::LIST, new AdminAction(
+            libraryName: $this->getLibrary()->getName(),
+            path: $currentKey,
+        ));
+
+        // the search is only supported by the explore view and the media picker modal
+        $searchValue = 'chooseDirectory' !== $action
+            ? $request->query->getString('query', '')
+            : '';
+        $hasSearch = '' !== $searchValue;
+
+        try {
+            $trashPath = $this->getOriginalStorage()->getTrashPath();
+
+            if ($trashPath === $currentKey || str_starts_with($currentKey, $trashPath . '/')) {
+                throw new ForbiddenPathException($trashPath);
+            }
+
+            $dirFilter = null;
+            if ($hasSearch) {
+                // recursive listings must not expose the trash contents
+                $dirFilter = static fn (string $directory): bool => str_contains(strtolower($directory), strtolower($searchValue))
+                    && $trashPath !== $directory
+                    && !str_starts_with($directory, $trashPath . '/');
+            }
+
+            $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: $hasSearch, filter: $dirFilter);
+            natcasesort($directories);
+        } catch (ForbiddenPathException|PathTraversalDetected|UnableToListContents) {
+            $this->addFlash(
+                'danger',
+                $this->translator->trans(
+                    'directory.list_failure',
+                    ['%directory%' => $currentKey],
+                    'JoliMediaEasyAdminBundle'
+                ),
+            );
+
+            return $this->redirect($this->mediaAdminRouter->generateUrl($action, ['key' => '']));
+        }
+
+        $template = match ($action) {
+            'choose' => 'choose',
+            'chooseDirectory' => 'choose_directory',
+            default => 'explore',
+        };
+
+        $mediaFilter = null;
+        $mediaSort = null;
+
+        if ($hasSearch) {
+            // recursive listings must not expose the trash contents
+            $mediaFilter = static fn (Media $media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue))
+                && !str_starts_with($media->getPath(), $trashPath . '/');
+
+            // recursive listings are not sorted by default and depend on the storage
+            // adapter's traversal order, which would make pagination unstable
+            $mediaSort = static fn (Media $a, Media $b): int => strtolower($a->getPath()) <=> strtolower($b->getPath());
+        }
+
+        try {
+            $paginatedMedias = $this->getOriginalStorage()->listMediasPaginated(
+                $currentKey,
+                recursive: $hasSearch,
+                page: $request->query->getInt('page', 1),
+                perPage: $this->config->getPaginationSize(),
+                filter: $mediaFilter,
+                sort: $mediaSort,
+            );
+        } catch (\OutOfRangeException) {
+            throw new BadRequestException('The requested page number is out of range.');
+        }
+
+        $paginator = $this->mediaPaginator->paginateMedias($paginatedMedias, $action, $currentKey, $searchValue);
+
+        return new Response($this->twig->render('@JoliMediaEasyAdmin/list.html.twig', [
+            'action' => $action,
+            'base_template' => \sprintf('@JoliMediaEasyAdmin/%s.html.twig', $template),
+            'breadcrumb' => $this->generateBreadcrumb($currentKey, $action),
+            'config' => $this->config,
+            'create_directory_form' => $this->createCreateDirectoryForm($key, $template)->createView(),
+            'create_media_form' => $this->createUploadForm($currentKey)->createView(),
+            'current_key' => $currentKey,
+            'delete_directory_form' => $this->createDeleteDirectoryForm($key)->createView(),
+            'directories' => $directories,
+            'medias' => $paginator->getResults(),
+            'paginator' => $paginator,
+            'parent_key' => \dirname($currentKey),
+            'rename_directory_form' => $this->createRenameDirectoryForm($key)->createView(),
+            'search' => $searchValue,
+        ]));
+    }
+
     private function addAssets(AdminContext $adminContext): void
     {
         $package = new PathPackage(
@@ -746,7 +787,7 @@ class MediaAdminController extends AbstractController
     private function createDeleteForm(?string $path = null): FormInterface
     {
         $form = $this->formFactory->create(DeleteType::class, null, [
-            'action' => $this->generateUrl('joli_media_easy_admin_delete'),
+            'action' => $this->mediaAdminRouter->generateUrl('delete'),
             'method' => Request::METHOD_POST,
             'translation_domain' => $this->config->getTranslationDomain(),
         ]);
@@ -761,7 +802,7 @@ class MediaAdminController extends AbstractController
     private function createDeleteDirectoryForm(?string $path = null): FormInterface
     {
         $form = $this->formFactory->create(DeleteDirectoryType::class, null, [
-            'action' => $this->generateUrl('joli_media_easy_admin_delete_directory'),
+            'action' => $this->mediaAdminRouter->generateUrl('deleteDirectory'),
             'method' => Request::METHOD_POST,
             'translation_domain' => $this->config->getTranslationDomain(),
         ]);
@@ -790,7 +831,7 @@ class MediaAdminController extends AbstractController
     private function createMoveFileForm(?string $path = null): FormInterface
     {
         $form = $this->formFactory->create(MoveType::class, null, [
-            'action' => $this->generateUrl('joli_media_easy_admin_move'),
+            'action' => $this->mediaAdminRouter->generateUrl('move'),
             'method' => Request::METHOD_POST,
             'translation_domain' => $this->config->getTranslationDomain(),
         ]);
@@ -805,7 +846,7 @@ class MediaAdminController extends AbstractController
     private function createRenameDirectoryForm(?string $path = null): FormInterface
     {
         $form = $this->formFactory->create(RenameDirectoryType::class, null, [
-            'action' => $this->generateUrl('joli_media_easy_admin_rename_directory'),
+            'action' => $this->mediaAdminRouter->generateUrl('renameDirectory'),
             'method' => Request::METHOD_POST,
             'translation_domain' => $this->config->getTranslationDomain(),
         ]);
@@ -823,7 +864,7 @@ class MediaAdminController extends AbstractController
     private function createRenameFileForm(?string $path = null): FormInterface
     {
         $form = $this->formFactory->create(RenameType::class, null, [
-            'action' => $this->generateUrl('joli_media_easy_admin_show', ['key' => $path]),
+            'action' => $this->mediaAdminRouter->generateUrl('show', ['key' => $path]),
             'method' => Request::METHOD_POST,
             'translation_domain' => $this->config->getTranslationDomain(),
         ]);
@@ -840,7 +881,7 @@ class MediaAdminController extends AbstractController
     private function createUploadForm(?string $path = null): FormInterface
     {
         $form = $this->formFactory->create(UploadType::class, null, [
-            'action' => $this->generateUrl('joli_media_easy_admin_upload'),
+            'action' => $this->mediaAdminRouter->generateUrl('upload'),
             'method' => Request::METHOD_POST,
             'config' => $this->config,
         ]);
@@ -855,14 +896,12 @@ class MediaAdminController extends AbstractController
     /**
      * @return array<array{url: string, name: string}>
      */
-    private function generateBreadcrumb(string $path, string $routeName): array
+    private function generateBreadcrumb(string $path, string $action): array
     {
         $breadcrumb = [];
         $folderName = $path;
         $breadcrumb[] = [
-            'url' => $this->adminUrlGenerator
-                ->setRoute($routeName)
-                ->generateUrl(),
+            'url' => $this->mediaAdminRouter->generateUrl($action),
             'name' => $this->translator->trans('media_library', domain: 'JoliMediaEasyAdminBundle'),
         ];
         $breadcrumbPaths = [];
@@ -882,14 +921,23 @@ class MediaAdminController extends AbstractController
             $breadcrumbPaths[] = $part;
             $currentBreadcrumbPath = implode('/', $breadcrumbPaths);
             $breadcrumb[] = [
-                'url' => $this->adminUrlGenerator
-                    ->setRoute($routeName, ['key' => '/' . $currentBreadcrumbPath])
-                    ->generateUrl(),
+                'url' => $this->mediaAdminRouter->generateUrl($action, ['key' => '/' . $currentBreadcrumbPath]),
                 'name' => $part,
             ];
         }
 
         return $breadcrumb;
+    }
+
+    /**
+     * Returns the key of the directory containing the given key, the root directory
+     * being identified by an empty key rather than by the "." returned by dirname().
+     */
+    private function getParentKey(string $key): string
+    {
+        $parentKey = \dirname($key);
+
+        return '.' === $parentKey ? '' : $parentKey;
     }
 
     private function getOriginalStorage(): OriginalStorage

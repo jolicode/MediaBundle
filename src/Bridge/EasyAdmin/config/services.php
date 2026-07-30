@@ -2,11 +2,17 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteLoader;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Config\Config;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Controller\MediaAdminController;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\MediaChoiceType;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Paginator\MediaPaginator;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Router\MediaAdminRouter;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Routing\MediaAdminRouteLoader;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Twig\JoliMediaEasyAdminExtension;
 use JoliCode\MediaBundle\Bridge\Form\DataTransformer\MediaTransformer;
 use JoliCode\MediaBundle\Bridge\Security\Voter\MediaVoter;
 use JoliCode\MediaBundle\Bridge\Twig\JoliMediaAdminExtension;
@@ -24,10 +30,29 @@ return static function (ContainerConfigurator $container): void {
             '$translator' => service('translator')->ignoreOnInvalid(),
         ])
 
+        // routing
+        ->set('joli_media_easy_admin.route_loader', MediaAdminRouteLoader::class)
+        ->decorate(AdminRouteLoader::class)
+        ->args([
+            '$decorated' => service('joli_media_easy_admin.route_loader.inner'),
+            '$pathPrefix' => 'media',
+        ])
+
+        // router
+        ->set('joli_media_easy_admin.router', MediaAdminRouter::class)
+        ->args([
+            '$adminUrlGenerator' => service(AdminUrlGenerator::class),
+            '$adminRouteGenerator' => service(AdminRouteGenerator::class),
+            // the concrete classes are referenced because EasyAdmin 4.x does not alias
+            // their interfaces
+            '$adminContextProvider' => service(AdminContextProvider::class),
+        ])
+        ->alias(MediaAdminRouter::class, 'joli_media_easy_admin.router')
+
         // paginator
         ->set('joli_media_easy_admin.paginator', MediaPaginator::class)
         ->args([
-            '$adminUrlGenerator' => service(AdminUrlGenerator::class),
+            '$mediaAdminRouter' => service('joli_media_easy_admin.router'),
         ])
 
         // controller
@@ -40,12 +65,15 @@ return static function (ContainerConfigurator $container): void {
             '$translator' => service('translator')->ignoreOnInvalid(),
             '$twig' => service('twig'),
             '$formFactory' => service('form.factory'),
-            '$adminUrlGenerator' => service(AdminUrlGenerator::class),
+            '$mediaAdminRouter' => service('joli_media_easy_admin.router'),
             '$mediaPaginator' => service('joli_media_easy_admin.paginator'),
             '$authorizationChecker' => service('security.authorization_checker')->ignoreOnInvalid(),
         ])
         ->call('setContainer', [service('service_container')])
         ->tag('controller.service_arguments')
+        // let EasyAdmin generate the routes declared with the #[AdminRoute] attributes,
+        // so that the media library is browsable through pretty URLs
+        ->tag('ea.admin_route_controller')
         ->alias(MediaAdminController::class, 'joli_media_easy_admin.controller.admin')
         ->public()
 
@@ -71,6 +99,11 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             '$libraries' => service('joli_media.library_container'),
             '$authorizationChecker' => service('security.authorization_checker')->ignoreOnInvalid(),
+        ])
+        ->tag('twig.extension')
+        ->set('joli_media_easy_admin.twig_extension', JoliMediaEasyAdminExtension::class)
+        ->args([
+            '$mediaAdminRouter' => service('joli_media_easy_admin.router'),
         ])
         ->tag('twig.extension')
     ;

@@ -32,7 +32,7 @@
                     {% if parent_key != '' and current_key != '.' -%}
                         <tr>
                             <td data-column="name" data-label="name" class="text-left" dir="ltr">
-                                <a href="{{ ea_url().setRoute(route_name, '.' != parent_key ? { key: parent_key } : { }) }}" class="gallery-list-item gallery-list-item--back">
+                                <a href="{{ joli_media_admin_url(action, '.' != parent_key ? { key: parent_key } : { }) }}" class="gallery-list-item gallery-list-item--back">
                                     <span class="gallery-list-item__icon"><i class="fas fa-arrow-left"></i></span>
                                     {{ 'back'|trans }}
                                 </a>
@@ -52,7 +52,7 @@
                         {% if joli_media_admin_is_granted('LIST', path: directory) %}
                             <tr>
                                 <td data-column="name" data-label="name" class="text-left" dir="ltr">
-                                    <a href="{{ ea_url().setRoute(route_name, { key: directory }) }}" class="gallery-list-item">
+                                    <a href="{{ joli_media_admin_url(action, { key: directory }) }}" class="gallery-list-item">
                                         <span class="gallery-list-item__icon"><i class="fa fa-folder"></i></span>
                                         <span class="gallery-list-item__name">{{ directory|joli_media_admin_basename }}</span>
                                     </a>
@@ -89,7 +89,7 @@
             <ul class="gallery-grid gallery-grid--folders">
                 {% if parent_key != '' and current_key != '.' -%}
                     <li class="gallery-grid-item gallery-grid-item--back">
-                        <a href="{{ ea_url().setRoute(route_name, '.' != parent_key ? { key: parent_key } : { }) }}" class="gallery-grid-item__link">
+                        <a href="{{ joli_media_admin_url(action, '.' != parent_key ? { key: parent_key } : { }) }}" class="gallery-grid-item__link">
                             <span class="gallery-grid-item__icon"><i class="fas fa-arrow-left"></i></span>
                             <span class="gallery-grid-item__name">{{ 'back'|trans }}</span>
                         </a>
@@ -99,7 +99,7 @@
                 {%- for directory in directories -%}
                     {% if joli_media_admin_is_granted('LIST', path: directory) %}
                         <li class="gallery-grid-item">
-                            <a href="{{ ea_url().setRoute(route_name, { key: directory }) }}" class="gallery-grid-item__link">
+                            <a href="{{ joli_media_admin_url(action, { key: directory }) }}" class="gallery-grid-item__link">
                                 <span class="gallery-grid-item__icon"><i class="fas fa-folder"></i></span>
                                 <span class="gallery-grid-item__name">{{ directory|joli_media_admin_basename }}</span>
                             </a>
@@ -134,7 +134,7 @@
                             htmlElement="a"
                             size="sm"
                             icon="fas fa-list"
-                            href="{{ ea_url().setRoute(route_name, { key: current_key }).set('view_mode', 'list') }}"
+                            href="{{ joli_media_admin_url(action, { key: current_key }, { view_mode: 'list' }) }}"
                             class="{{ 'list' == current_view_mode ? 'active disabled' }}"
                             aria-current="{{ 'list' == current_view_mode ? 'true' : 'false' }}"
                         >{{ 'view.list'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
@@ -142,7 +142,7 @@
                             htmlElement="a"
                             size="sm"
                             icon="fas fa-th-large"
-                            href="{{ ea_url().setRoute(route_name, { key: current_key }).set('view_mode', 'grid') }}"
+                            href="{{ joli_media_admin_url(action, { key: current_key }, { view_mode: 'grid' }) }}"
                             class="{{ 'grid' == current_view_mode ? 'active disabled' }}"
                             aria-current="{{ 'grid' == current_view_mode ? 'true' : 'false' }}"
                         >{{ 'view.grid'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
@@ -199,14 +199,14 @@
             </form>
         </div>
         <div class="new-directory-container">
-            {{ form_start(create_directory_form, { action: ea_url().setRoute('joli_media_easy_admin_create_directory') }) }}
+            {{ form_start(create_directory_form, { action: joli_media_admin_url('createDirectory') }) }}
                 {{ form_widget(create_directory_form.directory) }}
                 {{ form_widget(create_directory_form.submit) }}
             {{ form_end(create_directory_form) }}
         </div>
         {% if base_template ends with '/choose.html.twig' %}
             <div class="search-container">
-                <form class="joli-media-search-form" data-component="media-search" method="get" action="{{ ea_url().setRoute(route_name, '.' != current_key ? { key: current_key } : { }) }}">
+                <form class="joli-media-search-form" data-component="media-search" method="get" action="{{ joli_media_admin_url(action, '.' != current_key ? { key: current_key } : { }) }}">
                     <input type="search" name="query" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
                     <twig:ea:Button type="submit" variant="primary" class="joli-media-search-btn">{{ 'action.search'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
                 </form>

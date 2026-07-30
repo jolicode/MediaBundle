@@ -1,4 +1,5 @@
 joli_media_easy_admin:
+    path_prefix: media-library
     pagination:
         per_page: 20
     visibility:

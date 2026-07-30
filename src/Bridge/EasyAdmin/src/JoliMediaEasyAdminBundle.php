@@ -26,6 +26,18 @@ class JoliMediaEasyAdminBundle extends AbstractBundle
     {
         $definition->rootNode()
             ->children()
+                ->scalarNode('path_prefix')
+                    ->defaultValue('media')
+                    ->info('Path of the media library, appended to the path of the EasyAdmin dashboard (e.g. "media" makes it available at /admin/media/explore).')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(static fn (string $value): string => trim($value, '/'))
+                    ->end()
+                    ->validate()
+                        ->ifTrue(static fn (mixed $value): bool => !\is_string($value) || '' === $value)
+                        ->thenInvalid('The "joli_media_easy_admin.path_prefix" option must be a non-empty string.')
+                    ->end()
+                ->end()
                 ->arrayNode('pagination')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -107,6 +119,11 @@ class JoliMediaEasyAdminBundle extends AbstractBundle
             ->arg('$maxFiles', $config['upload']['max_files'])
             ->arg('$maxFileSize', $config['upload']['max_file_size'])
             ->arg('$paginationSize', $config['pagination']['per_page'])
+        ;
+
+        $container->services()
+            ->get('joli_media_easy_admin.route_loader')
+            ->arg('$pathPrefix', $config['path_prefix'])
         ;
     }
 
