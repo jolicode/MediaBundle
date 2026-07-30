@@ -114,6 +114,7 @@ function front_watch(): void
     \Castor\watch([
         '../src/Bridge/EasyAdmin/public/...',
         '../src/Bridge/SonataAdmin/public/...',
+        '../src/Bridge/Sylius/public/...',
     ], static function (string $file, string $action) use (&$lastCallTime) {
         $currentTime = time();
 
