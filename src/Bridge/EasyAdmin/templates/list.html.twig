@@ -128,16 +128,24 @@
         <section class="content-header">
             {% block content_header %}
                 <div class="content-header-title">
-                    <div class="btn-group" role="group" aria-label="Change view mode">
-                        <a href="{{ ea_url().setRoute(route_name, { key: current_key }).set('view_mode', 'list') }}" class="btn btn-secondary {{ app.session.get('view_mode', 'grid') == 'list' ? 'active disabled' }}">
-                            <span>
-                                <i class="fas fa-list"></i> {{ 'view.list'|trans }}
-                            </span>
-                        </a><a href="{{ ea_url().setRoute(route_name, { key: current_key }).set('view_mode', 'grid') }}" class="btn btn-secondary {{ app.session.get('view_mode', 'grid') == 'grid' ? 'active disabled' }}">
-                            <span>
-                                <i class="fas fa-th-large"></i> {{ 'view.grid'|trans }}
-                            </span>
-                        </a>
+                    {% set current_view_mode = app.session.get('view_mode', 'grid') %}
+                    <div class="joli-media-view-switch" role="group" aria-label="{{ 'view.label'|trans }}">
+                        <twig:ea:Button
+                            htmlElement="a"
+                            size="sm"
+                            icon="fas fa-list"
+                            href="{{ ea_url().setRoute(route_name, { key: current_key }).set('view_mode', 'list') }}"
+                            class="{{ 'list' == current_view_mode ? 'active disabled' }}"
+                            aria-current="{{ 'list' == current_view_mode ? 'true' : 'false' }}"
+                        >{{ 'view.list'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
+                        <twig:ea:Button
+                            htmlElement="a"
+                            size="sm"
+                            icon="fas fa-th-large"
+                            href="{{ ea_url().setRoute(route_name, { key: current_key }).set('view_mode', 'grid') }}"
+                            class="{{ 'grid' == current_view_mode ? 'active disabled' }}"
+                            aria-current="{{ 'grid' == current_view_mode ? 'true' : 'false' }}"
+                        >{{ 'view.grid'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
                     </div>
                 </div>
 
@@ -148,28 +156,24 @@
                             {{ block('rename_directory_button') }}
                             {% block create_directory_button %}
                                 {% if joli_media_admin_is_granted('CREATE_DIRECTORY', path: current_key) %}
-                                    <a
-                                        class="btn btn-secondary me-sm-2"
+                                    <twig:ea:Button
+                                        htmlElement="a"
+                                        icon="fa-solid fa-folder-plus"
+                                        class="me-sm-2"
                                         data-component="folder-create"
-                                        role="button"
                                         tabindex="0"
-                                    >
-                                        <span class="icon btn-icon"><i class="fa-solid fa-folder-plus"></i></span>
-                                        <span class="btn-label">{{ 'directory.create'|trans }}</span>
-                                    </a>
+                                    >{{ 'directory.create'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
                                 {% endif %}
                             {% endblock %}
                             {% block search_button %}
                                 {% if base_template ends with '/choose.html.twig' %}
-                                    <a
-                                        class="btn btn-secondary me-sm-2"
+                                    <twig:ea:Button
+                                        htmlElement="a"
+                                        icon="fa-solid fa-magnifying-glass"
+                                        class="me-sm-2"
                                         data-component="search"
-                                        role="button"
                                         tabindex="0"
-                                    >
-                                        <span class="icon btn-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-                                        <span class="btn-label">{{ 'action.search'|trans }}</span>
-                                    </a>
+                                    >{{ 'action.search'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
                                 {% endif %}
                             {% endblock %}
                             {{ block('choose_directory_button') }}
@@ -204,7 +208,7 @@
             <div class="search-container">
                 <form class="joli-media-search-form" data-component="media-search" method="get" action="{{ ea_url().setRoute(route_name, '.' != current_key ? { key: current_key } : { }) }}">
                     <input type="search" name="query" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
-                    <button class="btn btn-primary joli-media-search-btn" type="submit">{{ 'action.search'|trans }}</button>
+                    <twig:ea:Button type="submit" variant="primary" class="joli-media-search-btn">{{ 'action.search'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
                 </form>
             </div>
         {% endif %}

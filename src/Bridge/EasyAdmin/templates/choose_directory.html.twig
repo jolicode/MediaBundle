@@ -13,17 +13,17 @@
 {% block main %}
     {% block choose_directory_button %}
         {% if joli_media_admin_is_granted('MOVE', path: current_key) %}
-            <a
+            <twig:ea:Button
+                htmlElement="a"
+                variant="primary"
+                icon="fa fa-crosshairs"
                 href="{{ ea_url().setRoute('joli_media_easy_admin_move') }}"
-                class="action-move btn btn-primary"
+                class="action-move"
                 data-folder-path="{{ current_key }}"
                 data-bs-toggle="modal"
                 data-bs-target="#modal-move"
                 data-confirmation="{{ 'media.move_modal.content'|trans({ '%directory%': current_key }) }}"
-                formaction="{{ ea_url().setRoute('joli_media_easy_admin_move') }}"
-            >
-                <i class="action-icon fa fa-crosshairs"></i> <span class="action-label">{{ 'action.move_to_this_directory'|trans }}</span>
-            </a>
+            >{{ 'action.move_to_this_directory'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
         {% endif %}
     {% endblock %}
 

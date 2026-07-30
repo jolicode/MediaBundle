@@ -53,32 +53,29 @@
 {% block body_class %}ea-content-width-full{% endblock %}
 
 {% block add_media_button %}
-    <a
-        class="btn btn-primary"
+    <twig:ea:Button
+        htmlElement="a"
+        variant="primary"
+        icon="fas fa-plus-circle"
         data-component="media-add"
-        role="button"
         tabindex="0"
-    >
-        <span class="icon btn-icon"><i class="fas fa-plus-circle"></i></span>
-        <span class="btn-label">{{ 'media.add'|trans }}</span>
-    </a>
+    >{{ 'media.add'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
 {% endblock %}
 
 {% block choose_directory_button %}{% endblock %}
 
 {% block delete_directory_button %}
     {% if breadcrumb|length > 1 and joli_media_admin_is_granted('DELETE_DIRECTORY', path: current_key) %}
-        <a
+        <twig:ea:Button
+            htmlElement="a"
+            variant="danger"
+            icon="fa fa-fw fa-trash-o"
             href="{{ ea_url().setRoute('joli_media_easy_admin_delete_directory') }}"
-            class="action-delete-directory btn btn-danger me-sm-3"
+            class="action-delete-directory me-sm-3"
             data-action-name="delete"
             data-bs-toggle="modal"
             data-bs-target="#modal-delete-directory"
-            formaction="{{ ea_url().setRoute('joli_media_easy_admin_delete_directory') }}"
-        >
-            <span class="icon btn-icon"><i class="action-icon fa fa-fw fa-trash-o"></i></span>
-            <span class="action-label">{{ 'action.delete_directory'|trans }}</span>
-        </a>
+        >{{ 'action.delete_directory'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
 
         {{ form_start(delete_directory_form, { attr: { id: 'delete-directory-form' } }) }}
             {{ form_widget(delete_directory_form) }}
@@ -108,15 +105,12 @@
 
 {% block rename_directory_button %}
     {% if breadcrumb|length > 1 and joli_media_admin_is_granted('RENAME_DIRECTORY', path: current_key) %}
-        <a
-            class="btn btn-secondary pr-0"
+        <twig:ea:Button
+            htmlElement="a"
+            icon="fa fa-pen-to-square"
             data-component="folder-rename"
-            role="button"
             tabindex="0"
-        >
-            <span class="icon btn-icon"><i class="fa fa-pen-to-square"></i></span>
-            <span class="btn-label">{{ 'action.rename_directory'|trans }}</span>
-        </a>
+        >{{ 'action.rename_directory'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
     {% endif %}
 {% endblock %}
 

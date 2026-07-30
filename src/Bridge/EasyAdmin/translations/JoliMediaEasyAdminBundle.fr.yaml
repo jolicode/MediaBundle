@@ -112,4 +112,5 @@ variation:
     stored: 'Stockée ?'
 view:
     grid: 'Vue grille'
+    label: "Changer le mode d'affichage"
     list: 'Vue liste'

@@ -42,10 +42,17 @@
   form {
     display: flex;
     flex-direction: row;
+    align-items: center;
   }
 
   input[type=text] {
     flex-grow: 1;
     margin-right: 1.5rem;
+  }
+
+  /* EasyAdmin 5.3 dropped the "min-inline-size: max-content" of ".btn", so the submit button
+     now shrinks below its content width and its label gets clipped */
+  .btn {
+    flex-shrink: 0;
   }
 }
