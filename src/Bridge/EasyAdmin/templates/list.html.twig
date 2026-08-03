@@ -124,7 +124,7 @@
 {% endblock %}
 
 {% block content_header_wrapper %}
-    <div class="joli-media-header-tools">
+    <div class="joli-media-header-tools" data-component="media-tools">
         <section class="content-header">
             {% block content_header %}
                 <div class="content-header-title">
@@ -185,7 +185,7 @@
                 {% endblock %}
             {% endblock content_header %}
         </section>
-        <div class="dropzone-container">
+        <div class="dropzone-container" data-component="dropzone-container">
             {{ form_start(create_media_form, { attr: {
                 class: 'dropzone',
                 'data-component': 'dropzone',
@@ -193,21 +193,21 @@
             } }) }}
                 {{ form_widget(create_media_form.path) }}
                 {{ form_widget(create_media_form._token) }}
-                <div class="dz-preview-template">
+                <div class="dz-preview-template" data-component="dropzone-preview-template">
                     {{ include('@JoliMediaEasyAdmin/uploaded_file_preview.html.twig') }}
                 </div>
             </form>
         </div>
-        <div class="new-directory-container">
+        <div class="new-directory-container" data-component="new-directory-container">
             {{ form_start(create_directory_form, { action: joli_media_admin_url('createDirectory') }) }}
                 {{ form_widget(create_directory_form.directory) }}
                 {{ form_widget(create_directory_form.submit) }}
             {{ form_end(create_directory_form) }}
         </div>
         {% if base_template ends with '/choose.html.twig' %}
-            <div class="search-container">
-                <form class="joli-media-search-form" data-component="media-search" method="get" action="{{ joli_media_admin_url(action, '.' != current_key ? { key: current_key } : { }) }}">
-                    <input type="search" name="query" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
+            <div class="search-container" data-component="search-container">
+                <form data-component="media-search" method="get" action="{{ joli_media_admin_url(action, '.' != current_key ? { key: current_key } : { }) }}">
+                    <input type="search" name="query" class="form-control" data-component="media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
                     <twig:ea:Button type="submit" variant="primary" class="joli-media-search-btn">{{ 'action.search'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
                 </form>
             </div>

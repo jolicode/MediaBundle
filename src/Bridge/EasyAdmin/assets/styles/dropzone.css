@@ -28,7 +28,7 @@
   left: 0;
   right: 0;
 
-  &.dropzone-active {
+  &[data-active] {
     display: block;
   }
 

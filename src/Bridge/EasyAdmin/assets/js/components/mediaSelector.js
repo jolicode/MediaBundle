@@ -4,15 +4,13 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const id = mediaChoiceContainer.dataset.mediaId;
     const mediaContainer = document.getElementById(`joli-media-container_${id}`);
     const deleteButton = mediaChoiceContainer.querySelector(
-        ".joli-media-choice-delete",
+        '[data-component="media-choice-delete"]',
     );
-    const editButton = mediaChoiceContainer.querySelector(".joli-media-choice-edit");
+    const editButton = mediaChoiceContainer.querySelector('[data-component="media-choice-edit"]');
     const inputElement = document.getElementById(id);
     const modal = document.getElementById(`modal-media-choice_${id}`);
     document.body.appendChild(modal);
-    const modalContent = document.querySelector(
-        `#modal-media-choice_${id} .modal-body`,
-    );
+    const modalContent = modal.querySelector('[data-component="media-choice-modal-body"]');
 
     let currentSearchValue = '';
     let currentFolderUrl = buildFolderUrl(
@@ -58,17 +56,17 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     };
 
     const openSearchPanel = () => {
-        const searchContainer = modalContent.querySelector('.search-container');
+        const searchContainer = modalContent.querySelector('[data-component="search-container"]');
 
         if (searchContainer) {
-            searchContainer.classList.add('search-active');
-            searchContainer.querySelector('.joli-media-search-input').focus();
+            searchContainer.toggleAttribute('data-active', true);
+            searchContainer.querySelector('[data-component="media-search-input"]').focus();
         }
     };
 
     const setupSearch = () => {
-        const searchForm = modalContent.querySelector('.joli-media-search-form');
-        const searchInput = modalContent.querySelector('.joli-media-search-input');
+        const searchForm = modalContent.querySelector('[data-component="media-search"]');
+        const searchInput = modalContent.querySelector('[data-component="media-search-input"]');
         if (!searchForm || !searchInput) return;
 
         currentSearchValue = searchInput.value;
@@ -76,7 +74,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         const newSearchForm = searchForm.cloneNode(true);
         searchForm.parentNode.replaceChild(newSearchForm, searchForm);
 
-        const newInput = newSearchForm.querySelector('.joli-media-search-input');
+        const newInput = newSearchForm.querySelector('[data-component="media-search-input"]');
 
         // the modal content is re-rendered on every fetch: keep the search
         // panel visible as long as a search is active
@@ -129,7 +127,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         }
 
         mediaContainer.innerHTML = target.dataset.mediaTemplate;
-        mediaChoiceContainer.classList.remove("empty");
+        mediaChoiceContainer.toggleAttribute("data-empty", false);
         setFieldValue(target.dataset.mediaUrl);
         editButton.dataset.folder = target.dataset.mediaFolder;
         closeModal();
@@ -137,7 +135,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
 
     const handleDelete = (event) => {
         event.preventDefault();
-        mediaChoiceContainer.classList.add("empty");
+        mediaChoiceContainer.toggleAttribute("data-empty", true);
 
         const template = document.getElementById(`template-null-label-${id}`);
         mediaContainer.innerHTML = "";
@@ -196,28 +194,30 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     mediaChoiceContainer.dataset.configured = true;
 };
 
+const MEDIA_CHOICE_SELECTOR = '[data-component="media-choice"]';
+
 const configureMediaSelector = () => {
-    document.querySelectorAll("form.ea-edit-form, form.ea-new-form").forEach((form) =>
-        form.addEventListener("click", (event) => {
-            const target = event.target.closest(".js-joli-media-choice-container");
+    // containers added after the initial render (collection fields, for instance)
+    // are configured on their first click
+    document.addEventListener("click", (event) => {
+        const target = event.target.closest(MEDIA_CHOICE_SELECTOR);
 
-            if (target !== null && target.dataset.configured === undefined) {
-                configureMediaChoiceContainer(target);
+        if (target !== null && target.dataset.configured === undefined) {
+            configureMediaChoiceContainer(target);
 
-                // the click may land on the icon or the label of the button, not on the
-                // button itself, hence the "closest" lookup
-                const editButton = event.target.closest(".joli-media-choice-edit");
+            // the click may land on the icon or the label of the button, not on the
+            // button itself, hence the "closest" lookup
+            const editButton = event.target.closest('[data-component="media-choice-edit"]');
 
-                if (editButton !== null) {
-                    // force reload the modal content
-                    editButton.dispatchEvent(new Event("click"));
-                }
+            if (editButton !== null) {
+                // force reload the modal content
+                editButton.dispatchEvent(new Event("click"));
             }
-        }),
-    );
+        }
+    });
 
     document
-        .querySelectorAll(".js-joli-media-choice-container")
+        .querySelectorAll(MEDIA_CHOICE_SELECTOR)
         .forEach(configureMediaChoiceContainer);
 };
 

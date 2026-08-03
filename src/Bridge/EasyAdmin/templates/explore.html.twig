@@ -25,7 +25,7 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        <form method="get" class="joli-media-search-form ms-md-3" data-component="media-search">
+        <form method="get" class="ms-md-3" data-component="media-search">
             {% if not joli_media_admin_uses_pretty_urls() %}
                 {# without pretty URLs, the media library is reached through the dashboard route #}
                 <input type="hidden" name="routeName" value="{{ joli_media_admin_route(action) }}">
@@ -118,7 +118,7 @@
 {% endblock %}
 
 {% block rename_directory_container %}
-    <div class="rename-directory-container">
+    <div class="rename-directory-container" data-component="rename-directory-container">
         {{ form_start(rename_directory_form, { action: joli_media_admin_url('renameDirectory') }) }}
             {{ form_widget(rename_directory_form.to) }}
             {{ form_widget(rename_directory_form.from) }}

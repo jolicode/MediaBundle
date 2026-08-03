@@ -201,7 +201,7 @@ class MediaAdminControllerTest extends WebTestCase
 
         // the folder to open is only known client-side, so the picker URL carries a
         // placeholder which the JavaScript replaces with the folder to browse
-        $pickerUrl = $crawler->filter('a.joli-media-choice-edit')->first()->attr('href');
+        $pickerUrl = $crawler->filter('a[data-component="media-choice-edit"]')->first()->attr('href');
         $this->assertIsString($pickerUrl);
         $this->assertStringEndsWith('/admin/media/choose-file/__FOLDER__', $pickerUrl);
 
@@ -216,22 +216,22 @@ class MediaAdminControllerTest extends WebTestCase
         $this->client->request(Request::METHOD_GET, '/admin/media/choose-file');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('[data-component="search"]');
-        $this->assertSelectorExists('.search-container .joli-media-search-input');
+        $this->assertSelectorExists('.search-container [data-component="media-search-input"]');
 
         // the media library has an always visible search bar next to the breadcrumb
         $this->client->request(Request::METHOD_GET, '/admin/media/explore');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorNotExists('[data-component="search"]');
-        $this->assertSelectorNotExists('.joli-media-search-input');
-        $this->assertSelectorExists('form.joli-media-search-form input[name="query"]');
+        $this->assertSelectorNotExists('[data-component="media-search-input"]');
+        $this->assertSelectorExists('form[data-component="media-search"] input[name="query"]');
         // with pretty URLs, searching only needs to submit the query to the current URL
-        $this->assertSelectorNotExists('form.joli-media-search-form input[name="routeName"]');
+        $this->assertSelectorNotExists('form[data-component="media-search"] input[name="routeName"]');
 
         // the folder picker modal has no JS support for the search form, it must not be displayed there
         $this->client->request(Request::METHOD_GET, '/admin/media/choose-directory');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorNotExists('[data-component="search"]');
-        $this->assertSelectorNotExists('.joli-media-search-input');
+        $this->assertSelectorNotExists('[data-component="media-search-input"]');
     }
 
     public function testSearch(): void
@@ -239,7 +239,7 @@ class MediaAdminControllerTest extends WebTestCase
         // matches both directories and medias, recursively
         $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/choose-file?query=deep');
         $this->assertResponseIsSuccessful();
-        $this->assertSame('deep', $crawler->filter('.joli-media-search-input')->attr('value'));
+        $this->assertSame('deep', $crawler->filter('[data-component="media-search-input"]')->attr('value'));
         $this->assertSelectorCount(1, 'ul.gallery-grid--folders .gallery-grid-item');
         $this->assertSelectorTextContains('ul.gallery-grid--folders .gallery-grid-item__name', 'deep');
         $this->assertSelectorCount(1, 'ul.gallery-grid--files .gallery-grid-item');
