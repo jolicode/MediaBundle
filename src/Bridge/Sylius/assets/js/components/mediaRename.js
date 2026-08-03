@@ -1,71 +1,76 @@
-const configureMediaRename = () => {
-    const mediaListContainer = document.querySelector('[data-component*="media-list"]');
-    const mediaRenameContainer = document.querySelector('[data-component*="media-rename"]');
+const FORM_SELECTOR = '[data-component="media-rename-form"]';
+const INPUT_SELECTOR = '[data-component="media-rename-input"]';
+const NAME_SELECTOR = '[data-component="media-name"]';
 
-    if (!mediaListContainer && !mediaRenameContainer) {
-        return;
+/**
+ * The rename button lives inside the row it renames on the media list, but in
+ * the page actions on the media show page, where a single rename form exists.
+ */
+const findRenameForm = (renameBtn) => {
+    const row = renameBtn.closest('tr');
+
+    if (row) {
+        return row.querySelector(FORM_SELECTOR);
     }
 
-    const handleEditClick = (container, isShowPage) => {
-        const editBtn = container.querySelector('.media-rename-btn');
-        if (!editBtn) return;
+    return document.querySelector(`[data-component="media-rename"] ${FORM_SELECTOR}`);
+};
 
-        let nameSpan, form, row;
+const openRenameForm = (form) => {
+    const nameSpan = form.parentElement.querySelector(NAME_SELECTOR);
+    const input = form.querySelector(INPUT_SELECTOR);
 
-        if (isShowPage) {
-            nameSpan = container.querySelector('.media-name');
-            form = container.querySelector('.media-rename-form');
-        } else {
-            row = editBtn.closest('tr');
-            const pathCell = row.querySelector('.media-name').closest('td');
-            nameSpan = pathCell.querySelector('.media-name');
-            form = pathCell.querySelector('.media-rename-form');
-        }
+    nameSpan.hidden = true;
+    form.hidden = false;
 
-        nameSpan.classList.add('d-none');
-        form.classList.remove('d-none');
+    input.dataset.original = input.value;
+    input.focus();
+    input.select();
+};
 
-        const input = form.querySelector('.media-rename-input');
-        input.dataset.original = input.value;
-        input.focus();
-        input.select();
-    };
+const closeRenameForm = (form, restoreValue = true) => {
+    const nameSpan = form.parentElement.querySelector(NAME_SELECTOR);
+    const input = form.querySelector(INPUT_SELECTOR);
 
-    const handleCancelClick = (container, isShowPage) => {
-        let form, nameSpan;
-
-        if (isShowPage) {
-            form = container.querySelector('.media-rename-form');
-            nameSpan = container.querySelector('.media-name');
-        } else {
-            const cancelBtn = container.querySelector('.media-rename-cancel-btn');
-            if (!cancelBtn) return;
-            form = cancelBtn.closest('.media-rename-form');
-            nameSpan = form.parentElement.querySelector('.media-name');
-        }
-
-        const input = form.querySelector('.media-rename-input');
+    if (restoreValue) {
         input.value = input.dataset.original;
-        form.classList.add('d-none');
-        nameSpan.classList.remove('d-none');
-    };
+    }
 
-    const handleSubmit = (e, container, isShowPage) => {
-        if (!e.target.classList.contains('media-rename-form')) return;
+    form.hidden = true;
+    nameSpan.hidden = false;
+};
+
+const configureMediaRename = () => {
+    document.addEventListener('click', (e) => {
+        const renameBtn = e.target.closest('[data-component="media-rename-toggle"]');
+        if (renameBtn) {
+            e.preventDefault();
+            const form = findRenameForm(renameBtn);
+            if (form) {
+                openRenameForm(form);
+            }
+
+            return;
+        }
+
+        const cancelBtn = e.target.closest('[data-component="media-rename-cancel"]');
+        if (cancelBtn) {
+            closeRenameForm(cancelBtn.closest(FORM_SELECTOR));
+        }
+    });
+
+    document.addEventListener('submit', (e) => {
+        if (!e.target.matches(FORM_SELECTOR)) return;
         e.preventDefault();
 
         const form = e.target;
-        const input = form.querySelector('.media-rename-input');
+        const input = form.querySelector(INPUT_SELECTOR);
         const newName = input.value.trim();
         const originalName = input.dataset.original;
 
         if (!newName || newName === originalName) {
-            form.classList.add('d-none');
-            if (isShowPage) {
-                container.querySelector('.media-name').classList.remove('d-none');
-            } else {
-                form.parentElement.querySelector('.media-name').classList.remove('d-none');
-            }
+            closeRenameForm(form, false);
+
             return;
         }
 
@@ -79,101 +84,12 @@ const configureMediaRename = () => {
         }
 
         form.submit();
-    };
+    });
 
-    const handleKeydown = (e, container, isShowPage) => {
-        if (e.target.classList.contains('media-rename-input')) {
-            if (e.key === 'Escape') {
-                const form = e.target.closest('.media-rename-form');
-                const nameSpan = isShowPage
-                    ? container.querySelector('.media-name')
-                    : form.parentElement.querySelector('.media-name');
-
-                e.target.value = e.target.dataset.original;
-                form.classList.add('d-none');
-                nameSpan.classList.remove('d-none');
-            }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && e.target.matches(INPUT_SELECTOR)) {
+            closeRenameForm(e.target.closest(FORM_SELECTOR));
         }
-    };
-
-    if (mediaListContainer) {
-        mediaListContainer.querySelectorAll('tr.item').forEach(row => {
-            const mediaNameCell = row.querySelector('.media-name');
-            if (mediaNameCell) {
-                const mediaName = mediaNameCell.textContent.trim();
-                const currentKey = document.querySelector('meta[name="current-key"]')?.content || '';
-                const mediaKey = currentKey ? `${currentKey}/${mediaName}` : mediaName;
-                row.dataset.media = mediaKey;
-            }
-        });
-
-        mediaListContainer.addEventListener('click', (e) => {
-            const editBtn = e.target.closest('.media-rename-btn');
-            if (editBtn) {
-                const row = editBtn.closest('tr');
-                const pathCell = row.querySelector('.media-name').closest('td');
-                const nameSpan = pathCell.querySelector('.media-name');
-                const form = pathCell.querySelector('.media-rename-form');
-                nameSpan.classList.add('d-none');
-                form.classList.remove('d-none');
-                const input = form.querySelector('.media-rename-input');
-                input.dataset.original = input.value;
-                input.focus();
-                input.select();
-            }
-
-            const cancelBtn = e.target.closest('.media-rename-cancel-btn');
-            if (cancelBtn) {
-                handleCancelClick(mediaListContainer, false);
-            }
-        });
-
-        mediaListContainer.addEventListener('submit', (e) => handleSubmit(e, mediaListContainer, false));
-        mediaListContainer.addEventListener('keydown', (e) => handleKeydown(e, mediaListContainer, false));
-    }
-
-    if (mediaRenameContainer) {
-        mediaRenameContainer.addEventListener('click', (e) => {
-            const editBtn = e.target.closest('.media-rename-btn');
-            if (editBtn) {
-                handleEditClick(mediaRenameContainer, true);
-            }
-
-            const cancelBtn = e.target.closest('.media-rename-cancel-btn');
-            if (cancelBtn) {
-                handleCancelClick(mediaRenameContainer, true);
-            }
-        });
-
-        mediaRenameContainer.addEventListener('submit', (e) => handleSubmit(e, mediaRenameContainer, true));
-        mediaRenameContainer.addEventListener('keydown', (e) => handleKeydown(e, mediaRenameContainer, true));
-    }
-
-    document.addEventListener('click', (e) => {
-        const editBtn = e.target.closest('.media-rename-btn');
-        if (!editBtn || editBtn.closest('[data-component*="media-list"]')) {
-            return;
-        }
-
-        const row = editBtn.closest('.row');
-        if (!row) {
-            return;
-        }
-
-        const container = row.querySelector('[data-component*="media-rename"]');
-        const nameSpan = container?.querySelector('.media-name');
-        const form = container?.querySelector('.media-rename-form');
-
-        if (!nameSpan || !form) {
-            return;
-        }
-
-        nameSpan.classList.add('d-none');
-        form.classList.remove('d-none');
-        const input = form.querySelector('.media-rename-input');
-        input.dataset.original = input.value;
-        input.focus();
-        input.select();
     });
 };
 

@@ -5,16 +5,16 @@ const configureClipboard = () => {
         element.addEventListener('click', (event) => {
             event.preventDefault();
             const button = event.currentTarget;
-            const label = button.querySelector('.btn-label');
+            const label = button.querySelector('[data-clipboard-label]');
             const originalText = label.textContent;
 
             navigator.clipboard.writeText(document.querySelector(button.dataset.clipboardTarget).innerText).then(() => {
-                button.classList.add('is-copied');
+                button.toggleAttribute('data-copied', true);
                 if (button.dataset.clipboardCopied) {
                     label.textContent = button.dataset.clipboardCopied;
                 }
                 setTimeout(() => {
-                    button.classList.remove('is-copied');
+                    button.toggleAttribute('data-copied', false);
                     label.textContent = originalText;
                 }, 1000);
             });

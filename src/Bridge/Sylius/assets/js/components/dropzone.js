@@ -9,7 +9,7 @@ const addDropzone = (element = null) => {
 
   if (dropzone) {
     const config = dropzone.dataset.dropzoneConfig ? JSON.parse(dropzone.dataset.dropzoneConfig) : {};
-    const previewTemplate = dropzone.querySelector('.dz-preview-template');
+    const previewTemplate = dropzone.querySelector('[data-component="dropzone-preview-template"]');
     const defaultConfig = {
       addRemoveLinks: false,
       maxFilesize: 20,

@@ -1,21 +1,22 @@
 const configureDirectoryCreate = () => {
     const createDirectoryForm = document.querySelector('[data-component="directory-create-form"]');
-    const createDirectoryInput = createDirectoryForm?.querySelector('.directory-create-input');
-    const createDirectoryCancelBtn = createDirectoryForm?.querySelector('.directory-create-cancel-btn');
 
     if (!createDirectoryForm) {
         return;
     }
 
-    createDirectoryForm.classList.add('d-none');
+    const createDirectoryInput = createDirectoryForm.querySelector('[data-component="directory-create-input"]');
+    const createDirectoryCancelBtn = createDirectoryForm.querySelector('[data-component="directory-create-cancel"]');
+
+    createDirectoryForm.hidden = true;
 
     document.addEventListener('click', (e) => {
         const createDirectoryBtn = e.target.closest('[data-component="directory-create"]');
 
         if (createDirectoryBtn) {
             e.preventDefault();
-            createDirectoryForm.classList.toggle('d-none');
-            if (!createDirectoryForm.classList.contains('d-none')) {
+            createDirectoryForm.hidden = !createDirectoryForm.hidden;
+            if (!createDirectoryForm.hidden) {
                 createDirectoryInput.focus();
             }
         }
@@ -31,15 +32,16 @@ const configureDirectoryCreate = () => {
         // The form will submit normally via HTML
     });
 
-    createDirectoryCancelBtn?.addEventListener('click', () => {
-        createDirectoryForm.classList.add('d-none');
+    const resetCreateDirectoryForm = () => {
+        createDirectoryForm.hidden = true;
         createDirectoryInput.value = '';
-    });
+    };
+
+    createDirectoryCancelBtn?.addEventListener('click', resetCreateDirectoryForm);
 
     createDirectoryInput?.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            createDirectoryForm.classList.add('d-none');
-            createDirectoryInput.value = '';
+            resetCreateDirectoryForm();
         }
     });
 };

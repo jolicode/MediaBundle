@@ -3,9 +3,8 @@ import buildFolderUrl from "./folderUrl.js";
 const openFolderChoiceModal = (folderChoiceButton) => {
     const modal = document.getElementById('modal-folder-choice');
     document.body.appendChild(modal);
-    const modalContent = modal.querySelector('.modal-body');
-    const pageActions = folderChoiceButton.closest('.page-actions');
-    const inputElement = pageActions.querySelector('#move_to');
+    const modalContent = modal.querySelector('[data-component="folder-choice-modal-body"]');
+    const inputElement = document.querySelector('#move-form #move_to');
 
     const fetchFolder = (url) => fetch(url).then((response) => response.text());
 

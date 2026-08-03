@@ -11,11 +11,9 @@ const configureTrixToolbar = () => {
         }
 
         const id = editor.getAttribute('input');
-        const modal = widget.querySelector('.modal-media-choice');
+        const modal = widget.querySelector('[data-component="media-choice-modal"]');
         document.body.appendChild(modal);
-        const modalContent = document.querySelector(
-            `#modal-media-choice_${id} .modal-body`,
-        );
+        const modalContent = modal.querySelector('[data-component="media-choice-modal-body"]');
 
         if (!buttonRow) {
             return;

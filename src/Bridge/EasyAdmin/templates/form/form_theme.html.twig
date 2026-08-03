@@ -3,7 +3,7 @@
         {{ include('@EasyAdmin/label/null.html.twig') }}
     </template>
 
-    <div class="media-choice js-joli-media-choice-container{% if media is empty %} empty{% endif %}" data-media-id="{{ id }}">
+    <div class="media-choice" data-component="media-choice" data-media-id="{{ id }}"{% if media is empty %} data-empty{% endif %}>
         <span id="joli-media-container_{{ id }}">
             {% if media is not empty %}
                 {{ include('@JoliMediaEasyAdmin/_preview.html.twig', { className: 'media-preview' }) }}
@@ -19,7 +19,7 @@
                     size="sm"
                     icon="fas fa-plus"
                     href="{{ joli_media_admin_url('choose', { key: '__FOLDER__' }) }}"
-                    class="joli-media-choice-edit"
+                    data-component="media-choice-edit"
                     data-folder="{{ folder }}"
                     data-bs-toggle="modal"
                     data-bs-target="#modal-media-choice_{{ id }}"
@@ -28,17 +28,18 @@
                     variant="link"
                     size="sm"
                     icon="fas fa-minus-circle"
-                    class="ms-2 text-danger hide-when-empty joli-media-choice-delete"
+                    class="ms-2 text-danger hide-when-empty"
+                    data-component="media-choice-delete"
                 >{{ 'action.remove'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
             </span>
         </span>
         {{- block('form_widget_simple') -}}
         <small class="form-text form-help form-error">{{ 'media.error.required'|trans(domain: 'JoliMediaEasyAdminBundle') }}</small>
     </div>
-    <div id="modal-media-choice_{{ id }}" class="modal-media-choice modal fade" tabindex="-1">
+    <div id="modal-media-choice_{{ id }}" class="modal-media-choice modal fade" tabindex="-1" data-component="media-choice-modal">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-body">
+                <div class="modal-body" data-component="media-choice-modal-body">
                 </div>
                 <div class="modal-footer">
                     <twig:ea:Button type="button" data-bs-dismiss="modal">
@@ -58,12 +59,13 @@
     <div
         id="modal-media-choice_{{ id }}"
         class="modal-media-choice modal fade"
+        data-component="media-choice-modal"
         tabindex="-1"
         data-href="{{ joli_media_admin_url('choose', { key: '__FOLDER__' }) }}"
     >
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-body">
+                <div class="modal-body" data-component="media-choice-modal-body">
                 </div>
                 <div class="modal-footer">
                     <twig:ea:Button type="button" data-bs-dismiss="modal">

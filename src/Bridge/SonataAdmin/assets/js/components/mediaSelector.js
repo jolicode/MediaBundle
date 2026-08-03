@@ -1,10 +1,12 @@
 const { jQuery, Admin } = window;
 
+const MEDIA_CHOICE_SELECTOR = '[data-component="media-choice"]';
+
 const MediaSelector = class {
   constructor(mediaChoiceContainer) {
     this.mediaChoiceContainer = mediaChoiceContainer;
-    this.deleteButton = mediaChoiceContainer.querySelector('.js-joli-media-choice-delete');
-    this.editButton = mediaChoiceContainer.querySelector('.js-joli-media-choice-edit');
+    this.deleteButton = mediaChoiceContainer.querySelector('[data-component="media-choice-delete"]');
+    this.editButton = mediaChoiceContainer.querySelector('[data-component="media-choice-edit"]');
     this.id = mediaChoiceContainer.dataset.mediaId;
     this.mediaContainer = document.getElementById(`joli-media-container_${this.id}`);
     this.inputElement = document.getElementById(this.id);
@@ -38,17 +40,17 @@ const MediaSelector = class {
   };
 
   openSearchPanel = () => {
-    const searchContainer = this.modalContent.querySelector('.search-container');
+    const searchContainer = this.modalContent.querySelector('[data-component="search-container"]');
 
     if (searchContainer) {
-      searchContainer.classList.add('search-active');
-      searchContainer.querySelector('.joli-media-search-input').focus();
+      searchContainer.toggleAttribute('data-active', true);
+      searchContainer.querySelector('[data-component="media-search-input"]').focus();
     }
   };
 
   setupSearch = () => {
-    const searchForm = this.modalContent.querySelector('.joli-media-search-form');
-    const searchInput = this.modalContent.querySelector('.joli-media-search-input');
+    const searchForm = this.modalContent.querySelector('[data-component="media-search"]');
+    const searchInput = this.modalContent.querySelector('[data-component="media-search-input"]');
     if (!searchForm || !searchInput) return;
 
     this.currentSearchValue = searchInput.value;
@@ -56,7 +58,7 @@ const MediaSelector = class {
     const newSearchForm = searchForm.cloneNode(true);
     searchForm.parentNode.replaceChild(newSearchForm, searchForm);
 
-    const newInput = newSearchForm.querySelector('.joli-media-search-input');
+    const newInput = newSearchForm.querySelector('[data-component="media-search-input"]');
 
     // the modal content is re-rendered on every fetch: keep the search
     // panel visible as long as a search is active
@@ -112,7 +114,7 @@ const MediaSelector = class {
     }
 
     this.mediaContainer.innerHTML = target.dataset.mediaTemplate;
-    this.mediaChoiceContainer.classList.remove('empty');
+    this.mediaChoiceContainer.toggleAttribute('data-empty', false);
     this.setFieldValue(target.dataset.mediaUrl);
     this.editButton.dataset.folder = target.dataset.mediaFolder;
     jQuery(this.modal).modal('hide');
@@ -158,6 +160,7 @@ const MediaSelector = class {
       this.modal.addEventListener('click', this.handleModalClick);
       this.modal.addEventListener("submit", this.handleModalSubmit);
 
+      // the modal markup comes from @SonataAdmin/CRUD/Association/edit_modal.html.twig
       this.modalContent = document.querySelector(`#field_dialog_${this.id} .modal-body`);
       document.body.appendChild(this.modal);
 
@@ -185,7 +188,7 @@ const MediaSelector = class {
     event.preventDefault();
     event.stopPropagation();
 
-    this.mediaChoiceContainer.classList.add('empty');
+    this.mediaChoiceContainer.toggleAttribute('data-empty', true);
     const template = document.getElementById(`template-null-label-${this.id}`);
     this.mediaContainer.innerHTML = "";
     this.mediaContainer.appendChild(template.content.cloneNode(true));
@@ -199,7 +202,7 @@ const configureMediaSelector = () => {
   const mediaSelectors = {};
 
   const getMediaSelector = (node) => {
-    const container = node.closest('.js-joli-media-choice-container');
+    const container = node.closest(MEDIA_CHOICE_SELECTOR);
     const mediaId = container.dataset.mediaId;
 
     if (!mediaSelectors[mediaId]) {
@@ -209,11 +212,11 @@ const configureMediaSelector = () => {
     return mediaSelectors[mediaId];
   }
 
-  jQuery(document).on('click', '.js-joli-media-choice-delete', function (e) {
+  jQuery(document).on('click', '[data-component="media-choice-delete"]', function (e) {
     getMediaSelector(e.target).delete(e);
   });
 
-  jQuery(document).on('click', '.js-joli-media-choice-edit', function (e) {
+  jQuery(document).on('click', '[data-component="media-choice-edit"]', function (e) {
     getMediaSelector(e.target).choose(e);
   });
 };

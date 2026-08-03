@@ -13,17 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
   let dropzoneInstance = null;
 
   const switchTool = (target, currentTool) => {
-    const headerTools = target.closest('.joli-media-header-tools');
+    const headerTools = target.closest('[data-component="media-tools"]');
     let activeTool = null;
 
     for (const tool of ['dropzone', 'new-directory', 'rename-directory', 'search']) {
-      const toolContainer = headerTools.querySelector('.' + tool + '-container');
+      const toolContainer = headerTools.querySelector(`[data-component="${tool}-container"]`);
 
       if (toolContainer) {
         if (tool !== currentTool) {
-          toolContainer.classList.remove(tool + '-active');
+          toolContainer.toggleAttribute('data-active', false);
         } else {
-          toolContainer.classList.toggle(tool + '-active');
+          toolContainer.toggleAttribute('data-active');
           activeTool = toolContainer;
         }
       }
@@ -70,12 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const dropzone = switchTool(e.target, 'dropzone');
 
-    if (!dropzone.classList.contains('dropzone-initialized')) {
+    if (dropzone.dataset.dropzoneInitialized !== 'true') {
       dropzoneInstance = addDropzone(dropzone.querySelector('[data-component=dropzone]'));
-      dropzone.classList.add('dropzone-initialized');
+      dropzone.dataset.dropzoneInitialized = 'true';
     }
 
-    if (!dropzone.classList.contains('dropzone-active')) {
+    if (!dropzone.hasAttribute('data-active')) {
       dropzoneInstance.removeAllFiles(true);
     }
   });
@@ -84,10 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     e.stopPropagation();
 
-    const headerTools = e.target.closest('.content-header');
-    const fileRenameForm = headerTools.querySelector('.rename-file-container');
+    const fileRenameForm = document.querySelector('[data-component="rename-file-container"]');
 
-    fileRenameForm.classList.toggle('rename-active');
+    fileRenameForm.toggleAttribute('data-active');
     fileRenameForm.querySelector('input[type=text]').focus();
   });
 });

@@ -3,7 +3,7 @@
         <span class="text-muted">{{ 'media.unavailable.simple'|trans(domain: 'JoliMediaSyliusBundle') }}</span>
     </template>
 
-    <div class="media-choice js-joli-media-choice-container{% if media is empty %} empty{% endif %}" data-media-id="{{ id }}">
+    <div class="media-choice" data-component="media-choice" data-media-id="{{ id }}"{% if media is empty %} data-empty{% endif %}>
         <span id="joli-media-container_{{ id }}">
             {% if media is not empty %}
                 {{ include('@JoliMediaSylius/_preview.html.twig', { className: 'media-preview' }) }}
@@ -16,12 +16,14 @@
                 <a
                     href="{{ path('joli_media_sylius_admin_choose', { key: folder }) }}"
                     data-base-path="{{ path('joli_media_sylius_admin_choose') }}"
-                    class="btn btn-sm btn-link text-primary joli-media-choice-edit"
+                    class="btn btn-sm btn-link text-primary"
+                    data-component="media-choice-edit"
                 >
                     <i class="fas fa-plus"></i> {{ 'action.choose_a_file'|trans(domain: 'JoliMediaSyliusBundle') }}
                 </a>
                 <button
-                    class="btn btn-sm btn-link text-danger ms-2 hide-when-empty joli-media-choice-delete"
+                    class="btn btn-sm btn-link text-danger ms-2 hide-when-empty"
+                    data-component="media-choice-delete"
                 >
                     <i class="fas fa-minus-circle"></i> {{ 'action.remove'|trans(domain: 'JoliMediaSyliusBundle') }}
                 </button>
@@ -32,7 +34,7 @@
     <div id="modal-media-choice_{{ id }}" class="modal-media-choice modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-body">
+                <div class="modal-body" data-component="media-choice-modal-body">
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">

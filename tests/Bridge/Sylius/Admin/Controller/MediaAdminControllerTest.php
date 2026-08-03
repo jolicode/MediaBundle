@@ -216,10 +216,10 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         // buttons for the media choice
-        $this->assertSelectorExists('a.joli-media-choice-edit');
-        $this->assertSelectorTextContains('a.joli-media-choice-edit', 'Choose a file');
-        $this->assertSelectorExists('button.joli-media-choice-delete');
-        $this->assertSelectorTextContains('button.joli-media-choice-delete', 'Remove');
+        $this->assertSelectorExists('a[data-component="media-choice-edit"]');
+        $this->assertSelectorTextContains('a[data-component="media-choice-edit"]', 'Choose a file');
+        $this->assertSelectorExists('button[data-component="media-choice-delete"]');
+        $this->assertSelectorTextContains('button[data-component="media-choice-delete"]', 'Remove');
     }
 
     public function testDeleteDirectoryNotInUse(): void
@@ -569,7 +569,7 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertCount(1, $directoryRow, \sprintf('Directory row not found for "%s"', $directoryName));
 
         // Get the form from that row
-        $form = $directoryRow->filter('.directory-rename-form');
+        $form = $directoryRow->filter('form[data-component="directory-rename-row-form"]');
         $this->assertCount(1, $form, \sprintf('Directory rename form not found for "%s"', $directoryName));
 
         return $form->form();

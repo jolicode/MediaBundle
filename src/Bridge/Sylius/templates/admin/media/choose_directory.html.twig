@@ -2,7 +2,7 @@
 
 <div class="folder-choice-content">
     {% if parent_key is defined and parent_key != current_key %}
-        <div class="folder-parent">
+        <div class="folder-parent" data-component="folder-parent">
             <a href="{{ path('joli_media_sylius_admin_choose', { key: parent_key }) }}" 
                data-folder-path="{{ parent_key }}">
                 <span class="folder-icon">{{ ux_icon('tabler:folder-up') }}</span>

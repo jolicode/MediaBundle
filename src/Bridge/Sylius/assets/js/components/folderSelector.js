@@ -8,8 +8,7 @@ const openFolderChoiceModal = (folderChoiceButton) => {
 
     folderChoiceButtonRef = folderChoiceButton;
 
-    const modalBody = modal.querySelector('.modal-body');
-    const listContainer = modalBody?.querySelector('.folder-list-container');
+    const listContainer = modal.querySelector('[data-component="folder-list"]');
     const currentMediaPath = folderChoiceButton.closest('[data-media-key]')?.dataset.mediaKey || '';
 
     const fetchFolder = (url) => {
@@ -23,7 +22,7 @@ const openFolderChoiceModal = (folderChoiceButton) => {
     let currentFolderPath = folderChoiceButton.dataset.folder || '';
 
     const updateBreadcrumb = (newFolderPath) => {
-        const breadcrumb = modal.querySelector('.folder-modal-breadcrumb');
+        const breadcrumb = modal.querySelector('[data-component="folder-breadcrumb"]');
         if (!breadcrumb) return;
 
         const baseUrl = folderChoiceButton.getAttribute('href') || '';
@@ -78,7 +77,7 @@ const openFolderChoiceModal = (folderChoiceButton) => {
     };
 
     const attachModalEvents = () => {
-        const breadcrumb = modal.querySelector('.folder-modal-breadcrumb');
+        const breadcrumb = modal.querySelector('[data-component="folder-breadcrumb"]');
         breadcrumb?.addEventListener('click', (e) => {
             const link = e.target.closest('a[data-folder-path]');
             if (!link) return;
@@ -96,7 +95,7 @@ const openFolderChoiceModal = (folderChoiceButton) => {
             }
         });
 
-        const folderParent = listContainer?.querySelector('.folder-parent a');
+        const folderParent = listContainer?.querySelector('[data-component="folder-parent"] a');
         folderParent?.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -126,7 +125,7 @@ const openFolderChoiceModal = (folderChoiceButton) => {
             });
         });
 
-        const moveBtn = modal.querySelector('.folder-move-btn');
+        const moveBtn = modal.querySelector('[data-component="folder-move"]');
         if (moveBtn) {
             moveBtn.dataset.folderPath = currentFolderPath;
             moveBtn.addEventListener('click', (e) => {
@@ -139,22 +138,24 @@ const openFolderChoiceModal = (folderChoiceButton) => {
 
     const setupCreateFolder = () => {
         const createBtn = modal.querySelector('[data-component="folder-create"]');
-        const createForm = modal.querySelector('.folder-create-form');
-        const createInput = modal.querySelector('.folder-create-input');
-        const cancelBtn = modal.querySelector('.folder-create-cancel');
+        const createForm = modal.querySelector('[data-component="folder-create-form"]');
+        const createInput = modal.querySelector('[data-component="folder-create-input"]');
+        const cancelBtn = modal.querySelector('[data-component="folder-create-cancel"]');
 
         createBtn?.addEventListener('click', (e) => {
             e.preventDefault();
-            createForm.classList.toggle('d-none');
-            if (!createForm.classList.contains('d-none')) {
+            createForm.hidden = !createForm.hidden;
+            if (!createForm.hidden) {
                 createInput.focus();
             }
         });
 
-        cancelBtn?.addEventListener('click', () => {
-            createForm.classList.add('d-none');
+        const resetCreateForm = () => {
+            createForm.hidden = true;
             createInput.value = '';
-        });
+        };
+
+        cancelBtn?.addEventListener('click', resetCreateForm);
 
         createForm?.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -186,8 +187,7 @@ const openFolderChoiceModal = (folderChoiceButton) => {
                         updateBreadcrumb(currentFolderPath);
                         attachModalEvents();
                     }
-                    createForm.classList.add('d-none');
-                    createInput.value = '';
+                    resetCreateForm();
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -196,8 +196,7 @@ const openFolderChoiceModal = (folderChoiceButton) => {
 
         createInput?.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                createForm.classList.add('d-none');
-                createInput.value = '';
+                resetCreateForm();
             }
         });
     };
@@ -229,10 +228,10 @@ const openFolderChoiceModal = (folderChoiceButton) => {
 };
 
 const configureFolderSelector = () => {
-    const folderSelectors = document.querySelectorAll("[data-component=media-move]");
+    const folderSelectors = document.querySelectorAll('[data-component="media-move"]');
 
     folderSelectors.forEach((folderSelector) => {
-        folderSelector.addEventListener("click", (event) => {
+        folderSelector.addEventListener('click', (event) => {
             event.preventDefault();
             openFolderChoiceModal(folderSelector);
         });

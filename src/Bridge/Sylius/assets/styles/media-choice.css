@@ -29,7 +29,7 @@
     width: 15rem
   }
 
-  &.empty .hide-when-empty {
+  &[data-empty] .hide-when-empty {
     display: none;
   }
 

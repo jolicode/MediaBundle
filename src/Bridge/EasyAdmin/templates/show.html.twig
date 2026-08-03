@@ -70,7 +70,7 @@
     <div id="modal-folder-choice" class="modal-folder-choice modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-body">
+                <div class="modal-body" data-component="folder-choice-modal-body">
                 </div>
                 <div class="modal-footer">
                     <twig:ea:Button type="button" data-bs-dismiss="modal">
@@ -127,10 +127,10 @@
 {% endblock %}
 
 {% block content_header_wrapper %}
-    <div class="joli-media-header-tools">
+    <div class="joli-media-header-tools" data-component="media-tools">
         {{ parent() }}
 
-        <div class="rename-file-container">
+        <div class="rename-file-container" data-component="rename-file-container">
             {{ form_start(rename_form, { action: joli_media_admin_url('show', { key: file }) }) }}
                 {{ form_widget(rename_form.to) }}
                 {{ form_widget(rename_form.submit) }}

@@ -7,9 +7,9 @@ const configureClipboard = () => {
             const button = event.currentTarget;
             navigator.clipboard.writeText(document.querySelector(button.dataset.clipboardTarget).innerText).then(() => {
             // clipboard successfully set
-            button.classList.add('is-copied');
+            button.toggleAttribute('data-copied', true);
             setTimeout(() => {
-                button.classList.remove('is-copied');
+                button.toggleAttribute('data-copied', false);
             }, 2000);
             });
         });

@@ -13,7 +13,7 @@ const addDropzone = (element = null) => {
       addRemoveLinks: false,
       maxFilesize: 20, // MB
       paramName: 'upload[file]',
-      previewTemplate: dropzone.querySelector('.dz-preview-template').innerHTML,
+      previewTemplate: dropzone.querySelector('[data-component="dropzone-preview-template"]').innerHTML,
       thumbnailWidth: 180,
       thumbnailHeight: 109,
       sending(file, xhr) {
