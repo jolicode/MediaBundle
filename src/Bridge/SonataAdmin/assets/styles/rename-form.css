@@ -12,7 +12,7 @@
   border-radius: 4px;
   z-index: 100;
 
-  &.rename-active {
+  &[data-active] {
     display: block;
   }
 

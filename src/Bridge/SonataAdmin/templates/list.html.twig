@@ -28,7 +28,7 @@
 {% block navbar_title %}{% endblock %}
 
 {% block sonata_page_content_nav %}
-    <div class="joli-media-header-tools">
+    <div class="joli-media-header-tools" data-component="media-tools">
         <nav class="navbar navbar-default" role="navigation">
             <div class="container-fluid">
                 <div class="nav navbar-left btn-group" role="group" aria-label="Change view mode">
@@ -69,7 +69,7 @@
                 </div>
             </div>
         </nav>
-        <div class="sonata-ba-form dropzone-container">
+        <div class="sonata-ba-form dropzone-container" data-component="dropzone-container">
             {{ form_start(create_media_form, { attr: {
                 class: 'dropzone',
                 'data-component': 'dropzone',
@@ -77,22 +77,22 @@
             } }) }}
                 {{ form_widget(create_media_form.path) }}
                 {{ form_widget(create_media_form._token) }}
-                <div class="dz-preview-template">
+                <div class="dz-preview-template" data-component="dropzone-preview-template">
                     {{ include('@JoliMediaSonataAdmin/uploaded_file_preview.html.twig') }}
                 </div>
             {{ form_end(create_media_form) }}
         </div>
-        <div class="sonata-ba-form new-directory-container">
+        <div class="sonata-ba-form new-directory-container" data-component="new-directory-container">
             {{ form_start(create_directory_form, { action: path('joli_media_sonata_admin_create_directory') }) }}
                 {{ form_widget(create_directory_form.directory) }}
                 {{ form_widget(create_directory_form.submit) }}
             {{ form_end(create_directory_form) }}
         </div>
         {% if base_template ends with '/choose.html.twig' %}
-            <div class="search-container">
-                <form class="joli-media-search-form" data-component="media-search">
+            <div class="search-container" data-component="search-container">
+                <form data-component="media-search">
                     <div class="input-group">
-                        <input type="search" name="query" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
+                        <input type="search" name="query" class="form-control" data-component="media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
                         <span class="input-group-btn">
                             <button class="btn btn-default joli-media-search-btn" type="submit">{{ 'action.search'|trans }}</button>
                         </span>

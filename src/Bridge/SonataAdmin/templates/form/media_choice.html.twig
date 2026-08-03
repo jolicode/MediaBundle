@@ -3,7 +3,7 @@
         <span class="label label-info">{{ 'short_object_description_placeholder'|trans(domain: 'SonataAdminBundle') }}</span>
     </template>
 
-    <div class="media-choice js-joli-media-choice-container{% if media is empty %} empty{% endif %}" data-media-id="{{ id }}">
+    <div class="media-choice" data-component="media-choice" data-media-id="{{ id }}"{% if media is empty %} data-empty{% endif %}>
         <span id="joli-media-container_{{ id }}">
             {% if media is not empty %}
                 {{ include('@JoliMediaSonataAdmin/_preview.html.twig', { className: 'media-preview' }) }}
@@ -15,12 +15,14 @@
             <span class="btn-group">
                 <a href="{{ path('joli_media_sonata_admin_choose') }}"
                     data-folder="{{ folder }}"
-                    class="btn btn-info btn-sm sonata-ba-action js-joli-media-choice-edit"
+                    class="btn btn-info btn-sm sonata-ba-action"
+                    data-component="media-choice-edit"
                 >
                     <i class="fas fa-file"></i> {{ 'action.choose_a_file'|trans(domain: 'JoliMediaSonataAdminBundle') }}
                 </a>
                 <button
-                    class="btn btn-danger btn-sm sonata-ba-action hide-when-empty js-joli-media-choice-delete"
+                    class="btn btn-danger btn-sm sonata-ba-action hide-when-empty"
+                    data-component="media-choice-delete"
                     title="Remove"
                 >
                     <i class="fas fa-trash"></i> {{ 'action.remove'|trans(domain: 'JoliMediaSonataAdminBundle') }}

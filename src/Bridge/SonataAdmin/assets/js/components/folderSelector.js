@@ -84,6 +84,7 @@ const FolderSelector = class {
       this.modal.addEventListener('click', this.handleModalClick);
       this.modal.addEventListener("submit", this.handleModalSubmit);
 
+      // the modal markup comes from @SonataAdmin/CRUD/Association/edit_modal.html.twig
       this.modalContent = document.querySelector(`#field_dialog_folder-choice .modal-body`);
       document.body.appendChild(this.modal);
 

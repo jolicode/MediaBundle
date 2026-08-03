@@ -12,7 +12,7 @@
   border-radius: 4px;
   z-index: 100;
 
-  &.new-directory-active {
+  &[data-active] {
     display: block;
   }
 
