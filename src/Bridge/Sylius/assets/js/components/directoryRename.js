@@ -1,16 +1,20 @@
+const ROW_FORM_SELECTOR = '[data-component="directory-rename-row-form"]';
+const INPUT_SELECTOR = '[data-component="directory-rename-input"]';
+const NAME_SELECTOR = '[data-component="directory-name"]';
+
 const configureDirectoryRename = () => {
     const container = document.querySelector('[data-component*="directory-list"]');
     const headerRenameForm = document.querySelector('[data-component="directory-rename-form"]');
-    const headerRenameInput = headerRenameForm?.querySelector('.directory-rename-input');
-    const headerRenameCancelBtn = headerRenameForm?.querySelector('.directory-rename-cancel-btn');
+    const headerRenameInput = headerRenameForm?.querySelector(INPUT_SELECTOR);
+    const headerRenameCancelBtn = headerRenameForm?.querySelector('[data-component="directory-rename-cancel"]');
 
     document.addEventListener('click', (e) => {
-        const headerRenameBtn = e.target.closest('.directory-rename-header-btn');
+        const headerRenameBtn = e.target.closest('[data-component="directory-rename-header"]');
 
-        if (headerRenameBtn) {
+        if (headerRenameBtn && headerRenameForm) {
             e.preventDefault();
-            headerRenameForm?.classList.toggle('d-none');
-            if (!headerRenameForm?.classList.contains('d-none')) {
+            headerRenameForm.hidden = !headerRenameForm.hidden;
+            if (!headerRenameForm.hidden) {
                 headerRenameInput.focus();
                 headerRenameInput.select();
             }
@@ -38,15 +42,16 @@ const configureDirectoryRename = () => {
         newPathInput.value = newPath;
     });
 
-    headerRenameCancelBtn?.addEventListener('click', () => {
-        headerRenameForm.classList.add('d-none');
+    const resetHeaderRenameForm = () => {
+        headerRenameForm.hidden = true;
         headerRenameInput.value = '';
-    });
+    };
+
+    headerRenameCancelBtn?.addEventListener('click', resetHeaderRenameForm);
 
     headerRenameInput?.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            headerRenameForm.classList.add('d-none');
-            headerRenameInput.value = '';
+            resetHeaderRenameForm();
         }
     });
 
@@ -54,52 +59,55 @@ const configureDirectoryRename = () => {
         return;
     }
 
+    const closeRowRenameForm = (form) => {
+        const input = form.querySelector(INPUT_SELECTOR);
+        const nameSpan = form.parentElement.querySelector(NAME_SELECTOR);
+
+        input.value = input.dataset.original;
+        form.hidden = true;
+        nameSpan.hidden = false;
+    };
+
     container.addEventListener('click', (e) => {
-        const editBtn = e.target.closest('.directory-rename-btn');
+        const editBtn = e.target.closest('[data-component="directory-rename-row"]');
         if (!editBtn) return;
 
         const row = editBtn.closest('tr');
-        const pathCell = row.querySelector('.directory-name').closest('td');
-        const nameSpan = pathCell.querySelector('.directory-name');
+        const pathCell = row.querySelector(NAME_SELECTOR).closest('td');
+        const nameSpan = pathCell.querySelector(NAME_SELECTOR);
 
-        const form = pathCell.querySelector('.directory-rename-form');
-        nameSpan.classList.add('d-none');
-        form.classList.remove('d-none');
+        const form = pathCell.querySelector(ROW_FORM_SELECTOR);
+        nameSpan.hidden = true;
+        form.hidden = false;
 
-        const input = form.querySelector('.directory-rename-input');
+        const input = form.querySelector(INPUT_SELECTOR);
         input.dataset.original = input.value;
         input.focus();
         input.select();
     });
 
     container.addEventListener('click', (e) => {
-        const cancelBtn = e.target.closest('.directory-rename-cancel-btn');
+        const cancelBtn = e.target.closest('[data-component="directory-rename-cancel"]');
         if (!cancelBtn) return;
 
-        const form = cancelBtn.closest('.directory-rename-form');
-        const nameSpan = form.parentElement.querySelector('.directory-name');
-        const input = form.querySelector('.directory-rename-input');
-
-        input.value = input.dataset.original;
-        form.classList.add('d-none');
-        nameSpan.classList.remove('d-none');
+        closeRowRenameForm(cancelBtn.closest(ROW_FORM_SELECTOR));
     });
 
     container.addEventListener('submit', (e) => {
-        if (!e.target.classList.contains('directory-rename-form')) return;
+        if (!e.target.matches(ROW_FORM_SELECTOR)) return;
         e.preventDefault();
 
         const form = e.target;
         const pathCell = form.closest('td');
         const row = pathCell.closest('tr');
-        const nameSpan = pathCell.querySelector('.directory-name');
-        const input = form.querySelector('.directory-rename-input');
+        const nameSpan = pathCell.querySelector(NAME_SELECTOR);
+        const input = form.querySelector(INPUT_SELECTOR);
         const newName = input.value.trim();
         const originalName = input.dataset.original;
 
         if (!newName || newName === originalName) {
-            form.classList.add('d-none');
-            nameSpan.classList.remove('d-none');
+            form.hidden = true;
+            nameSpan.hidden = false;
             return;
         }
 
@@ -121,15 +129,8 @@ const configureDirectoryRename = () => {
     });
 
     container.addEventListener('keydown', (e) => {
-        if (e.target.classList.contains('directory-rename-input')) {
-            if (e.key === 'Escape') {
-                const form = e.target.closest('.directory-rename-form');
-                const nameSpan = form.parentElement.querySelector('.directory-name');
-
-                e.target.value = e.target.dataset.original;
-                form.classList.add('d-none');
-                nameSpan.classList.remove('d-none');
-            }
+        if (e.key === 'Escape' && e.target.matches(INPUT_SELECTOR)) {
+            closeRowRenameForm(e.target.closest(ROW_FORM_SELECTOR));
         }
     });
 };

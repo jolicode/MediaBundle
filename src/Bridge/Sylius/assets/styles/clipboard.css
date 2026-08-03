@@ -1,8 +1,8 @@
-.clipboard-btn.is-copied,
-.clipboard-btn.is-copied:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):active,
-.clipboard-btn.is-copied:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):active:focus,
-.clipboard-btn.is-copied:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):focus,
-.clipboard-btn.is-copied:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):hover {
+.clipboard-btn[data-copied],
+.clipboard-btn[data-copied]:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):active,
+.clipboard-btn[data-copied]:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):active:focus,
+.clipboard-btn[data-copied]:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):focus,
+.clipboard-btn[data-copied]:not(:disabled):not(.disabled):not(.btn-link):not(.btn-danger):hover {
   --button-bg: #22B99A;
   --button-hover-bg: #22B99A;
   --button-focus-outline-color: #22B99A;

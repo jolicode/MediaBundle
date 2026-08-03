@@ -34,24 +34,25 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             e.stopPropagation();
 
-            const dropzoneContainer = mediaAddButton.closest('.joli-media-choose-container, .joli-media-header-tools')?.querySelector('.dropzone-container');
+            const dropzoneContainer = mediaAddButton.closest('[data-component="media-tools"]')?.querySelector('[data-component="dropzone-container"]');
             if (!dropzoneContainer) {
                 return;
             }
 
-            dropzoneContainer.classList.toggle('dropzone-active');
+            const isActive = !dropzoneContainer.hasAttribute('data-active');
+            dropzoneContainer.toggleAttribute('data-active', isActive);
 
             const dropzoneForm = dropzoneContainer.querySelector('[data-component="dropzone"]');
             if (!dropzoneForm) {
                 return;
             }
 
-            if (!dropzoneContainer.classList.contains('dropzone-initialized')) {
+            if (dropzoneContainer.dataset.dropzoneInitialized !== 'true') {
                 dropzoneInstance = addDropzone(dropzoneForm);
-                dropzoneContainer.classList.add('dropzone-initialized');
+                dropzoneContainer.dataset.dropzoneInitialized = 'true';
             }
 
-            if (!dropzoneContainer.classList.contains('dropzone-active')) {
+            if (!isActive) {
                 dropzoneInstance?.removeAllFiles(true);
             }
         }

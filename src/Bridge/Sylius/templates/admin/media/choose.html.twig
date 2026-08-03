@@ -4,9 +4,9 @@
 
 <meta name="current-key" content="{{ current_key }}">
 
-<div class="joli-media-choose-container">
+<div data-component="media-tools">
     <div class="mb-3 d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
-        <div class="folder-modal-breadcrumb">
+        <div class="folder-modal-breadcrumb" data-component="folder-breadcrumb">
             {% if current_key %}
                 {% set parts = current_key|split('/') %}
                 <a href="{{ path('joli_media_sylius_admin_choose') }}" data-folder-path="">
@@ -41,35 +41,36 @@
     </div>
 
     <div class="joli-media-search mb-3">
-        <form class="joli-media-search-form" data-component="media-search">
+        <form data-component="media-search">
             <label for="joli-media-search-input" class="visually-hidden">{{ 'media.search_label'|trans }}</label>
             <div class="input-group">
-                <input id="joli-media-search-input" type="search" class="form-control joli-media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
+                <input id="joli-media-search-input" type="search" class="form-control" data-component="media-search-input" placeholder="{{ 'media.search_label'|trans }}" value="{{ search }}" autocomplete="off">
                 <button class="btn btn-outline-secondary joli-media-search-btn" type="submit">{{ ux_icon('tabler:search') }} {{ 'action.search'|trans }}</button>
             </div>
         </form>
     </div>
 
-    <form class="directory-create-form d-none mt-2"
+    <form class="mt-2"
           data-component="directory-create-form"
           action="{{ path('joli_media_sylius_admin_create_directory') }}"
           method="POST"
+          hidden
     >
         <input type="hidden" name="_csrf_token" value="{{ csrf_token_create }}">
-        <input type="hidden" name="parentPath" class="directory-create-parent-path" value="{{ current_key }}">
-        <input type="hidden" name="_search" class="directory-create-search" value="{{ search }}">
+        <input type="hidden" name="parentPath" data-component="directory-create-parent-path" value="{{ current_key }}">
+        <input type="hidden" name="_search" data-component="directory-create-search" value="{{ search }}">
         <div class="input-group input-group-sm">
-            <input type="text" name="name" class="form-control directory-create-input" placeholder="{{ 'directory.name'|trans }}">
+            <input type="text" name="name" class="form-control" data-component="directory-create-input" placeholder="{{ 'directory.name'|trans }}">
             <button type="submit" class="btn btn-primary">
                 {{ ux_icon('tabler:check') }}
             </button>
-            <button type="button" class="btn btn-secondary directory-create-cancel-btn">
+            <button type="button" class="btn btn-secondary" data-component="directory-create-cancel">
                 {{ ux_icon('tabler:x') }}
             </button>
         </div>
     </form>
 
-    <div class="dropzone-container">
+    <div class="dropzone-container" data-component="dropzone-container">
         {{ form_start(create_media_form, { attr: {
             class: 'dropzone',
             'data-component': 'dropzone',
@@ -77,7 +78,7 @@
         } }) }}
         {{ form_widget(create_media_form.path) }}
         {{ form_widget(create_media_form._token) }}
-        <div class="dz-preview-template">
+        <div class="dz-preview-template" data-component="dropzone-preview-template">
             {{ include('@JoliMediaSylius/uploaded_file_preview.html.twig') }}
         </div>
         {{ form_end(create_media_form) }}
@@ -86,8 +87,9 @@
     <div class="gallery">
         {% if current_key %}
             <ul class="gallery-grid gallery-grid--folders">
+                {% set parent_key = current_key|split('/')|slice(0, -1)|join('/') %}
                 <li class="gallery-grid-item gallery-grid-item--back">
-                    <a href="{{ path('joli_media_sylius_admin_choose', { key: current_key|split('/')|slice(0, -1)|join('/') }) }}" class="gallery-grid-item__link">
+                    <a href="{{ path('joli_media_sylius_admin_choose', { key: parent_key }) }}" class="gallery-grid-item__link" data-folder-path="{{ parent_key }}">
                         <span class="gallery-grid-item__icon">{{ ux_icon('tabler:folder-up', {class: 'w-80 h-80'}) }}</span>
                         <span class="gallery-grid-item__name">Parent</span>
                     </a>
@@ -99,7 +101,7 @@
             <ul class="gallery-grid gallery-grid--folders">
                 {% for directory in directories %}
                     <li class="gallery-grid-item" {{ sylius_test_html_attribute('directory-row') }}>
-                        <a href="{{ path('joli_media_sylius_admin_choose', { key: directory }) }}" class="gallery-grid-item__link">
+                        <a href="{{ path('joli_media_sylius_admin_choose', { key: directory }) }}" class="gallery-grid-item__link" data-folder-path="{{ directory }}">
                             <span class="gallery-grid-item__icon">
                                 {{ ux_icon('tabler:folder', {class: 'w-80 h-80'}) }}
                             </span>
@@ -145,7 +147,7 @@
             <div class="text-muted">
                 {{ pagination.results_count(medias) }}
             </div>
-            <div class="ms-auto">
+            <div class="ms-auto" data-component="pagination">
                 {% if medias.haveToPaginate %}
                     {{ pagination.simple(medias) }}
                 {% endif %}

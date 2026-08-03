@@ -21,7 +21,7 @@
     margin-top: 1rem;
 }
 
-.dropzone-container.dropzone-active {
+.dropzone-container[data-active] {
     display: block;
 }
 

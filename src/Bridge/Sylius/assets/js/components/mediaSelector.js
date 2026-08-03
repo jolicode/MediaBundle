@@ -1,5 +1,8 @@
+const MEDIA_CHOICE_SELECTOR = '[data-component="media-choice"]';
+const MODAL_BODY_SELECTOR = '[data-component="media-choice-modal-body"]';
+
 const getContainerForElement = (element) => {
-    return element.closest(".js-joli-media-choice-container");
+    return element.closest(MEDIA_CHOICE_SELECTOR);
 };
 
 const isLiveComponent = (element) => {
@@ -28,9 +31,9 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const id = mediaChoiceContainer.dataset.mediaId;
     const mediaContainer = mediaChoiceContainer.querySelector(`[id^="joli-media-container_"]`);
     const deleteButton = mediaChoiceContainer.querySelector(
-        ".joli-media-choice-delete",
+        '[data-component="media-choice-delete"]',
     );
-    const editButton = mediaChoiceContainer.querySelector(".joli-media-choice-edit");
+    const editButton = mediaChoiceContainer.querySelector('[data-component="media-choice-edit"]');
     const inputElement = mediaChoiceContainer.querySelector(`[id="${id}"]`);
     let modal = document.getElementById(`modal-media-choice_${id}`);
 
@@ -54,6 +57,8 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         
         if (mediaContainer && !isLiveComponent(mediaChoiceContainer)) {
             const debugObserver = new MutationObserver(() => {
+                // "media-preview" is the styling class the preview markup is rendered with,
+                // there is no single root element to hook a data attribute on.
                 const previews = mediaContainer.querySelectorAll('.media-preview');
                 if (previews.length > 1) {
                     previews.forEach((el, i) => {
@@ -67,22 +72,20 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
 
     if (mediaChoiceContainer.dataset.mediaValue) {
         inputElement.value = mediaChoiceContainer.dataset.mediaValue;
-        
+
         if (mediaChoiceContainer.dataset.mediaTemplate) {
-            mediaChoiceContainer.classList.remove("empty");
+            mediaChoiceContainer.toggleAttribute("data-empty", false);
         }
-        
+
         inputElement.dispatchEvent(new Event("change", { bubbles: true }));
     }
-
-    const modalContent = modal.querySelector('.modal-body');
 
     const fetchFolder = (url) => fetch(url).then((response) => response.text());
 
     const updateBreadcrumb = (newFolderPath) => {
         const currentModalEl = document.getElementById(`modal-media-choice_${id}`);
-        const currentModalContent = currentModalEl?.querySelector('.modal-body');
-        const breadcrumb = currentModalContent?.querySelector('.folder-modal-breadcrumb');
+        const currentModalContent = currentModalEl?.querySelector(MODAL_BODY_SELECTOR);
+        const breadcrumb = currentModalContent?.querySelector('[data-component="folder-breadcrumb"]');
         if (!breadcrumb) return;
 
         const basePath = getBasePath();
@@ -144,8 +147,8 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         const currentModalEl = document.getElementById(`modal-media-choice_${id}`);
         if (!currentModalEl) return;
 
-        const searchForm = currentModalEl.querySelector('.joli-media-search-form');
-        const searchInput = currentModalEl.querySelector('.joli-media-search-input');
+        const searchForm = currentModalEl.querySelector('[data-component="media-search"]');
+        const searchInput = currentModalEl.querySelector('[data-component="media-search-input"]');
         if (!searchForm || !searchInput) return;
 
         currentSearchValue = searchInput.value;
@@ -153,7 +156,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         const newSearchForm = searchForm.cloneNode(true);
         searchForm.parentNode.replaceChild(newSearchForm, searchForm);
 
-        const newInput = newSearchForm.querySelector('.joli-media-search-input');
+        const newInput = newSearchForm.querySelector('[data-component="media-search-input"]');
 
         newSearchForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -182,7 +185,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         const currentModalEl = document.getElementById(`modal-media-choice_${id}`);
         if (!currentModalEl) return;
         
-        const currentModalContent = currentModalEl.querySelector('.modal-body');
+        const currentModalContent = currentModalEl.querySelector(MODAL_BODY_SELECTOR);
         if (!currentModalContent) return;
         
         currentModalContent.innerHTML = html;
@@ -212,7 +215,7 @@ const setFieldValue = (value, template = null) => {
         
         if (template) {
             mediaChoiceContainer.dataset.mediaTemplate = template;
-            mediaChoiceContainer.classList.remove("empty");
+            mediaChoiceContainer.toggleAttribute("data-empty", false);
             
             if (mediaContainer && !isLiveComponent(mediaChoiceContainer)) {
                 mediaContainer.innerHTML = template;
@@ -267,10 +270,8 @@ const getParentControllers = (element) => {
             event.preventDefault();
             event.stopPropagation();
             setFieldValue(target.dataset.mediaUrl, target.dataset.mediaTemplate);
-            const currentModalEl = document.getElementById(`modal-media-choice_${id}`);
-            if (currentModalEl?.classList.contains('show')) {
-                closeModal();
-            }
+            // Bootstrap ignores hide() when the modal is not shown
+            closeModal();
             return;
         }
 
@@ -278,18 +279,21 @@ const getParentControllers = (element) => {
             return;
         }
 
-        if (target.closest('.folder-modal-breadcrumb') || target.closest('.gallery-grid--folders') || target.closest('.gallery-grid-item') || target.closest('.pagination') || href.match(/\/media\/choose/)) {
+        const isFolderLink = target.dataset.folderPath !== undefined || target.closest('[data-component="folder-breadcrumb"]') !== null;
+        const isPaginationLink = target.closest('[data-component="pagination"]') !== null;
+
+        if (isFolderLink || isPaginationLink || href.match(/\/media\/choose/)) {
             const url = new URL(href, window.location.origin);
             let folderPath = url.searchParams.get('key') || '';
-            
+
             if (!folderPath) {
                 const pathMatch = href.match(/\/media\/choose(?:\/(.+))?$/);
                 if (pathMatch && pathMatch[1]) {
                     folderPath = pathMatch[1];
                 }
             }
-            
-            if (target.closest('.pagination')) {
+
+            if (isPaginationLink) {
                 currentFolderPath = folderPath;
             } else {
                 currentFolderPath = folderPath;
@@ -305,7 +309,7 @@ const getParentControllers = (element) => {
 
     const handleDelete = (event) => {
         event.preventDefault();
-        mediaChoiceContainer.classList.add("empty");
+        mediaChoiceContainer.toggleAttribute("data-empty", true);
         mediaChoiceContainer.dataset.mediaTemplate = "";
         mediaChoiceContainer.dataset.mediaValue = "";
 
@@ -325,7 +329,7 @@ const getParentControllers = (element) => {
         const modalEl = document.getElementById(`modal-media-choice_${id}`);
         if (!modalEl) return;
         
-        const modalBody = modalEl.querySelector('.modal-body');
+        const modalBody = modalEl.querySelector(MODAL_BODY_SELECTOR);
         if (modalBody) modalBody.innerHTML = "";
 
         fetchFolder(editButton.href).then((html) => {
@@ -374,22 +378,24 @@ const getParentControllers = (element) => {
             return;
         }
 
-        const createInput = createForm.querySelector('.directory-create-input');
-        const cancelBtn = createForm.querySelector('.directory-create-cancel-btn');
-        const parentPathInput = createForm.querySelector('.directory-create-parent-path');
+        const createInput = createForm.querySelector('[data-component="directory-create-input"]');
+        const cancelBtn = createForm.querySelector('[data-component="directory-create-cancel"]');
+        const parentPathInput = createForm.querySelector('[data-component="directory-create-parent-path"]');
 
         createBtn?.addEventListener('click', (e) => {
             e.preventDefault();
-            createForm.classList.toggle('d-none');
-            if (!createForm.classList.contains('d-none')) {
+            createForm.hidden = !createForm.hidden;
+            if (!createForm.hidden) {
                 createInput.focus();
             }
         });
 
-        cancelBtn?.addEventListener('click', () => {
-            createForm.classList.add('d-none');
+        const resetCreateForm = () => {
+            createForm.hidden = true;
             createInput.value = '';
-        });
+        };
+
+        cancelBtn?.addEventListener('click', resetCreateForm);
 
         createForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -402,7 +408,7 @@ const getParentControllers = (element) => {
 
             parentPathInput.value = currentFolderPath;
 
-            const searchInput = createForm.querySelector('.directory-create-search');
+            const searchInput = createForm.querySelector('[data-component="directory-create-search"]');
             if (searchInput) {
                 searchInput.value = currentSearchValue;
             }
@@ -425,8 +431,7 @@ const getParentControllers = (element) => {
 
         createInput?.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                createForm.classList.add('d-none');
-                createInput.value = '';
+                resetCreateForm();
             }
         });
     };
@@ -443,7 +448,7 @@ const getParentControllers = (element) => {
 };
 
 document.addEventListener("click", (event) => {
-    const editButton = event.target.closest(".joli-media-choice-edit");
+    const editButton = event.target.closest('[data-component="media-choice-edit"]');
     if (editButton) {
         const container = getContainerForElement(editButton);
         if (container && container.dataset.configured !== "true") {
@@ -456,7 +461,7 @@ document.addEventListener("click", (event) => {
         const match = modal.id.match(/modal-media-choice_(.+)/);
         if (match) {
             const id = match[1];
-            const container = document.querySelector(`.js-joli-media-choice-container[data-media-id="${id}"]`);
+            const container = document.querySelector(`${MEDIA_CHOICE_SELECTOR}[data-media-id="${id}"]`);
             if (container && container.dataset.configured === "true" && container._handleModalClick) {
                 container._handleModalClick(event);
             }
@@ -470,7 +475,7 @@ document.addEventListener("submit", (event) => {
         const match = modal.id.match(/modal-media-choice_(.+)/);
         if (match) {
             const id = match[1];
-            const container = document.querySelector(`.js-joli-media-choice-container[data-media-id="${id}"]`);
+            const container = document.querySelector(`${MEDIA_CHOICE_SELECTOR}[data-media-id="${id}"]`);
             if (container && container.dataset.configured === "true" && container._handleModalSubmit) {
                 container._handleModalSubmit(event);
             }
@@ -488,7 +493,7 @@ const configureMediaSelector = () => {
         seenIds.add(modal.id);
     });
     
-    document.querySelectorAll(".js-joli-media-choice-container").forEach((container) => {
+    document.querySelectorAll(MEDIA_CHOICE_SELECTOR).forEach((container) => {
         if (container.dataset.configured === undefined) {
             configureMediaChoiceContainer(container);
         }

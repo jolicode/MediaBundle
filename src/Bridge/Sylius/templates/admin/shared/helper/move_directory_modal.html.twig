@@ -6,7 +6,7 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="mb-3 d-flex justify-content-between align-items-center">
-                        <div class="folder-modal-breadcrumb">
+                        <div class="folder-modal-breadcrumb" data-component="folder-breadcrumb">
                             {% if directoryPath %}
                                 {% set parts = directoryPath|split('/') %}
                                 <a href="{{ path('joli_media_sylius_admin_choose') }}" data-folder-path="">
@@ -36,16 +36,16 @@
                             {{ 'directory.create'|trans }}
                         </button>
                     </div>
-                    <form method="post" action="{{ path('joli_media_sylius_admin_create_directory') }}" class="folder-create-form d-none mb-3">
+                    <form method="post" action="{{ path('joli_media_sylius_admin_create_directory') }}" class="mb-3" data-component="folder-create-form" hidden>
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('media_create_directory') }}">
                         <input type="hidden" name="parentPath" value="{{ directoryPath|default('') }}">
                         <div class="input-group">
-                            <input type="text" name="name" class="form-control folder-create-input" placeholder="{{ 'directory.create'|trans }}">
+                            <input type="text" name="name" class="form-control" data-component="folder-create-input" placeholder="{{ 'directory.create'|trans }}">
                             <button type="submit" class="btn btn-primary">{{ 'action.create'|trans }}</button>
-                            <button type="button" class="btn btn-secondary folder-create-cancel">{{ 'action.cancel'|trans }}</button>
+                            <button type="button" class="btn btn-secondary" data-component="folder-create-cancel">{{ 'action.cancel'|trans }}</button>
                         </div>
                     </form>
-                    <div class="folder-list-container"></div>
+                    <div data-component="folder-list"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -53,7 +53,8 @@
                     </button>
                     <a
                         href="#"
-                        class="btn btn-primary folder-move-btn"
+                        class="btn btn-primary"
+                        data-component="folder-move"
                         data-folder-path=""
                     >
                         {{ 'action.move_to_this_directory'|trans }}

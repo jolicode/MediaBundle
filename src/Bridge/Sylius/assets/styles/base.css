@@ -23,6 +23,12 @@
 /* Rules
    ========================================================================== */
 
+/* The bundle toggles visibility with the `hidden` attribute rather than with UI
+   classes, so it has to win over the display utilities carried by the markup. */
+[hidden] {
+  display: none !important;
+}
+
 .code-preview {
   display: flex;
 
