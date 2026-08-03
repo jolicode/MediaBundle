@@ -1,3 +1,5 @@
+import buildFolderUrl from "./folderUrl.js";
+
 const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const id = mediaChoiceContainer.dataset.mediaId;
     const mediaContainer = document.getElementById(`joli-media-container_${id}`);
@@ -13,7 +15,10 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     );
 
     let currentSearchValue = '';
-    let currentFolderUrl = editButton.attributes.href.value + editButton.dataset.folder;
+    let currentFolderUrl = buildFolderUrl(
+        editButton.attributes.href.value,
+        editButton.dataset.folder,
+    );
 
     const fetchFolder = (url) => fetch(url).then((response) => response.text());
 
@@ -146,7 +151,10 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const handleEdit = (event) => {
         event.preventDefault();
         modalContent.innerHTML = "";
-        currentFolderUrl = editButton.attributes.href.value + editButton.dataset.folder;
+        currentFolderUrl = buildFolderUrl(
+            editButton.attributes.href.value,
+            editButton.dataset.folder,
+        );
 
         fetchFolder(currentFolderUrl).then((html) => {
             configureModal(html);

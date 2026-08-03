@@ -41,28 +41,28 @@ class MediaAdminControllerTest extends WebTestCase
     public function testDelete(): void
     {
         // MediaDeleteBehavior::RESTRICT
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_explore');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/explore');
         $media = $this->findInGalleryFromName($crawler, 'restrict.pdf');
         $crawler = $this->client->click($media->link());
         $this->assertResponseIsSuccessful();
 
         $this->client->submit($crawler->filter('form[name="delete"]')->form());
-        $this->assertResponseRedirects('/admin?routeName=joli_media_easy_admin_show&routeParams%5Bkey%5D=restrict.pdf');
+        $this->assertResponseRedirects('/admin/media/show/restrict.pdf');
         $this->client->followRedirect();
         $this->assertSelectorTextContains('.alert-danger', 'The media "restrict.pdf" is used in the "mediaRestrict" field of the "JoliCode\MediaBundle\Tests\Application\Entity\Page" entity. It cannot be deleted.');
 
         // MediaDeleteBehavior::SET_NULL
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_explore');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/explore');
         $media = $this->findInGalleryFromName($crawler, 'set_null.pdf');
         $crawler = $this->client->click($media->link());
         $this->assertResponseIsSuccessful();
 
         $this->client->submit($crawler->filter('form[name="delete"]')->form());
-        $this->assertResponseRedirects('/admin?routeName=joli_media_easy_admin_explore&routeParams%5Bkey%5D=.');
+        $this->assertResponseRedirects('/admin/media/explore');
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.alert-success', 'Media "set_null.pdf" deleted successfully');
 
-        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_show&routeParams%5Bkey%5D=set_null.pdf');
+        $this->client->request(Request::METHOD_GET, '/admin/media/show/set_null.pdf');
         $this->assertResponseStatusCodeSame(404);
 
         /** @var Page $page */
@@ -70,17 +70,17 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertNull($page->getMediaSetNull());
 
         // no MediaDeleteBahavior defined
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_explore');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/explore');
         $media = $this->findInGalleryFromName($crawler, 'default.pdf');
         $crawler = $this->client->click($media->link());
         $this->assertResponseIsSuccessful();
 
         $this->client->submit($crawler->filter('form[name="delete"]')->form());
-        $this->assertResponseRedirects('/admin?routeName=joli_media_easy_admin_explore&routeParams%5Bkey%5D=.');
+        $this->assertResponseRedirects('/admin/media/explore');
         $this->client->followRedirect();
         $this->assertSelectorTextContains('.alert-success', 'Media "default.pdf" deleted successfully');
 
-        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_show&routeParams%5Bkey%5D=default.pdf');
+        $this->client->request(Request::METHOD_GET, '/admin/media/show/default.pdf');
         $this->assertResponseStatusCodeSame(404);
 
         /** @var Page $page */
@@ -91,7 +91,7 @@ class MediaAdminControllerTest extends WebTestCase
     public function testUploadAtRoot(): void
     {
         // test upload at the root of the media library
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_explore');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/explore');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('form[name="upload"]');
         $form = $crawler->filter('form[name="upload"]')->form();
@@ -140,7 +140,7 @@ class MediaAdminControllerTest extends WebTestCase
     {
         // test switching view mode between grid and list
         $this->client->followRedirects();
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_explore');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/explore');
 
         $gridViewLink = $crawler->selectLink('Grid view');
         $this->assertStringContainsString('active', (string) $gridViewLink->attr('class')); // grid is default
@@ -167,7 +167,7 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorNotExists('.gallery-list-item');
 
         // test the view mode inside a subfolder
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_explore&routeParams%5Bkey%5D=/sub/folder');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/explore/sub/folder');
         $gridViewLink = $crawler->selectLink('Grid view');
         $this->assertStringContainsString('active', (string) $gridViewLink->attr('class')); // grid is default
         $this->assertSelectorCount(3, '.gallery-grid-item');
@@ -184,24 +184,51 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorCount(3, '.gallery-list-item');
     }
 
+    public function testTheMediaLibraryRootRedirectsToTheExplorer(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/admin/media');
+        $this->assertResponseRedirects('http://localhost/admin/media/explore');
+
+        $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.gallery');
+    }
+
+    public function testMediaPickerButton(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/page/new');
+        $this->assertResponseIsSuccessful();
+
+        // the folder to open is only known client-side, so the picker URL carries a
+        // placeholder which the JavaScript replaces with the folder to browse
+        $pickerUrl = $crawler->filter('a.joli-media-choice-edit')->first()->attr('href');
+        $this->assertIsString($pickerUrl);
+        $this->assertStringEndsWith('/admin/media/choose-file/__FOLDER__', $pickerUrl);
+
+        $this->client->request(Request::METHOD_GET, str_replace('__FOLDER__', 'sub/folder', $pickerUrl));
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('.breadcrumb-item.active', 'folder');
+    }
+
     public function testSearchFormDisplay(): void
     {
         // the choose media modal has a toggable search panel
-        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose');
+        $this->client->request(Request::METHOD_GET, '/admin/media/choose-file');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('[data-component="search"]');
         $this->assertSelectorExists('.search-container .joli-media-search-input');
 
         // the media library has an always visible search bar next to the breadcrumb
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_explore');
+        $this->client->request(Request::METHOD_GET, '/admin/media/explore');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorNotExists('[data-component="search"]');
         $this->assertSelectorNotExists('.joli-media-search-input');
         $this->assertSelectorExists('form.joli-media-search-form input[name="query"]');
-        $this->assertSame('joli_media_easy_admin_explore', $crawler->filter('form.joli-media-search-form input[name="routeName"]')->attr('value'));
+        // with pretty URLs, searching only needs to submit the query to the current URL
+        $this->assertSelectorNotExists('form.joli-media-search-form input[name="routeName"]');
 
         // the folder picker modal has no JS support for the search form, it must not be displayed there
-        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose_directory');
+        $this->client->request(Request::METHOD_GET, '/admin/media/choose-directory');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorNotExists('[data-component="search"]');
         $this->assertSelectorNotExists('.joli-media-search-input');
@@ -210,7 +237,7 @@ class MediaAdminControllerTest extends WebTestCase
     public function testSearch(): void
     {
         // matches both directories and medias, recursively
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&query=deep');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/choose-file?query=deep');
         $this->assertResponseIsSuccessful();
         $this->assertSame('deep', $crawler->filter('.joli-media-search-input')->attr('value'));
         $this->assertSelectorCount(1, 'ul.gallery-grid--folders .gallery-grid-item');
@@ -219,23 +246,23 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertSame('sub/folder/deep/test.txt', $crawler->filter('ul.gallery-grid--files .gallery-grid-item__link')->attr('data-media-url'));
 
         // the search is case-insensitive
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&query=DEEP');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/choose-file?query=DEEP');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorCount(1, 'ul.gallery-grid--folders .gallery-grid-item');
         $this->assertSelectorCount(1, 'ul.gallery-grid--files .gallery-grid-item');
         $this->assertSame('sub/folder/deep/test.txt', $crawler->filter('ul.gallery-grid--files .gallery-grid-item__link')->attr('data-media-url'));
 
         // the search is scoped to the current directory
-        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&routeParams%5Bkey%5D=/sub&query=circle');
+        $this->client->request(Request::METHOD_GET, '/admin/media/choose-file/sub?query=circle');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorCount(1, 'ul.gallery-grid--files .gallery-grid-item');
 
-        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&routeParams%5Bkey%5D=/not_used&query=circle');
+        $this->client->request(Request::METHOD_GET, '/admin/media/choose-file/not_used?query=circle');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorCount(0, 'ul.gallery-grid--files .gallery-grid-item');
 
         // a search without any match displays empty results
-        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&query=doesnotexist');
+        $this->client->request(Request::METHOD_GET, '/admin/media/choose-file?query=doesnotexist');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorCount(0, 'ul.gallery-grid--folders .gallery-grid-item');
         $this->assertSelectorCount(0, 'ul.gallery-grid--files .gallery-grid-item');
@@ -245,7 +272,7 @@ class MediaAdminControllerTest extends WebTestCase
     {
         // recursive listings are not sorted by the storage, the controller must
         // sort them to guarantee a stable pagination
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&query=pdf');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/choose-file?query=pdf');
         $this->assertResponseIsSuccessful();
 
         $paths = $crawler->filter('ul.gallery-grid--files .gallery-grid-item__link')
@@ -261,10 +288,10 @@ class MediaAdminControllerTest extends WebTestCase
 
     public function testSearchWithAnOutOfRangePageNumber(): void
     {
-        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&query=pdf&page=1');
+        $this->client->request(Request::METHOD_GET, '/admin/media/choose-file?query=pdf&page=1');
         $this->assertResponseIsSuccessful();
 
-        $this->client->request(Request::METHOD_GET, '/admin?routeName=joli_media_easy_admin_choose&query=pdf&page=2');
+        $this->client->request(Request::METHOD_GET, '/admin/media/choose-file?query=pdf&page=2');
         $this->assertResponseStatusCodeSame(400);
     }
 

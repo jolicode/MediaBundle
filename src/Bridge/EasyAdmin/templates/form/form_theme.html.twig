@@ -18,7 +18,7 @@
                     variant="link"
                     size="sm"
                     icon="fas fa-plus"
-                    href="{{ ea_url().setRoute('joli_media_easy_admin_choose') }}&routeParams%5Bkey%5D="
+                    href="{{ joli_media_admin_url('choose', { key: '__FOLDER__' }) }}"
                     class="joli-media-choice-edit"
                     data-folder="{{ folder }}"
                     data-bs-toggle="modal"
@@ -59,7 +59,7 @@
         id="modal-media-choice_{{ id }}"
         class="modal-media-choice modal fade"
         tabindex="-1"
-        data-href="{{ ea_url().setRoute('joli_media_easy_admin_choose') }}&routeParams%5Bkey%5D="
+        data-href="{{ joli_media_admin_url('choose', { key: '__FOLDER__' }) }}"
     >
         <div class="modal-dialog">
             <div class="modal-content">

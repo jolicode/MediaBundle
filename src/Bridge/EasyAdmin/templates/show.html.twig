@@ -36,7 +36,7 @@
         <twig:ea:Button
             htmlElement="a"
             icon="fa fa-folder-tree"
-            href="{{ ea_url().setRoute('joli_media_easy_admin_choose_directory') }}&routeParams%5Bkey%5D="
+            href="{{ joli_media_admin_url('chooseDirectory', { key: '__FOLDER__' }) }}"
             data-folder="{{ media.folderPath }}"
             data-bs-toggle="modal"
             data-bs-target="#modal-folder-choice"
@@ -55,7 +55,7 @@
             htmlElement="a"
             variant="danger"
             icon="fa fa-fw fa-trash-o"
-            href="{{ ea_url().setRoute('joli_media_easy_admin_delete') }}"
+            href="{{ joli_media_admin_url('delete') }}"
             class="action-delete"
             data-action-name="delete"
             data-bs-toggle="modal"
@@ -131,7 +131,7 @@
         {{ parent() }}
 
         <div class="rename-file-container">
-            {{ form_start(rename_form, { action: ea_url().setRoute('joli_media_easy_admin_show', { key: file }) }) }}
+            {{ form_start(rename_form, { action: joli_media_admin_url('show', { key: file }) }) }}
                 {{ form_widget(rename_form.to) }}
                 {{ form_widget(rename_form.submit) }}
             {{ form_end(rename_form) }}
@@ -235,7 +235,7 @@
                                                         htmlElement="a"
                                                         size="sm"
                                                         icon="fa-solid fa-arrows-rotate"
-                                                        href="{{ ea_url().setRoute('joli_media_easy_admin_regenerate_variation', { key: media.path, variation: variation.variation.name }) }}"
+                                                        href="{{ joli_media_admin_url('regenerateVariation', { key: media.path, variation: variation.variation.name }) }}"
                                                     >{{ 'action.regenerate'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
                                                 {% endif %}
                                             </td>

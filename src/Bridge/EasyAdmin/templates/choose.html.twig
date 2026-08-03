@@ -51,7 +51,7 @@
     {% block media_grid_view %}
         <li class="gallery-grid-item">
             <a class="gallery-grid-item__link"
-                href="{{ ea_url().setRoute('joli_media_easy_admin_show', { key: media.path }) }}"
+                href="{{ joli_media_admin_url('show', { key: media.path }) }}"
                 data-media-folder="{{ current_key }}"
                 data-media-url="{{ media.path }}"
                 data-media-full-url="{{ media.url }}"
@@ -71,7 +71,7 @@
         <tr>
             <td data-column="name" data-label="name" dir="ltr">
                 <a
-                    href="{{ ea_url().setRoute('joli_media_easy_admin_show', { key: media.path }) }}"
+                    href="{{ joli_media_admin_url('show', { key: media.path }) }}"
                     data-media-folder="{{ current_key }}"
                     data-media-url="{{ media.path }}"
                     data-media-full-url="{{ media.url }}"

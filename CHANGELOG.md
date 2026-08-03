@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- feature - The EasyAdmin media library is now browsed through pretty URLs whenever the application uses EasyAdmin pretty URLs - see the [EasyAdmin bridge documentation](doc/bridges/easy-admin.rst)
+
 ## [0.8.0] - 2026-07-30
 
 - feature - Mutualize the admin bridges duplicated code into the shared `JoliCode\MediaBundle\Bridge` namespace

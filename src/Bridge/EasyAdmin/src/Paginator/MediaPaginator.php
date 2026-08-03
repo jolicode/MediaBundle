@@ -5,7 +5,7 @@ namespace JoliCode\MediaBundle\Bridge\EasyAdmin\Paginator;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityPaginatorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\PaginatorDto;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Router\MediaAdminRouter;
 use JoliCode\MediaBundle\Model\Media;
 
 /**
@@ -27,14 +27,14 @@ class MediaPaginator implements EntityPaginatorInterface
      */
     private array $results;
 
-    private string $routeName;
+    private string $action;
 
     private string $currentKey;
 
     private string $searchValue = '';
 
     public function __construct(
-        private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly MediaAdminRouter $mediaAdminRouter,
     ) {
     }
 
@@ -45,14 +45,15 @@ class MediaPaginator implements EntityPaginatorInterface
 
     /**
      * @param array{items: array<Media>, total: int, page: int, perPage: int} $paginationData
+     * @param string                                                          $action         the media library action being paginated, eg. "explore"
      */
-    public function paginateMedias(array $paginationData, string $routeName, string $currentKey, string $searchValue = ''): self
+    public function paginateMedias(array $paginationData, string $action, string $currentKey, string $searchValue = ''): self
     {
         $this->currentPage = $paginationData['page'];
         $this->pageSize = $paginationData['perPage'];
         $this->numResults = $paginationData['total'];
         $this->results = $paginationData['items'];
-        $this->routeName = $routeName;
+        $this->action = $action;
         $this->currentKey = $currentKey;
         $this->searchValue = $searchValue;
 
@@ -61,16 +62,17 @@ class MediaPaginator implements EntityPaginatorInterface
 
     public function generateUrlForPage(int $page): string
     {
-        $url = $this->adminUrlGenerator
-            ->setRoute($this->routeName, ['key' => $this->currentKey])
-            ->set('page', $page)
-        ;
+        $queryParameters = ['page' => $page];
 
         if ('' !== $this->searchValue) {
-            $url->set('query', $this->searchValue);
+            $queryParameters['query'] = $this->searchValue;
         }
 
-        return $url->generateUrl();
+        return $this->mediaAdminRouter->generateUrl(
+            $this->action,
+            ['key' => $this->currentKey],
+            $queryParameters,
+        );
     }
 
     public function getCurrentPage(): int

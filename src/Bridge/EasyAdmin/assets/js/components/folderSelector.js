@@ -1,3 +1,5 @@
+import buildFolderUrl from "./folderUrl.js";
+
 const openFolderChoiceModal = (folderChoiceButton) => {
     const modal = document.getElementById('modal-folder-choice');
     document.body.appendChild(modal);
@@ -76,7 +78,10 @@ const openFolderChoiceModal = (folderChoiceButton) => {
     modal.addEventListener("submit", handleModalSubmit);
     configureModal('');
     fetchFolder(
-        folderChoiceButton.attributes.href.value + folderChoiceButton.dataset.folder,
+        buildFolderUrl(
+            folderChoiceButton.attributes.href.value,
+            folderChoiceButton.dataset.folder,
+        ),
     ).then(configureModal);
 };
 
