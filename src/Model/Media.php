@@ -3,13 +3,22 @@
 namespace JoliCode\MediaBundle\Model;
 
 use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Exception\MediaNotFoundException;
 use JoliCode\MediaBundle\Library\Library;
+use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Variation\Variation;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Media implements StorableInterface
 {
+    /**
+     * @var callable(): Resolver|null
+     */
+    public static $resolverInitializer;
+
+    private static Resolver $resolver;
+
     /**
      * @var array<string, MediaVariation>
      */
@@ -26,7 +35,35 @@ class Media implements StorableInterface
 
     public function __serialize(): array
     {
-        return [$this->path, $this->storage->getLibrary()->getName()];
+        return [
+            'path' => $this->path,
+            'library' => $this->storage->getLibrary()->getName(),
+        ];
+    }
+
+    /**
+     * @param array<int|string, mixed> $data
+     */
+    public function __unserialize(array $data): void
+    {
+        $path = $data['path'] ?? $data[0] ?? null;
+        $libraryName = $data['library'] ?? $data[1] ?? null;
+
+        if (!\is_string($path) || !\is_string($libraryName)) {
+            throw new \UnexpectedValueException('Invalid serialized media payload.');
+        }
+
+        try {
+            $resolvedMedia = $this->getResolver()->resolveMedia($path, $libraryName);
+        } catch (MediaNotFoundException) {
+            $resolvedMedia = $this->getResolver()->createUnresolvedMedia($path, $libraryName);
+        }
+
+        $this->path = $resolvedMedia->path;
+        $this->storage = $resolvedMedia->storage;
+        $this->binary = null;
+        $this->stored = null;
+        $this->variations = [];
     }
 
     public function addVariation(MediaVariation $variation): void
@@ -213,5 +250,18 @@ class Media implements StorableInterface
 
         $this->storage->createMediaFromBinary($this->path, $this->binary);
         $this->stored = true;
+    }
+
+    private function getResolver(): Resolver
+    {
+        if (!isset(self::$resolver)) {
+            if (!isset(self::$resolverInitializer)) {
+                throw new \LogicException('Resolver Initializer is not set.');
+            }
+
+            self::$resolver = (self::$resolverInitializer)();
+        }
+
+        return self::$resolver;
     }
 }

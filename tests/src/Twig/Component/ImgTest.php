@@ -31,8 +31,6 @@ class ImgTest extends BaseTestCase
 
     public static function setUpBeforeClass(): void
     {
-        parent::setUpBeforeClass();
-
         $container = static::getContainer();
 
         /** @var Converter */
@@ -78,8 +76,6 @@ class ImgTest extends BaseTestCase
 
     public static function tearDownAfterClass(): void
     {
-        parent::tearDownAfterClass();
-
         $container = static::getContainer();
 
         /** @var LibraryContainer */
@@ -106,7 +102,7 @@ class ImgTest extends BaseTestCase
         );
         $crawler = new Crawler(\sprintf('<!DOCTYPE html><html><body>%s</body></html>', $rendered));
         $img = $crawler->filterXPath('//body/*')->first();
-        $html = preg_replace(['/(\n\s*)+/', '/\s+/'], ['', ' '], $img->outerHtml());
+        $html = preg_replace(['/(\n\s*)+/', '/\s+/'], ['', ' '], (string) $img->outerHtml());
 
         if ($expected !== $html) {
             echo "\n\n" . $html . "\n\n";
