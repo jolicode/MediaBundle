@@ -15,6 +15,7 @@ use JoliCode\MediaBundle\Doctrine\Type\MediaType;
 use JoliCode\MediaBundle\Doctrine\Types;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
+use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\PreProcessor\HeifPreProcessor;
 use JoliCode\MediaBundle\Processor\Imagine;
 use JoliCode\MediaBundle\Transformer\Resize\Mode;
@@ -39,9 +40,12 @@ class JoliMediaBundle extends AbstractBundle
             return;
         }
 
+        $libraryContainerInitializer = fn (): ?object => $this->container->get('joli_media.library_container');
+        Media::$libraryContainerInitializer = $libraryContainerInitializer;
+        OriginalStorage::$libraryContainerInitializer = $libraryContainerInitializer;
+
         // doctrine media type
         $resolverInitializer = fn (): ?object => $this->container->get('joli_media.resolver');
-        Media::$resolverInitializer = $resolverInitializer;
         MediaType::$resolverInitializer = $resolverInitializer;
         MediaLongType::$resolverInitializer = $resolverInitializer;
     }

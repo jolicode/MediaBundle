@@ -5,7 +5,7 @@ namespace JoliCode\MediaBundle\Tests\Model;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
-use JoliCode\MediaBundle\Resolver\Resolver;
+use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
 
 class MediaTest extends BaseTestCase
@@ -162,18 +162,23 @@ class MediaTest extends BaseTestCase
 
     public function testSerializeUnserializeRestoresMedia(): void
     {
-        Media::$resolverInitializer = fn (): Resolver => $this->resolver;
+        $libraryContainerInitializer = fn () => $this->libraries;
+        Media::$libraryContainerInitializer = $libraryContainerInitializer;
+        OriginalStorage::$libraryContainerInitializer = $libraryContainerInitializer;
 
         $restored = unserialize(serialize($this->media));
 
         self::assertInstanceOf(Media::class, $restored);
         self::assertSame('test.jpg', $restored->getPath());
         self::assertSame('default', $restored->getLibrary()->getName());
+        self::assertSame($this->originalStorage, $restored->getStorage());
     }
 
     public function testUnserializeSupportsLegacyIndexedPayload(): void
     {
-        Media::$resolverInitializer = fn (): Resolver => $this->resolver;
+        $libraryContainerInitializer = fn () => $this->libraries;
+        Media::$libraryContainerInitializer = $libraryContainerInitializer;
+        OriginalStorage::$libraryContainerInitializer = $libraryContainerInitializer;
 
         $restored = (new \ReflectionClass(Media::class))->newInstanceWithoutConstructor();
         $restored->__unserialize([
@@ -183,5 +188,6 @@ class MediaTest extends BaseTestCase
 
         self::assertSame('test.jpg', $restored->getPath());
         self::assertSame('default', $restored->getLibrary()->getName());
+        self::assertSame($this->originalStorage, $restored->getStorage());
     }
 }

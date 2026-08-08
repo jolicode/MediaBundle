@@ -3,9 +3,8 @@
 namespace JoliCode\MediaBundle\Model;
 
 use JoliCode\MediaBundle\Binary\Binary;
-use JoliCode\MediaBundle\Exception\MediaNotFoundException;
 use JoliCode\MediaBundle\Library\Library;
-use JoliCode\MediaBundle\Resolver\Resolver;
+use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Variation\Variation;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -13,11 +12,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Media implements StorableInterface
 {
     /**
-     * @var callable(): Resolver|null
+     * @var callable(): LibraryContainer|null
      */
-    public static $resolverInitializer;
+    public static $libraryContainerInitializer;
 
-    private static Resolver $resolver;
+    private static LibraryContainer $libraryContainer;
 
     /**
      * @var array<string, MediaVariation>
@@ -37,7 +36,7 @@ class Media implements StorableInterface
     {
         return [
             'path' => $this->path,
-            'library' => $this->storage->getLibrary()->getName(),
+            'storage' => $this->storage,
         ];
     }
 
@@ -46,21 +45,26 @@ class Media implements StorableInterface
      */
     public function __unserialize(array $data): void
     {
-        $path = $data['path'] ?? $data[0] ?? null;
-        $libraryName = $data['library'] ?? $data[1] ?? null;
+        if (isset($data['path'], $data['storage']) && \is_string($data['path']) && $data['storage'] instanceof OriginalStorage) {
+            // Restore the exact cached path and re-attach the live storage service.
+            // Prefer the container instance over the temporary unserialize handle.
+            $this->path = $data['path'];
+            $this->storage = $data['storage']->getLibrary()->getOriginalStorage();
+        } else {
+            // Backward compatibility with legacy payloads:
+            // - ['path' => ..., 'library' => ...]
+            // - [0 => path, 1 => library]
+            $path = $data['path'] ?? $data[0] ?? null;
+            $libraryName = $data['library'] ?? $data[1] ?? null;
 
-        if (!\is_string($path) || !\is_string($libraryName)) {
-            throw new \UnexpectedValueException('Invalid serialized media payload.');
+            if (!\is_string($path) || !\is_string($libraryName)) {
+                throw new \UnexpectedValueException('Invalid serialized media payload.');
+            }
+
+            $this->path = $path;
+            $this->storage = self::getLibraryContainer()->get($libraryName)->getOriginalStorage();
         }
 
-        try {
-            $resolvedMedia = $this->getResolver()->resolveMedia($path, $libraryName);
-        } catch (MediaNotFoundException) {
-            $resolvedMedia = $this->getResolver()->createUnresolvedMedia($path, $libraryName);
-        }
-
-        $this->path = $resolvedMedia->path;
-        $this->storage = $resolvedMedia->storage;
         $this->binary = null;
         $this->stored = null;
         $this->variations = [];
@@ -252,16 +256,16 @@ class Media implements StorableInterface
         $this->stored = true;
     }
 
-    private function getResolver(): Resolver
+    private static function getLibraryContainer(): LibraryContainer
     {
-        if (!isset(self::$resolver)) {
-            if (!isset(self::$resolverInitializer)) {
-                throw new \LogicException('Resolver Initializer is not set.');
+        if (!isset(self::$libraryContainer)) {
+            if (!isset(self::$libraryContainerInitializer)) {
+                throw new \LogicException('Library container initializer is not set.');
             }
 
-            self::$resolver = (self::$resolverInitializer)();
+            self::$libraryContainer = (self::$libraryContainerInitializer)();
         }
 
-        return self::$resolver;
+        return self::$libraryContainer;
     }
 }
