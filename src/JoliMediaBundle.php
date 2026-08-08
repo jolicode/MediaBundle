@@ -17,6 +17,7 @@ use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\PreProcessor\HeifPreProcessor;
 use JoliCode\MediaBundle\Processor\Imagine;
+use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Transformer\Resize\Mode;
 use Symfony\Component\Config\Definition\Builder\FloatNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
@@ -1177,7 +1178,7 @@ class JoliMediaBundle extends AbstractBundle
             ->arg('$strategy', service(sprintf('.joli_media.storage.strategy.%s', $libraryConfig['original']['url_generator']['strategy'])))
             ->arg('$urlPath', $libraryConfig['original']['url_generator']['path'])
             ->arg('$enableServeUsingPhp', $libraryConfig['original']['enable_serve_using_php'])
-            ->arg('$trashPath', $libraryConfig['original']['trash_path'])
+            ->arg('$trashPath', Resolver::normalizePath($libraryConfig['original']['trash_path']))
             ->arg('$mediaPropertyAccessor', service($mediaPropertyAccessorServiceId))
         ;
         $container->services()

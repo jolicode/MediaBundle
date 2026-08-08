@@ -238,4 +238,53 @@ class OriginalStorageTest extends BaseTestCase
         $this->assertInstanceOf(Media::class, $media);
         $this->assertSame($path, $media->getPath());
     }
+
+    public function testDeleteDirectoryForbidsTrashPathWithTrailingSlash(): void
+    {
+        $storage = $this->createOriginalStorage(
+            'default',
+            $this->originalFilesystem,
+            '/media',
+            $this->urlGenerator,
+            'trash/',
+        );
+        $this->originalFilesystem->createDirectory('trash');
+
+        $this->expectException(ForbiddenPathException::class);
+        $storage->deleteDirectory('trash');
+    }
+
+    public function testListDirectoriesHidesTrashPathWithTrailingSlash(): void
+    {
+        $storage = $this->createOriginalStorage(
+            'default',
+            $this->originalFilesystem,
+            '/media',
+            $this->urlGenerator,
+            'trash/',
+        );
+        $this->originalFilesystem->createDirectory('trash');
+        $this->originalFilesystem->createDirectory('visible');
+
+        $directories = $storage->listDirectories('');
+
+        $this->assertContains('visible', $directories);
+        $this->assertNotContains('trash', $directories);
+        $this->assertSame('trash', $storage->getTrashPath());
+    }
+
+    public function testMoveFolderForbidsTrashPathWithTrailingSlash(): void
+    {
+        $storage = $this->createOriginalStorage(
+            'default',
+            $this->originalFilesystem,
+            '/media',
+            $this->urlGenerator,
+            'trash/',
+        );
+        $this->originalFilesystem->createDirectory('trash');
+
+        $this->expectException(ForbiddenPathException::class);
+        $storage->moveFolder('trash', 'elsewhere');
+    }
 }

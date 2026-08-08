@@ -35,17 +35,20 @@ class OriginalStorage
 {
     private Library $library;
 
+    private readonly string $trashPath;
+
     public function __construct(
         private readonly StorageStrategyInterface $strategy,
         private readonly Filesystem $filesystem,
         private readonly string $urlPath,
         private readonly bool $enableServeUsingPhp,
-        private readonly string $trashPath,
+        string $trashPath,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MimeTypeGuesser $mimeTypeGuesser,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly MediaPropertyAccessor $mediaPropertyAccessor,
     ) {
+        $this->trashPath = Resolver::normalizePath($trashPath);
     }
 
     public function __serialize(): array
