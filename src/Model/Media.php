@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Model;
 
 use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Exception\InvalidSerializedMediaException;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
@@ -15,8 +16,6 @@ class Media implements StorableInterface
      * @var callable(): LibraryContainer|null
      */
     public static $libraryContainerInitializer;
-
-    private static LibraryContainer $libraryContainer;
 
     /**
      * @var array<string, MediaVariation>
@@ -36,7 +35,7 @@ class Media implements StorableInterface
     {
         return [
             'path' => $this->path,
-            'storage' => $this->storage,
+            'library' => $this->storage->getLibrary()->getName(),
         ];
     }
 
@@ -45,26 +44,16 @@ class Media implements StorableInterface
      */
     public function __unserialize(array $data): void
     {
-        if (isset($data['path'], $data['storage']) && \is_string($data['path']) && $data['storage'] instanceof OriginalStorage) {
-            // Restore the exact cached path and re-attach the live storage service.
-            // Prefer the container instance over the temporary unserialize handle.
-            $this->path = $data['path'];
-            $this->storage = $data['storage']->getLibrary()->getOriginalStorage();
-        } else {
-            // Backward compatibility with legacy payloads:
-            // - ['path' => ..., 'library' => ...]
-            // - [0 => path, 1 => library]
-            $path = $data['path'] ?? $data[0] ?? null;
-            $libraryName = $data['library'] ?? $data[1] ?? null;
+        // Legacy payloads are indexed ([0 => path, 1 => library name]).
+        $path = $data['path'] ?? $data[0] ?? null;
+        $libraryName = $data['library'] ?? $data[1] ?? null;
 
-            if (!\is_string($path) || !\is_string($libraryName)) {
-                throw new \UnexpectedValueException('Invalid serialized media payload.');
-            }
-
-            $this->path = $path;
-            $this->storage = self::getLibraryContainer()->get($libraryName)->getOriginalStorage();
+        if (!\is_string($path) || !\is_string($libraryName)) {
+            throw new InvalidSerializedMediaException('Invalid serialized media payload.');
         }
 
+        $this->path = $path;
+        $this->storage = self::getLibraryContainer()->get($libraryName)->getOriginalStorage();
         $this->binary = null;
         $this->stored = null;
         $this->variations = [];
@@ -258,14 +247,11 @@ class Media implements StorableInterface
 
     private static function getLibraryContainer(): LibraryContainer
     {
-        if (!isset(self::$libraryContainer)) {
-            if (!isset(self::$libraryContainerInitializer)) {
-                throw new \LogicException('Library container initializer is not set.');
-            }
-
-            self::$libraryContainer = (self::$libraryContainerInitializer)();
+        if (!isset(self::$libraryContainerInitializer)) {
+            throw new \LogicException('Library container initializer is not set.');
         }
 
-        return self::$libraryContainer;
+        // not memoized on purpose
+        return (self::$libraryContainerInitializer)();
     }
 }

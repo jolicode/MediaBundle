@@ -21,7 +21,6 @@ use JoliCode\MediaBundle\Event\PreResolveMediaEvent;
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Exception\PathAlreadyExistsException;
 use JoliCode\MediaBundle\Library\Library;
-use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Storage\Strategy\StorageStrategyInterface;
@@ -34,13 +33,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class OriginalStorage
 {
-    /**
-     * @var callable(): LibraryContainer|null
-     */
-    public static $libraryContainerInitializer;
-
-    private static LibraryContainer $libraryContainer;
-
     private Library $library;
 
     public function __construct(
@@ -59,23 +51,9 @@ class OriginalStorage
     public function __serialize(): array
     {
         return [
-            'library' => $this->library->getName(),
+            'urlPath',
+            'strategy',
         ];
-    }
-
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function __unserialize(array $data): void
-    {
-        $libraryName = $data['library'] ?? null;
-
-        if (!\is_string($libraryName)) {
-            throw new \UnexpectedValueException('Invalid serialized original storage payload.');
-        }
-
-        // Handle only: Media re-attaches the live storage from the library.
-        $this->library = self::getLibraryContainer()->get($libraryName);
     }
 
     public function createDirectory(string $path): void
@@ -561,19 +539,6 @@ class OriginalStorage
     public function setLibrary(Library $library): void
     {
         $this->library = $library;
-    }
-
-    private static function getLibraryContainer(): LibraryContainer
-    {
-        if (!isset(self::$libraryContainer)) {
-            if (!isset(self::$libraryContainerInitializer)) {
-                throw new \LogicException('Library container initializer is not set.');
-            }
-
-            self::$libraryContainer = (self::$libraryContainerInitializer)();
-        }
-
-        return self::$libraryContainer;
     }
 
     private function getRouteName(): string
