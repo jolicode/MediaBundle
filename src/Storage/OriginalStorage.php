@@ -50,10 +50,7 @@ class OriginalStorage
 
     public function __serialize(): array
     {
-        return [
-            'urlPath',
-            'strategy',
-        ];
+        throw new \LogicException(\sprintf('A "%s" is a service and must not be serialized. Serialize the media it holds instead.', self::class));
     }
 
     public function createDirectory(string $path): void
