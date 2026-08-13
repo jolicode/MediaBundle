@@ -4,6 +4,7 @@
 
 - feature - The EasyAdmin media library is now browsed through pretty URLs whenever the application uses EasyAdmin pretty URLs - see the [EasyAdmin bridge documentation](doc/bridges/easy-admin.rst)
 - improvement - The admin bridges JavaScript no longer relies on UI classes to find or toggle elements: behavior is hooked on `data-component` attributes, and state on `data-active`, `data-empty`, `data-copied` or the `hidden` attribute
+- improvement - Allow `symfony/ux-twig-component` 3.x in addition to 2.x
 
 ## [0.8.0] - 2026-07-30
 
