@@ -3,9 +3,15 @@
 namespace JoliCode\MediaBundle\Tests\Model;
 
 use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Exception\InvalidSerializedMediaException;
+use JoliCode\MediaBundle\Library\Library;
+use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
+use JoliCode\MediaBundle\Model\MediaVariation;
+use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class MediaTest extends BaseTestCase
 {
@@ -157,5 +163,87 @@ class MediaTest extends BaseTestCase
         $this->expectExceptionMessage('No binary set to store');
 
         $media->store();
+    }
+
+    public function testSerializeOnlyStoresScalars(): void
+    {
+        self::assertSame([
+            'path' => 'test.jpg',
+            'library' => 'default',
+        ], $this->media->__serialize());
+
+        // the storage is a service, it must never end up in the payload
+        self::assertStringNotContainsString(OriginalStorage::class, serialize($this->media));
+    }
+
+    public function testSerializeUnserializeRestoresMedia(): void
+    {
+        Media::$libraryContainerInitializer = fn (): LibraryContainer => $this->libraries;
+
+        $restored = unserialize(serialize($this->media));
+
+        self::assertInstanceOf(Media::class, $restored);
+        self::assertSame('test.jpg', $restored->getPath());
+        self::assertSame('default', $restored->getLibrary()->getName());
+        self::assertSame($this->originalStorage, $restored->getStorage());
+    }
+
+    public function testUnserializeResetsTheRuntimeState(): void
+    {
+        Media::$libraryContainerInitializer = fn (): LibraryContainer => $this->libraries;
+        $this->media->addVariation(new MediaVariation($this->media, $this->variation));
+
+        $restored = unserialize(serialize($this->media));
+
+        self::assertInstanceOf(Media::class, $restored);
+        self::assertSame([], $restored->getVariations());
+    }
+
+    public function testUnserializeUsesTheCurrentLibraryContainer(): void
+    {
+        Media::$libraryContainerInitializer = fn (): LibraryContainer => $this->libraries;
+        $payload = serialize($this->media);
+
+        // the container is rebuilt whenever the kernel is rebooted: the restored
+        // media must not be attached to a stale one
+        $otherLibraries = new LibraryContainer(
+            new ServiceLocator([
+                'default' => fn (): Library => $this->libraries->get('custom'),
+            ]),
+            'default',
+        );
+        Media::$libraryContainerInitializer = static fn (): LibraryContainer => $otherLibraries;
+
+        $restored = unserialize($payload);
+
+        self::assertInstanceOf(Media::class, $restored);
+        self::assertSame($this->customOriginalStorage, $restored->getStorage());
+    }
+
+    public function testUnserializeSupportsLegacyIndexedPayload(): void
+    {
+        Media::$libraryContainerInitializer = fn (): LibraryContainer => $this->libraries;
+
+        $restored = (new \ReflectionClass(Media::class))->newInstanceWithoutConstructor();
+        $restored->__unserialize([
+            0 => 'test.jpg',
+            1 => 'default',
+        ]);
+
+        self::assertSame('test.jpg', $restored->getPath());
+        self::assertSame('default', $restored->getLibrary()->getName());
+        self::assertSame($this->originalStorage, $restored->getStorage());
+    }
+
+    public function testUnserializeThrowsOnInvalidPayload(): void
+    {
+        Media::$libraryContainerInitializer = fn (): LibraryContainer => $this->libraries;
+
+        $restored = (new \ReflectionClass(Media::class))->newInstanceWithoutConstructor();
+
+        $this->expectException(InvalidSerializedMediaException::class);
+        $this->expectExceptionMessage('Invalid serialized media payload.');
+
+        $restored->__unserialize(['path' => 'test.jpg']);
     }
 }

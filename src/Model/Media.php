@@ -3,13 +3,20 @@
 namespace JoliCode\MediaBundle\Model;
 
 use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Exception\InvalidSerializedMediaException;
 use JoliCode\MediaBundle\Library\Library;
+use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Variation\Variation;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Media implements StorableInterface
 {
+    /**
+     * @var callable(): LibraryContainer|null
+     */
+    public static $libraryContainerInitializer;
+
     /**
      * @var array<string, MediaVariation>
      */
@@ -26,7 +33,30 @@ class Media implements StorableInterface
 
     public function __serialize(): array
     {
-        return [$this->path, $this->storage->getLibrary()->getName()];
+        return [
+            'path' => $this->path,
+            'library' => $this->storage->getLibrary()->getName(),
+        ];
+    }
+
+    /**
+     * @param array<int|string, mixed> $data
+     */
+    public function __unserialize(array $data): void
+    {
+        // Legacy payloads are indexed ([0 => path, 1 => library name]).
+        $path = $data['path'] ?? $data[0] ?? null;
+        $libraryName = $data['library'] ?? $data[1] ?? null;
+
+        if (!\is_string($path) || !\is_string($libraryName)) {
+            throw new InvalidSerializedMediaException('Invalid serialized media payload.');
+        }
+
+        $this->path = $path;
+        $this->storage = self::getLibraryContainer()->get($libraryName)->getOriginalStorage();
+        $this->binary = null;
+        $this->stored = null;
+        $this->variations = [];
     }
 
     public function addVariation(MediaVariation $variation): void
@@ -213,5 +243,15 @@ class Media implements StorableInterface
 
         $this->storage->createMediaFromBinary($this->path, $this->binary);
         $this->stored = true;
+    }
+
+    private static function getLibraryContainer(): LibraryContainer
+    {
+        if (!isset(self::$libraryContainerInitializer)) {
+            throw new \LogicException('Library container initializer is not set.');
+        }
+
+        // not memoized on purpose
+        return (self::$libraryContainerInitializer)();
     }
 }
