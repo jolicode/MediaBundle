@@ -44,6 +44,11 @@ services:
         tags:
             - { name: sonata.admin, model_class: App\Entity\Post, controller: ~, manager_type: orm, group: admin, label: Posts }
 
+    admin.brand:
+        class: App\Admin\BrandAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Brand, controller: ~, manager_type: orm, group: admin, label: Brands }
+
     admin.post_media:
         class: App\Admin\PostMediaAdmin
         tags:

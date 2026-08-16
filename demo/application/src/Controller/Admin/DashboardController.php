@@ -44,6 +44,7 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Contents');
         yield MenuItem::linkTo(PostCrudController::class, 'Posts', 'fa fa-file-text');
+        yield MenuItem::linkTo(BrandCrudController::class, 'Brands', 'fa fa-tag');
         yield MenuItem::linkToRoute('Media Library', 'fa fa-image', $this->mediaAdminRouter->getRouteName('explore'));
     }
 }

@@ -15,6 +15,7 @@ sonata_admin:
                 keep_open: true
                 items:
                     - admin.post
+                    - admin.brand
                     -
                         route: joli_media_sonata_admin_explore
                         label: Media library
