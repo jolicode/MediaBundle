@@ -6,6 +6,7 @@
 - improvement - The admin bridges JavaScript no longer relies on UI classes to find or toggle elements: behavior is hooked on `data-component` attributes, and state on `data-active`, `data-empty`, `data-copied` or the `hidden` attribute
 - improvement - Allow `symfony/ux-twig-component` 3.x in addition to 2.x
 - fix - `Media` objects are now correctly restored when unserialized, for instance when they are read from the Doctrine second level cache
+- fix - The EasyAdmin media selector widget is now rendered when the `MediaChoiceType` is used outside of a `MediaChoiceField`, for instance when it is nested into another form type such as the A2lix `TranslationsType` - see the [EasyAdmin bridge documentation](doc/bridges/easy-admin.rst)
 
 ## [0.8.0] - 2026-07-30
 

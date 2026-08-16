@@ -8,9 +8,16 @@ use Symfony\Component\Asset\PathPackage;
 use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Symfony Asset named package grouping the assets of this bundle. Referencing an
+ * asset through it resolves its hashed name when the page is rendered, and prefixes
+ * it with the base path of the current request.
+ */
 final readonly class Package implements PackageInterface
 {
     public const NAME = 'joli-media-easy-admin';
+    public const CSS_FILE = 'joli-media-easy-admin.css';
+    public const JS_FILE = 'joli-media-easy-admin.js';
 
     private PackageInterface $package;
 
