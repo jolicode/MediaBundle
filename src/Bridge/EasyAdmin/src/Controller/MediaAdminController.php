@@ -4,7 +4,7 @@ namespace JoliCode\MediaBundle\Bridge\EasyAdmin\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\AssetDto;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Asset\AssetRegistrar;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Config\Config;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Paginator\MediaPaginator;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Router\MediaAdminRouter;
@@ -30,8 +30,6 @@ use League\Flysystem\PathTraversalDetected;
 use League\Flysystem\UnableToListContents;
 use League\Flysystem\UnableToWriteFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Asset\PathPackage;
-use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -67,6 +65,7 @@ class MediaAdminController extends AbstractController
         private readonly FormFactoryInterface $formFactory,
         private readonly MediaAdminRouter $mediaAdminRouter,
         private readonly MediaPaginator $mediaPaginator,
+        private readonly AssetRegistrar $assetRegistrar,
         private readonly ?AuthorizationCheckerInterface $authorizationChecker = null,
     ) {
     }
@@ -480,7 +479,7 @@ class MediaAdminController extends AbstractController
 
         $media = $this->resolver->resolveMedia($key);
         $key = $media->getPath();
-        $this->addAssets($adminContext);
+        $this->assetRegistrar->registerOn($adminContext);
         $query = $request->query->all();
         // with pretty URLs, the tab is a plain query parameter; otherwise it travels
         // through the EasyAdmin "routeParams" query parameter
@@ -669,7 +668,7 @@ class MediaAdminController extends AbstractController
      */
     private function renderList(AdminContext $adminContext, Request $request, string $action, string $key): Response
     {
-        $this->addAssets($adminContext);
+        $this->assetRegistrar->registerOn($adminContext);
 
         if ($request->query->get('view_mode')) {
             $request->getSession()->set('view_mode', $request->query->get('view_mode'));
@@ -771,17 +770,6 @@ class MediaAdminController extends AbstractController
             'rename_directory_form' => $this->createRenameDirectoryForm($key)->createView(),
             'search' => $searchValue,
         ]));
-    }
-
-    private function addAssets(AdminContext $adminContext): void
-    {
-        $package = new PathPackage(
-            '/bundles/jolimediaeasyadmin',
-            new JsonManifestVersionStrategy(__DIR__ . '/../../public/manifest.json'),
-        );
-        $adminAssets = $adminContext->getAssets();
-        $adminAssets->addCssAsset(new AssetDto($package->getUrl('joli-media-easy-admin.css')));
-        $adminAssets->addJsAsset(new AssetDto($package->getUrl('joli-media-easy-admin.js')));
     }
 
     private function createDeleteForm(?string $path = null): FormInterface

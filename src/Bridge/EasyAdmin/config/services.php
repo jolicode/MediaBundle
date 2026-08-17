@@ -6,6 +6,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteLoader;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Asset\AssetRegistrar;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Asset\Package;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Config\Config;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Controller\MediaAdminController;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\MediaChoiceType;
@@ -19,6 +21,14 @@ use JoliCode\MediaBundle\Bridge\Twig\JoliMediaAdminExtension;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
+
+        // assets
+        ->set('joli_media_easy_admin.asset.package', Package::class)
+        ->args([
+            '$requestStack' => service('request_stack'),
+        ])
+        ->tag('assets.package', ['package' => Package::NAME])
+        ->set('joli_media_easy_admin.asset.registrar', AssetRegistrar::class)
 
         // config
         ->set('joli_media_easy_admin.config', Config::class)
@@ -67,6 +77,7 @@ return static function (ContainerConfigurator $container): void {
             '$formFactory' => service('form.factory'),
             '$mediaAdminRouter' => service('joli_media_easy_admin.router'),
             '$mediaPaginator' => service('joli_media_easy_admin.paginator'),
+            '$assetRegistrar' => service('joli_media_easy_admin.asset.registrar'),
             '$authorizationChecker' => service('security.authorization_checker')->ignoreOnInvalid(),
         ])
         ->call('setContainer', [service('service_container')])
@@ -87,6 +98,8 @@ return static function (ContainerConfigurator $container): void {
             '$resolver' => service('joli_media.resolver'),
             '$libraries' => service('joli_media.library_container'),
             '$transformer' => service('joli_media_admin.form.data_transformer.media'),
+            '$assetRegistrar' => service('joli_media_easy_admin.asset.registrar'),
+            '$adminContextProvider' => service(AdminContextProvider::class)->ignoreOnInvalid(),
         ])
         ->tag('form.type')
 

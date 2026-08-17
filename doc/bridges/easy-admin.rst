@@ -174,26 +174,9 @@ This ``setFolder()`` method can be used to specify which folder should be opened
 The ``MediaChoiceField`` can be nested into a ``CollectionField``, allowing you to manage multiple media items in a single form. This is particularly useful for managing collections of images or other media types::
 
     use JoliCode\MediaBundle\Bridge\EasyAdmin\Field\MediaChoiceField;
-    use Symfony\Component\Asset\PathPackage;
-    use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 
     class ArticleCrudController extends AbstractCrudController
     {
-        public function configureAssets(Assets $assets): Assets
-        {
-            // this should not be needed, but there is a bug in EA with assets in nested forms
-            // see https://github.com/EasyCorp/EasyAdminBundle/issues/6127
-            $package = new PathPackage(
-                '/bundles/jolimediaeasyadmin',
-                new JsonManifestVersionStrategy(__DIR__ . '/../../../public/bundles/jolimediaeasyadmin/manifest.json'),
-            );
-
-            return $assets
-                ->addCssFile($package->getUrl('joli-media-easy-admin.css'))
-                ->addJsFile($package->getUrl('joli-media-easy-admin.js'))
-            ;
-        }
-
         public function configureFields(string $pageName): iterable
         {
             return [
@@ -207,6 +190,23 @@ The ``MediaChoiceField`` can be nested into a ``CollectionField``, allowing you 
     }
 
 
+Using the widget outside of a ``MediaChoiceField``
+--------------------------------------------------
+
+The widget can also be used as a plain form type, for instance when it is nested into one of your own form types, or into a form type provided by a third-party bundle such as `A2lix TranslationsType <https://github.com/a2lix/TranslationFormBundle>`_::
+
+    use JoliCode\MediaBundle\Bridge\EasyAdmin\Form\Type\MediaChoiceType;
+
+    class ArticleTranslationType extends AbstractType
+    {
+        public function buildForm(FormBuilderInterface $builder, array $options): void
+        {
+            $builder->add('image', MediaChoiceType::class);
+        }
+    }
+
+There is nothing else to configure: the form type registers the form theme and the assets it needs by itself.
+
 Trix and `TextEditorField` integration
 --------------------------------------
 
@@ -219,21 +219,16 @@ When a `TextEditorField` is used in an EasyAdmin form, a media selector button c
         ;
     }
 
-You also need to make sure that the assets for the JoliMediaEasyAdminBundle are configured correctly. This can be done in the `configureAssets` method of your EasyAdmin controller::
+Unless the page also displays a media selector widget, which brings them along, you also need to make sure that the assets for the JoliMediaEasyAdminBundle are configured correctly. This can be done in the `configureAssets` method of your EasyAdmin controller::
 
-    use Symfony\Component\Asset\PathPackage;
-    use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
+    use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
+    use JoliCode\MediaBundle\Bridge\EasyAdmin\Asset\Package;
 
     public function configureAssets(Assets $assets): Assets
     {
-        $package = new PathPackage(
-            '/bundles/jolimediaeasyadmin',
-            new JsonManifestVersionStrategy(__DIR__ . '/../../../public/bundles/jolimediaeasyadmin/manifest.json'),
-        );
-
         return $assets
-            ->addCssFile($package->getUrl('joli-media-easy-admin.css'))
-            ->addJsFile($package->getUrl('joli-media-easy-admin.js'))
+            ->addCssFile(Asset::new(Package::CSS_FILE)->package(Package::NAME))
+            ->addJsFile(Asset::new(Package::JS_FILE)->package(Package::NAME))
         ;
     }
 
