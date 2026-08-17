@@ -19,7 +19,22 @@ const configureTrixToolbar = () => {
             return;
         }
 
-        const fetchFolder = (url) => fetch(url).then((response) => response.text());
+        // the markup inserted in the editor is rendered server-side, so the variation
+        // configured on the field must be forwarded to every request triggered from
+        // within the modal - browsing a folder, paginating, searching or uploading
+        const variation = modal.dataset.variation || "";
+        const withVariation = (url) => {
+            if (variation === "") {
+                return url;
+            }
+
+            const variationUrl = new URL(url, window.location.href);
+            variationUrl.searchParams.set("variation", variation);
+
+            return variationUrl.toString();
+        };
+
+        const fetchFolder = (url) => fetch(withVariation(url)).then((response) => response.text());
 
         const configureModal = (html) => {
             modalContent.innerHTML = html;
@@ -87,7 +102,7 @@ const configureTrixToolbar = () => {
             const formData = new FormData(form);
             const url = form.action;
 
-            fetch(url, {
+            fetch(withVariation(url), {
                 method: "POST",
                 body: formData,
                 headers: {

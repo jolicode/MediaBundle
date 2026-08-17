@@ -2,6 +2,9 @@
 
 {% block breadcrumb %}{% endblock %}
 
+{# the variation to insert in a TextEditorField, when the media supports it #}
+{% set insert_variation = insert_variation|default(null) %}
+
 {% block main %}
     {% block add_media_button %}
         <twig:ea:Button
@@ -49,6 +52,7 @@
     {% block content_header_wrapper %}{% endblock %}
 
     {% block media_grid_view %}
+        {% set media_insert_variation = insert_variation is not null and insert_variation.canBeAppliedTo(media) ? insert_variation.name : false %}
         <li class="gallery-grid-item">
             <a class="gallery-grid-item__link"
                 href="{{ joli_media_admin_url('show', { key: media.path }) }}"
@@ -57,7 +61,7 @@
                 data-media-full-url="{{ media.url }}"
                 data-media-type="{{ media.fileType }}"
                 data-media-template="{{ include('@JoliMediaEasyAdmin/_preview.html.twig', { className: 'media-preview' })|escape }}"
-                data-media-original-template="{{ include('@JoliMediaEasyAdmin/_preview.html.twig', { variation: false })|escape }}"
+                data-media-original-template="{{ include('@JoliMediaEasyAdmin/_preview.html.twig', { variation: media_insert_variation })|escape }}"
             >
                 <span class="media-preview">
                     {{ include('@JoliMediaEasyAdmin/_as_image.html.twig', { skipAutoDimensions: true }) }}
@@ -68,6 +72,7 @@
     {% endblock %}
 
     {% block media_list_view %}
+        {% set media_insert_variation = insert_variation is not null and insert_variation.canBeAppliedTo(media) ? insert_variation.name : false %}
         <tr>
             <td data-column="name" data-label="name" dir="ltr">
                 <a
@@ -77,7 +82,7 @@
                     data-media-full-url="{{ media.url }}"
                     data-media-type="{{ media.fileType }}"
                     data-media-template="{{ include('@JoliMediaEasyAdmin/_preview.html.twig', { className: 'media-preview' })|escape }}"
-                    data-media-original-template="{{ include('@JoliMediaEasyAdmin/_preview.html.twig', { variation: false })|escape }}"
+                    data-media-original-template="{{ include('@JoliMediaEasyAdmin/_preview.html.twig', { variation: media_insert_variation })|escape }}"
                     class="gallery-list-item"
                 >
                     <span class="gallery-list-item__preview">

@@ -52,6 +52,8 @@ The integration can be configured in the ``config/packages/joli_media_easy_admin
         path_prefix: media
         pagination:
             per_page: 20
+        text_editor:
+            variation: blog_content
         upload:
             max_files: 10
             max_file_size: 20
@@ -73,6 +75,10 @@ The ``path_prefix`` option controls where the media library is mounted, relative
 The ``pagination`` section controls how media items are loaded and displayed:
 
 - ``per_page``: Number of media items to display per page (default: ``20``). This improves performance for large libraries by loading only a subset of items.
+
+The ``text_editor`` section configures the media picker of the ``TextEditorField`` fields:
+
+- ``variation``: Name of the variation to insert when a media is picked from the toolbar of a text editor (default: ``null``, meaning that the original media is inserted). See `Choosing the variation inserted in the editor`_.
 
 The ``upload`` section of the configuration allows you to control the media upload behavior in EasyAdmin:
 
@@ -231,6 +237,46 @@ Unless the page also displays a media selector widget, which brings them along, 
             ->addJsFile(Asset::new(Package::JS_FILE)->package(Package::NAME))
         ;
     }
+
+Choosing the variation inserted in the editor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default, picking a media from the toolbar inserts the original media in the editor content. This is rarely what you want for images: originals are usually way too large for the body of an article.
+
+The variation to insert can be defined field by field, by building the field with ``MediaTextEditorField``. It returns a plain EasyAdmin ``TextEditorField``, which you can configure as usual::
+
+    use JoliCode\MediaBundle\Bridge\EasyAdmin\Field\MediaTextEditorField;
+
+    class ArticleCrudController extends AbstractCrudController
+    {
+        public function configureFields(string $pageName): iterable
+        {
+            return [
+                MediaTextEditorField::new('body', variation: 'blog_content')
+                    ->setNumOfRows(20),
+            ];
+        }
+    }
+
+The same can be done on an already built field, with the ``MediaTextEditorField::OPTION_VARIATION`` custom option::
+
+    use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+    use JoliCode\MediaBundle\Bridge\EasyAdmin\Field\MediaTextEditorField;
+
+    TextEditorField::new('body')
+        ->setCustomOption(MediaTextEditorField::OPTION_VARIATION, 'blog_content')
+    ;
+
+When most of your text editors share the same variation, define it once for the whole project with the ``text_editor.variation`` option:
+
+.. code-block:: yaml
+
+    # filepath: config/packages/joli_media_easy_admin.yaml
+    joli_media_easy_admin:
+        text_editor:
+            variation: blog_content
+
+The variation configured on a field always takes precedence over this default one. The variation must be defined in the default library, otherwise the media picker returns a "400 Bad Request" error. Media for which the variation does not apply - because of the variation `voters <../variations/variation-voters.html>`_, or because they are not images - are inserted as their original file.
 
 Restricting access to the Media library controller
 --------------------------------------------------

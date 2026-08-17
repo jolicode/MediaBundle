@@ -5,6 +5,7 @@ namespace JoliCode\MediaBundle\Tests\Bridge\EasyAdmin\DependencyInjection;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\JoliMediaEasyAdminBundle;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends TestCase
@@ -66,6 +67,40 @@ class ConfigurationTest extends TestCase
         $this->assertTrue($config['visibility']['show_markdown_code']);
         $this->assertTrue($config['visibility']['show_html_code']);
         $this->assertFalse($config['visibility']['show_variations_stored']);
+    }
+
+    public function testDefaultTextEditorConfiguration(): void
+    {
+        $config = $this->processConfiguration([]);
+
+        $this->assertArrayHasKey('text_editor', $config);
+        $this->assertNull($config['text_editor']['variation']);
+    }
+
+    public function testTextEditorConfiguration(): void
+    {
+        $config = $this->processConfiguration([
+            [
+                'text_editor' => [
+                    'variation' => 'blog_content',
+                ],
+            ],
+        ]);
+
+        $this->assertSame('blog_content', $config['text_editor']['variation']);
+    }
+
+    public function testEmptyTextEditorVariationIsRejected(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->processConfiguration([
+            [
+                'text_editor' => [
+                    'variation' => '',
+                ],
+            ],
+        ]);
     }
 
     public function testDefaultUploadConfiguration(): void

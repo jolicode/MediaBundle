@@ -43,6 +43,33 @@ class ConfigTest extends TestCase
         $this->assertEquals(100, $config->getPaginationSize());
     }
 
+    public function testGetTextEditorVariationDefaultValue(): void
+    {
+        $config = new Config(
+            $this->translator,
+            [],
+            [],
+            20,
+        );
+
+        $this->assertNull($config->getTextEditorVariation());
+    }
+
+    public function testGetTextEditorVariationCustomValue(): void
+    {
+        $config = new Config(
+            $this->translator,
+            [],
+            [],
+            20,
+            null,
+            20,
+            'blog_content',
+        );
+
+        $this->assertSame('blog_content', $config->getTextEditorVariation());
+    }
+
     public function testGetTranslationDomain(): void
     {
         $config = new Config(
