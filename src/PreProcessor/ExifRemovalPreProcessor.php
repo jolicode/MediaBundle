@@ -42,9 +42,7 @@ readonly class ExifRemovalPreProcessor extends AbstractPreProcessor implements P
                 'processed size' => filesize($temporaryFile),
             ]);
 
-            return new Binary(
-                $binary->getMimeType(),
-                $binary->getFormat(),
+            return $binary->withContent(
                 file_get_contents($temporaryFile) ?: throw new \RuntimeException(\sprintf('Failed to read content from temporary file "%s"', $temporaryFile)),
             );
         } catch (\Exception $exception) {

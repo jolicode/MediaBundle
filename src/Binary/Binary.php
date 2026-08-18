@@ -110,4 +110,20 @@ class Binary
 
         return $dimensions['height'] ?? null;
     }
+
+    /**
+     * Builds a copy of this binary, holding a different content.
+     *
+     * The mime type, format and path are preserved, but the pixel dimensions are
+     * not: they are guessed again from the new content, when they are needed.
+     */
+    public function withContent(string $content): self
+    {
+        return new self(
+            $this->mimeType,
+            $this->format,
+            $content,
+            $this->path,
+        );
+    }
 }
