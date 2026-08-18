@@ -5,9 +5,11 @@ namespace JoliCode\MediaBundle\Tests\Storage;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Event\MediaEvents;
 use JoliCode\MediaBundle\Event\PreCreateMediaEvent;
+use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class OriginalStorageTest extends BaseTestCase
 {
@@ -131,6 +133,30 @@ class OriginalStorageTest extends BaseTestCase
 
         $this->assertSame('sanitized content', $this->originalFilesystem->read($path));
         $this->assertSame('sanitized content', $media->getBinary()->getContent());
+    }
+
+    #[DataProvider('provideForbiddenTrashPaths')]
+    public function testCreateMediaInTheTrashDirectoryIsForbidden(string $path): void
+    {
+        $this->expectException(ForbiddenPathException::class);
+        $this->expectExceptionMessage('The path ".trash" is reserved.');
+
+        try {
+            $this->originalStorage->createMedia($path, BaseTestCase::getFixtureBinaryContent(BaseTestCase::PNG_FIXTURE_PATH));
+        } finally {
+            $this->assertFalse($this->originalFilesystem->fileExists($path));
+        }
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function provideForbiddenTrashPaths(): iterable
+    {
+        yield 'the trash directory itself' => ['.trash'];
+        yield 'a file in the trash directory' => ['.trash/test.png'];
+        yield 'a file in a subfolder of the trash directory' => ['.trash/sub/folder/test.png'];
+        yield 'a non normalized path' => ['/.trash/test.png'];
     }
 
     public function testGetBinary(): void
