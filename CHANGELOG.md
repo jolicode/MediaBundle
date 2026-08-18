@@ -3,9 +3,12 @@
 ## [Unreleased]
 
 - feature - The media picked from an EasyAdmin `TextEditorField` toolbar can now be inserted as one of its variations, configured field by field with the new `MediaTextEditorField`, or for the whole project with the `joli_media_easy_admin.text_editor.variation` directive - see the [EasyAdmin bridge documentation](doc/bridges/easy-admin.rst)
+- feature - The `binary` property of the `PreCreateMediaEvent` is now writable, so that a listener can sanitize or replace an uploaded content before it is stored - see the [events documentation](doc/misc-features/events.rst)
 - feature - The EasyAdmin media library is now browsed through pretty URLs whenever the application uses EasyAdmin pretty URLs - see the [EasyAdmin bridge documentation](doc/bridges/easy-admin.rst)
 - improvement - The admin bridges JavaScript no longer relies on UI classes to find or toggle elements: behavior is hooked on `data-component` attributes, and state on `data-active`, `data-empty`, `data-copied` or the `hidden` attribute
 - improvement - Allow `symfony/ux-twig-component` 3.x in addition to 2.x
+- improvement - Add a `Binary::withContent()` method, which builds a copy of a binary holding a different content
+- fix - Creating a media inside the trash directory now throws a `ForbiddenPathException`, consistently with the folder creation, move and deletion APIs
 - fix - `Media` objects are now correctly restored when unserialized, for instance when they are read from the Doctrine second level cache
 - fix - The EasyAdmin media selector widget is now rendered when the `MediaChoiceType` is used outside of a `MediaChoiceField`, for instance when it is nested into another form type such as the A2lix `TranslationsType` - see the [EasyAdmin bridge documentation](doc/bridges/easy-admin.rst)
 
