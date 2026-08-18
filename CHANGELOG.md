@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.9.0] - 2026-08-18
 
 - feature - The media picked from an EasyAdmin `TextEditorField` toolbar can now be inserted as one of its variations, configured field by field with the new `MediaTextEditorField`, or for the whole project with the `joli_media_easy_admin.text_editor.variation` directive - see the [EasyAdmin bridge documentation](doc/bridges/easy-admin.rst)
 - feature - The `binary` property of the `PreCreateMediaEvent` is now writable, so that a listener can sanitize or replace an uploaded content before it is stored - see the [events documentation](doc/misc-features/events.rst)
@@ -159,3 +159,4 @@ This is the initial release of the bundle.
 [0.6.1]: https://github.com/jolicode/mediabundle/releases/tag/v0.6.1
 [0.7.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.7.0
 [0.8.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.8.0
+[0.9.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.9.0
