@@ -74,13 +74,12 @@ class CreateMediaEventListenerTest extends WebTestCase
         $path = self::TEST_FOLDER . '/rejected.txt';
 
         try {
+            $this->expectException(\RuntimeException::class);
+            $this->expectExceptionMessage('This media is not acceptable');
             $this->originalStorage->createMediaFromBinary($path, new Binary('text/plain', 'txt', 'sensitive content'));
-            $this->fail('The exception thrown by the listener should not have been swallowed.');
-        } catch (\RuntimeException $e) {
-            $this->assertSame('This media is not acceptable', $e->getMessage());
+        } finally {
+            $this->assertFalse($this->originalStorage->has($path), 'Nothing should have been written to the storage.');
         }
-
-        $this->assertFalse($this->originalStorage->has($path), 'Nothing should have been written to the storage.');
     }
 
     protected static function getKernelClass(): string

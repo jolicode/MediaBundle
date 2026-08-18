@@ -108,13 +108,12 @@ class OriginalStorageTest extends BaseTestCase
         $binary = new Binary('image/png', Format::PNG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::PNG_FIXTURE_PATH));
 
         try {
+            $this->expectException(\RuntimeException::class);
+            $this->expectExceptionMessage('This media is not acceptable');
             $this->originalStorage->createMediaFromBinary($path, $binary);
-            $this->fail('The exception thrown by the listener should not have been swallowed.');
-        } catch (\RuntimeException $e) {
-            $this->assertSame('This media is not acceptable', $e->getMessage());
+        } finally {
+            $this->assertFalse($this->originalFilesystem->fileExists($path), 'Nothing should have been written to the storage.');
         }
-
-        $this->assertFalse($this->originalFilesystem->fileExists($path), 'Nothing should have been written to the storage.');
     }
 
     public function testStoreAdoptsTheBinaryReplacedByAListener(): void
