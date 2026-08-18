@@ -10,7 +10,7 @@ final class PreCreateMediaEvent extends MediaEvent
     public function __construct(
         public readonly OriginalStorage $originalStorage,
         public readonly string $path,
-        public readonly Binary $binary,
+        public Binary $binary,
     ) {
     }
 }

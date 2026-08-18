@@ -95,6 +95,7 @@ class OriginalStorage
         if ($this->dispatcher->hasListeners(MediaEvents::PRE_CREATE_MEDIA)) {
             $event = new PreCreateMediaEvent($this, $path, $binary);
             $this->dispatcher->dispatch($event, MediaEvents::PRE_CREATE_MEDIA);
+            $binary = $event->binary;
         }
 
         $this->getLibrary()->deleteAllVariations($path);
