@@ -64,4 +64,41 @@ class BinaryTest extends BaseTestCase
         $binary = new Binary('image/jpeg', Format::JPEG->value, $content);
         $this->assertSame(Format::JPEG->value, $binary->getFormat());
     }
+
+    public function testBinaryWithContent(): void
+    {
+        $content = BaseTestCase::getFixtureBinaryContent(BaseTestCase::PNG_FIXTURE_PATH);
+        $binary = new Binary('image/png', Format::PNG->value, $content, 'some/path.png');
+
+        $copy = $binary->withContent('replaced content');
+
+        $this->assertNotSame($binary, $copy);
+        $this->assertSame('replaced content', $copy->getContent());
+        $this->assertSame(\strlen('replaced content'), $copy->getContentSize());
+        $this->assertSame('image/png', $copy->getMimeType());
+        $this->assertSame(Format::PNG->value, $copy->getFormat());
+        $this->assertSame('some/path.png', $copy->getPath());
+
+        // the original binary is left untouched
+        $this->assertSame($content, $binary->getContent());
+    }
+
+    public function testBinaryWithContentDoesNotCarryThePixelDimensionsOver(): void
+    {
+        $binary = new Binary(
+            'image/png',
+            Format::PNG->value,
+            BaseTestCase::getFixtureBinaryContent(BaseTestCase::PNG_FIXTURE_PATH),
+            null,
+            2560,
+            1920,
+        );
+
+        // the dimensions are guessed again from the new content
+        $this->assertFalse($binary->withContent('')->getPixelDimensions());
+        $this->assertSame(
+            ['height' => 1920, 'width' => 2560],
+            $binary->withContent(BaseTestCase::getFixtureBinaryContent(BaseTestCase::PNG_FIXTURE_PATH))->getPixelDimensions(),
+        );
+    }
 }

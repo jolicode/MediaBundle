@@ -25,7 +25,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ServiceLocator;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Mime\FileBinaryMimeTypeGuesser;
 use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Routing\Generator\UrlGenerator;
@@ -63,6 +63,8 @@ class BaseTestCase extends WebTestCase
     ];
 
     protected CacheStorage $cacheStorage;
+
+    protected EventDispatcher $eventDispatcher;
 
     protected Converter $converter;
 
@@ -206,7 +208,8 @@ class BaseTestCase extends WebTestCase
         string $urlPath,
         UrlGeneratorInterface $urlGenerator,
     ): OriginalStorage {
-        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        // every storage of a test case shares the same dispatcher, as they would in an application
+        $this->eventDispatcher ??= new EventDispatcher();
         $cache = $this->createMock(CacheInterface::class);
         $cache->method('get')->willReturnCallback(function (string $key, callable $callback) {
             $item = $this->createMock(ItemInterface::class);
@@ -232,7 +235,7 @@ class BaseTestCase extends WebTestCase
             '.trash',
             $urlGenerator,
             $mimeTypeGuesser,
-            $eventDispatcher,
+            $this->eventDispatcher,
             $mediaPropertyAccessor,
         );
     }

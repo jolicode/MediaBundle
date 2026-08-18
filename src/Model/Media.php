@@ -241,7 +241,8 @@ class Media implements StorableInterface
             throw new \RuntimeException('No binary set to store');
         }
 
-        $this->storage->createMediaFromBinary($this->path, $this->binary);
+        // the pre-create listeners may have replaced the binary, so adopt the stored one
+        $this->binary = $this->storage->createMediaFromBinary($this->path, $this->binary)->getBinary();
         $this->stored = true;
     }
 

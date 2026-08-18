@@ -92,9 +92,14 @@ class OriginalStorage
     {
         $path = Resolver::normalizePath($path);
 
+        if ($this->trashPath === $path || str_starts_with($path, $this->trashPath . '/')) {
+            throw new ForbiddenPathException($this->trashPath);
+        }
+
         if ($this->dispatcher->hasListeners(MediaEvents::PRE_CREATE_MEDIA)) {
             $event = new PreCreateMediaEvent($this, $path, $binary);
             $this->dispatcher->dispatch($event, MediaEvents::PRE_CREATE_MEDIA);
+            $binary = $event->binary;
         }
 
         $this->getLibrary()->deleteAllVariations($path);
