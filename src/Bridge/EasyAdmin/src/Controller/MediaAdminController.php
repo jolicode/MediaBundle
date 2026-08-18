@@ -690,6 +690,16 @@ class MediaAdminController extends AbstractController
             : '';
         $hasSearch = '' !== $searchValue;
 
+        // the media picker of a TextEditorField asks for the markup of a given
+        // variation, so that picking a media inserts this variation in the editor
+        $insertVariationName = $request->query->getString('variation') ?: null;
+
+        if (null !== $insertVariationName && !$this->getLibrary()->hasVariation($insertVariationName)) {
+            throw new BadRequestException(\sprintf('The variation "%s" is not defined in the "%s" library.', $insertVariationName, $this->getLibrary()->getName()));
+        }
+
+        $insertVariation = null === $insertVariationName ? null : $this->getLibrary()->getVariation($insertVariationName);
+
         try {
             $trashPath = $this->getOriginalStorage()->getTrashPath();
 
@@ -764,6 +774,7 @@ class MediaAdminController extends AbstractController
             'current_key' => $currentKey,
             'delete_directory_form' => $this->createDeleteDirectoryForm($key)->createView(),
             'directories' => $directories,
+            'insert_variation' => $insertVariation,
             'medias' => $paginator->getResults(),
             'paginator' => $paginator,
             'parent_key' => \dirname($currentKey),

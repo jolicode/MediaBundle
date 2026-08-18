@@ -42,6 +42,12 @@ class Page implements \Stringable, ResourceInterface
     #[Assert\Length(max: 255)]
     private string $slug;
 
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TEXT, nullable: true)]
+    private ?string $body = null;
+
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TEXT, nullable: true)]
+    private ?string $summary = null;
+
     #[ORM\Column(type: Types::MEDIA)]
     #[MediaDeleteBehavior(strategy: Strategy::RESTRICT)]
     #[JoliAssert\Media]
@@ -91,6 +97,30 @@ class Page implements \Stringable, ResourceInterface
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getBody(): ?string
+    {
+        return $this->body;
+    }
+
+    public function setBody(?string $body): self
+    {
+        $this->body = $body;
+
+        return $this;
+    }
+
+    public function getSummary(): ?string
+    {
+        return $this->summary;
+    }
+
+    public function setSummary(?string $summary): self
+    {
+        $this->summary = $summary;
 
         return $this;
     }

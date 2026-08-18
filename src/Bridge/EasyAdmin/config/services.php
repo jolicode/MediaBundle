@@ -117,6 +117,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('joli_media_easy_admin.twig_extension', JoliMediaEasyAdminExtension::class)
         ->args([
             '$mediaAdminRouter' => service('joli_media_easy_admin.router'),
+            '$config' => service('joli_media_easy_admin.config'),
         ])
         ->tag('twig.extension')
     ;

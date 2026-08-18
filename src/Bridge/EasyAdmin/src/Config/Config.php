@@ -18,6 +18,7 @@ readonly class Config extends AbstractConfig
         int $maxFileSize,
         ?int $maxFiles = null,
         private int $paginationSize = 20,
+        private ?string $textEditorVariation = null,
     ) {
         parent::__construct($translator, $visibility, $acceptedFiles, $maxFileSize, $maxFiles);
     }
@@ -31,5 +32,14 @@ readonly class Config extends AbstractConfig
     public function getPaginationSize(): int
     {
         return $this->paginationSize;
+    }
+
+    /**
+     * Name of the variation inserted by default when a media is picked from a
+     * TextEditorField - null means that the original media is inserted.
+     */
+    public function getTextEditorVariation(): ?string
+    {
+        return $this->textEditorVariation;
     }
 }

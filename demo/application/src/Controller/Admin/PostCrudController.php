@@ -10,9 +10,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use JoliCode\MediaBundle\Bridge\EasyAdmin\Field\MediaChoiceField;
+use JoliCode\MediaBundle\Bridge\EasyAdmin\Field\MediaTextEditorField;
 
 class PostCrudController extends AbstractCrudController
 {
@@ -37,7 +37,8 @@ class PostCrudController extends AbstractCrudController
             ->setFolder('articles')
         ;
         $title = TextField::new('title');
-        $body = TextEditorField::new('body')
+        // the media picked from the editor toolbar are inserted as their "post_body" variation
+        $body = MediaTextEditorField::new('body', variation: 'post_body')
             ->setNumOfRows(20)
         ;
         $isPublished = BooleanField::new('isPublished');

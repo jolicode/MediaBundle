@@ -55,6 +55,14 @@ joli_media:
                         - type: folder
                           path: articles
 
+                post_body:
+                    transformers:
+                        resize:
+                            width: 600
+                            height: 600
+                            mode: inside
+                            allow_upscale: false
+
                 transform_resize:
                     format: webp
                     transformers:

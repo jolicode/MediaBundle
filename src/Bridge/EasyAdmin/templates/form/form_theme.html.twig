@@ -56,12 +56,16 @@
 {% endblock %}
 
 {% block ea_text_editor_widget %}
+    {# the variation of the field takes precedence over the one configured for the whole project #}
+    {% set joli_media_variation_option = constant('JoliCode\\MediaBundle\\Bridge\\EasyAdmin\\Field\\MediaTextEditorField::OPTION_VARIATION') %}
+    {% set joli_media_variation = form.vars.ea_vars.field.customOptions.get(joli_media_variation_option) ?? joli_media_admin_text_editor_variation() %}
     <div
         id="modal-media-choice_{{ id }}"
         class="modal-media-choice modal fade"
         data-component="media-choice-modal"
         tabindex="-1"
         data-href="{{ joli_media_admin_url('choose', { key: '__FOLDER__' }) }}"
+        {%- if joli_media_variation %} data-variation="{{ joli_media_variation }}"{% endif %}
     >
         <div class="modal-dialog">
             <div class="modal-content">

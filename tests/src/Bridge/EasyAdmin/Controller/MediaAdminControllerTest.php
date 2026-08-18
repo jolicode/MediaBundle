@@ -210,6 +210,50 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorTextContains('.breadcrumb-item.active', 'folder');
     }
 
+    public function testTheTextEditorMediaPickerCarriesItsVariation(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/page/new');
+        $this->assertResponseIsSuccessful();
+
+        // the variation of the field wins over the one configured for the project
+        $this->assertSame(
+            'variation-large',
+            $crawler->filter('#modal-media-choice_Page_body')->attr('data-variation'),
+        );
+
+        // a field without variation falls back to the one configured for the project
+        $this->assertSame(
+            'variation-standard',
+            $crawler->filter('#modal-media-choice_Page_summary')->attr('data-variation'),
+        );
+    }
+
+    public function testTheMediaPickerRendersTheRequestedVariation(): void
+    {
+        // without a variation, picking a media inserts the original one
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/choose-file/sub/folder');
+        $this->assertResponseIsSuccessful();
+        $template = (string) $this->findInGalleryFromName($crawler, 'circle-pattern.png')->attr('data-media-original-template');
+        $this->assertStringContainsString('/media/original/sub/folder/circle-pattern.png', $template);
+
+        // when a variation is requested, its markup is inserted instead
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/choose-file/sub/folder?variation=variation-large');
+        $this->assertResponseIsSuccessful();
+        $template = (string) $this->findInGalleryFromName($crawler, 'circle-pattern.png')->attr('data-media-original-template');
+        $this->assertStringNotContainsString('/media/original/sub/folder/circle-pattern.png', $template);
+        $this->assertStringContainsString('variation-large', $template);
+
+        // media which cannot be declined in this variation keep their original markup
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/choose-file?variation=variation-large');
+        $this->assertResponseIsSuccessful();
+        $template = (string) $this->findInGalleryFromName($crawler, 'default.pdf')->attr('data-media-original-template');
+        $this->assertStringContainsString('/media/original/default.pdf', $template);
+
+        // an undefined variation is a configuration error
+        $this->client->request(Request::METHOD_GET, '/admin/media/choose-file?variation=nope');
+        $this->assertResponseStatusCodeSame(400);
+    }
+
     public function testSearchFormDisplay(): void
     {
         // the choose media modal has a toggable search panel

@@ -4,6 +4,9 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 
 return static function (ContainerConfigurator $container): void {
     $container->extension('joli_media_easy_admin', [
+        'text_editor' => [
+            'variation' => 'variation-standard',
+        ],
         'visibility' => [
             'show_variations_stored' => true,
         ],
