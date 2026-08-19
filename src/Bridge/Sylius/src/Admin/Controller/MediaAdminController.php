@@ -267,10 +267,14 @@ class MediaAdminController extends AbstractController
 
         if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($key, $csrfToken))) {
             $this->addFlash('error', 'Invalid CSRF token');
+
+            return $this->redirectToRoute('joli_media_sylius_admin_explore');
         }
 
         if ('' === $key) {
             $this->addFlash('error', 'Missing path parameter');
+
+            return $this->redirectToRoute('joli_media_sylius_admin_explore');
         }
 
         try {
@@ -297,10 +301,14 @@ class MediaAdminController extends AbstractController
 
         if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($key, $csrfToken))) {
             $this->addFlash('error', 'Invalid CSRF token');
+
+            return $this->redirectToRoute('joli_media_sylius_admin_explore');
         }
 
         if ('' === $key) {
             $this->addFlash('error', 'Missing path parameter');
+
+            return $this->redirectToRoute('joli_media_sylius_admin_explore');
         }
 
         try {
