@@ -6,9 +6,9 @@
    ========================================================================== */
 
 .new-directory-container {
-  --new-directory-color: var(--jm-dropzone-color);
+  --new-directory-color: var(--jm-uploader-color);
   --new-directory-background-color: var(--jm-color-gray-100);
-  --new-directory-border-color: var(--jm-dropzone-border-color);
+  --new-directory-border-color: var(--jm-uploader-border-color);
 }
 
 [data-bs-theme="dark"] {

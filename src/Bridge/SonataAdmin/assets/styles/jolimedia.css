@@ -1,5 +1,5 @@
 /* Libraries */
-@import '@deltablot/dropzone/dist/basic.css';
+@import '../../../assets/styles/uploader-base.css';
 
 /* Base */
 @import 'base.css';
@@ -7,7 +7,7 @@
 /* Components */
 @import 'breadcrumb.css';
 @import 'clipboard.css';
-@import 'dropzone.css';
+@import 'uploader.css';
 @import 'folder-choice.css';
 @import 'gallery.css';
 @import 'media-choice.css';

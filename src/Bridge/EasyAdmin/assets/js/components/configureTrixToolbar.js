@@ -1,4 +1,4 @@
-import buildFolderUrl from "./folderUrl.js";
+import buildFolderUrl from "../../../../assets/js/helpers/folderUrl.js";
 
 const configureTrixToolbar = () => {
     document.querySelectorAll("trix-toolbar").forEach((toolbar) => {

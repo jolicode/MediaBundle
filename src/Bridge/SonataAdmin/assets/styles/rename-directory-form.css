@@ -6,9 +6,9 @@
   min-height: auto;
   margin-top: 1rem;
   padding: 1.5rem;
-  color: var(--jm-dropzone-color);
+  color: var(--jm-uploader-color);
   background-color: var(--jm-color-gray-100);
-  border: dashed 1px var(--jm-dropzone-border-color);
+  border: dashed 1px var(--jm-uploader-border-color);
   border-radius: 4px;
   z-index: 100;
 

@@ -1,15 +1,15 @@
 import '../styles/base.css';
 import '../styles/box.css';
 import '../styles/clipboard.css';
-import '../styles/dropzone.css';
+import '../styles/uploader.css';
 import '../styles/gallery.css';
 import '../styles/media-choice.css';
 import '../styles/media-preview.css';
 import '../styles/media-show.css';
 import './modal-portal';
 import configureMediaSelector from './components/mediaSelector';
-import addDropzone from './components/dropzone';
-import configureClipboard from './components/clipboard';
+import addUploader from '../../../assets/js/components/mediaUploader';
+import configureClipboard from '../../../assets/js/components/clipboard';
 import configureDirectoryCreate from './components/directoryCreate';
 import configureDirectoryRename from './components/directoryRename';
 import configureMediaRename from './components/mediaRename';
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configureMediaRename();
     configureFolderSelector();
 
-    let dropzoneInstance = null;
+    let uploaderInstance = null;
 
     document.addEventListener('click', (e) => {
         const mediaAddButton = e.target.closest('[data-component="media-add"]');
@@ -34,26 +34,26 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             e.stopPropagation();
 
-            const dropzoneContainer = mediaAddButton.closest('[data-component="media-tools"]')?.querySelector('[data-component="dropzone-container"]');
-            if (!dropzoneContainer) {
+            const uploaderContainer = mediaAddButton.closest('[data-component="media-tools"]')?.querySelector('[data-component="uploader-container"]');
+            if (!uploaderContainer) {
                 return;
             }
 
-            const isActive = !dropzoneContainer.hasAttribute('data-active');
-            dropzoneContainer.toggleAttribute('data-active', isActive);
+            const isActive = !uploaderContainer.hasAttribute('data-active');
+            uploaderContainer.toggleAttribute('data-active', isActive);
 
-            const dropzoneForm = dropzoneContainer.querySelector('[data-component="dropzone"]');
-            if (!dropzoneForm) {
+            const uploaderForm = uploaderContainer.querySelector('[data-component="uploader"]');
+            if (!uploaderForm) {
                 return;
             }
 
-            if (dropzoneContainer.dataset.dropzoneInitialized !== 'true') {
-                dropzoneInstance = addDropzone(dropzoneForm);
-                dropzoneContainer.dataset.dropzoneInitialized = 'true';
+            if (uploaderContainer.dataset.uploaderInitialized !== 'true') {
+                uploaderInstance = addUploader(uploaderForm);
+                uploaderContainer.dataset.uploaderInitialized = 'true';
             }
 
             if (!isActive) {
-                dropzoneInstance?.removeAllFiles(true);
+                uploaderInstance?.removeAllFiles(true);
             }
         }
     });

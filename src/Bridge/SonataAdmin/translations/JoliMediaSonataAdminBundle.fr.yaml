@@ -84,10 +84,8 @@ media:
     unavailable:
         simple: 'Le média n’est pas disponible.'
     upload:
-        dropzone:
+        uploader:
             default_message: 'Déposez vos fichiers ici ou cliquez pour télécharger'
-            fallback_message: 'Votre navigateur ne supporte pas le drag’n’drop pour le téléchargement de fichiers.'
-            fallback_text: 'Veuillez utiliser le formulaire ci-dessous pour envoyer vos fichiers.'
             file_too_big: 'Le fichier est trop volumineux ({{filesize}}Mo). La taille maximale autorisée est de {{maxFilesize}}Mo.'
             invalid_file_type: 'Type de fichier non autorisé.'
             max_files_exceeded: 'Vous ne pouvez pas télécharger plus de {{maxFiles}} fichiers.'

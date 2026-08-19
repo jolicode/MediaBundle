@@ -1,0 +1,132 @@
+@import '../../../assets/styles/uploader-base.css';
+
+:root {
+    --jm-uploader-color: #293a53;
+    --jm-uploader-border-color: #aab6c8;
+    --jm-uploader-bg-color: #f8fafc;
+    --jm-color-green: #00a65a;
+    --jm-color-red: #dd4b39;
+}
+
+[data-bs-theme="dark"] {
+    .uploader {
+        --jm-uploader-color: #c4d0e0;
+        --jm-uploader-border-color: #4b5563;
+        --jm-uploader-bg-color: #1f2937;
+    }
+}
+
+.uploader-container {
+    display: none;
+    margin-top: 1rem;
+}
+
+.uploader-container[data-active] {
+    display: block;
+}
+
+.uploader-container input[type=file] {
+    display: none;
+}
+
+.uploader {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: auto;
+    margin-top: 1rem;
+    color: var(--jm-uploader-color);
+    background-color: var(--jm-uploader-bg-color);
+    border: dashed 2px var(--jm-uploader-border-color);
+    border-radius: 4px;
+    z-index: 100;
+}
+
+.uploader .uploader-message {
+    cursor: pointer;
+    font-size: 1.4375rem;
+    padding: 5rem 1.25rem;
+    margin: 0;
+    width: 100%;
+}
+
+.uploader .uploader-button {
+    display: block;
+    margin: 0 auto;
+    border: none;
+    padding: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+}
+
+.uploader[data-started] .uploader-message {
+    display: none;
+}
+
+.uploader .uploader-preview-details {
+    font-size: 15px;
+}
+
+.uploader .uploader-preview {
+    width: 180px;
+}
+
+.uploader .uploader-preview .uploader-progress {
+    height: 10px;
+    border: none;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.uploader .uploader-preview .uploader-progress .uploader-progress-bar {
+    background-color: var(--jm-color-green);
+}
+
+.uploader .uploader-preview[data-complete] .uploader-progress {
+    display: none;
+}
+
+.uploader .uploader-preview .uploader-error-marker {
+    color: var(--jm-color-red);
+    display: none;
+    margin-right: .25rem;
+}
+
+.uploader .uploader-preview .uploader-success-marker {
+    color: var(--jm-color-green);
+    display: none;
+    margin-right: .25rem;
+}
+
+.uploader .uploader-preview[data-status="error"] .uploader-error-marker {
+    display: inline-block;
+}
+
+.uploader .uploader-preview[data-status="error"] .uploader-error-message {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--jm-color-red);
+}
+
+.uploader .uploader-preview[data-status="error"] .uploader-preview-image.media-preview {
+    display: none;
+}
+
+.uploader .uploader-preview[data-status="success"] .uploader-success-marker {
+    display: inline-block;
+}
+
+.uploader .uploader-preview a[data-upload-link] {
+    flex-wrap: wrap;
+    place-content: center;
+    align-items: center;
+    display: flex;
+    width: 180px;
+    height: 109px;
+}
+
+.uploader-preview-template {
+    display: none;
+}

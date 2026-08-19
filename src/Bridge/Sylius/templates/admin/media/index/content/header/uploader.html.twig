@@ -2,16 +2,16 @@
 {% set create_media_form = hookable_metadata.context.create_media_form %}
 
 <div class="row">
-    <div class="dropzone-container" data-component="dropzone-container">
+    <div class="uploader-container" data-component="uploader-container">
         {{ form_start(create_media_form, { attr: {
-            class: 'dropzone',
-            'data-component': 'dropzone',
-            'data-dropzone-config': config.uploadOptions|json_encode(constant('JSON_THROW_ON_ERROR')),
+            class: 'uploader',
+            'data-component': 'uploader',
+            'data-uploader-config': config.uploadOptions|json_encode(constant('JSON_THROW_ON_ERROR')),
         } }) }}
         {{ form_widget(create_media_form.path) }}
-        {{ form_widget(create_media_form.file, { attr: { class: 'dz-hidden-input' } }) }}
+        {{ form_widget(create_media_form.file, { attr: { class: 'uploader-hidden-input' } }) }}
         {{ form_widget(create_media_form._token) }}
-        <div class="dz-preview-template" data-component="dropzone-preview-template">
+        <div class="uploader-preview-template" data-component="uploader-preview-template">
             {{ include('@JoliMediaSylius/uploaded_file_preview.html.twig') }}
         </div>
         {{ form_end(create_media_form) }}

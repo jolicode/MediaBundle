@@ -6,9 +6,9 @@
    ========================================================================== */
 
 .rename-file-container {
-  --rename-file-color: var(--jm-dropzone-color);
+  --rename-file-color: var(--jm-uploader-color);
   --rename-file-background-color: var(--jm-color-gray-100);
-  --rename-file-border-color: var(--jm-dropzone-border-color);
+  --rename-file-border-color: var(--jm-uploader-border-color);
 }
 
 [data-bs-theme="dark"] {

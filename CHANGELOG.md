@@ -8,6 +8,10 @@
 - fix - Deleting the trash directory no longer moves it into itself and fails with an `UnableToMoveFile` error: a `ForbiddenPathException` is thrown instead, even when the `trash_path` is configured with a trailing slash
 - fix - Deleting a media stored in the trash directory now throws a `ForbiddenPathException`, consistently with the folder deletion, creation and move APIs
 - fix - The EasyAdmin, Sonata and Sylius bridges no longer return a 500 error when the trash directory, or one of the medias it holds, is listed or deleted through a crafted URL
+- improvement - The media upload is now handled by an internal uploader, and the bundle now ships without any runtime JavaScript dependency
+- improvement - The JavaScript shared by the admin bridges now lives in a single place instead of being duplicated in each bridge
+- bc break - `AbstractConfig::getUploadOptions()` no longer returns the Dropzone-flavoured `dictDefaultMessage`, `dictFileTooBig`, `dictInvalidFileType`, `dictMaxFilesExceeded` and `maxFilesize` keys, but a `messages` array (`default`, `fileTooBig`, `invalidFileType`, `maxFilesExceeded`) and a `maxFileSize` key. The `dictFallbackMessage` and `dictFallbackText` keys are gone, along with the browser fallback they configured
+- bc break - The Sylius `dropzone` twig hookable of `joli_media_sylius_admin.media.index.content.header` was renamed to `uploader`
 
 ## [0.9.0] - 2026-08-18
 

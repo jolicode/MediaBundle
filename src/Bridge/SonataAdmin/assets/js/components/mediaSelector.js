@@ -1,3 +1,5 @@
+import { fetchFolder, getFolderUrl, getSearchUrl, isSelectableLink, setFieldValue } from '../../../../assets/js/helpers/modalFetch.js';
+
 const { jQuery, Admin } = window;
 
 const MEDIA_CHOICE_SELECTOR = '[data-component="media-choice"]';
@@ -15,29 +17,6 @@ const MediaSelector = class {
     this.currentFolder = false;
     this.currentSearchValue = '';
   }
-
-  fetchFolder = (url) => {
-    return fetch(url).then((response) => response.text());
-  };
-
-  getSearchUrl = (baseUrl) => {
-    if (!this.currentSearchValue) return baseUrl;
-
-    const url = new URL(baseUrl, window.location.origin);
-    url.searchParams.set('query', this.currentSearchValue);
-
-    return `${url.pathname}${url.search}${url.hash}`;
-  };
-
-  // the folder URL must not retain pagination or search parameters, so that
-  // a new search (or clearing the search) always starts back at page 1
-  getFolderUrl = (href) => {
-    const url = new URL(href, window.location.origin);
-    url.searchParams.delete('page');
-    url.searchParams.delete('query');
-
-    return `${url.pathname}${url.search}${url.hash}`;
-  };
 
   openSearchPanel = () => {
     const searchContainer = this.modalContent.querySelector('[data-component="search-container"]');
@@ -70,13 +49,13 @@ const MediaSelector = class {
       e.preventDefault();
       e.stopPropagation();
       this.currentSearchValue = newInput.value.trim();
-      this.fetchFolder(this.getSearchUrl(this.currentFolder)).then(this.configureModal);
+      fetchFolder(getSearchUrl(this.currentFolder, this.currentSearchValue)).then(this.configureModal);
     });
 
     newInput.addEventListener('search', () => {
       if (!newInput.value) {
         this.currentSearchValue = '';
-        this.fetchFolder(this.currentFolder).then((html) => {
+        fetchFolder(this.currentFolder).then((html) => {
           this.configureModal(html);
           this.openSearchPanel();
         });
@@ -93,13 +72,7 @@ const MediaSelector = class {
   handleModalClick = (event) => {
     const target = event.target.closest('a');
 
-    if (
-      target === null ||
-      target.tagName !== 'A' ||
-      target.attributes.href === undefined ||
-      target.attributes.href.length === 0 ||
-      target.attributes.href.value === '#'
-    ) {
+    if (!isSelectableLink(target)) {
       return;
     }
 
@@ -108,14 +81,14 @@ const MediaSelector = class {
 
     if (target.dataset.mediaTemplate === undefined || target.dataset.mediaUrl === undefined) {
       // this is not a selectable media
-      this.currentFolder = this.getFolderUrl(target.attributes.href.value);
-      this.fetchFolder(this.getSearchUrl(target.attributes.href.value)).then(this.configureModal);
+      this.currentFolder = getFolderUrl(target.attributes.href.value);
+      fetchFolder(getSearchUrl(target.attributes.href.value, this.currentSearchValue)).then(this.configureModal);
       return;
     }
 
     this.mediaContainer.innerHTML = target.dataset.mediaTemplate;
     this.mediaChoiceContainer.toggleAttribute('data-empty', false);
-    this.setFieldValue(target.dataset.mediaUrl);
+    setFieldValue(this.inputElement, target.dataset.mediaUrl);
     this.editButton.dataset.folder = target.dataset.mediaFolder;
     jQuery(this.modal).modal('hide');
   };
@@ -145,11 +118,6 @@ const MediaSelector = class {
     ;
   };
 
-  setFieldValue = (value) => {
-    this.inputElement.value = value;
-    this.inputElement.dispatchEvent(new Event('change'));
-  };
-
   choose(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -175,7 +143,7 @@ const MediaSelector = class {
     this.currentSearchValue = '';
     this.currentFolder = this.editButton.attributes.href.value + '/' + this.editButton.dataset.folder;
 
-    this.fetchFolder(this.currentFolder).then((html) => {
+    fetchFolder(this.currentFolder).then((html) => {
       this.configureModal(html);
       jQuery(this.modal).modal();
       Admin.setup_list_modal(this.modal);
@@ -194,7 +162,7 @@ const MediaSelector = class {
     this.mediaContainer.appendChild(template.content.cloneNode(true));
 
     this.editButton.dataset.folder = '';
-    this.setFieldValue('');
+    setFieldValue(this.inputElement, '');
   }
 }
 

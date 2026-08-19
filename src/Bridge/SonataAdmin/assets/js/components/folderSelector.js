@@ -1,3 +1,5 @@
+import { fetchFolder as fetchFolderContent, isSelectableLink, setFieldValue } from '../../../../assets/js/helpers/modalFetch.js';
+
 const { jQuery, Admin } = window;
 
 const FolderSelector = class {
@@ -11,7 +13,8 @@ const FolderSelector = class {
 
   fetchFolder = (url) => {
     this.currentFolder = url;
-    return fetch(url).then((response) => response.text());
+
+    return fetchFolderContent(url);
   };
 
   configureModal = (html) => {
@@ -22,13 +25,7 @@ const FolderSelector = class {
   handleModalClick = (event) => {
     const target = event.target.closest('a');
 
-    if (
-      target === null ||
-      target.tagName !== 'A' ||
-      target.attributes.href === undefined ||
-      target.attributes.href.length === 0 ||
-      target.attributes.href.value === '#'
-    ) {
+    if (!isSelectableLink(target)) {
       return;
     }
 
@@ -41,7 +38,7 @@ const FolderSelector = class {
       return;
     }
 
-    this.setFieldValue(target.dataset.folderPath);
+    setFieldValue(this.inputElement, target.dataset.folderPath);
     jQuery(this.modal).modal('hide');
 
     if (confirm(target.dataset.confirmation)) {
@@ -67,11 +64,6 @@ const FolderSelector = class {
       .then((response) => response.text())
       .then(this.configureModal)
     ;
-  };
-
-  setFieldValue = (value) => {
-    this.inputElement.value = value;
-    this.inputElement.dispatchEvent(new Event('change'));
   };
 
   choose(event) {

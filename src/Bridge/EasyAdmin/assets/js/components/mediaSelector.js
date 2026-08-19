@@ -1,4 +1,5 @@
-import buildFolderUrl from "./folderUrl.js";
+import buildFolderUrl from "../../../../assets/js/helpers/folderUrl.js";
+import { fetchFolder, getFolderUrl, getSearchUrl, isSelectableLink, setFieldValue } from "../../../../assets/js/helpers/modalFetch.js";
 
 const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const id = mediaChoiceContainer.dataset.mediaId;
@@ -18,27 +19,6 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         editButton.dataset.folder,
     );
 
-    const fetchFolder = (url) => fetch(url).then((response) => response.text());
-
-    const getSearchUrl = (baseUrl) => {
-        if (!currentSearchValue) return baseUrl;
-
-        const url = new URL(baseUrl, window.location.origin);
-        url.searchParams.set('query', currentSearchValue);
-
-        return `${url.pathname}${url.search}${url.hash}`;
-    };
-
-    // the folder URL must not retain pagination or search parameters, so that
-    // a new search (or clearing the search) always starts back at page 1
-    const getFolderUrl = (href) => {
-        const url = new URL(href, window.location.origin);
-        url.searchParams.delete('page');
-        url.searchParams.delete('query');
-
-        return `${url.pathname}${url.search}${url.hash}`;
-    };
-
     const configureModal = (html) => {
         modalContent.innerHTML = html;
         setupSearch();
@@ -48,11 +28,6 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         const closeButtons = modal.querySelectorAll("[data-bs-dismiss='modal']");
         closeButtons.item(closeButtons.length - 1).dispatchEvent(new Event("click"));
         return;
-    };
-
-    const setFieldValue = (value) => {
-        inputElement.value = value;
-        inputElement.dispatchEvent(new Event("change"));
     };
 
     const openSearchPanel = () => {
@@ -86,7 +61,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
             e.preventDefault();
             e.stopPropagation();
             currentSearchValue = newInput.value.trim();
-            fetchFolder(getSearchUrl(currentFolderUrl)).then(configureModal);
+            fetchFolder(getSearchUrl(currentFolderUrl, currentSearchValue)).then(configureModal);
         });
 
         newInput.addEventListener('search', () => {
@@ -103,13 +78,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
     const handleModalClick = (event) => {
         const target = event.target.closest("a");
 
-        if (
-            target === null ||
-            target.tagName !== "A" ||
-            target.attributes.href === undefined ||
-            target.attributes.href.length === 0 ||
-            target.attributes.href.value === "#"
-        ) {
+        if (!isSelectableLink(target)) {
             return;
         }
 
@@ -122,13 +91,13 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         ) {
             // this is not a selectable media
             currentFolderUrl = getFolderUrl(target.attributes.href.value);
-            fetchFolder(getSearchUrl(target.attributes.href.value)).then(configureModal);
+            fetchFolder(getSearchUrl(target.attributes.href.value, currentSearchValue)).then(configureModal);
             return;
         }
 
         mediaContainer.innerHTML = target.dataset.mediaTemplate;
         mediaChoiceContainer.toggleAttribute("data-empty", false);
-        setFieldValue(target.dataset.mediaUrl);
+        setFieldValue(inputElement, target.dataset.mediaUrl);
         editButton.dataset.folder = target.dataset.mediaFolder;
         closeModal();
     };
@@ -142,7 +111,7 @@ const configureMediaChoiceContainer = (mediaChoiceContainer) => {
         mediaContainer.appendChild(template.content.cloneNode(true));
 
         editButton.dataset.folder = "";
-        setFieldValue("");
+        setFieldValue(inputElement, "");
         return false;
     };
 

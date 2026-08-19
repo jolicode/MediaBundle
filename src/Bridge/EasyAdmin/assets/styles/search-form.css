@@ -6,9 +6,9 @@
    ========================================================================== */
 
 .search-container {
-  --search-color: var(--jm-dropzone-color);
+  --search-color: var(--jm-uploader-color);
   --search-background-color: var(--jm-color-gray-100);
-  --search-border-color: var(--jm-dropzone-border-color);
+  --search-border-color: var(--jm-uploader-border-color);
 }
 
 [data-bs-theme="dark"] {
