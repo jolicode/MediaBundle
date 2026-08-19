@@ -74,6 +74,7 @@ media:
             file_too_big: 'File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.'
             invalid_file_type: 'You can''t upload files of this type.'
             max_files_exceeded: 'You can''t upload any more files.'
+            response_error: 'The server responded with an error (code {{statusCode}}).'
 document:
     download: 'Download the document'
 no_file_found: 'No file found'

@@ -89,6 +89,7 @@ media:
             file_too_big: 'Le fichier est trop volumineux ({{filesize}}Mo). La taille maximale autorisée est de {{maxFilesize}}Mo.'
             invalid_file_type: 'Type de fichier non autorisé.'
             max_files_exceeded: 'Vous ne pouvez pas télécharger plus de {{maxFiles}} fichiers.'
+            response_error: 'Le serveur a répondu par une erreur (code {{statusCode}}).'
         error:
             already_exists: 'Le fichier "%file%" existe déjà, veuillez changer le nom du fichier.'
             default: 'Échec de l''envoi du fichier'

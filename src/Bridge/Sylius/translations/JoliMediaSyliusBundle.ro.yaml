@@ -74,6 +74,7 @@ media:
             file_too_big: 'Fișierul este prea mare ({{filesize}} MiB). Maximul: {{maxFilesize}} MiB.'
             invalid_file_type: 'Nu puteți încărca fișiere de acest tip.'
             max_files_exceeded: 'Nu mai puteți încărca alte fișiere.'
+            response_error: 'Serverul a răspuns cu o eroare (cod {{statusCode}}).'
 document:
     download: 'Descarcă documentul'
 no_file_found: 'Niciun fișier găsit'

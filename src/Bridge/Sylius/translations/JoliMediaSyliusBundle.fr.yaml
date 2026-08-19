@@ -73,6 +73,7 @@ media:
             file_too_big: 'Le fichier est trop volumineux ({{filesize}}Mo). Taille maximale: {{maxFilesize}}Mo.'
             invalid_file_type: 'Vous ne pouvez pas télécharger de fichiers de ce type.'
             max_files_exceeded: 'Vous ne pouvez plus télécharger de fichiers.'
+            response_error: 'Le serveur a répondu par une erreur (code {{statusCode}}).'
 document:
     download: 'Télécharger le document'
 no_file_found: 'Aucun fichier trouvé'

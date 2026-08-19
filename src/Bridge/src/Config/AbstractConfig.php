@@ -49,6 +49,7 @@ abstract readonly class AbstractConfig
                 'fileTooBig' => $this->translator->trans('media.upload.uploader.file_too_big', domain: $this->getTranslationDomain()),
                 'invalidFileType' => $this->translator->trans('media.upload.uploader.invalid_file_type', domain: $this->getTranslationDomain()),
                 'maxFilesExceeded' => $this->translator->trans('media.upload.uploader.max_files_exceeded', domain: $this->getTranslationDomain()),
+                'responseError' => $this->translator->trans('media.upload.uploader.response_error', domain: $this->getTranslationDomain()),
             ],
             'maxFileSize' => $this->maxFileSize,
         ];

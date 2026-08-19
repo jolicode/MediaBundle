@@ -74,6 +74,7 @@ media:
             file_too_big: 'Die Datei ist zu groß ({{filesize}} MiB). Maximale Dateigröße: {{maxFilesize}} MiB.'
             invalid_file_type: 'Dateien dieses Typs können nicht hochgeladen werden.'
             max_files_exceeded: 'Es können keine weiteren Dateien hochgeladen werden.'
+            response_error: 'Der Server hat mit einem Fehler geantwortet (Code {{statusCode}}).'
 document:
     download: 'Dokument herunterladen'
 no_file_found: 'Keine Datei gefunden'

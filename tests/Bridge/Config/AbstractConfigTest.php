@@ -88,6 +88,7 @@ class AbstractConfigTest extends TestCase
             'fileTooBig' => 'media.upload.uploader.file_too_big',
             'invalidFileType' => 'media.upload.uploader.invalid_file_type',
             'maxFilesExceeded' => 'media.upload.uploader.max_files_exceeded',
+            'responseError' => 'media.upload.uploader.response_error',
         ], $options['messages']);
     }
 
