@@ -2,10 +2,10 @@
   "entrypoints": {
     "joli-media-sonata-admin": {
       "css": [
-        "/bundles/jolimediasonataadmin/joli-media-sonata-admin.413c58c4.css"
+        "/bundles/jolimediasonataadmin/joli-media-sonata-admin.feb74271.css"
       ],
       "js": [
-        "/bundles/jolimediasonataadmin/joli-media-sonata-admin.9afd7efd.js"
+        "/bundles/jolimediasonataadmin/joli-media-sonata-admin.66f15441.js"
       ]
     }
   }
