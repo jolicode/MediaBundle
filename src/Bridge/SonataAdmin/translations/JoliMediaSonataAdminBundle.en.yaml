@@ -24,6 +24,7 @@ directory:
     delete:
         confirm: 'Are you sure you want to delete this directory? This action cannot be undone. All files and subdirectories will be deleted.'
     deleted_success: 'Directory "%directory%" deleted successfully'
+    forbidden: 'The directory "%directory%" is reserved and cannot be modified.'
     label: 'Directory'
     list_failure: 'Failed to list the directory "%directory%"'
     move:
@@ -44,6 +45,7 @@ media:
     dimensions: 'Dimensions'
     search_label: 'Search media...'
     error:
+        forbidden: 'The media "%media%" is stored in a reserved directory and cannot be modified.'
         in_use: 'The media "%media%" is used in the "%field%" field of the "%entity%" entity. It cannot be deleted.'
     inaccessible:
         explanation: 'The media "%media%" is not accessible. It may have been deleted or moved.'

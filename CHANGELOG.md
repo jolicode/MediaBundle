@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+- improvement - The `trash_path` configuration directive is now normalized and validated at configuration time
+- improvement - `OriginalStorage::listDirectories()`, `listFiles()`, `listMedias()` and `listMediasPaginated()` now hide the trash directory and all of its contents
+- improvement - Add `OriginalStorage::isTrashPath()` and `OriginalStorage::assertPathIsNotTrash()`
+- fix - Deleting the trash directory no longer moves it into itself and fails with an `UnableToMoveFile` error: a `ForbiddenPathException` is thrown instead, even when the `trash_path` is configured with a trailing slash
+- fix - Deleting a media stored in the trash directory now throws a `ForbiddenPathException`, consistently with the folder deletion, creation and move APIs
+- fix - The EasyAdmin, Sonata and Sylius bridges no longer return a 500 error when the trash directory, or one of the medias it holds, is listed or deleted through a crafted URL
+
 ## [0.9.0] - 2026-08-18
 
 - feature - The media picked from an EasyAdmin `TextEditorField` toolbar can now be inserted as one of its variations, configured field by field with the new `MediaTextEditorField`, or for the whole project with the `joli_media_easy_admin.text_editor.variation` directive - see the [EasyAdmin bridge documentation](doc/bridges/easy-admin.rst)

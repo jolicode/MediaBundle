@@ -57,6 +57,15 @@ class DeleteFolderEventListenerTest extends WebTestCase
         $this->originalStorage->deleteDirectory($fullFolderPath);
         $this->assertFalse($this->originalStorage->has($dummyFilePath), \sprintf('Dummy file %s should not exist after folder deletion.', $dummyFilePath));
         $this->assertFalse($this->originalStorage->has($fullFolderPath), \sprintf('Folder %s should not exist after deletion.', $fullFolderPath));
+
+        // the deletion stages the folder in the trash before removing it: the trash
+        // is hidden from the listings, but the deletion must still empty it
+        $trashPath = $this->originalStorage->getTrashPath();
+        $this->assertSame(
+            [],
+            $this->originalStorage->getFilesystem()->listContents($trashPath, true)->toArray(),
+            'The temporary trash directory should be emptied after the folder deletion.',
+        );
     }
 
     #[DataProvider('provideFolderPaths')]

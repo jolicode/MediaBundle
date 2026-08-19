@@ -28,6 +28,7 @@ directory:
     name_required: 'Verzeichnisname ist erforderlich'
     rename_success: 'Das Verzeichnis "%from%" wurde erfolgreich in "%to%" umbenannt'
     move_success: 'Das Verzeichnis "%from%" wurde erfolgreich nach "%to%" verschoben.'
+    forbidden: 'Das Verzeichnis "%directory%" ist reserviert und kann nicht geändert werden.'
 media:
     add: 'Medien hinzufügen'
     dimensions: 'Abmessungen'
@@ -59,6 +60,7 @@ media:
         label: 'Nicht verfügbare Mediendatei'
     error:
         required: 'Bitte wählen Sie eine Mediendatei aus.'
+        forbidden: 'Die Mediendatei "%media%" liegt in einem reservierten Verzeichnis und kann nicht geändert werden.'
     move_modal:
         title: 'Mediendatei verschieben'
         content: 'Möchten Sie diese Mediendatei wirklich in das Verzeichnis %directory% verschieben?'

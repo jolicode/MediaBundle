@@ -4,6 +4,7 @@ namespace JoliCode\MediaBundle\Tests\DependencyInjection;
 
 use JoliCode\MediaBundle\JoliMediaBundle;
 use JoliCode\MediaBundle\PreProcessor\ExifRemovalPreProcessor;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
@@ -100,6 +101,88 @@ class ConfigurationTest extends TestCase
 
         $this->assertSame(120, $config['pre_processors'][ExifRemovalPreProcessor::class]['process_timeout']);
         $this->assertNull($config['pre_processors']['App\PreProcessor\CustomPreProcessor']['process_timeout']);
+    }
+
+    public function testDefaultTrashPathConfiguration(): void
+    {
+        // the default value bypasses the normalization, so it must already be normalized
+        $this->assertSame('.trash', $this->processOriginalStorageConfiguration([]));
+    }
+
+    #[DataProvider('provideTrashPathsToNormalize')]
+    public function testTrashPathIsNormalized(string $trashPath, string $expected): void
+    {
+        $this->assertSame($expected, $this->processOriginalStorageConfiguration(['trash_path' => $trashPath]));
+    }
+
+    /**
+     * @return iterable<string, array{string, string}>
+     */
+    public static function provideTrashPathsToNormalize(): iterable
+    {
+        yield 'a trailing slash' => ['trash/', 'trash'];
+        yield 'a leading slash' => ['/trash', 'trash'];
+        yield 'a leading dot segment' => ['./trash/', 'trash'];
+        yield 'duplicated slashes' => ['/.trash//sub/', '.trash/sub'];
+    }
+
+    #[DataProvider('provideEmptyTrashPaths')]
+    public function testEmptyTrashPathIsRejected(string $trashPath): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->processOriginalStorageConfiguration(['trash_path' => $trashPath]);
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function provideEmptyTrashPaths(): iterable
+    {
+        yield 'an empty string' => [''];
+        // these only become empty once normalized, which proves the normalization
+        // runs before the emptiness check
+        yield 'a single slash' => ['/'];
+        yield 'duplicated slashes' => ['//'];
+    }
+
+    #[DataProvider('provideTrashPathsWithADotSegment')]
+    public function testTrashPathWithADotSegmentIsRejected(string $trashPath): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->processOriginalStorageConfiguration(['trash_path' => $trashPath]);
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function provideTrashPathsWithADotSegment(): iterable
+    {
+        yield 'a leading parent segment' => ['../trash'];
+        yield 'an inner parent segment' => ['trash/../../etc'];
+        // this one normalizes to "." rather than to an empty string, so it escapes
+        // the emptiness check while still pointing at the storage root
+        yield 'a lone dot segment' => ['/./'];
+    }
+
+    /**
+     * @param array<string, mixed> $original
+     */
+    private function processOriginalStorageConfiguration(array $original): string
+    {
+        $config = $this->processConfiguration([
+            [
+                'libraries' => [
+                    'default' => [
+                        'original' => ['flysystem' => 'flysystem.original'] + $original,
+                        'cache' => ['flysystem' => 'flysystem.cache'],
+                    ],
+                ],
+            ],
+        ]);
+
+        return $config['libraries']['default']['original']['trash_path'];
     }
 
     /**

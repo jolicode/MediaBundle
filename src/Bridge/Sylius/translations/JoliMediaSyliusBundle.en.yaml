@@ -28,6 +28,7 @@ directory:
     name_required: 'Directory name is required'
     rename_success: 'The directory "%from%" was successfully renamed to "%to%"'
     move_success: 'The directory "%from%" was successfully moved to "%to%".'
+    forbidden: 'The directory "%directory%" is reserved and cannot be modified.'
 media:
     add: 'Add media'
     dimensions: 'Dimensions'
@@ -59,6 +60,7 @@ media:
         label: 'Inaccessible media'
     error:
         required: 'Please choose a media file.'
+        forbidden: 'The media "%media%" is stored in a reserved directory and cannot be modified.'
     move_modal:
         title: 'Move the media'
         content: 'Do you really want to move this media to the directory %directory%?'

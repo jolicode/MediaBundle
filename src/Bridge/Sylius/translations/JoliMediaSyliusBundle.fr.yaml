@@ -27,6 +27,7 @@ directory:
     name_required: 'Le nom du répertoire est requis'
     rename_success: 'Le répertoire %from% a été renommé avec succès en %to%.'
     move_success: 'Le répertoire "%from%" a été déplacé avec succès vers "%to%".'
+    forbidden: 'Le dossier "%directory%" est réservé et ne peut pas être modifié.'
 media:
     add: 'Ajouter un média'
     dimensions: 'Dimensions'
@@ -58,6 +59,7 @@ media:
         label: 'Média inaccessible'
     error:
         required: 'Veuillez choisir un fichier média.'
+        forbidden: 'Le média "%media%" est stocké dans un dossier réservé et ne peut pas être modifié.'
     move_modal:
         title: 'Déplacer le média'
         content: 'Voulez-vous vraiment déplacer ce média vers le répertoire %directory% ?'

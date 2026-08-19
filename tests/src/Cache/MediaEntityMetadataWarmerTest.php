@@ -23,7 +23,7 @@ class MediaEntityMetadataWarmerTest extends KernelTestCase
         $warmer->warmUp($cacheDir);
 
         // DoctrineBundle's own metadata warmer is optional, so it runs after this
-        // one — and it refuses to warm a metadata factory that already holds
+        // one - and it refuses to warm a metadata factory that already holds
         // loaded metadata (LogicException "must load metadata first").
         /** @var ManagerRegistry $registry */
         $registry = $container->get('doctrine');
