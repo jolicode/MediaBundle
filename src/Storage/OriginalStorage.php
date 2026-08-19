@@ -35,17 +35,24 @@ class OriginalStorage
 {
     private Library $library;
 
+    private readonly string $trashPath;
+
     public function __construct(
         private readonly StorageStrategyInterface $strategy,
         private readonly Filesystem $filesystem,
         private readonly string $urlPath,
         private readonly bool $enableServeUsingPhp,
-        private readonly string $trashPath,
+        string $trashPath,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MimeTypeGuesser $mimeTypeGuesser,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly MediaPropertyAccessor $mediaPropertyAccessor,
     ) {
+        $this->trashPath = Resolver::normalizePath($trashPath);
+
+        if ('' === $this->trashPath) {
+            throw new \InvalidArgumentException('The trash path cannot be empty.');
+        }
     }
 
     public function __serialize(): array
@@ -53,13 +60,17 @@ class OriginalStorage
         throw new \LogicException(\sprintf('A "%s" is a service and must not be serialized. Serialize the media it holds instead.', self::class));
     }
 
+    public function assertPathIsNotTrash(string $path): void
+    {
+        if ($this->isTrashPath($path)) {
+            throw new ForbiddenPathException($this->trashPath);
+        }
+    }
+
     public function createDirectory(string $path): void
     {
         $path = Resolver::normalizePath($path);
-
-        if ($this->trashPath === $path || str_starts_with($path, $this->trashPath . '/')) {
-            throw new ForbiddenPathException($this->trashPath);
-        }
+        $this->assertPathIsNotTrash($path);
 
         if ($this->dispatcher->hasListeners(MediaEvents::PRE_CREATE_FOLDER)) {
             $event = new PreCreateFolderEvent($this, $path);
@@ -91,10 +102,7 @@ class OriginalStorage
     public function createMediaFromBinary(string $path, Binary $binary): Media
     {
         $path = Resolver::normalizePath($path);
-
-        if ($this->trashPath === $path || str_starts_with($path, $this->trashPath . '/')) {
-            throw new ForbiddenPathException($this->trashPath);
-        }
+        $this->assertPathIsNotTrash($path);
 
         if ($this->dispatcher->hasListeners(MediaEvents::PRE_CREATE_MEDIA)) {
             $event = new PreCreateMediaEvent($this, $path, $binary);
@@ -121,53 +129,18 @@ class OriginalStorage
     public function delete(string $path): void
     {
         $path = Resolver::normalizePath($path);
+        $this->assertPathIsNotTrash($path);
 
-        if ($this->dispatcher->hasListeners(MediaEvents::PRE_DELETE_MEDIA)) {
-            $event = new PreDeleteMediaEvent($this, $path);
-            $this->dispatcher->dispatch($event, MediaEvents::PRE_DELETE_MEDIA);
-        }
-
-        if ($this->dispatcher->hasListeners(MediaEvents::POST_DELETE_MEDIA)) {
-            // create a temporary path to avoid deleting the directory
-            $trashDirectory = \sprintf('%s/%s', $this->trashPath, uniqid());
-            $this->filesystem->createDirectory($trashDirectory);
-            $trashPath = \sprintf('%s/%s', $trashDirectory, $path);
-            $this->filesystem->move($path, $trashPath);
-
-            try {
-                $event = new PostDeleteMediaEvent($this, $path);
-                $this->dispatcher->dispatch($event, MediaEvents::POST_DELETE_MEDIA);
-            } catch (\Throwable $e) {
-                // if an exception is thrown, we rollback the deletion
-                $this->filesystem->move($trashPath, $path);
-                $this->filesystem->deleteDirectory($trashDirectory);
-
-                throw $e;
-            }
-
-            // if no exception was thrown, perform the deletion
-            $this->filesystem->delete($trashPath);
-            $this->mediaPropertyAccessor->clearCache($path);
-            $this->library->deleteAllVariations(substr($trashPath, \strlen($trashDirectory) + 1));
-            $this->filesystem->deleteDirectory($trashDirectory);
-        } else {
-            // if no event listeners, just delete the file and its variations
-            $this->filesystem->delete($path);
-            $this->mediaPropertyAccessor->clearCache($path);
-            $this->library->deleteAllVariations($path);
-        }
+        $this->doDelete($path);
     }
 
     public function deleteDirectory(string $path): void
     {
         $path = Resolver::normalizePath($path);
-
-        if ($this->trashPath === $path || str_starts_with($path, $this->trashPath . '/')) {
-            throw new ForbiddenPathException($this->trashPath);
-        }
+        $this->assertPathIsNotTrash($path);
 
         if ('' === $path) {
-            throw new ForbiddenPathException($this->trashPath);
+            throw new ForbiddenPathException($path);
         }
 
         if ($this->dispatcher->hasListeners(MediaEvents::PRE_DELETE_FOLDER)) {
@@ -194,8 +167,8 @@ class OriginalStorage
             }
 
             // if no exception was thrown, perform the deletion
-            foreach ($this->listMedias($trashPath, recursive: true) as $media) {
-                $this->delete($media->getPath());
+            foreach ($this->listTrashedMedias($trashPath) as $media) {
+                $this->doDelete($media->getPath());
                 $realPath = substr($media->getPath(), \strlen($trashDirectory) + 1);
                 $this->mediaPropertyAccessor->clearCache($realPath);
                 $this->library->deleteAllVariations($realPath);
@@ -315,6 +288,13 @@ class OriginalStorage
         return $this->enableServeUsingPhp;
     }
 
+    public function isTrashPath(string $path): bool
+    {
+        $path = Resolver::normalizePath($path);
+
+        return $this->trashPath === $path || str_starts_with($path, $this->trashPath . '/');
+    }
+
     /**
      * @return string[]
      */
@@ -326,7 +306,6 @@ class OriginalStorage
         ?callable $sort = null,
     ): array {
         $listing = $this->list($path, $contains, 'dir', $recursive)
-            ->filter(fn (StorageAttributes $attributes): bool => $this->trashPath !== $attributes->path())
             ->sortByPath()
             ->map(static fn (StorageAttributes $attributes): string => $attributes->path())
             ->toArray()
@@ -438,9 +417,8 @@ class OriginalStorage
         $from = Resolver::normalizePath($from);
         $to = Resolver::normalizePath($to);
 
-        if ($this->trashPath === $to || str_starts_with($to, $this->trashPath . '/') || $this->trashPath === $from || str_starts_with($from, $this->trashPath . '/')) {
-            throw new ForbiddenPathException($this->trashPath);
-        }
+        $this->assertPathIsNotTrash($from);
+        $this->assertPathIsNotTrash($to);
 
         if ($this->has($to)) {
             throw new PathAlreadyExistsException($this, $to);
@@ -474,9 +452,8 @@ class OriginalStorage
         $from = Resolver::normalizePath($from);
         $to = Resolver::normalizePath($to);
 
-        if ($this->trashPath === $to || str_starts_with($to, $this->trashPath . '/') || $this->trashPath === $from || str_starts_with($from, $this->trashPath . '/')) {
-            throw new ForbiddenPathException($this->trashPath);
-        }
+        $this->assertPathIsNotTrash($from);
+        $this->assertPathIsNotTrash($to);
 
         if ($this->hasDirectory($to)) {
             throw new PathAlreadyExistsException($this, $to);
@@ -543,6 +520,48 @@ class OriginalStorage
         $this->library = $library;
     }
 
+    /**
+     * Deletes a media without checking that it lives outside of the trash: the folder
+     * deletion below has to delete the medias it has just moved into the trash.
+     */
+    private function doDelete(string $path): void
+    {
+        if ($this->dispatcher->hasListeners(MediaEvents::PRE_DELETE_MEDIA)) {
+            $event = new PreDeleteMediaEvent($this, $path);
+            $this->dispatcher->dispatch($event, MediaEvents::PRE_DELETE_MEDIA);
+        }
+
+        if ($this->dispatcher->hasListeners(MediaEvents::POST_DELETE_MEDIA)) {
+            // create a temporary path to avoid deleting the directory
+            $trashDirectory = \sprintf('%s/%s', $this->trashPath, uniqid());
+            $this->filesystem->createDirectory($trashDirectory);
+            $trashPath = \sprintf('%s/%s', $trashDirectory, $path);
+            $this->filesystem->move($path, $trashPath);
+
+            try {
+                $event = new PostDeleteMediaEvent($this, $path);
+                $this->dispatcher->dispatch($event, MediaEvents::POST_DELETE_MEDIA);
+            } catch (\Throwable $e) {
+                // if an exception is thrown, we rollback the deletion
+                $this->filesystem->move($trashPath, $path);
+                $this->filesystem->deleteDirectory($trashDirectory);
+
+                throw $e;
+            }
+
+            // if no exception was thrown, perform the deletion
+            $this->filesystem->delete($trashPath);
+            $this->mediaPropertyAccessor->clearCache($path);
+            $this->library->deleteAllVariations(substr($trashPath, \strlen($trashDirectory) + 1));
+            $this->filesystem->deleteDirectory($trashDirectory);
+        } else {
+            // if no event listeners, just delete the file and its variations
+            $this->filesystem->delete($path);
+            $this->mediaPropertyAccessor->clearCache($path);
+            $this->library->deleteAllVariations($path);
+        }
+    }
+
     private function getRouteName(): string
     {
         return 'joli_media_original_' . $this->getLibrary()->getName();
@@ -553,8 +572,15 @@ class OriginalStorage
         ?string $contains = null,
         ?string $type = null,
         bool $recursive = true,
+        bool $includeTrash = false,
     ): DirectoryListing {
         $listing = $this->filesystem->listContents($this->strategy->getPath($path ?? ''), $recursive);
+
+        if (!$includeTrash) {
+            // the trash and everything it holds is an implementation detail of the
+            // deletion, and must never leak through the listing API
+            $listing = $listing->filter(fn (StorageAttributes $attributes): bool => !$this->isTrashPath($attributes->path()));
+        }
 
         if (null !== $type) {
             if ('file' === $type) {
@@ -582,5 +608,19 @@ class OriginalStorage
         }
 
         return $listing;
+    }
+
+    /**
+     * The trash is hidden from the public listings, but the folder deletion has to
+     * iterate over the medias it has just moved into it.
+     *
+     * @return Media[]
+     */
+    private function listTrashedMedias(string $path): array
+    {
+        return $this->list($path, null, 'file', true, includeTrash: true)
+            ->map(fn (StorageAttributes $attributes): Media => new Media(Resolver::normalizePath($attributes->path()), $this))
+            ->toArray()
+        ;
     }
 }

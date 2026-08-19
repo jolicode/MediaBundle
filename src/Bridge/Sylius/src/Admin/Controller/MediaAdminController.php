@@ -261,22 +261,32 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/delete', name: 'delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function delete(Request $request): Response
     {
-        $key = $request->query->getString('key');
+        $key = Resolver::normalizePath($request->query->getString('key'));
 
         $csrfToken = $request->request->getString('_csrf_token');
 
-        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($key, $csrfToken))) {
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($request->query->getString('key'), $csrfToken))) {
             $this->addFlash('error', 'Invalid CSRF token');
+
+            return $this->redirectToRoute('joli_media_sylius_admin_explore');
         }
 
         if ('' === $key) {
             $this->addFlash('error', 'Missing path parameter');
+
+            return $this->redirectToRoute('joli_media_sylius_admin_explore');
         }
 
         try {
             $this->getOriginalStorage()->delete($key);
 
             $this->addFlash('success', $this->translator->trans('sylius.resource.delete', ['%resource%' => $key], domain: 'flashes'));
+        } catch (ForbiddenPathException) {
+            $this->addFlash('error', $this->translator->trans(
+                'media.error.forbidden',
+                ['%media%' => $key],
+                'JoliMediaSyliusBundle'
+            ));
         } catch (\Throwable $throwable) {
             $this->addFlash('error', $throwable->getMessage());
         }
@@ -291,22 +301,32 @@ class MediaAdminController extends AbstractController
     #[Route(path: '/delete-directory', name: 'delete_directory', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function deleteDirectory(Request $request): RedirectResponse
     {
-        $key = $request->query->getString('key');
+        $key = Resolver::normalizePath($request->query->getString('key'));
 
         $csrfToken = $request->request->getString('_csrf_token');
 
-        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($key, $csrfToken))) {
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($request->query->getString('key'), $csrfToken))) {
             $this->addFlash('error', 'Invalid CSRF token');
+
+            return $this->redirectToRoute('joli_media_sylius_admin_explore');
         }
 
         if ('' === $key) {
             $this->addFlash('error', 'Missing path parameter');
+
+            return $this->redirectToRoute('joli_media_sylius_admin_explore');
         }
 
         try {
             $this->getOriginalStorage()->deleteDirectory($key);
 
             $this->addFlash('success', $this->translator->trans('sylius.resource.delete', ['%resource%' => $key], domain: 'flashes'));
+        } catch (ForbiddenPathException) {
+            $this->addFlash('error', $this->translator->trans(
+                'directory.forbidden',
+                ['%directory%' => $key],
+                'JoliMediaSyliusBundle'
+            ));
         } catch (\Throwable $throwable) {
             $this->addFlash('error', $throwable->getMessage());
         }
@@ -373,10 +393,14 @@ class MediaAdminController extends AbstractController
         $currentKey = Resolver::normalizePath($key);
         $request->attributes->set('currentKey', $currentKey);
 
-        $trashPath = $this->getOriginalStorage()->getTrashPath();
+        if ($this->getOriginalStorage()->isTrashPath($currentKey)) {
+            $this->addFlash('error', $this->translator->trans(
+                'directory.forbidden',
+                ['%directory%' => $currentKey],
+                'JoliMediaSyliusBundle'
+            ));
 
-        if ($trashPath === $currentKey || str_starts_with($currentKey, $trashPath . '/')) {
-            throw new ForbiddenPathException($trashPath);
+            return $this->redirectToRoute('joli_media_sylius_admin_explore', ['key' => '']);
         }
 
         $sortingByPath = $request->query->all('sorting')['path'] ?? null;
@@ -427,11 +451,7 @@ class MediaAdminController extends AbstractController
         $perPage = $this->config->getPaginationSizes()[0] ?? 10;
 
         try {
-            $trashPath = $this->getOriginalStorage()->getTrashPath();
-
-            if ($trashPath === $currentKey || str_starts_with($currentKey, $trashPath . '/')) {
-                throw new ForbiddenPathException($trashPath);
-            }
+            $this->getOriginalStorage()->assertPathIsNotTrash($currentKey);
 
             $dirFilter = null;
             if ($hasSearch) {
@@ -623,11 +643,7 @@ class MediaAdminController extends AbstractController
         $hasSearch = '' !== $searchValue;
 
         try {
-            $trashPath = $this->getOriginalStorage()->getTrashPath();
-
-            if ($trashPath === $currentKey || str_starts_with($currentKey, $trashPath . '/')) {
-                throw new ForbiddenPathException($trashPath);
-            }
+            $this->getOriginalStorage()->assertPathIsNotTrash($currentKey);
 
             $dirFilter = null;
             if ($hasSearch) {
@@ -678,11 +694,7 @@ class MediaAdminController extends AbstractController
         $parentKey = '' !== $currentKey ? (($pos = strrpos($currentKey, '/')) !== false ? substr($currentKey, 0, $pos) : '') : '';
 
         try {
-            $trashPath = $this->getOriginalStorage()->getTrashPath();
-
-            if ($trashPath === $currentKey || str_starts_with($currentKey, $trashPath . '/')) {
-                throw new ForbiddenPathException($trashPath);
-            }
+            $this->getOriginalStorage()->assertPathIsNotTrash($currentKey);
 
             $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: false);
             natcasesort($directories);

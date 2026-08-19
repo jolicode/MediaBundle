@@ -207,6 +207,7 @@ class BaseTestCase extends WebTestCase
         Filesystem $filesystem,
         string $urlPath,
         UrlGeneratorInterface $urlGenerator,
+        string $trashPath = '.trash',
     ): OriginalStorage {
         // every storage of a test case shares the same dispatcher, as they would in an application
         $this->eventDispatcher ??= new EventDispatcher();
@@ -232,7 +233,7 @@ class BaseTestCase extends WebTestCase
             $filesystem,
             $urlPath,
             false,
-            '.trash',
+            $trashPath,
             $urlGenerator,
             $mimeTypeGuesser,
             $this->eventDispatcher,

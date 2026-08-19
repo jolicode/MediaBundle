@@ -4,10 +4,13 @@ namespace JoliCode\MediaBundle\Tests\Storage;
 
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Event\MediaEvents;
+use JoliCode\MediaBundle\Event\PostDeleteFolderEvent;
 use JoliCode\MediaBundle\Event\PreCreateMediaEvent;
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
+use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
+use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -237,5 +240,142 @@ class OriginalStorageTest extends BaseTestCase
         $media = $this->originalStorage->resolve($path);
         $this->assertInstanceOf(Media::class, $media);
         $this->assertSame($path, $media->getPath());
+    }
+
+    public function testDeleteDirectoryForbidsTrashPathWithTrailingSlash(): void
+    {
+        $storage = $this->createStorageWithTrashPath('trash/');
+        $this->originalFilesystem->createDirectory('trash');
+
+        $this->expectException(ForbiddenPathException::class);
+        $storage->deleteDirectory('trash');
+    }
+
+    public function testListDirectoriesHidesTrashPathWithTrailingSlash(): void
+    {
+        $storage = $this->createStorageWithTrashPath('trash/');
+        $this->originalFilesystem->createDirectory('trash/sub');
+        $this->originalFilesystem->createDirectory('visible');
+
+        $directories = $storage->listDirectories('');
+
+        $this->assertContains('visible', $directories);
+        $this->assertNotContains('trash', $directories);
+        $this->assertNotContains('trash/sub', $directories);
+        $this->assertSame('trash', $storage->getTrashPath());
+    }
+
+    public function testMoveFolderForbidsTrashPathWithTrailingSlash(): void
+    {
+        $storage = $this->createStorageWithTrashPath('trash/');
+        $this->originalFilesystem->createDirectory('trash');
+
+        $this->expectException(ForbiddenPathException::class);
+        $storage->moveFolder('trash', 'elsewhere');
+    }
+
+    public function testDeletingTheTrashDirectoryIsForbiddenWhenAPostDeleteFolderListenerIsRegistered(): void
+    {
+        // a listener is what makes deleteDirectory() go through the trash directory,
+        // where it used to move the trash into itself - see #157
+        $this->eventDispatcher->addListener(
+            MediaEvents::POST_DELETE_FOLDER,
+            static function (PostDeleteFolderEvent $event): void {
+            },
+        );
+        $storage = $this->createStorageWithTrashPath('trash/');
+        $this->originalFilesystem->write('trash/abcdef/deleted.png', 'content');
+
+        try {
+            $this->expectException(ForbiddenPathException::class);
+            $this->expectExceptionMessage('The path "trash" is reserved.');
+            $storage->deleteDirectory('trash');
+        } finally {
+            $this->assertTrue($this->originalFilesystem->fileExists('trash/abcdef/deleted.png'), 'The trash content must be left untouched.');
+        }
+    }
+
+    #[DataProvider('provideForbiddenTrashPaths')]
+    public function testDeletingAMediaInTheTrashDirectoryIsForbidden(string $path): void
+    {
+        $this->expectException(ForbiddenPathException::class);
+        $this->expectExceptionMessage('The path ".trash" is reserved.');
+
+        $this->originalStorage->delete($path);
+    }
+
+    public function testListDirectoriesHidesTheTrashAndItsDescendants(): void
+    {
+        $this->originalFilesystem->createDirectory('.trash/abcdef/sub');
+        $this->originalFilesystem->createDirectory('visible/sub');
+
+        $directories = $this->originalStorage->listDirectories('');
+
+        $this->assertSame(['visible', 'visible/sub'], $directories);
+    }
+
+    public function testListFilesHidesTheTrashContents(): void
+    {
+        $this->originalFilesystem->write('.trash/abcdef/deleted.png', 'content');
+        $this->originalFilesystem->write('kept.png', 'content');
+
+        $this->assertSame(['kept.png'], $this->originalStorage->listFiles(''));
+    }
+
+    public function testListMediasHidesTheTrashContents(): void
+    {
+        $this->originalFilesystem->write('.trash/abcdef/deleted.png', 'content');
+        $this->originalFilesystem->write('kept.png', 'content');
+
+        $medias = $this->originalStorage->listMedias('');
+
+        $this->assertCount(1, $medias);
+        $this->assertSame('kept.png', $medias[0]->getPath());
+        $this->assertSame(1, $this->originalStorage->listMediasPaginated('', recursive: true)['total']);
+    }
+
+    #[DataProvider('provideTrashPaths')]
+    public function testIsTrashPath(string $path, bool $expected): void
+    {
+        $this->assertSame($expected, $this->originalStorage->isTrashPath($path));
+    }
+
+    /**
+     * @return iterable<string, array{string, bool}>
+     */
+    public static function provideTrashPaths(): iterable
+    {
+        yield 'the trash directory itself' => ['.trash', true];
+        yield 'a trailing slash' => ['.trash/', true];
+        yield 'a leading slash' => ['/.trash', true];
+        yield 'a leading dot segment' => ['./.trash', true];
+        yield 'a file in the trash directory' => ['.trash/x/y.png', true];
+        yield 'a directory sharing the trash prefix' => ['.trashy', false];
+        yield 'an unrelated directory' => ['other', false];
+        yield 'the storage root' => ['', false];
+    }
+
+    public function testTheTrashPathCannotBeEmpty(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The trash path cannot be empty.');
+
+        $this->createStorageWithTrashPath('/');
+    }
+
+    private function createStorageWithTrashPath(string $trashPath): OriginalStorage
+    {
+        $storage = $this->createOriginalStorage(
+            'default',
+            $this->originalFilesystem,
+            '/media',
+            $this->urlGenerator,
+            $trashPath,
+        );
+        $cacheStorage = $this->createCacheStorage('default', $this->createFilesystem(), '/cache', $this->urlGenerator);
+        // the Library constructor wires itself into both storages
+        new Library('default', $storage, $cacheStorage, $this->createVariationContainer($cacheStorage));
+
+        return $storage;
     }
 }

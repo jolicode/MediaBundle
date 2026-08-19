@@ -24,6 +24,7 @@ directory:
     delete:
         confirm: 'Êtes-vous sûr de vouloir supprimer ce dossier ? Cette action ne peut pas être annulée. Tous les fichiers et sous-dossiers seront supprimés.'
     deleted_success: 'Le dossier "%directory%" a été supprimé avec succès'
+    forbidden: 'Le dossier "%directory%" est réservé et ne peut pas être modifié.'
     label: 'Dossier'
     list_failure: 'Impossible de lister le contenu du dossier "%directory%"'
     move:
@@ -47,6 +48,7 @@ media:
     dimensions: 'Dimensions'
     search_label: 'Rechercher un média...'
     error:
+        forbidden: 'Le média "%media%" est stocké dans un dossier réservé et ne peut pas être modifié.'
         in_use: 'Le media "%media%" est utilisé dans le champ "%field%" de l''entité "%entity%". Il ne peut pas être supprimé.'
     inaccessible:
         explanation: 'Le média "%media%" n''est pas accessible. Il a peut-être été supprimé ou déplacé.'

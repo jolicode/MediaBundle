@@ -142,16 +142,27 @@ class MediaAdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $key = $form->get('path')->getData();
+            $key = Resolver::normalizePath($form->get('path')->getData());
 
             $this->denyAccessUnlessGranted(AdminAction::DELETE, new AdminAction(
                 libraryName: $this->getLibrary()->getName(),
-                path: Resolver::normalizePath($key),
+                path: $key,
             ));
 
             // Remove the media and the cache files
             try {
                 $this->getOriginalStorage()->delete($key);
+            } catch (ForbiddenPathException) {
+                $this->addFlash(
+                    'sonata_flash_error',
+                    $this->translator->trans(
+                        'media.error.forbidden',
+                        ['%media%' => $key],
+                        'JoliMediaSonataAdminBundle'
+                    )
+                );
+
+                return $this->redirectToRoute('joli_media_sonata_admin_explore', ['key' => '']);
             } catch (MediaInUseException $e) {
                 $this->addFlash(
                     'sonata_flash_error',
@@ -194,15 +205,26 @@ class MediaAdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $key = $form->get('path')->getData();
+            $key = Resolver::normalizePath($form->get('path')->getData());
 
             $this->denyAccessUnlessGranted(AdminAction::DELETE_DIRECTORY, new AdminAction(
                 libraryName: $this->getLibrary()->getName(),
-                path: Resolver::normalizePath($key),
+                path: $key,
             ));
 
             try {
                 $this->getOriginalStorage()->deleteDirectory($key);
+            } catch (ForbiddenPathException) {
+                $this->addFlash(
+                    'sonata_flash_error',
+                    $this->translator->trans(
+                        'directory.forbidden',
+                        ['%directory%' => $key],
+                        'JoliMediaSonataAdminBundle'
+                    )
+                );
+
+                return $this->redirectToRoute('joli_media_sonata_admin_explore', ['key' => '']);
             } catch (MediaInUseException $e) {
                 $this->addFlash(
                     'sonata_flash_error',
@@ -259,18 +281,11 @@ class MediaAdminController extends AbstractController
         $hasSearch = '' !== $searchValue;
 
         try {
-            $trashPath = $this->getOriginalStorage()->getTrashPath();
-
-            if ($trashPath === $currentKey || str_starts_with($currentKey, $trashPath . '/')) {
-                throw new ForbiddenPathException($trashPath);
-            }
+            $this->getOriginalStorage()->assertPathIsNotTrash($currentKey);
 
             $dirFilter = null;
             if ($hasSearch) {
-                // recursive listings must not expose the trash contents
-                $dirFilter = static fn (string $directory): bool => str_contains(strtolower($directory), strtolower($searchValue))
-                    && $trashPath !== $directory
-                    && !str_starts_with($directory, $trashPath . '/');
+                $dirFilter = static fn (string $directory): bool => str_contains(strtolower($directory), strtolower($searchValue));
             }
 
             $directories = $this->getOriginalStorage()->listDirectories($currentKey, recursive: $hasSearch, filter: $dirFilter);
@@ -297,9 +312,7 @@ class MediaAdminController extends AbstractController
         $mediaFilter = null;
         $mediaSort = null;
         if ($hasSearch) {
-            // recursive listings must not expose the trash contents
-            $mediaFilter = static fn (Media $media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue))
-                && !str_starts_with($media->getPath(), $trashPath . '/');
+            $mediaFilter = static fn (Media $media): bool => str_contains(strtolower($media->getPath()), strtolower($searchValue));
 
             // recursive listings are not sorted by default and depend on the storage
             // adapter's traversal order, which would make pagination unstable

@@ -28,6 +28,7 @@ directory:
     name_required: 'Numele dosarului este obligatoriu'
     rename_success: 'Dosarul „%from%” a fost redenumit în „%to%”.'
     move_success: 'Dosarul „%from%” a fost mutat în „%to%”.'
+    forbidden: 'Dosarul „%directory%” este rezervat și nu poate fi modificat.'
 media:
     add: 'Adaugă imagini'
     dimensions: 'Dimensiuni'
@@ -59,6 +60,7 @@ media:
         label: 'Fișier inaccesibil'
     error:
         required: 'Alegeți un fișier.'
+        forbidden: 'Fișierul „%media%” se află într-un dosar rezervat și nu poate fi modificat.'
     move_modal:
         title: 'Mutarea fișierului'
         content: 'Sigur mutați acest fișier în dosarul %directory%?'

@@ -32,7 +32,7 @@ A library is defined by a name and contains the multiple information:
     - ``path``: the path prefix to use for media URLs. Use a trailing slash to have the media URLs generated correctly.
 
   - ``enable_serve_using_php`` is a boolean (default: ``false``) that enables the ability to serve media files using PHP. By default, for performance reasons, the bundle will not allow serving original media files using PHP. Instead, it is advised to correctly configure the Web server to have media files served as static files. However, there are situations that require media files to be served using PHP (for example, to apply access control). In this case, you can enable this option.
-  - ``trash_path``: the path where media files are temporary moved when they are being deleted. If the deletion is not possible (for example, if a listener prevents the deletion), the media file will be restored to its original location. This path is located in the storage and will be hidden in the admin bridges.
+  - ``trash_path``: the path where media files are temporary moved when they are being deleted. If the deletion is not possible (for example, if a listener prevents the deletion), the media file will be restored to its original location. This path is located in the storage and will be hidden in the admin bridges. The path is normalized (leading, trailing and duplicated slashes are removed), and it cannot be empty nor contain a ``.`` or ``..`` segment.
 
 - ``cache``: the configuration of the cache media storage:
 

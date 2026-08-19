@@ -28,6 +28,7 @@ directory:
     name_required: 'Название папки обязательно'
     rename_success: 'Папка «%from%» переименована в «%to%».'
     move_success: 'Папка «%from%» перемещена в «%to%».'
+    forbidden: 'Папка «%directory%» зарезервирована и не может быть изменена.'
 media:
     add: 'Добавить изображения'
     dimensions: 'Размеры'
@@ -59,6 +60,7 @@ media:
         label: 'Недоступный файл'
     error:
         required: 'Выберите файл.'
+        forbidden: 'Файл «%media%» находится в зарезервированной папке и не может быть изменён.'
     move_modal:
         title: 'Перемещение файла'
         content: 'Действительно переместить этот файл в папку %directory%?'

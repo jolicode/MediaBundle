@@ -17,6 +17,7 @@ use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\PreProcessor\HeifPreProcessor;
 use JoliCode\MediaBundle\Processor\Imagine;
+use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Transformer\Resize\Mode;
 use Symfony\Component\Config\Definition\Builder\FloatNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
@@ -193,8 +194,20 @@ class JoliMediaBundle extends AbstractBundle
                     ->info('If true, the original files may be served using PHP if the web server cannot serve it. This might be useful for private files.')
                 ->end()
                 ->scalarNode('trash_path')
+                    // the default value bypasses the normalization and the validation below, so it must be given already normalized
                     ->defaultValue('.trash')
+                    ->cannotBeEmpty()
                     ->info('Path to the trash directory where deleted files are moved. This path is relative to the original storage root and is hidden when listing files using the bridges.')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(static fn (string $value): string => Resolver::normalizePath($value))
+                    ->end()
+                    ->validate()
+                        // a "." segment resolves to the storage root and a ".." one escapes
+                        // it: either would silently defeat every trash protection
+                        ->ifTrue(static fn ($value): bool => [] !== array_intersect(['.', '..'], explode('/', (string) $value)))
+                        ->thenInvalid('The "trash_path" configuration cannot contain a "." or ".." segment, got %s.')
+                    ->end()
                 ->end()
                 ->arrayNode('url_generator')
                     ->children()
