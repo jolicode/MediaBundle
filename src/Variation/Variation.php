@@ -58,6 +58,7 @@ class Variation
             $this->postProcessorsConfiguration,
             $this->voters,
             $this->webpAlternativeVariation,
+            $this->multiplier,
         );
     }
 

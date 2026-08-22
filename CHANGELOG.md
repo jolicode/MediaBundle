@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- fix - `Variation::cloneWithOutputFormat()` no longer drops the pixel-ratio multiplier of the variation it clones
 - improvement - The `trash_path` configuration directive is now normalized and validated at configuration time
 - improvement - `OriginalStorage::listDirectories()`, `listFiles()`, `listMedias()` and `listMediasPaginated()` now hide the trash directory and all of its contents
 - improvement - Add `OriginalStorage::isTrashPath()` and `OriginalStorage::assertPathIsNotTrash()`
