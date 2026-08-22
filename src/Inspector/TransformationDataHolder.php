@@ -43,7 +43,12 @@ class TransformationDataHolder
         }
 
         $key = $this->getKey($mediaVariation);
-        $this->data[$key]['url'] = $mediaVariation->getUrl();
+        // build the URL through the storage to avoid triggering a nested
+        // conversion: complete() runs before the variation binary is stored
+        $this->data[$key]['url'] = $mediaVariation->getStorage()->getUrl(
+            $mediaVariation->getMedia()->getPath(),
+            $mediaVariation->getVariation(),
+        );
         $this->data[$key]['duration'] = $this->getStopWatchEvent()?->getDuration();
 
         if ('image' === $this->data[$key]['fileType']) {

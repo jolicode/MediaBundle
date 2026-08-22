@@ -60,6 +60,18 @@ return static function (ContainerConfigurator $container): void {
                             ],
                         ],
                     ],
+                    // overrides the library-level "must_store_when_generating_url" setting
+                    'variation-auto-stored' => [
+                        'must_store_when_generating_url' => true,
+                        'transformers' => [
+                            'resize' => [
+                                'width' => 180,
+                                'height' => 109,
+                                'mode' => 'inside',
+                                'allow_upscale' => false,
+                            ],
+                        ],
+                    ],
                 ],
             ],
 
@@ -81,6 +93,28 @@ return static function (ContainerConfigurator $container): void {
                 'enable_auto_webp' => true,
                 'variations' => [
                     'variation-standard' => [
+                        'transformers' => [
+                            'resize' => [
+                                'width' => 180,
+                                'height' => 109,
+                                'mode' => 'inside',
+                                'allow_upscale' => false,
+                            ],
+                        ],
+                    ],
+                    'variation-large' => [
+                        'transformers' => [
+                            'resize' => [
+                                'width' => 800,
+                                'height' => 600,
+                                'mode' => 'inside',
+                                'allow_upscale' => false,
+                            ],
+                        ],
+                    ],
+                    // overrides the library-level "must_store_when_generating_url" setting
+                    'variation-never-stored' => [
+                        'must_store_when_generating_url' => false,
                         'transformers' => [
                             'resize' => [
                                 'width' => 180,

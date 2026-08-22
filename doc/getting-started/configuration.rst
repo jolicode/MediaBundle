@@ -38,7 +38,7 @@ A library is defined by a name and contains the multiple information:
 
   - the ``flysystem`` key contains the id of a Flysystem service that addresses the location where cache media are stored.
   - its ``url_generator``: the configuration of the way URLs should be generated for the media variations
-  - ``must_store_when_generating_url`` is a boolean (default: ``false``) that defines whether the media variation must be generated and stored when its URL is generated. If set to ``false``, the media variation will be generated on-the-fly when accessed for the first time.
+  - ``must_store_when_generating_url`` is a boolean (default: ``false``) that defines whether the media variation must be generated and stored when its URL is generated. If set to ``false``, the media variation will be generated on-the-fly when accessed for the first time. This setting can be overridden for a single variation, using the ``must_store_when_generating_url`` attribute of the variation configuration - the variations that leave it to ``null`` (the default) fall back to this library-level value. Variation clones (the ``@2x`` pixel-ratio variations and the automatic WebP alternatives) inherit the value of the variation they are cloned from.
 
 - ``variations`` that can be created from the original media. See the `Variation configuration <../variations/variations.rst>`_ section for more information
 - ``enable_auto_webp`` is a boolean (default: ``false``) that enables the automatic generation of WebP variations for the media. When enabled, the configured variations in the ``variations`` above node will be duplicated in WebP format, in addition to the original format.

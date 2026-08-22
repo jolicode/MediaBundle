@@ -2,7 +2,6 @@
 
 namespace JoliCode\MediaBundle\Twig\Components;
 
-use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Exception\MediaNotFoundException;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Model\Media;
@@ -39,7 +38,6 @@ class Img
     public ?string $sizes = null;
 
     public function __construct(
-        private readonly Converter $converter,
         private readonly Resolver $resolver,
         private readonly LibraryContainer $libraries,
         private readonly ?LoggerInterface $logger = null,
@@ -145,23 +143,12 @@ class Img
 
         $this->media = $media;
 
-        if ($media instanceof MediaVariation) {
-            try {
-                $this->converter->convertIfMustStoreWhenGeneratingUrl($media);
+        if ($media instanceof MediaVariation && $allowAppendWebpAlternativeSource) {
+            // when displaying an img tag in the context of a picture tag, try to get the webp alternative source
+            $webpAlternativeVariation = $media->getVariation()->getWebpAlternativeVariation();
 
-                if ($allowAppendWebpAlternativeSource) {
-                    // when displaying an iimg tag in the ocntext of a picture tag, try to get the webp alternative source
-                    $webpAlternativeVariation = $media->getVariation()->getWebpAlternativeVariation();
-
-                    if ($webpAlternativeVariation instanceof Variation) {
-                        $this->webpAlternativeSource = $webpAlternativeVariation->getName();
-                    }
-                }
-            } catch (\RuntimeException $e) {
-                $this->logger?->warning('Could not generate the variation file', [
-                    'exception' => $e,
-                    'media' => $media,
-                ]);
+            if ($webpAlternativeVariation instanceof Variation) {
+                $this->webpAlternativeSource = $webpAlternativeVariation->getName();
             }
         }
 
@@ -217,14 +204,7 @@ class Img
                     continue;
                 }
 
-                try {
-                    $this->converter->convertMediaVariation($variationMedia, false);
-                } catch (\RuntimeException $e) {
-                    $this->logger?->warning('Could not generate the variation file', [
-                        'exception' => $e,
-                        'media' => $variationMedia,
-                    ]);
-                }
+                $url = $variationMedia->getUrl();
 
                 if (!$variationMedia->isStored()) {
                     continue;
@@ -234,7 +214,7 @@ class Img
                 $dimensions = $binary->getPixelDimensions();
 
                 if (false !== $dimensions) {
-                    $this->srcset[$dimensions['width']] = $variationMedia->getUrl();
+                    $this->srcset[$dimensions['width']] = $url;
                 }
             }
         }

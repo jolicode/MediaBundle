@@ -2,7 +2,6 @@
 
 namespace JoliCode\MediaBundle\Conversion;
 
-use JoliCode\MediaBundle\Exception\UnprocessableMediaException;
 use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
@@ -83,8 +82,8 @@ readonly class Converter
         if ($mediaVariation->getStorage()->mustStoreWhenGeneratingUrl($mediaVariation)) {
             try {
                 $this->convertMediaVariation($mediaVariation, false);
-            } catch (UnprocessableMediaException $e) {
-                // do not make URL generation (a rendering concern) fatal for unprocessable medias
+            } catch (\Exception $e) {
+                // conversion failures must never make URL generation fatal
                 $this->logger?->warning($e->getMessage(), ['exception' => $e]);
             }
         }

@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- feature - The `must_store_when_generating_url` setting can now be defined per variation, overriding the library-level `cache` setting - see the [variations documentation](doc/variations/variations.rst)
+- improvement - The "generate the variation file when its URL is generated" behavior moved from the Twig layer into `MediaVariation::getUrl()` itself: every URL generation (Twig components and filters, admin bridges, or custom code such as an API Platform normalizer) now honors the `must_store_when_generating_url` setting - see the [URL generation documentation](doc/misc-features/url-generation.rst)
+- bc break - The `JoliMediaExtension`, `Img` and `Source` constructors no longer take a `Converter` argument
+- bc break - The extra `srcset` variations of the `joli:Img` component are no longer generated unconditionally when the component is rendered: they now follow the `must_store_when_generating_url` setting, like every other variation. Enable the setting (at the library or variation level), or pre-generate the variations with the `joli:media:convert` command, to keep the previous markup
+- bc break - A failing conversion no longer removes the corresponding candidate from the `srcset` of the `joli:Source` component: the URL is now always output, and the variation is served on the fly when requested
 - fix - `Variation::cloneWithOutputFormat()` no longer drops the pixel-ratio multiplier of the variation it clones
 - improvement - The `trash_path` configuration directive is now normalized and validated at configuration time
 - improvement - `OriginalStorage::listDirectories()`, `listFiles()`, `listMedias()` and `listMediasPaginated()` now hide the trash directory and all of its contents

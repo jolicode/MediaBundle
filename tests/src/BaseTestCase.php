@@ -246,6 +246,7 @@ class BaseTestCase extends WebTestCase
         Filesystem $filesystem,
         string $urlPath,
         UrlGeneratorInterface $urlGenerator,
+        bool $mustStoreWhenGeneratingUrl = false,
     ): CacheStorage {
         $cache = $this->createMock(CacheInterface::class);
         $cache->method('get')->willReturnCallback(function (string $key, callable $callback) {
@@ -270,7 +271,7 @@ class BaseTestCase extends WebTestCase
             $strategy,
             $filesystem,
             $urlPath,
-            false,
+            $mustStoreWhenGeneratingUrl,
             $urlGenerator,
             $mimeTypeGuesser,
             $mediaVariationPropertyAccessor,

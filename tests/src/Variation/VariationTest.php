@@ -144,6 +144,22 @@ class VariationTest extends BaseTestCase
         self::assertSame($this->preProcessor, $clonedVariation->getPreProcessors()->current());
     }
 
+    public function testCloneWithOutputFormatPreservesMultiplierAndMustStoreWhenGeneratingUrl(): void
+    {
+        $variation = new Variation(
+            'test_variation',
+            Format::JPEG,
+            $this->transformerChain,
+            multiplier: 2.0,
+            mustStoreWhenGeneratingUrl: true,
+        );
+
+        $clonedVariation = $variation->cloneWithOutputFormat(Format::PNG);
+
+        self::assertSame(2.0, $clonedVariation->getMultiplier());
+        self::assertTrue($clonedVariation->mustStoreWhenGeneratingUrl());
+    }
+
     public function testWebpAlternativeVariation(): void
     {
         $webpVariation = new Variation(
