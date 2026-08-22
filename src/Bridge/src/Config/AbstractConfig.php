@@ -39,18 +39,19 @@ abstract readonly class AbstractConfig
     }
 
     /**
-     * @return array<string, int|string|array<string>>
+     * @return array<string, int|string|array<string, string>>
      */
     public function getUploadOptions(): array
     {
         $config = [
-            'dictDefaultMessage' => $this->translator->trans('media.upload.dropzone.default_message', domain: $this->getTranslationDomain()),
-            'dictFallbackMessage' => $this->translator->trans('media.upload.dropzone.fallback_message', domain: $this->getTranslationDomain()),
-            'dictFallbackText' => $this->translator->trans('media.upload.dropzone.fallback_text', domain: $this->getTranslationDomain()),
-            'dictFileTooBig' => $this->translator->trans('media.upload.dropzone.file_too_big', domain: $this->getTranslationDomain()),
-            'dictInvalidFileType' => $this->translator->trans('media.upload.dropzone.invalid_file_type', domain: $this->getTranslationDomain()),
-            'dictMaxFilesExceeded' => $this->translator->trans('media.upload.dropzone.max_files_exceeded', domain: $this->getTranslationDomain()),
-            'maxFilesize' => $this->maxFileSize,
+            'messages' => [
+                'default' => $this->translator->trans('media.upload.uploader.default_message', domain: $this->getTranslationDomain()),
+                'fileTooBig' => $this->translator->trans('media.upload.uploader.file_too_big', domain: $this->getTranslationDomain()),
+                'invalidFileType' => $this->translator->trans('media.upload.uploader.invalid_file_type', domain: $this->getTranslationDomain()),
+                'maxFilesExceeded' => $this->translator->trans('media.upload.uploader.max_files_exceeded', domain: $this->getTranslationDomain()),
+                'responseError' => $this->translator->trans('media.upload.uploader.response_error', domain: $this->getTranslationDomain()),
+            ],
+            'maxFileSize' => $this->maxFileSize,
         ];
 
         if (null !== $this->maxFiles) {

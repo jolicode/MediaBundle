@@ -1,28 +1,28 @@
 /* ==========================================================================
-   Dropzone
+   Uploader
    ========================================================================== */
 
 /* Custom properties
    ========================================================================== */
 
-.dropzone-container {
-  --dropzone-background-color: var(--jm-color-gray-100);
-  --dropzone-color: var(--jm-dropzone-color);
-  --dropzone-border-color: var(--jm-dropzone-border-color);
+.uploader-container {
+  --uploader-background-color: var(--jm-color-gray-100);
+  --uploader-color: var(--jm-uploader-color);
+  --uploader-border-color: var(--jm-uploader-border-color);
 }
 
 [data-bs-theme="dark"] {
-  .dropzone-container {
-    --dropzone-background-color: var(--true-gray-800);
-    --dropzone-color: var(--jm-color-gray-100);
-    --dropzone-border-color: var(--jm-color-gray);
+  .uploader-container {
+    --uploader-background-color: var(--true-gray-800);
+    --uploader-color: var(--jm-color-gray-100);
+    --uploader-border-color: var(--jm-color-gray);
   }
 }
 
 /* Rules
    ========================================================================== */
 
-.dropzone-container {
+.uploader-container {
   display: none;
   top: 100%;
   left: 0;
@@ -37,26 +37,26 @@
   }
 }
 
-.dropzone {
+.uploader {
   display: flex;
   flex-wrap: wrap;
   min-height: auto;
   margin-bottom: 1.5rem;
-  color: var(--dropzone-color);
-  background-color: var(--dropzone-background-color, var(--jm-color-gray-100));
-  border: dashed 1px var(--dropzone-border-color);
+  color: var(--uploader-color);
+  background-color: var(--uploader-background-color, var(--jm-color-gray-100));
+  border: dashed 1px var(--uploader-border-color);
   border-radius: 4px;
   z-index: 100;
 }
 
-.dz-message {
+.uploader-message {
   cursor: pointer;
   font-size: 1.4375rem;
   padding: 5rem 1.25rem;
   margin: 0;
 }
 
-.dz-button {
+.uploader-button {
   display: block;
   margin: 0 auto;
   border: none;
@@ -68,67 +68,67 @@
   outline: inherit;
 }
 
-.dz-started .dz-message {
+.uploader[data-started] .uploader-message {
   display: none;
 }
 
-.dz-details {
+.uploader-preview-details {
   font-size: 15px;
 }
 
-.dropzone .dz-preview {
+.uploader .uploader-preview {
   width: 180px;
 
-  .dz-progress {
+  .uploader-progress {
     height: 10px;
     border: none;
     border-radius: 5px;
     overflow: hidden;
 
-    .dz-upload {
+    .uploader-progress-bar {
       background-color: var(--jm-color-green);
     }
   }
 
-  &.dz-complete {
-    .dz-progress {
+  &[data-complete] {
+    .uploader-progress {
       display: none;
     }
   }
 
-  .dz-error-marker {
+  .uploader-error-marker {
     color: var(--jm-color-red);
     display: none;
     margin-right: .25rem;
   }
 
-  .dz-success-marker {
+  .uploader-success-marker {
     color: var(--jm-color-green);
     display: none;
     margin-right: .25rem;
   }
 
-  &.dz-error {
-    .dz-error-marker {
+  &[data-status="error"] {
+    .uploader-error-marker {
       display: inline-block;
     }
 
-    .dz-error-message {
+    .uploader-error-message {
       display: block;
       font-size: 0.875rem;
       color: var(--jm-color-red);
     }
 
-    .dz-image.media-preview {
+    .uploader-preview-image.media-preview {
       display: none;
     }
   }
 
-  &.dz-success .dz-success-marker {
+  &[data-status="success"] .uploader-success-marker {
     display: inline-block;
   }
 
-  a[data-dz-link] {
+  a[data-upload-link] {
     flex-wrap: wrap;
     place-content: center;
     align-items: center;
@@ -138,6 +138,6 @@
   }
 }
 
-.dz-preview-template {
+.uploader-preview-template {
   display: none;
 }

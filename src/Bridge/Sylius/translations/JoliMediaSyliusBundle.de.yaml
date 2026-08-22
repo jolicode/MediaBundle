@@ -69,13 +69,12 @@ media:
     rename_success: 'Die Datei %from% wurde erfolgreich in %to% umbenannt.'
     search_label: 'Medien suchen …'
     upload:
-        dropzone:
+        uploader:
             default_message: 'Dateien zum Hochladen hier ablegen'
-            fallback_message: 'Ihr Browser unterstützt das Hochladen von Dateien per Drag & Drop nicht.'
-            fallback_text: 'Bitte verwenden Sie das untenstehende Formular, um Ihre Dateien wie früher hochzuladen.'
             file_too_big: 'Die Datei ist zu groß ({{filesize}} MiB). Maximale Dateigröße: {{maxFilesize}} MiB.'
             invalid_file_type: 'Dateien dieses Typs können nicht hochgeladen werden.'
             max_files_exceeded: 'Es können keine weiteren Dateien hochgeladen werden.'
+            response_error: 'Der Server hat mit einem Fehler geantwortet (Code {{statusCode}}).'
 document:
     download: 'Dokument herunterladen'
 no_file_found: 'Keine Datei gefunden'

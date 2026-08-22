@@ -1,8 +1,8 @@
 import '../styles/jolimedia.css';
-import addDropzone from './components/dropzone';
+import addUploader from '../../../assets/js/components/mediaUploader';
 import configureFolderSelector from './components/folderSelector';
 import configureMediaSelector from './components/mediaSelector';
-import configureClipboard from './components/clipboard';
+import configureClipboard from '../../../assets/js/components/clipboard';
 
 const { jQuery } = window;
 
@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
   configureFolderSelector();
   configureMediaSelector();
   configureClipboard();
-  let dropzoneInstance = null;
+  let uploaderInstance = null;
 
   const switchTool = (target, currentTool) => {
     const headerTools = target.closest('[data-component="media-tools"]');
     let activeTool = null;
 
-    for (const tool of ['dropzone', 'new-directory', 'rename-directory', 'search']) {
+    for (const tool of ['uploader', 'new-directory', 'rename-directory', 'search']) {
       const toolContainer = headerTools.querySelector(`[data-component="${tool}-container"]`);
 
       if (toolContainer) {
@@ -68,15 +68,15 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     e.stopPropagation();
 
-    const dropzone = switchTool(e.target, 'dropzone');
+    const uploader = switchTool(e.target, 'uploader');
 
-    if (dropzone.dataset.dropzoneInitialized !== 'true') {
-      dropzoneInstance = addDropzone(dropzone.querySelector('[data-component=dropzone]'));
-      dropzone.dataset.dropzoneInitialized = 'true';
+    if (uploader.dataset.uploaderInitialized !== 'true') {
+      uploaderInstance = addUploader(uploader.querySelector('[data-component=uploader]'));
+      uploader.dataset.uploaderInitialized = 'true';
     }
 
-    if (!dropzone.hasAttribute('data-active')) {
-      dropzoneInstance.removeAllFiles(true);
+    if (!uploader.hasAttribute('data-active')) {
+      uploaderInstance.removeAllFiles(true);
     }
   });
 

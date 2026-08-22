@@ -76,12 +76,20 @@ class AbstractConfigTest extends TestCase
         $options = $config->getUploadOptions();
 
         $this->assertIsArray($options);
-        $this->assertArrayHasKey('maxFilesize', $options);
+        $this->assertArrayHasKey('messages', $options);
+        $this->assertArrayHasKey('maxFileSize', $options);
         $this->assertArrayHasKey('maxFiles', $options);
         $this->assertArrayHasKey('acceptedFiles', $options);
-        $this->assertEquals(20, $options['maxFilesize']);
+        $this->assertEquals(20, $options['maxFileSize']);
         $this->assertEquals(10, $options['maxFiles']);
         $this->assertEquals('image/*', $options['acceptedFiles']);
+        $this->assertSame([
+            'default' => 'media.upload.uploader.default_message',
+            'fileTooBig' => 'media.upload.uploader.file_too_big',
+            'invalidFileType' => 'media.upload.uploader.invalid_file_type',
+            'maxFilesExceeded' => 'media.upload.uploader.max_files_exceeded',
+            'responseError' => 'media.upload.uploader.response_error',
+        ], $options['messages']);
     }
 
     public function testGetUploadOptionsWithoutMaxFiles(): void

@@ -28,8 +28,8 @@ return static function (ContainerConfigurator $container): void {
                 'breadcrumbs' => [
                     'template' => '@JoliMediaSylius/admin/media/index/content/header/breadcrumbs.html.twig',
                 ],
-                'dropzone' => [
-                    'template' => '@JoliMediaSylius/admin/media/index/content/header/dropzone.html.twig',
+                'uploader' => [
+                    'template' => '@JoliMediaSylius/admin/media/index/content/header/uploader.html.twig',
                 ],
                 'rename_directory' => [
                     'template' => '@JoliMediaSylius/admin/media/index/content/header/rename_directory.html.twig',

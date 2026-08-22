@@ -83,13 +83,12 @@ media:
     unavailable:
         simple: 'The media is not available.'
     upload:
-        dropzone:
+        uploader:
             default_message: 'Drop your files here or click to upload'
-            fallback_message: 'Your browser does not support drag’n’drop file uploads.'
-            fallback_text: 'Please use the form below to upload your files.'
             file_too_big: 'The file is too big ({{filesize}}MiB). Maximum allowed size is {{maxFilesize}}MiB.'
             invalid_file_type: This file type is not allowed.
             max_files_exceeded: 'You cannot upload more than {{maxFiles}} files.'
+            response_error: 'The server responded with an error (code {{statusCode}}).'
         error:
             already_exists: 'The file "%file%" already exists, please change the file name.'
             default: 'Failed to upload the file.'

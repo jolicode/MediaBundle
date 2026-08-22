@@ -1,0 +1,32 @@
+/* ==========================================================================
+   Uploader - base rules
+   ========================================================================== */
+
+.uploader,
+.uploader * {
+  box-sizing: border-box;
+}
+
+.uploader {
+  position: relative;
+}
+
+.uploader .uploader-preview {
+  position: relative;
+  display: inline-block;
+  margin: 0.5em;
+}
+
+.uploader .uploader-progress {
+  display: block;
+}
+
+.uploader .uploader-progress .uploader-progress-bar {
+  display: block;
+  height: 100%;
+  width: 0;
+}
+
+.uploader .uploader-error-message {
+  display: none;
+}

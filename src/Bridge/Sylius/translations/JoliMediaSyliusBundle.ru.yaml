@@ -69,13 +69,12 @@ media:
     rename_success: 'Файл %from% переименован в %to%.'
     search_label: 'Поиск изображений…'
     upload:
-        dropzone:
+        uploader:
             default_message: 'Перетащите файлы сюда для загрузки'
-            fallback_message: 'Ваш браузер не поддерживает загрузку перетаскиванием.'
-            fallback_text: 'Используйте форму ниже для загрузки файлов.'
             file_too_big: 'Файл слишком большой ({{filesize}} МиБ). Максимум: {{maxFilesize}} МиБ.'
             invalid_file_type: 'Файлы этого типа загружать нельзя.'
             max_files_exceeded: 'Больше файлов загрузить нельзя.'
+            response_error: 'Сервер ответил ошибкой (код {{statusCode}}).'
 document:
     download: 'Скачать документ'
 no_file_found: 'Файлы не найдены'

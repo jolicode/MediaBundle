@@ -2,10 +2,10 @@
   "entrypoints": {
     "joli-media-easy-admin": {
       "css": [
-        "/bundles/jolimediaeasyadmin/joli-media-easy-admin.449c35bc.css"
+        "/bundles/jolimediaeasyadmin/joli-media-easy-admin.7514364a.css"
       ],
       "js": [
-        "/bundles/jolimediaeasyadmin/joli-media-easy-admin.cc9a9122.js"
+        "/bundles/jolimediaeasyadmin/joli-media-easy-admin.25e2cd76.js"
       ]
     }
   }

@@ -1,12 +1,11 @@
-import buildFolderUrl from "./folderUrl.js";
+import buildFolderUrl from "../../../../assets/js/helpers/folderUrl.js";
+import { fetchFolder, isSelectableLink, setFieldValue } from "../../../../assets/js/helpers/modalFetch.js";
 
 const openFolderChoiceModal = (folderChoiceButton) => {
     const modal = document.getElementById('modal-folder-choice');
     document.body.appendChild(modal);
     const modalContent = modal.querySelector('[data-component="folder-choice-modal-body"]');
     const inputElement = document.querySelector('#move-form #move_to');
-
-    const fetchFolder = (url) => fetch(url).then((response) => response.text());
 
     const configureModal = (html) => {
         modalContent.innerHTML = html;
@@ -18,21 +17,10 @@ const openFolderChoiceModal = (folderChoiceButton) => {
         return;
     };
 
-    const setFieldValue = (value) => {
-        inputElement.value = value;
-        inputElement.dispatchEvent(new Event("change"));
-    };
-
     const handleModalClick = (event) => {
         const target = event.target.closest("a");
 
-        if (
-            target === null ||
-            target.tagName !== "A" ||
-            target.attributes.href === undefined ||
-            target.attributes.href.length === 0 ||
-            target.attributes.href.value === "#"
-        ) {
+        if (!isSelectableLink(target)) {
             return;
         }
 
@@ -45,7 +33,7 @@ const openFolderChoiceModal = (folderChoiceButton) => {
             return;
         }
 
-        setFieldValue(target.dataset.folderPath);
+        setFieldValue(inputElement, target.dataset.folderPath);
         closeModal();
         document.querySelector('#modal-move p').textContent = target.dataset.confirmation;
         document.querySelector('#modal-move #modal-move-button').addEventListener('click', () => {
