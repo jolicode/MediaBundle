@@ -459,13 +459,11 @@ return static function (ContainerConfigurator $container): void {
         ->set('joli_media.twig_extension', JoliMediaExtension::class)
         ->args([
             service('joli_media.resolver'),
-            service('joli_media.converter'),
         ])
         ->tag('twig.extension')
 
         ->set('joli_media.twig.component.img', Img::class)
         ->args([
-            '$converter' => service('joli_media.converter'),
             '$resolver' => service('joli_media.resolver'),
             '$libraries' => service('joli_media.library_container'),
             '$logger' => service('logger')->ignoreOnInvalid(),
@@ -481,7 +479,6 @@ return static function (ContainerConfigurator $container): void {
 
         ->set('joli_media.twig.component.source', Source::class)
         ->args([
-            '$converter' => service('joli_media.converter'),
             '$resolver' => service('joli_media.resolver'),
             '$logger' => service('logger')->ignoreOnInvalid(),
         ])
@@ -513,6 +510,7 @@ return static function (ContainerConfigurator $container): void {
             '$postProcessorsConfiguration' => abstract_arg('post_processors_configuration'),
             '$voters' => abstract_arg('joli_media.voters'),
             '$multiplier' => abstract_arg('multiplier'),
+            '$mustStoreWhenGeneratingUrl' => abstract_arg('mustStoreWhenGeneratingUrl'),
         ])
 
         // voter

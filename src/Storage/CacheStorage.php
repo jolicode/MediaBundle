@@ -221,7 +221,10 @@ class CacheStorage
 
     public function mustStoreWhenGeneratingUrl(MediaVariation $mediaVariation): bool
     {
-        return !$mediaVariation->isStored() && $this->mustStoreWhenGeneratingUrl;
+        $mustStore = $mediaVariation->getVariation()->mustStoreWhenGeneratingUrl()
+            ?? $this->mustStoreWhenGeneratingUrl;
+
+        return $mustStore && !$mediaVariation->isStored();
     }
 
     private function getRouteName(): string

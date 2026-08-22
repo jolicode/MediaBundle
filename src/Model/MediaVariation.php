@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Model;
 
 use JoliCode\MediaBundle\Binary\Binary;
+use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Storage\CacheStorage;
 use JoliCode\MediaBundle\Variation\Variation;
@@ -10,7 +11,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class MediaVariation implements StorableInterface
 {
+    /**
+     * @var (callable(): Converter)|null
+     */
+    public static $converterInitializer;
+
     private ?bool $stored = null;
+
+    private bool $isConvertingForUrlGeneration = false;
 
     public function __construct(
         private readonly Media $media,
@@ -90,6 +98,21 @@ class MediaVariation implements StorableInterface
     public function getUrl(
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH,
     ): string {
+        if (isset(self::$converterInitializer)
+            && !$this->isConvertingForUrlGeneration
+            && $this->getStorage()->mustStoreWhenGeneratingUrl($this)
+        ) {
+            // guard against re-entrance: the conversion pipeline may generate
+            // the URL of the variation being converted (eg. in the profiler)
+            $this->isConvertingForUrlGeneration = true;
+
+            try {
+                (self::$converterInitializer)()->convertIfMustStoreWhenGeneratingUrl($this);
+            } finally {
+                $this->isConvertingForUrlGeneration = false;
+            }
+        }
+
         return $this->getStorage()->getUrl($this->media->getPath(), $this->variation, $referenceType);
     }
 

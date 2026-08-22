@@ -545,3 +545,7 @@ This could be a problem if you are picky about the HTML attributes or if you do 
             default:
                 cache:
                     must_store_when_generating_url: true
+
+This behavior is not specific to the Twig components: it is implemented by ``MediaVariation::getUrl()`` itself, so *any* URL generation for a media variation (the Twig components and filters, the admin bridges, or your own code - for instance an API Platform normalizer) generates and stores the missing variation file when the setting is enabled. See the `URL generation documentation <url-generation.rst>`_ for more details.
+
+The setting can also be overridden for a single variation, using the ``must_store_when_generating_url`` attribute of the variation configuration - see the `Variations documentation <../variations/variations.rst>`_.

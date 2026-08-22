@@ -34,6 +34,15 @@ There are few chances that you need to instanciate the ``Media`` or ``MediaVaria
         $media = $resolver->resolve('example-image.png');
         $mediaVariation = $resolver->resolve('example-image.png', null, 'variation_name');
 
+Generating the variation file along with its URL
+------------------------------------------------
+
+By default, generating the URL of a media variation does not generate the variation file itself - it is generated on the fly, the first time the URL is requested. If the ``must_store_when_generating_url`` setting is enabled (either in the library's ``cache`` configuration or on the variation itself - see the `Configuration documentation <../getting-started/configuration.rst>`_), ``MediaVariation::getUrl()`` generates and stores the missing variation file before returning the URL.
+
+Since this behavior is implemented by ``MediaVariation::getUrl()`` itself, it applies everywhere a variation URL is generated: in the Twig components and filters, in the admin bridges, or in your own code - for instance in an API Platform normalizer.
+
+Note that a conversion failure never makes ``getUrl()`` throw: the error is logged as a warning, and the URL is returned anyway (the ``MediaController`` will then try to generate the variation on the fly when the URL is requested).
+
 Twig extension
 --------------
 

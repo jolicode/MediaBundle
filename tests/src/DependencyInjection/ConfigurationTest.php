@@ -103,6 +103,32 @@ class ConfigurationTest extends TestCase
         $this->assertNull($config['pre_processors']['App\PreProcessor\CustomPreProcessor']['process_timeout']);
     }
 
+    public function testVariationMustStoreWhenGeneratingUrlConfiguration(): void
+    {
+        $config = $this->processConfiguration([
+            [
+                'libraries' => [
+                    'default' => [
+                        'original' => ['flysystem' => 'flysystem.original'],
+                        'cache' => ['flysystem' => 'flysystem.cache'],
+                        'variations' => [
+                            'thumbnail' => [
+                                'must_store_when_generating_url' => true,
+                            ],
+                            'large' => [],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $variations = $config['libraries']['default']['variations'];
+
+        $this->assertTrue($variations['thumbnail']['must_store_when_generating_url']);
+        // when not set, the value is null and falls back to the library-level setting
+        $this->assertNull($variations['large']['must_store_when_generating_url']);
+    }
+
     public function testDefaultTrashPathConfiguration(): void
     {
         // the default value bypasses the normalization, so it must already be normalized

@@ -31,6 +31,7 @@ class Variation
         private readonly array $voters = [],
         private ?self $webpAlternativeVariation = null,
         private readonly float $multiplier = 1.0,
+        private readonly ?bool $mustStoreWhenGeneratingUrl = null,
     ) {
     }
 
@@ -58,6 +59,8 @@ class Variation
             $this->postProcessorsConfiguration,
             $this->voters,
             $this->webpAlternativeVariation,
+            $this->multiplier,
+            $this->mustStoreWhenGeneratingUrl,
         );
     }
 
@@ -98,6 +101,11 @@ class Variation
     public function getMultiplier(): float
     {
         return $this->multiplier;
+    }
+
+    public function mustStoreWhenGeneratingUrl(): ?bool
+    {
+        return $this->mustStoreWhenGeneratingUrl;
     }
 
     public function getName(): string

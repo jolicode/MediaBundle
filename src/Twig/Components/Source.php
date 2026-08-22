@@ -2,7 +2,6 @@
 
 namespace JoliCode\MediaBundle\Twig\Components;
 
-use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
@@ -33,7 +32,6 @@ class Source
     public ?array $webpAlternativeSrcset = [];
 
     public function __construct(
-        private readonly Converter $converter,
         private readonly Resolver $resolver,
         private readonly ?LoggerInterface $logger = null,
     ) {
@@ -58,15 +56,6 @@ class Source
             }
 
             $this->srcset = $mediaVariation->getUrl();
-
-            try {
-                $this->converter->convertIfMustStoreWhenGeneratingUrl($mediaVariation);
-            } catch (\RuntimeException $e) {
-                $this->logger?->warning('Could not generate the variation file', [
-                    'exception' => $e,
-                    'mediaVariation' => $mediaVariation,
-                ]);
-            }
 
             if ($mediaVariation->isStored()) {
                 $this->type = $mediaVariation->getMimeType();
@@ -113,15 +102,7 @@ class Source
                 throw new \InvalidArgumentException(\sprintf('Media variation "%s" not found for the media "%s".', $name, $media->getPath()));
             }
 
-            try {
-                $this->converter->convertIfMustStoreWhenGeneratingUrl($mediaVariation);
-                $candidates[] = trim(\sprintf('%s %s', $mediaVariation->getUrl(), $descriptor));
-            } catch (\RuntimeException $e) {
-                $this->logger?->warning('Could not generate the variation file', [
-                    'exception' => $e,
-                    'mediaVariation' => $mediaVariation,
-                ]);
-            }
+            $candidates[] = trim(\sprintf('%s %s', $mediaVariation->getUrl(), $descriptor));
 
             if (!$skipAutoDimensions && $mediaVariation->isStored()) {
                 $types[] = $mediaVariation->getMimeType();

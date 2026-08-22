@@ -55,11 +55,13 @@ class ImgTest extends BaseTestCase
         $binary = new Binary('image/jpeg', Format::JPEG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::JPEG_FIXTURE_PATH));
         $media = new Media(self::PARTIALLY_STORED_MEDIA, $libraries->getDefault()->getOriginalStorage(), $binary);
         $media->store();
+        $libraries->getDefault()->deleteAllVariations(self::PARTIALLY_STORED_MEDIA);
 
         // store the self::PARTIALLY_STORED_MEDIA media in the "auto_generate" library, but none of its variations
         $binary = new Binary('image/jpeg', Format::JPEG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::JPEG_FIXTURE_PATH));
         $media = new Media(self::PARTIALLY_STORED_MEDIA, $libraries->get('auto_generate')->getOriginalStorage(), $binary);
         $media->store();
+        $libraries->get('auto_generate')->deleteAllVariations(self::PARTIALLY_STORED_MEDIA);
 
         // store the self::TIFF_MEDIA media
         $binary = new Binary('image/tiff', Format::TIFF->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::TIFF_FIXTURE_PATH));
@@ -72,6 +74,7 @@ class ImgTest extends BaseTestCase
         $binary = new Binary('image/jpeg', Format::JPEG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::JPEG_FIXTURE_PATH));
         $media = new Media(self::BROKEN_FILENAME, $libraries->getDefault()->getOriginalStorage(), $binary);
         $media->store();
+        $libraries->getDefault()->deleteAllVariations(self::BROKEN_FILENAME);
     }
 
     public static function tearDownAfterClass(): void
@@ -84,6 +87,8 @@ class ImgTest extends BaseTestCase
         $library->getOriginalStorage()->delete(self::COMPLETELY_STORED_MEDIA);
         $library->getOriginalStorage()->delete(self::PARTIALLY_STORED_MEDIA);
         $library->deleteAllVariations(self::PARTIALLY_STORED_MEDIA);
+        $library->getOriginalStorage()->delete(self::BROKEN_FILENAME);
+        $library->deleteAllVariations(self::BROKEN_FILENAME);
 
         $library = $libraries->get('auto_generate');
         $library->getOriginalStorage()->delete(self::PARTIALLY_STORED_MEDIA);
@@ -186,7 +191,21 @@ class ImgTest extends BaseTestCase
                 'variation' => ['variation-standard', 'variation-large', 'variation-extra-large'],
                 'alt' => 'Alternative text',
             ],
-            '<img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text" srcset="/media/cache/variation-standard/partially-stored-media.jpg 145w, /media/cache/variation-large/partially-stored-media.jpg 800w, /media/cache/variation-extra-large/partially-stored-media.jpg 1800w" sizes="145px">',
+            // the srcset variations are not eagerly generated anymore, as the
+            // library does not enable must_store_when_generating_url
+            '<img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text">',
+        ];
+        yield 'auto-generate-partial-media-srcset-multiple' => [
+            Img::class,
+            [
+                'path' => self::PARTIALLY_STORED_MEDIA,
+                'library' => 'auto_generate',
+                'variation' => ['variation-standard', 'variation-large'],
+                'alt' => 'Alternative text',
+            ],
+            // the library enables must_store_when_generating_url, so the srcset
+            // variations are generated when their URL is generated
+            '<img src="/media-auto-generate/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text" srcset="/media-auto-generate/cache/variation-standard/partially-stored-media.jpg 145w, /media-auto-generate/cache/variation-large/partially-stored-media.jpg 800w" sizes="145px" width="145" height="109">',
         ];
         yield 'existing-media-with-skip-auto-dimensions' => [
             Img::class,
@@ -271,7 +290,9 @@ class ImgTest extends BaseTestCase
                 'path' => self::BROKEN_FILENAME,
                 'variation' => ['variation-standard', 'variation-large', 'variation-extra-large'],
             ],
-            '<img src="/media/cache/variation-standard/some%5C%20filename.jpg" loading="lazy" decoding="async" srcset="/media/cache/variation-standard/some%5C%20filename.jpg 145w, /media/cache/variation-large/some%5C%20filename.jpg 800w, /media/cache/variation-extra-large/some%5C%20filename.jpg 1800w" sizes="145px">',
+            // the srcset variations are not eagerly generated anymore, as the
+            // library does not enable must_store_when_generating_url
+            '<img src="/media/cache/variation-standard/some%5C%20filename.jpg" loading="lazy" decoding="async">',
         ];
         yield 'non-existing-media-variation' => [
             Img::class,

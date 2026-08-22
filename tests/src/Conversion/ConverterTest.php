@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Tests\Conversion;
 
 use Imagine\Imagick\Imagine as ImagineImagine;
+use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
@@ -125,6 +126,52 @@ class ConverterTest extends BaseTestCase
         yield ['webp', 'avif', 7675, 'image/avif'];
     }
 
+    public function testConvertIfMustStoreWhenGeneratingUrlHonorsTheLibrarySetting(): void
+    {
+        // the test library cache storage is configured with must_store_when_generating_url = false
+        $mediaVariation = $this->createMediaVariation('must-store/library.jpeg', 'thumbnail');
+
+        $this->converter->convertIfMustStoreWhenGeneratingUrl($mediaVariation);
+
+        self::assertFalse($mediaVariation->isStored());
+    }
+
+    public function testConvertIfMustStoreWhenGeneratingUrlHonorsTheVariationSetting(): void
+    {
+        // the variation-level setting overrides the library-level one
+        $mediaVariation = $this->createMediaVariation('must-store/variation.jpeg', 'auto-stored-thumbnail');
+
+        $this->converter->convertIfMustStoreWhenGeneratingUrl($mediaVariation);
+
+        self::assertTrue($mediaVariation->isStored());
+    }
+
+    public function testConvertIfMustStoreWhenGeneratingUrlIsANoOpWhenAlreadyStored(): void
+    {
+        $mediaVariation = $this->createMediaVariation('must-store/stored.jpeg', 'auto-stored-thumbnail');
+        $this->converter->convertMediaVariation($mediaVariation);
+        $initialBinary = $mediaVariation->getBinary();
+
+        $this->converter->convertIfMustStoreWhenGeneratingUrl($mediaVariation);
+
+        self::assertSame($initialBinary, $mediaVariation->getBinary());
+    }
+
+    public function testConvertIfMustStoreWhenGeneratingUrlSwallowsConversionErrors(): void
+    {
+        // an empty binary makes the transformation throw an UnprocessableMediaException,
+        // as its pixel dimensions cannot be determined
+        $mediaVariation = $this->createMediaVariation(
+            'must-store/failing.jpeg',
+            'failing-auto-stored-thumbnail',
+            new Binary('image/jpeg', 'jpeg', ''),
+        );
+
+        $this->converter->convertIfMustStoreWhenGeneratingUrl($mediaVariation);
+
+        self::assertFalse($mediaVariation->isStored());
+    }
+
     public function testConvertWithoutTransformersConvertsTheFormat(): void
     {
         // a variation with a target format but no transformers must convert the
@@ -177,7 +224,37 @@ class ConverterTest extends BaseTestCase
             new TransformerChain([]),
         );
 
+        $variations['auto-stored-thumbnail'] = static fn (): Variation => new Variation(
+            'auto-stored-thumbnail',
+            Format::WEBP,
+            new TransformerChain([]),
+            mustStoreWhenGeneratingUrl: true,
+        );
+
+        $variations['failing-auto-stored-thumbnail'] = static fn (): Variation => new Variation(
+            'failing-auto-stored-thumbnail',
+            Format::WEBP,
+            new TransformerChain([
+                new Resize(400, 300),
+            ]),
+            mustStoreWhenGeneratingUrl: true,
+        );
+
         return $variations;
+    }
+
+    private function createMediaVariation(string $filename, string $variationName, ?Binary $binary = null): MediaVariation
+    {
+        $media = new Media($filename, $this->originalStorage);
+        $media->store($binary ?? $this->getFixtureBinary('jpeg'));
+
+        $mediaVariation = $this->converter->getMediaVariation($filename, $variationName, $this->library->getName());
+
+        if (!$mediaVariation instanceof MediaVariation) {
+            self::fail(\sprintf('The media variation "%s" was not created.', $variationName));
+        }
+
+        return $mediaVariation;
     }
 
     private function getVariationName(?string $toExtension): string

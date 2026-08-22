@@ -15,6 +15,7 @@ use JoliCode\MediaBundle\Doctrine\Type\MediaType;
 use JoliCode\MediaBundle\Doctrine\Types;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
+use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\PreProcessor\HeifPreProcessor;
 use JoliCode\MediaBundle\Processor\Imagine;
 use JoliCode\MediaBundle\Resolver\Resolver;
@@ -39,6 +40,7 @@ class JoliMediaBundle extends AbstractBundle
         // media unserialization does not depend on Doctrine: this must be set
         // before the Doctrine check below
         Media::$libraryContainerInitializer = fn (): ?object => $this->container->get('joli_media.library_container');
+        MediaVariation::$converterInitializer = fn (): ?object => $this->container->get('joli_media.converter');
 
         if (!class_exists(StringType::class)) {
             return;
@@ -261,6 +263,10 @@ class JoliMediaBundle extends AbstractBundle
                     ->scalarNode('format')->end()
                     ->booleanNode('enable_auto_webp')
                         ->info('If true and the format config attribute is not set or different from "webp", enables an additionnal webp version of the variation.')
+                    ->end()
+                    ->booleanNode('must_store_when_generating_url')
+                        ->defaultNull()
+                        ->info('If true, this variation file will be generated, if missing, when its URL is generated. Overrides the library-level cache.must_store_when_generating_url setting; when null, falls back to it.')
                     ->end()
                     ->append($this->addPixelRatiosNode())
                     ->arrayNode('transformers')
@@ -1468,6 +1474,7 @@ class JoliMediaBundle extends AbstractBundle
                 '$postProcessorsConfiguration' => array_replace_recursive($libraryConfig['post_processors'] ?? [], $variationConfig['post_processors'] ?? []),
                 '$voters' => array_map(service(...), $voterServiceIds),
                 '$multiplier' => $variationConfig['pixel_ratio'],
+                '$mustStoreWhenGeneratingUrl' => $variationConfig['must_store_when_generating_url'] ?? null,
             ])
             ->tag($variationServiceTag, ['name' => $slugger->slug($variationName)->lower()->toString()])
         ;

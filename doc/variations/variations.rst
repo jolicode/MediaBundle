@@ -50,6 +50,29 @@ This is a string that defines the format of the variation. If not set, the origi
 
     There are chances that, for compatibility reasons, you want to keep the original image format. In this case, you can omit the ``format`` key in the variation configuration. If you wish to generate variations both in the original format and in WebP format, you can define two variations with the same transformers, one without the ``format`` key, and one with the ``format`` key set to ``webp``. A better alternative, however, is to use the ``enable_auto_webp`` configuration directive above, which will automatically generate an additional WebP variation.
 
+must_store_when_generating_url
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is a boolean that defines whether the variation file must be generated and stored when its URL is generated - see the `URL generation documentation <../misc-features/url-generation.rst>`_.
+
+If not defined (or set to ``null``), the value of the ``must_store_when_generating_url`` option defined in the library ``cache`` configuration is used instead. Setting it explicitly to ``true`` or ``false`` overrides the library-level value for this variation only. The variation clones (the ``@2x`` pixel-ratio variations and the automatic WebP alternatives) inherit the value of the variation they are cloned from.
+
+.. code-block:: yaml
+
+    joli_media:
+        libraries:
+            default:
+                cache:
+                    # ...
+                    must_store_when_generating_url: false
+                variations:
+                    thumbnail:
+                        # this variation is generated as soon as its URL is generated,
+                        # even though the library does not enable the setting
+                        must_store_when_generating_url: true
+                        transformers:
+                            # ...
+
 pixel_ratios
 ~~~~~~~~~~~~
 
