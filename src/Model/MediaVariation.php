@@ -4,6 +4,7 @@ namespace JoliCode\MediaBundle\Model;
 
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Conversion\Converter;
+use JoliCode\MediaBundle\Exception\MediaVariationNotStoredException;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Storage\CacheStorage;
 use JoliCode\MediaBundle\Variation\Variation;
@@ -95,22 +96,37 @@ class MediaVariation implements StorableInterface
         return $this->getStorage()->getStrategy()->getPath($this->media->getPath(), $this->variation);
     }
 
+    /**
+     * A temporary URL points directly at the storage backend and bypasses the
+     * media controller, so the variation file must exist before its URL is
+     * signed: it is generated when missing, whatever the value of the
+     * must_store_when_generating_url setting, and conversion failures are not
+     * swallowed.
+     *
+     * @param array<string, mixed> $config extra options forwarded to the filesystem adapter
+     *
+     * @throws MediaVariationNotStoredException when the variation file cannot be generated
+     */
+    public function getTemporaryUrl(
+        \DateTimeInterface|\DateInterval|null $expiresAt = null,
+        array $config = [],
+    ): string {
+        if (!$this->isStored()) {
+            $this->convertForUrlGeneration(fn (Converter $converter) => $converter->convertMediaVariation($this, false));
+
+            if (!$this->isStored()) {
+                throw new MediaVariationNotStoredException($this);
+            }
+        }
+
+        return $this->getStorage()->getTemporaryUrl($this->media->getPath(), $this->variation, $expiresAt, $config);
+    }
+
     public function getUrl(
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH,
     ): string {
-        if (isset(self::$converterInitializer)
-            && !$this->isConvertingForUrlGeneration
-            && $this->getStorage()->mustStoreWhenGeneratingUrl($this)
-        ) {
-            // guard against re-entrance: the conversion pipeline may generate
-            // the URL of the variation being converted (eg. in the profiler)
-            $this->isConvertingForUrlGeneration = true;
-
-            try {
-                (self::$converterInitializer)()->convertIfMustStoreWhenGeneratingUrl($this);
-            } finally {
-                $this->isConvertingForUrlGeneration = false;
-            }
+        if ($this->getStorage()->mustStoreWhenGeneratingUrl($this)) {
+            $this->convertForUrlGeneration(fn (Converter $converter) => $converter->convertIfMustStoreWhenGeneratingUrl($this));
         }
 
         return $this->getStorage()->getUrl($this->media->getPath(), $this->variation, $referenceType);
@@ -146,5 +162,25 @@ class MediaVariation implements StorableInterface
 
         $this->getStorage()->store($this);
         $this->stored = true;
+    }
+
+    /**
+     * @param callable(Converter): void $convert
+     */
+    private function convertForUrlGeneration(callable $convert): void
+    {
+        if (!isset(self::$converterInitializer) || $this->isConvertingForUrlGeneration) {
+            return;
+        }
+
+        // guard against re-entrance: the conversion pipeline may generate
+        // the URL of the variation being converted (eg. in the profiler)
+        $this->isConvertingForUrlGeneration = true;
+
+        try {
+            $convert((self::$converterInitializer)());
+        } finally {
+            $this->isConvertingForUrlGeneration = false;
+        }
     }
 }
