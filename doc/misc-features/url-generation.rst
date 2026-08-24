@@ -43,6 +43,52 @@ Since this behavior is implemented by ``MediaVariation::getUrl()`` itself, it ap
 
 Note that a conversion failure never makes ``getUrl()`` throw: the error is logged as a warning, and the URL is returned anyway (the ``MediaController`` will then try to generate the variation on the fly when the URL is requested).
 
+Temporary (pre-signed) URLs
+---------------------------
+
+When the media files are stored on a bucket (Amazon S3, MinIO, etc.), it is often preferable to let the storage backend serve them directly through pre-signed URLs, instead of proxying the files through PHP. The ``getTemporaryUrl()`` method, available on the ``Media`` and ``MediaVariation`` objects (and on the underlying ``OriginalStorage`` and ``CacheStorage`` services), generates such URLs::
+
+    // valid for one hour by default
+    echo $media->getTemporaryUrl();
+
+    // absolute expiration date
+    echo $media->getTemporaryUrl(new \DateTimeImmutable('+20 minutes'));
+
+    // validity duration
+    echo $media->getTemporaryUrl(new \DateInterval('PT20M'));
+
+    // extra options forwarded to the filesystem adapter
+    echo $media->getTemporaryUrl(config: ['ResponseContentDisposition' => 'attachment; filename=example.png']);
+
+    echo $mediaVariation->getTemporaryUrl();
+
+This requires a Flysystem adapter able to generate temporary URLs (the AWS S3 and Async AWS S3 adapters, among others), or a ``League\Flysystem\UrlGeneration\TemporaryUrlGenerator`` explicitly configured on the filesystem. When the adapter does not support temporary URLs (e.g. the Local adapter), a ``League\Flysystem\UnableToGenerateTemporaryUrl`` exception is thrown.
+
+Unlike ``getUrl()``, which points at a route handled by the ``MediaController``:
+
+- there is no ``$referenceType`` parameter: the URL host comes from the storage backend and the signature, not from the Symfony router;
+- ``MediaVariation::getTemporaryUrl()`` always makes sure the variation file exists before signing its URL, whatever the value of the ``must_store_when_generating_url`` setting: a pre-signed URL bypasses the ``MediaController``, so a missing variation file could not be generated on the fly when the URL is requested. The variation file is converted and stored when missing, and a ``JoliCode\MediaBundle\Exception\MediaVariationNotStoredException`` is thrown when it cannot be generated - a conversion failure is not swallowed, as it would produce a signed URL to a missing object.
+
+.. tip::
+
+    ``MediaVariation::getTemporaryUrl()`` checks the existence of the variation file on the storage, which adds a round-trip to the storage backend. For hot endpoints, pre-generate the variation files with the ``joli:media:convert`` command.
+
+.. warning::
+
+    Do not cache a response containing pre-signed URLs beyond their expiration. Also note that most backends limit the validity duration (7 days for AWS Signature Version 4, for instance).
+
+Pre-signed URLs are mostly useful on private buckets. The bundle writes the media and variation files without forcing any visibility, so the visibility configured on the Flysystem storage applies:
+
+.. code-block:: yaml
+
+    # config/packages/flysystem.yaml
+    flysystem:
+        storages:
+            media.storage:
+                adapter: 'aws'
+                visibility: private
+                directory_visibility: private
+
 Twig extension
 --------------
 
