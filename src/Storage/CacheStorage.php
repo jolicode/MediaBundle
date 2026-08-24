@@ -8,7 +8,6 @@ use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Storage\Strategy\StorageStrategyInterface;
 use JoliCode\MediaBundle\Variation\Variation;
-use League\Flysystem\Config;
 use League\Flysystem\Filesystem;
 use League\Flysystem\StorageAttributes;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -218,10 +217,7 @@ class CacheStorage
             $mediaVariation->getMedia()->getPath(),
             $mediaVariation->getVariation(),
         );
-        $this->filesystem->write($path, $mediaVariation->getBinary()->getContent(), [
-            Config::OPTION_VISIBILITY => 'public',
-            Config::OPTION_DIRECTORY_VISIBILITY => 'public',
-        ]);
+        $this->filesystem->write($path, $mediaVariation->getBinary()->getContent());
     }
 
     public function mustStoreWhenGeneratingUrl(MediaVariation $mediaVariation): bool

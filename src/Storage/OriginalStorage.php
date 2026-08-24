@@ -24,7 +24,6 @@ use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Storage\Strategy\StorageStrategyInterface;
-use League\Flysystem\Config;
 use League\Flysystem\DirectoryListing;
 use League\Flysystem\Filesystem;
 use League\Flysystem\StorageAttributes;
@@ -112,10 +111,7 @@ class OriginalStorage
         }
 
         $this->getLibrary()->deleteAllVariations($path);
-        $this->filesystem->write($path, $binary->getContent(), [
-            Config::OPTION_VISIBILITY => 'public',
-            Config::OPTION_DIRECTORY_VISIBILITY => 'public',
-        ]);
+        $this->filesystem->write($path, $binary->getContent());
         $this->mediaPropertyAccessor->clearCache($path);
         $media = new Media($path, $this, $binary);
 
