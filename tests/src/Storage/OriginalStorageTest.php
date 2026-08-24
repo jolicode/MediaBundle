@@ -12,6 +12,7 @@ use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
+use League\Flysystem\UnableToGenerateTemporaryUrl;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class OriginalStorageTest extends BaseTestCase
@@ -196,6 +197,78 @@ class OriginalStorageTest extends BaseTestCase
         $this->originalFilesystem->write($path, BaseTestCase::getFixtureBinaryContent(BaseTestCase::PNG_FIXTURE_PATH));
 
         $this->assertSame('/media/test.png', $this->originalStorage->getUrl($path));
+    }
+
+    public function testGetTemporaryUrlSignsTheNormalizedStoragePath(): void
+    {
+        $temporaryUrlGenerator = new RecordingTemporaryUrlGenerator();
+        $storage = $this->createOriginalStorage('default', $this->createFilesystem($temporaryUrlGenerator), '/media', $this->urlGenerator);
+
+        $url = $storage->getTemporaryUrl('/folder//test.png');
+
+        // the URL is signed on the storage path, not on the /media URL prefix
+        $this->assertSame('folder/test.png', $temporaryUrlGenerator->calls[0]['path']);
+        $this->assertStringStartsWith('https://signed.example.com/folder/test.png?expires=', $url);
+    }
+
+    public function testGetTemporaryUrlExpiresInOneHourByDefault(): void
+    {
+        $temporaryUrlGenerator = new RecordingTemporaryUrlGenerator();
+        $storage = $this->createOriginalStorage('default', $this->createFilesystem($temporaryUrlGenerator), '/media', $this->urlGenerator);
+
+        $storage->getTemporaryUrl('test.png');
+
+        $this->assertEqualsWithDelta(time() + 3600, $temporaryUrlGenerator->calls[0]['expiresAt']->getTimestamp(), 10);
+    }
+
+    public function testGetTemporaryUrlHonorsTheGivenExpiration(): void
+    {
+        $temporaryUrlGenerator = new RecordingTemporaryUrlGenerator();
+        $storage = $this->createOriginalStorage('default', $this->createFilesystem($temporaryUrlGenerator), '/media', $this->urlGenerator);
+
+        $expiresAt = new \DateTimeImmutable('2030-01-01 12:00:00');
+        $storage->getTemporaryUrl('test.png', $expiresAt);
+        $this->assertSame($expiresAt, $temporaryUrlGenerator->calls[0]['expiresAt']);
+
+        $storage->getTemporaryUrl('test.png', new \DateInterval('PT15M'));
+        $this->assertEqualsWithDelta(time() + 900, $temporaryUrlGenerator->calls[1]['expiresAt']->getTimestamp(), 10);
+    }
+
+    public function testGetTemporaryUrlForwardsTheConfig(): void
+    {
+        $temporaryUrlGenerator = new RecordingTemporaryUrlGenerator();
+        $storage = $this->createOriginalStorage('default', $this->createFilesystem($temporaryUrlGenerator), '/media', $this->urlGenerator);
+
+        $storage->getTemporaryUrl('test.png', null, ['ResponseContentDisposition' => 'attachment; filename=test.png']);
+
+        $this->assertSame('attachment; filename=test.png', $temporaryUrlGenerator->calls[0]['config']->get('ResponseContentDisposition'));
+    }
+
+    public function testGetTemporaryUrlThrowsWhenTheAdapterDoesNotSupportIt(): void
+    {
+        $this->expectException(UnableToGenerateTemporaryUrl::class);
+
+        $this->originalStorage->getTemporaryUrl('test.png');
+    }
+
+    public function testCreateMediaHonorsTheFilesystemVisibility(): void
+    {
+        $filesystem = $this->createFilesystem(config: ['visibility' => 'private', 'directory_visibility' => 'private']);
+        $storage = $this->createOriginalStorage('default', $filesystem, '/media', $this->urlGenerator);
+        $cacheStorage = $this->createCacheStorage('default', $this->createFilesystem(), '/cache', $this->urlGenerator);
+        // the Library constructor wires itself into both storages
+        new Library('default', $storage, $cacheStorage, $this->createVariationContainer($cacheStorage));
+
+        $storage->createMedia('test.png', BaseTestCase::getFixtureBinaryContent(BaseTestCase::PNG_FIXTURE_PATH));
+
+        $this->assertSame('private', $filesystem->visibility('test.png'));
+    }
+
+    public function testCreateMediaKeepsThePublicVisibilityByDefault(): void
+    {
+        $this->originalStorage->createMedia('test.png', BaseTestCase::getFixtureBinaryContent(BaseTestCase::PNG_FIXTURE_PATH));
+
+        $this->assertSame('public', $this->originalFilesystem->visibility('test.png'));
     }
 
     public function testHas(): void

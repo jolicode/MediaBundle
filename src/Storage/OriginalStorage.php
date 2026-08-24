@@ -245,6 +245,26 @@ class OriginalStorage
         return $this->strategy;
     }
 
+    /**
+     * Generates a pre-signed URL pointing directly at the storage backend, valid
+     * until the given expiration date (one hour by default).
+     *
+     * @param array<string, mixed> $config extra options forwarded to the filesystem adapter
+     *
+     * @throws UnableToGenerateTemporaryUrl when unsupported by the configured filesystem adapter
+     */
+    public function getTemporaryUrl(
+        string $path,
+        \DateTimeInterface|\DateInterval|null $expiresAt = null,
+        array $config = [],
+    ): string {
+        return $this->filesystem->temporaryUrl(
+            $this->strategy->getPath(Resolver::normalizePath($path)),
+            TemporaryUrlExpiration::resolve($expiresAt),
+            $config,
+        );
+    }
+
     public function getTrashPath(): string
     {
         return $this->trashPath;
@@ -263,14 +283,6 @@ class OriginalStorage
             $parameters,
             $referenceType,
         );
-    }
-
-    /**
-     * @throws UnableToGenerateTemporaryUrl when unsupported by the configured filesystem adapter
-     */
-    public function getTemporaryUrl(string $path): string
-    {
-        return $this->filesystem->temporaryUrl($path, (new \DateTimeImmutable())->modify('+1 hour'));
     }
 
     public function getUrlPath(): string
