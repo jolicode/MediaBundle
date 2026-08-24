@@ -23,6 +23,7 @@ use JoliCode\MediaBundle\Variation\Variation;
 use JoliCode\MediaBundle\Variation\VariationContainer;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -199,9 +200,16 @@ class BaseTestCase extends WebTestCase
         return $content;
     }
 
-    protected function createFilesystem(): Filesystem
+    /**
+     * @param array<string, mixed> $config
+     */
+    protected function createFilesystem(?TemporaryUrlGenerator $temporaryUrlGenerator = null, array $config = []): Filesystem
     {
-        return new Filesystem(new InMemoryFilesystemAdapter());
+        return new Filesystem(
+            new InMemoryFilesystemAdapter(),
+            $config,
+            temporaryUrlGenerator: $temporaryUrlGenerator,
+        );
     }
 
     protected function createOriginalStorage(
