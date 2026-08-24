@@ -3,13 +3,16 @@
 namespace JoliCode\MediaBundle\Tests\Model;
 
 use JoliCode\MediaBundle\Conversion\Converter;
+use JoliCode\MediaBundle\Exception\MediaVariationNotStoredException;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
+use JoliCode\MediaBundle\Tests\Storage\RecordingTemporaryUrlGenerator;
 use JoliCode\MediaBundle\Transformer\TransformerChain;
 use JoliCode\MediaBundle\Variation\Variation;
+use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
 
 class MediaVariationTest extends BaseTestCase
 {
@@ -112,8 +115,73 @@ class MediaVariationTest extends BaseTestCase
         self::assertTrue($mediaVariation->isStored());
     }
 
-    private function createLibrary(bool $mustStoreWhenGeneratingUrl, ?bool $variationMustStoreWhenGeneratingUrl = null): Library
+    public function testGetTemporaryUrlConvertsAMissingVariationEvenWhenMustStoreIsDisabled(): void
     {
+        $calls = 0;
+        MediaVariation::$converterInitializer = function () use (&$calls): Converter {
+            ++$calls;
+
+            return $this->converter;
+        };
+
+        $library = $this->createLibrary(false, temporaryUrlGenerator: new RecordingTemporaryUrlGenerator());
+        $mediaVariation = $this->createStoredMedia($library)->createVariation('thumbnail');
+
+        $url = $mediaVariation->getTemporaryUrl();
+
+        self::assertTrue($mediaVariation->isStored());
+        self::assertSame(1, $calls);
+        self::assertStringStartsWith('https://signed.example.com/thumbnail/', $url);
+    }
+
+    public function testGetTemporaryUrlDoesNotConvertAStoredVariation(): void
+    {
+        $calls = 0;
+        MediaVariation::$converterInitializer = function () use (&$calls): Converter {
+            ++$calls;
+
+            return $this->converter;
+        };
+
+        $library = $this->createLibrary(false, temporaryUrlGenerator: new RecordingTemporaryUrlGenerator());
+        $mediaVariation = $this->createStoredMedia($library)->createVariation('thumbnail');
+        $this->converter->convertMediaVariation($mediaVariation);
+
+        $mediaVariation->getTemporaryUrl();
+
+        self::assertSame(0, $calls);
+    }
+
+    public function testGetTemporaryUrlThrowsWithoutConverterInitializer(): void
+    {
+        $library = $this->createLibrary(true, temporaryUrlGenerator: new RecordingTemporaryUrlGenerator());
+        $mediaVariation = $this->createStoredMedia($library)->createVariation('thumbnail');
+
+        $this->expectException(MediaVariationNotStoredException::class);
+        $mediaVariation->getTemporaryUrl();
+    }
+
+    public function testGetTemporaryUrlThrowsWhenTheVariationCannotBeGenerated(): void
+    {
+        MediaVariation::$converterInitializer = fn (): Converter => $this->converter;
+
+        // gif is not a processable input format of the cwebp processor, so the
+        // conversion is a no-op and the variation file cannot be generated
+        $library = $this->createLibrary(true, temporaryUrlGenerator: new RecordingTemporaryUrlGenerator());
+        $media = new Media('test.gif', $library->getOriginalStorage(), self::getFixtureBinary('gif'));
+        $media->store();
+        $mediaVariation = $media->createVariation('thumbnail');
+
+        $this->expectException(MediaVariationNotStoredException::class);
+        $this->expectExceptionMessage('The variation "thumbnail" of the media "test.gif" is not stored and could not be generated.');
+        $mediaVariation->getTemporaryUrl();
+    }
+
+    private function createLibrary(
+        bool $mustStoreWhenGeneratingUrl,
+        ?bool $variationMustStoreWhenGeneratingUrl = null,
+        ?TemporaryUrlGenerator $temporaryUrlGenerator = null,
+    ): Library {
         $urlGenerator = $this->createUrlGenerator([
             'auto' => [
                 'original' => '/auto/media',
@@ -121,7 +189,7 @@ class MediaVariationTest extends BaseTestCase
             ],
         ]);
         $originalStorage = $this->createOriginalStorage('auto', $this->createFilesystem(), '/auto/media', $urlGenerator);
-        $cacheStorage = $this->createCacheStorage('auto', $this->createFilesystem(), '/auto/cache', $urlGenerator, $mustStoreWhenGeneratingUrl);
+        $cacheStorage = $this->createCacheStorage('auto', $this->createFilesystem($temporaryUrlGenerator), '/auto/cache', $urlGenerator, $mustStoreWhenGeneratingUrl);
         $variation = new Variation(
             'thumbnail',
             Format::WEBP,

@@ -194,6 +194,16 @@ class Media implements StorableInterface
         return $this->storage;
     }
 
+    /**
+     * @param array<string, mixed> $config extra options forwarded to the filesystem adapter
+     */
+    public function getTemporaryUrl(
+        \DateTimeInterface|\DateInterval|null $expiresAt = null,
+        array $config = [],
+    ): string {
+        return $this->storage->getTemporaryUrl($this->path, $expiresAt, $config);
+    }
+
     public function getUrl(
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH,
     ): string {
