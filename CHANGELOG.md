@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- fix - The pixel dimensions, mime type, format and file size guessed for a missing file are no longer cached for a whole day, and the timestamp they are keyed on is floored to the current hour, so that a missing file does not fill the cache pool with unreachable entries
 - fix - Photos carrying an EXIF `Orientation` tag (e.g. portrait shots from phones) were processed on their side: the new `AutoOrientPreProcessor`, registered by default, now rotates them before any transformer runs, and the pixel dimensions reported for the originals account for the tag - see the [pre-processors documentation](doc/variations/pre-processors.rst). Variations generated before this fix stay as they are until they are regenerated (e.g. with `joli:media:convert --force`), and the cached pixel dimensions of the originals until the cache pool is cleared
 - fix - The `HeifPreProcessor` now really produces a JPEG intermediate binary: it used to label a PNG content as `image/jpeg`
 - improvement - The pre-processors registered by the bundle (`HeifPreProcessor`, `AutoOrientPreProcessor`) now always run before the ones defined in the configuration, through a `priority` on the `joli_media.pre_processor` tag

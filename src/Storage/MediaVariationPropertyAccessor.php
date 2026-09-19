@@ -14,6 +14,8 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class MediaVariationPropertyAccessor
 {
+    use MissingFileCacheTrait;
+
     public function __construct(
         private readonly string $libraryName,
         private readonly StorageStrategyInterface $strategy,
@@ -37,7 +39,11 @@ class MediaVariationPropertyAccessor
     {
         return $this->cache->get(
             $this->getCacheKey($path, $variation, 'mime_type'),
-            fn (ItemInterface $item): string => $this->guessMimeType($path, $variation),
+            function (ItemInterface $item) use ($path, $variation): string {
+                $this->expireEarlyWhenMissing($item, $this->strategy->getPath($path, $variation));
+
+                return $this->guessMimeType($path, $variation);
+            },
         );
     }
 
@@ -45,7 +51,11 @@ class MediaVariationPropertyAccessor
     {
         return $this->cache->get(
             $this->getCacheKey($path, $variation, 'format'),
-            fn (ItemInterface $item): string => $this->guessFormat($path, $variation),
+            function (ItemInterface $item) use ($path, $variation): string {
+                $this->expireEarlyWhenMissing($item, $this->strategy->getPath($path, $variation));
+
+                return $this->guessFormat($path, $variation);
+            },
         );
     }
 
@@ -53,7 +63,11 @@ class MediaVariationPropertyAccessor
     {
         return $this->cache->get(
             $this->getCacheKey($path, $variation, 'filesize'),
-            fn (ItemInterface $item): int => $this->guessFilesize($path, $variation)
+            function (ItemInterface $item) use ($path, $variation): int {
+                $this->expireEarlyWhenMissing($item, $this->strategy->getPath($path, $variation));
+
+                return $this->guessFilesize($path, $variation);
+            },
         );
     }
 
@@ -64,7 +78,11 @@ class MediaVariationPropertyAccessor
     {
         return $this->cache->get(
             $this->getCacheKey($path, $variation, 'pixel_dimensions'),
-            fn (ItemInterface $item): array|false => $this->guessPixelDimensions($path, $variation)
+            function (ItemInterface $item) use ($path, $variation): array|false {
+                $this->expireEarlyWhenMissing($item, $this->strategy->getPath($path, $variation));
+
+                return $this->guessPixelDimensions($path, $variation);
+            },
         );
     }
 
@@ -78,7 +96,9 @@ class MediaVariationPropertyAccessor
                 try {
                     return $this->filesystem->lastModified($this->strategy->getPath($path, $variation));
                 } catch (UnableToRetrieveMetadata) {
-                    return time();
+                    $item->expiresAfter(self::MISSING_FILE_EXPIRES_AFTER);
+
+                    return $this->getMissingFileTimestamp();
                 }
             },
         );
