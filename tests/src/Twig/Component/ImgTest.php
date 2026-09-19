@@ -50,6 +50,8 @@ class ImgTest extends BaseTestCase
         $converter->convert($media, 'default', 'variation-large-webp');
         $converter->convert($media, 'default', 'variation-extra-large');
         $converter->convert($media, 'default', 'variation-extra-large-webp');
+        $converter->convert($media, 'default', 'variation-retina');
+        $converter->convert($media, 'default', 'variation-retina-2x');
 
         // store the self::PARTIALLY_STORED_MEDIA media but none of its variations
         $binary = new Binary('image/jpeg', Format::JPEG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::JPEG_FIXTURE_PATH));
@@ -157,6 +159,44 @@ class ImgTest extends BaseTestCase
             ],
             '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" srcset="/media/cache/variation-standard/circle-pattern.jpg 145w, /media/cache/variation-large/circle-pattern.jpg 800w, /media/cache/variation-extra-large/circle-pattern.jpg 1800w" sizes="145px" width="145" height="109">',
         ];
+        yield 'existing-media-auto-srcset' => [
+            Img::class,
+            [
+                'path' => self::COMPLETELY_STORED_MEDIA,
+                'variation' => 'variation-retina',
+                'alt' => 'Alternative text',
+            ],
+            '<img src="/media/cache/variation-retina/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" srcset="/media/cache/variation-retina/circle-pattern.jpg 100w, /media/cache/variation-retina-2x/circle-pattern.jpg 200w" sizes="100px" width="100" height="75">',
+        ];
+        yield 'existing-media-auto-srcset-disabled' => [
+            Img::class,
+            [
+                'path' => self::COMPLETELY_STORED_MEDIA,
+                'variation' => 'variation-retina',
+                'alt' => 'Alternative text',
+                'autoSrcset' => false,
+            ],
+            '<img src="/media/cache/variation-retina/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="100" height="75">',
+        ];
+        yield 'existing-media-auto-srcset-not-configured' => [
+            Img::class,
+            [
+                'path' => self::COMPLETELY_STORED_MEDIA,
+                'variation' => 'variation-standard',
+                'alt' => 'Alternative text',
+            ],
+            '<img src="/media/cache/variation-standard/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109">',
+        ];
+        yield 'existing-media-auto-srcset-with-skip-auto-dimensions' => [
+            Img::class,
+            [
+                'path' => self::COMPLETELY_STORED_MEDIA,
+                'variation' => 'variation-retina',
+                'alt' => 'Alternative text',
+                'skipAutoDimensions' => true,
+            ],
+            '<img src="/media/cache/variation-retina/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" srcset="/media/cache/variation-retina/circle-pattern.jpg 100w, /media/cache/variation-retina-2x/circle-pattern.jpg 200w" sizes="100px">',
+        ];
         yield 'existing-media-tiff' => [
             Img::class,
             [
@@ -173,7 +213,8 @@ class ImgTest extends BaseTestCase
                 'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
             ],
-            '<img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text">',
+            // the dimensions are computed from the variation definition
+            '<img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109">',
         ];
         yield 'partial-existing-media-srcset' => [
             Img::class,
@@ -182,7 +223,8 @@ class ImgTest extends BaseTestCase
                 'variation' => ['variation-standard'],
                 'alt' => 'Alternative text',
             ],
-            '<img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text">',
+            // the dimensions are computed from the variation definition
+            '<img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109">',
         ];
         yield 'partial-existing-media-srcset-multiple' => [
             Img::class,
@@ -193,7 +235,7 @@ class ImgTest extends BaseTestCase
             ],
             // the srcset variations are not eagerly generated anymore, as the
             // library does not enable must_store_when_generating_url
-            '<img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text">',
+            '<img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text" srcset="/media/cache/variation-standard/partially-stored-media.jpg 145w, /media/cache/variation-large/partially-stored-media.jpg 800w, /media/cache/variation-extra-large/partially-stored-media.jpg 1800w" sizes="145px" width="145" height="109">',
         ];
         yield 'auto-generate-partial-media-srcset-multiple' => [
             Img::class,
@@ -274,7 +316,7 @@ class ImgTest extends BaseTestCase
                 'path' => self::BROKEN_FILENAME,
                 'variation' => 'variation-standard',
             ],
-            '<img src="/media/cache/variation-standard/some%5C%20filename.jpg" loading="lazy" decoding="async">',
+            '<img src="/media/cache/variation-standard/some%5C%20filename.jpg" loading="lazy" decoding="async" width="145" height="109">',
         ];
         yield 'existing-media-variation-cannot-be-read-srcset' => [
             Img::class,
@@ -282,7 +324,7 @@ class ImgTest extends BaseTestCase
                 'path' => self::BROKEN_FILENAME,
                 'variation' => ['variation-standard'],
             ],
-            '<img src="/media/cache/variation-standard/some%5C%20filename.jpg" loading="lazy" decoding="async">',
+            '<img src="/media/cache/variation-standard/some%5C%20filename.jpg" loading="lazy" decoding="async" width="145" height="109">',
         ];
         yield 'existing-media-variation-cannot-be-read-srcset-multiple' => [
             Img::class,
@@ -292,7 +334,7 @@ class ImgTest extends BaseTestCase
             ],
             // the srcset variations are not eagerly generated anymore, as the
             // library does not enable must_store_when_generating_url
-            '<img src="/media/cache/variation-standard/some%5C%20filename.jpg" loading="lazy" decoding="async">',
+            '<img src="/media/cache/variation-standard/some%5C%20filename.jpg" loading="lazy" decoding="async" srcset="/media/cache/variation-standard/some%5C%20filename.jpg 145w, /media/cache/variation-large/some%5C%20filename.jpg 800w, /media/cache/variation-extra-large/some%5C%20filename.jpg 1800w" sizes="145px" width="145" height="109">',
         ];
         yield 'non-existing-media-variation' => [
             Img::class,

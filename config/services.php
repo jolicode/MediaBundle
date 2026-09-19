@@ -512,6 +512,8 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             '$resolver' => service('joli_media.resolver'),
             '$libraries' => service('joli_media.library_container'),
+            '$srcsetBuilder' => service('joli_media.srcset_builder'),
+            '$dimensionPredictor' => service('joli_media.dimension_predictor'),
             '$logger' => service('logger')->ignoreOnInvalid(),
         ])
         ->tag('twig.component')
@@ -525,7 +527,7 @@ return static function (ContainerConfigurator $container): void {
 
         ->set('joli_media.twig.component.source', Source::class)
         ->args([
-            '$resolver' => service('joli_media.resolver'),
+            '$srcsetBuilder' => service('joli_media.srcset_builder'),
             '$logger' => service('logger')->ignoreOnInvalid(),
         ])
         ->tag('twig.component')

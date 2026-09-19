@@ -50,6 +50,10 @@ class PictureTest extends WebTestCase
         $converter->convert($media, 'default', 'variation-large-webp');
         $converter->convert($media, 'default', 'variation-extra-large');
         $converter->convert($media, 'default', 'variation-extra-large-webp');
+        $converter->convert($media, 'default', 'variation-retina');
+        $converter->convert($media, 'default', 'variation-retina-webp');
+        $converter->convert($media, 'default', 'variation-retina-2x');
+        $converter->convert($media, 'default', 'variation-retina-2x-webp');
 
         // store the self::PARTIALLY_STORED_MEDIA media but none of its variations
         $binary = new Binary('image/jpeg', Format::JPEG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::JPEG_FIXTURE_PATH));
@@ -141,7 +145,35 @@ class PictureTest extends WebTestCase
                 'variation' => 'variation-standard',
                 'alt' => 'Alternative text',
             ],
-            '<picture><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"></source><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text"></picture>',
+            '<picture><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp" width="145" height="109"></source><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text" width="145" height="109"></picture>',
+        ];
+        yield 'picture-tag-pixel-ratios' => [
+            Picture::class,
+            [
+                'path' => self::COMPLETELY_STORED_MEDIA,
+                'variation' => 'variation-retina',
+                'alt' => 'Alternative text',
+            ],
+            '<picture><source sizes="100px" srcset="/media/cache/variation-retina-webp/circle-pattern.d601f6f2.webp 100w, /media/cache/variation-retina-2x-webp/circle-pattern.d601f6f2.webp 200w" type="image/webp" width="100" height="75"></source><img src="/media/cache/variation-retina/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" srcset="/media/cache/variation-retina/circle-pattern.jpg 100w, /media/cache/variation-retina-2x/circle-pattern.jpg 200w" sizes="100px" width="100" height="75"></picture>',
+        ];
+        yield 'partial-picture-tag-pixel-ratios' => [
+            Picture::class,
+            [
+                'path' => self::PARTIALLY_STORED_MEDIA,
+                'variation' => 'variation-retina',
+                'alt' => 'Alternative text',
+            ],
+            '<picture><source sizes="100px" srcset="/media/cache/variation-retina-webp/partially-stored-media.b16d66f4.webp 100w, /media/cache/variation-retina-2x-webp/partially-stored-media.b16d66f4.webp 200w" type="image/webp" width="100" height="75"></source><img src="/media/cache/variation-retina/partially-stored-media.jpg" loading="lazy" decoding="async" alt="Alternative text" srcset="/media/cache/variation-retina/partially-stored-media.jpg 100w, /media/cache/variation-retina-2x/partially-stored-media.jpg 200w" sizes="100px" width="100" height="75"></picture>',
+        ];
+        yield 'picture-tag-pixel-ratios-without-auto-dimensions' => [
+            Picture::class,
+            [
+                'path' => self::COMPLETELY_STORED_MEDIA,
+                'variation' => 'variation-retina',
+                'alt' => 'Alternative text',
+                'skipAutoDimensions' => true,
+            ],
+            '<picture><source sizes="100px" srcset="/media/cache/variation-retina-webp/circle-pattern.d601f6f2.webp 100w, /media/cache/variation-retina-2x-webp/circle-pattern.d601f6f2.webp 200w" type="image/webp"></source><img src="/media/cache/variation-retina/circle-pattern.jpg" loading="lazy" decoding="async" alt="Alternative text" srcset="/media/cache/variation-retina/circle-pattern.jpg 100w, /media/cache/variation-retina-2x/circle-pattern.jpg 200w" sizes="100px"></picture>',
         ];
         yield 'picture-with-class' => [
             Picture::class,
@@ -189,7 +221,7 @@ class PictureTest extends WebTestCase
                 'img:class' => 'img-class',
                 'sources' => ['variation-standard', 'variation-large'],
             ],
-            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/partially-stored-media.jpg"></source><source srcset="/media/cache/variation-large/partially-stored-media.jpg"></source><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"></source><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<picture class="picture-class"><source srcset="/media/cache/variation-standard/partially-stored-media.jpg" width="145" height="109"></source><source srcset="/media/cache/variation-large/partially-stored-media.jpg" width="800" height="600"></source><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp" width="145" height="109"></source><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
         yield 'partial-picture-with-sources-and-skipAutoDimensions' => [
             Picture::class,
@@ -285,7 +317,7 @@ class PictureTest extends WebTestCase
                     ],
                 ]],
             ],
-            '<picture class="picture-class"><source media="(width &gt; 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/partially-stored-media.b16d66f4.webp 2560w, /media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1920w" type="image/webp"></source><source media="(width &gt; 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/partially-stored-media.jpg 2560w, /media/cache/variation-large/partially-stored-media.jpg 1920w"></source><source media="(width &gt;= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1600w, /media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp 1024w" type="image/webp"></source><source media="(width &gt;= 768px)" sizes="1024px" srcset="/media/cache/variation-large/partially-stored-media.jpg 1600w, /media/cache/variation-standard/partially-stored-media.jpg 1024w"></source><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp"></source><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text"></picture>',
+            '<picture class="picture-class"><source media="(width &gt; 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large-webp/partially-stored-media.b16d66f4.webp 2560w, /media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1920w" type="image/webp" width="1800" height="1200"></source><source media="(width &gt; 1024px)" sizes="1920px" srcset="/media/cache/variation-extra-large/partially-stored-media.jpg 2560w, /media/cache/variation-large/partially-stored-media.jpg 1920w" width="1800" height="1200"></source><source media="(width &gt;= 768px)" sizes="1024px" srcset="/media/cache/variation-large-webp/partially-stored-media.b16d66f4.webp 1600w, /media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp 1024w" type="image/webp" width="800" height="600"></source><source media="(width &gt;= 768px)" sizes="1024px" srcset="/media/cache/variation-large/partially-stored-media.jpg 1600w, /media/cache/variation-standard/partially-stored-media.jpg 1024w" width="800" height="600"></source><source srcset="/media/cache/variation-standard-webp/partially-stored-media.b16d66f4.webp" width="145" height="109"></source><img src="/media/cache/variation-standard/partially-stored-media.jpg" loading="lazy" decoding="async" class="img-class" alt="Alternative text" width="145" height="109"></picture>',
         ];
     }
 

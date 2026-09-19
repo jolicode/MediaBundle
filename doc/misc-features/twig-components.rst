@@ -108,7 +108,7 @@ generates:
         decoding="async"
     >
 
-If the provided image is a high pixels density image, you may wish the twig component to generate a ``srcset`` attribute with an additional pixel density descriptor. Consider the following conditions:
+If the provided image is a high pixels density image, the component generates a ``srcset`` attribute with the appropriate width descriptors. Consider the following conditions:
 
 - the original image ``high-density-image.png`` has ``1600x1600`` pixel dimensions
 - the variation ``variation_name`` is defined to resize the image to ``200x200`` pixels and it is defined with a ``pixel_ratios`` option set to ``[1,2]``
@@ -129,39 +129,6 @@ generates:
 
     <img
         src="/path/to/cache/variation-name/high-density-image.png"
-        alt="Alternative text"
-        width="200"
-        height="200"
-        loading="lazy"
-        decoding="async"
-    >
-
-So does the following code:
-
-.. code-block:: html+twig
-
-    <twig:joli:Img
-        path="high-density-image.png"
-        alt="Alternative text"
-        variation="{{ ['variation_name'] }}"
-    />
-
-You need to explicitly ask for the additional pixel density descriptor by providing an array of variation names to the ``variation`` attribute:
-
-.. code-block:: html+twig
-
-    <twig:joli:Img
-        path="high-density-image.png"
-        alt="Alternative text"
-        variation="{{ ['variation_name', 'variation_name_2x'] }}"
-    />
-
-generates:
-
-.. code-block:: html
-
-    <img
-        src="/path/to/cache/variation-name/high-density-image.png"
         srcset="
             /path/to/cache/variation-name/high-density-image.png 200w,
             /path/to/cache/variation-name@2x/high-density-image.png 400w
@@ -172,6 +139,34 @@ generates:
         height="200"
         loading="lazy"
         decoding="async"
+    >
+
+The variations of the other pixel ratios are found from the definition of the variation you asked for, so you do not have to name them. Set the ``autoSrcset`` attribute to ``false`` to opt out and render a single URL:
+
+.. code-block:: html+twig
+
+    <twig:joli:Img
+        path="high-density-image.png"
+        alt="Alternative text"
+        variation="variation_name"
+        autoSrcset="{{ false }}"
+    />
+
+You may also build the ``srcset`` out of an explicit list of variations, which do not have to be the pixel ratios of a single one - this is how you provide several sizes of the same image:
+
+.. code-block:: html+twig
+
+    <twig:joli:Img
+        path="high-density-image.png"
+        alt="Alternative text"
+        variation="{{ ['variation_name', 'variation_name_2x'] }}"
+    />
+
+An explicit list is always used as-is: it is never expanded with the pixel ratios of its variations.
+
+.. note::
+
+    The width descriptors are read from the variation files when they have been generated, and computed from the definition of the variations otherwise - so the ``srcset`` is complete even when the variations have not been generated yet. See the `srcset generation <srcset.rst>`_ documentation for the cases where the computation is not possible.
 
 The ``srcset`` and ``sizes`` attributes can be used to provide multiple image sources for different screen sizes and resolutions. The ``srcset`` attribute is a comma-separated list of image URLs and their corresponding pixel widths, while the ``sizes`` attribute specifies the intended display size of the image in different viewport conditions. In the example above, you can see that the ``srcset`` attribute contains two entries: one for the normal density (1x, i.e. a 200px image displayed in a 200px box) and one for the high density (2x, i.e. a 400px image displayed in a 200px box). The ``sizes`` attribute is set to ``200px``, which means that the image will be displayed at 200 pixels wide on all screen sizes. Of course, you can override the ``sizes`` attribute by providing a custom value (which can include media queries):
 
@@ -275,6 +270,8 @@ generates:
 .. tip::
 
     Note, in the example above, that a ``source`` tag has been generated for the webp alternative format. This is done automatically if the ``enable_auto_webp`` configuration directive is set to ``true`` in the configuration file. If you want to disable this behavior, you can set the ``enable_auto_webp`` attribute to ``false``.
+
+    If the variation is configured with several ``pixel_ratios``, this ``source`` tag carries the very same ``srcset`` and ``sizes`` attributes as the ``img`` tag, built out of the webp variations.
 
 The ``sources`` attribute can be a bit more fine-grained by providing the precise list of the variations you want to use, for example:
 
@@ -534,7 +531,7 @@ When are media variation files generated?
 
 When the ``joli:Img`` or ``joli:Picture`` components are used, the media variation files are by default not generated - only their URL is. This is done to improve the performance of the page loading, as generating the media variation files can be a time-consuming process. Media variation files are usually generated and stored in the cache storage when the variation is requested for the first time (using the ``MediaController`` controller), or on demand using the ``joli:media:convert`` command.
 
-This means that, when using the ``joli:Img`` or ``joli:Picture`` components for displaying a newly created media, that does not yet have variation files, the bundle will not be able to retrieve the mime-type, the dimensions and some other information about the requested media variation files. And, by consequence, the ``<img>`` and ``<picture>`` tags will not be able to set the ``width``, ``height``, ``type``, ``sizes``, etc. attributes.
+This means that, when using the ``joli:Img`` or ``joli:Picture`` components for displaying a newly created media, that does not yet have variation files, the bundle will not be able to retrieve the mime-type and some other information about the requested media variation files. The pixel dimensions are an exception: they are computed from the definition of the variation whenever possible - see the `srcset generation <srcset.rst#where-the-dimensions-come-from>`_ documentation. By consequence, the ``<img>`` and ``<picture>`` tags may not be able to set the ``type`` attribute and, when the dimensions cannot be computed, the ``width``, ``height``, ``sizes`` and ``srcset`` ones.
 
 This could be a problem if you are picky about the HTML attributes or if you do not want media variations to be generated on the fly. In this case, you can set the ``must_store_when_generating_url`` attribute to ``true`` in the cache storage configuration to have the media variation files generated when the URL is generated:
 

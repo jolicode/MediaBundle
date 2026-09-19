@@ -4,8 +4,9 @@ namespace JoliCode\MediaBundle\Twig\Components;
 
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
-use JoliCode\MediaBundle\Model\MediaVariation;
-use JoliCode\MediaBundle\Resolver\Resolver;
+use JoliCode\MediaBundle\Model\Srcset;
+use JoliCode\MediaBundle\Model\SrcsetCandidate;
+use JoliCode\MediaBundle\Srcset\SrcsetBuilder;
 use JoliCode\MediaBundle\Variation\Variation;
 use League\Flysystem\UnableToReadFile;
 use Psr\Log\LoggerInterface;
@@ -18,7 +19,7 @@ class Source
 {
     public Media $media;
 
-    public string $srcset;
+    public Srcset $srcset;
 
     public ?string $type = null;
 
@@ -32,9 +33,10 @@ class Source
     public ?array $webpAlternativeSrcset = [];
 
     public function __construct(
-        private readonly Resolver $resolver,
+        private readonly SrcsetBuilder $srcsetBuilder,
         private readonly ?LoggerInterface $logger = null,
     ) {
+        $this->srcset = new Srcset();
     }
 
     /**
@@ -49,25 +51,18 @@ class Source
         $this->media = $media;
 
         if (null !== $variation) {
-            $mediaVariation = $this->resolver->resolveMediaVariation($media, $variation);
+            $candidate = $this->srcsetBuilder->createCandidate($media, $variation, '', skipDimensions: $skipAutoDimensions);
 
-            if (!$mediaVariation instanceof MediaVariation) {
+            if (!$candidate instanceof SrcsetCandidate) {
                 throw new \InvalidArgumentException(\sprintf('Media variation "%s" not found for the media "%s".', $variation, $media->getPath()));
             }
 
-            $this->srcset = $mediaVariation->getUrl();
+            $this->srcset = new Srcset($candidate);
+            $this->width = $candidate->width;
+            $this->height = $candidate->height;
 
-            if ($mediaVariation->isStored()) {
-                $this->type = $mediaVariation->getMimeType();
-
-                if (!$skipAutoDimensions) {
-                    $dimensions = $mediaVariation->getBinary()->getPixelDimensions();
-
-                    if (false !== $dimensions) {
-                        $this->width = $dimensions['width'];
-                        $this->height = $dimensions['height'];
-                    }
-                }
+            if ($candidate->isStored()) {
+                $this->type = $candidate->mimeType;
             }
 
             return;
@@ -87,7 +82,7 @@ class Source
 
         foreach ($srcset as $descriptor => $name) {
             try {
-                $mediaVariation = $this->resolver->resolveMediaVariation($media, $name);
+                $candidate = $this->srcsetBuilder->createCandidate($media, $name, (string) $descriptor, skipDimensions: $skipAutoDimensions);
             } catch (UnableToReadFile $e) {
                 $this->logger?->warning('Could not resolve media variation', [
                     'exception' => $e,
@@ -98,22 +93,20 @@ class Source
                 continue;
             }
 
-            if (!$mediaVariation instanceof MediaVariation) {
+            if (!$candidate instanceof SrcsetCandidate) {
                 throw new \InvalidArgumentException(\sprintf('Media variation "%s" not found for the media "%s".', $name, $media->getPath()));
             }
 
-            $candidates[] = trim(\sprintf('%s %s', $mediaVariation->getUrl(), $descriptor));
+            $candidates[] = $candidate;
+            $mediaVariation = $candidate->mediaVariation;
+
+            if (null === $this->height) {
+                $this->width = $candidate->width;
+                $this->height = $candidate->height;
+            }
 
             if (!$skipAutoDimensions && $mediaVariation->isStored()) {
-                $types[] = $mediaVariation->getMimeType();
-                if (null === $this->height) {
-                    $dimensions = $mediaVariation->getBinary()->getPixelDimensions();
-
-                    if (false !== $dimensions) {
-                        $this->width = $dimensions['width'];
-                        $this->height = $dimensions['height'];
-                    }
-                }
+                $types[] = $candidate->mimeType;
             } elseif ($mediaVariation->getVariation()->getFormat() instanceof Format) {
                 // if the variation forces a format, we can use it to determine the mime type
                 $types[] = $mediaVariation->getVariation()->getFormat()->getMimeType();
@@ -141,7 +134,7 @@ class Source
             $this->type = $types[0];
         }
 
-        $this->srcset = implode(', ', $candidates);
+        $this->srcset = new Srcset(...$candidates);
 
         if ('image/webp' !== $this->type) {
             $this->webpAlternativeSrcset = $webpAlternativeSrcset;
