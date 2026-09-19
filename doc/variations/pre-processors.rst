@@ -134,6 +134,25 @@ A pre-processor class must implement the ``process`` method of the ``Joli\MediaB
         }
     }
 
+Declaring whether the pixel dimensions are preserved
+----------------------------------------------------
+
+A pre-processor is free to return a binary of any size, which prevents the bundle from computing the dimensions of a variation without generating it - something the `srcset generation <../misc-features/srcset.rst>`_ relies on to build complete width descriptors on a cold cache.
+
+The ``preservesPixelDimensions()`` method of the interface tells whether this pre-processor always returns a binary having the very same pixel dimensions as the one it is given. ``AbstractPreProcessor`` answers ``false``, which is the safe default: override it when your pre-processor only touches the content of the image, never its size::
+
+    public function preservesPixelDimensions(): bool
+    {
+        // only the metadata is stripped, the pixel data is left untouched
+        return true;
+    }
+
+The ``OgImagePreProcessor`` above resizes and repaints the image, so it must keep the ``false`` answer it inherits.
+
+.. caution::
+
+    A pre-processor answering ``true`` while resizing the binary makes the bundle advertise wrong dimensions in the markup it generates. When in doubt, leave the default.
+
 Built-in pre-processors
 -----------------------
 

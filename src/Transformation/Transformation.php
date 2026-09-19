@@ -42,6 +42,24 @@ class Transformation
         $this->transformers = $mediaVariation->getVariation()->getTransformerChain()->getTransformers();
     }
 
+    public static function forDimensions(MediaVariation $mediaVariation, int $width, int $height): self
+    {
+        $media = $mediaVariation->getMedia();
+
+        // the binary holds no content, only the dimensions
+        return new self(
+            new Binary(
+                $media->getMimeType(),
+                $media->getFormat(),
+                '',
+                $media->getPath(),
+                $width,
+                $height,
+            ),
+            $mediaVariation,
+        );
+    }
+
     public function getAlternativeOutputFormat(): ?string
     {
         return Format::fromName($this->getOutputFormat())?->getAlternativeFormat()?->value;
@@ -154,6 +172,32 @@ class Transformation
     public function getBinary(): Binary
     {
         return $this->binary;
+    }
+
+    /**
+     * @return array{height: int, width: int}|null
+     */
+    public function getOutputDimensions(): ?array
+    {
+        if (null === $this->binaryWidth || null === $this->binaryHeight) {
+            return null;
+        }
+
+        if (!$this->hasEffect()) {
+            return [
+                'height' => $this->binaryHeight,
+                'width' => $this->binaryWidth,
+            ];
+        }
+
+        if (null === $this->targetWidth || null === $this->targetHeight) {
+            return null;
+        }
+
+        return [
+            'height' => $this->multiply($this->targetHeight),
+            'width' => $this->multiply($this->targetWidth),
+        ];
     }
 
     public function shiftTransformers(): ?TransformerInterface
@@ -271,27 +315,24 @@ class Transformation
 
         try {
             $dimensions = $this->getInitialDimensions();
-            $this->binaryWidth = $dimensions['width'];
-            $this->binaryHeight = $dimensions['height'];
-            $this->targetWidth = $dimensions['width'];
-            $this->targetHeight = $dimensions['height'];
-
-            $this->cropX = null;
-            $this->cropY = null;
-            $this->cropWidth = null;
-            $this->cropHeight = null;
+            $this->setDimensions($dimensions['width'], $dimensions['height']);
         } catch (\Exception) {
             // Unable to get dimensions, reset the properties so no stale
             // dimensions from a previously set binary leak into this one
-            $this->binaryWidth = null;
-            $this->binaryHeight = null;
-            $this->targetWidth = null;
-            $this->targetHeight = null;
-            $this->cropX = null;
-            $this->cropY = null;
-            $this->cropWidth = null;
-            $this->cropHeight = null;
+            $this->setDimensions(null, null);
         }
+    }
+
+    public function setDimensions(?int $width, ?int $height): void
+    {
+        $this->binaryWidth = $width;
+        $this->binaryHeight = $height;
+        $this->targetWidth = $width;
+        $this->targetHeight = $height;
+        $this->cropX = null;
+        $this->cropY = null;
+        $this->cropWidth = null;
+        $this->cropHeight = null;
     }
 
     public function multiply(int $value): int

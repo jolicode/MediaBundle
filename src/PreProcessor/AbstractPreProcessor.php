@@ -16,6 +16,12 @@ abstract readonly class AbstractPreProcessor extends AbstractProcessCreator impl
         return null;
     }
 
+    public function preservesPixelDimensions(): bool
+    {
+        // a pre-processor may return a binary of any size, so it has to opt in
+        return false;
+    }
+
     public function supports(Binary $binary): bool
     {
         return true;

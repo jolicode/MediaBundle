@@ -17,7 +17,7 @@ use JoliCode\MediaBundle\Processor\Imagine as ImagineProcessor;
 use JoliCode\MediaBundle\Transformation\Transformation;
 use Psr\Log\LoggerInterface;
 
-readonly class Expand extends AbstractTransformer implements TransformerInterface, NeedsImmediateProcessingTransformerInterface
+readonly class Expand extends AbstractTransformer implements TransformerInterface, NeedsImmediateProcessingTransformerInterface, PredictableTransformerInterface
 {
     public function __construct(
         private ImagineProcessor $imagineProcessor,
@@ -44,6 +44,17 @@ readonly class Expand extends AbstractTransformer implements TransformerInterfac
         ];
     }
 
+    public function predictDimensions(Transformation $transformation): void
+    {
+        $canvas = $this->getCanvasDimensions($transformation);
+
+        if (null === $canvas) {
+            return;
+        }
+
+        $transformation->setDimensions($canvas['width'], $canvas['height']);
+    }
+
     public function transform(Transformation $transformation): void
     {
         $imagine = $this->imagineProcessor->getImagine();
@@ -59,30 +70,22 @@ readonly class Expand extends AbstractTransformer implements TransformerInterfac
             'binaryWidth' => $binaryWidth,
             'binaryHeight' => $binaryHeight,
         ]);
-        $width = $this->width;
-        $height = $this->height;
         $positionX = $this->positionX;
         $positionY = $this->positionY;
+        $canvas = $this->getCanvasDimensions($transformation);
 
-        $width = \is_string($width) ? $this->convertPercentageValue($width, $binaryWidth) : $transformation->multiply($width);
-
-        if (\is_string($height)) {
-            $height = $this->convertPercentageValue($height, $binaryHeight);
-        } else {
-            $height = $transformation->multiply($height);
-        }
-
-        if ($width < $binaryWidth || $height < $binaryHeight) {
+        if (null === $canvas) {
             // one of the target dimensions is smaller than the binary dimensions, so we do not apply the expand
             $this->logger?->info('Shipping the expand transform because the target dimensions are smaller than the binary dimensions.', [
                 'original width' => $binaryWidth,
                 'original height' => $binaryHeight,
-                'target width' => $width,
-                'target height' => $height,
             ]);
 
             return;
         }
+
+        $width = $canvas['width'];
+        $height = $canvas['height'];
 
         if (\is_int($positionX)) {
             $positionX = $transformation->multiply($positionX);
@@ -188,5 +191,31 @@ readonly class Expand extends AbstractTransformer implements TransformerInterfac
             width: $width,
             height: $height,
         ));
+    }
+
+    /**
+     * @return array{height: int, width: int}|null null when the expand does not apply
+     */
+    private function getCanvasDimensions(Transformation $transformation): ?array
+    {
+        $binaryDimensions = $this->requireBinaryDimensions($transformation);
+        $binaryWidth = $binaryDimensions['width'];
+        $binaryHeight = $binaryDimensions['height'];
+
+        $width = \is_string($this->width)
+            ? $this->convertPercentageValue($this->width, $binaryWidth)
+            : $transformation->multiply($this->width);
+        $height = \is_string($this->height)
+            ? $this->convertPercentageValue($this->height, $binaryHeight)
+            : $transformation->multiply($this->height);
+
+        if ($width < $binaryWidth || $height < $binaryHeight) {
+            return null;
+        }
+
+        return [
+            'height' => $height,
+            'width' => $width,
+        ];
     }
 }
