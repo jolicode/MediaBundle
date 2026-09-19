@@ -1323,6 +1323,9 @@ class JoliMediaBundle extends AbstractBundle
             );
             $pixelRatios = count($variationConfig['pixel_ratios']) > 0 ? $variationConfig['pixel_ratios'] : (count($libraryConfig['pixel_ratios']) > 0 ? $libraryConfig['pixel_ratios'] : [1]);
 
+            $ratioVariationServiceIds = [];
+            $ratioWebpVariationServiceIds = [];
+
             foreach ($pixelRatios as $pixelRatio) {
                 $ratioVariationName = $variationName;
                 $ratioVariationConfig = $variationConfig;
@@ -1333,14 +1336,28 @@ class JoliMediaBundle extends AbstractBundle
 
                 $ratioVariationConfig['pixel_ratio'] = $pixelRatio;
                 $variationServiceId = $this->createVariationService($container, $builder, $libraryName, $libraryConfig, $ratioVariationName, $ratioVariationConfig);
+                $ratioVariationServiceIds[] = $variationServiceId;
 
                 if ($addWebpVariation) {
                     $ratioVariationConfig['format'] = 'webp';
                     $webpVariationServiceId = $this->createVariationService($container, $builder, $libraryName, $libraryConfig, $ratioVariationName.'.webp', $ratioVariationConfig);
+                    $ratioWebpVariationServiceIds[] = $webpVariationServiceId;
                     $container->services()
                         ->get($variationServiceId)
                         ->call('setWebpAlternativeVariation', [service($webpVariationServiceId)])
                     ;
+                }
+            }
+
+            // link the variations of the different pixel ratios together
+            if (count($ratioVariationServiceIds) > 1) {
+                foreach ([$ratioVariationServiceIds, $ratioWebpVariationServiceIds] as $siblingServiceIds) {
+                    foreach ($siblingServiceIds as $siblingServiceId) {
+                        $container->services()
+                            ->get($siblingServiceId)
+                            ->call('setPixelRatioVariations', array_map(service(...), $siblingServiceIds))
+                        ;
+                    }
                 }
             }
         }

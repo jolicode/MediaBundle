@@ -18,6 +18,7 @@ class Variation
      * @param array<string, array<string, string[]>> $processorsConfiguration
      * @param array<string, array<string, string[]>> $postProcessorsConfiguration
      * @param VoterInterface[]                       $voters
+     * @param self[]                                 $pixelRatioVariations
      */
     public function __construct(
         private readonly string $name,
@@ -32,6 +33,7 @@ class Variation
         private ?self $webpAlternativeVariation = null,
         private readonly float $multiplier = 1.0,
         private readonly ?bool $mustStoreWhenGeneratingUrl = null,
+        private array $pixelRatioVariations = [],
     ) {
     }
 
@@ -61,6 +63,7 @@ class Variation
             $this->webpAlternativeVariation,
             $this->multiplier,
             $this->mustStoreWhenGeneratingUrl,
+            $this->pixelRatioVariations,
         );
     }
 
@@ -106,6 +109,21 @@ class Variation
     public function mustStoreWhenGeneratingUrl(): ?bool
     {
         return $this->mustStoreWhenGeneratingUrl;
+    }
+
+    /**
+     * @return self[] this variation included, ordered by increasing pixel ratio
+     */
+    public function getPixelRatioVariations(): array
+    {
+        return $this->pixelRatioVariations;
+    }
+
+    public function setPixelRatioVariations(self ...$pixelRatioVariations): void
+    {
+        usort($pixelRatioVariations, static fn (self $a, self $b): int => $a->getMultiplier() <=> $b->getMultiplier());
+
+        $this->pixelRatioVariations = $pixelRatioVariations;
     }
 
     public function getName(): string

@@ -173,4 +173,20 @@ class VariationTest extends BaseTestCase
         self::assertTrue($this->variation->hasWebpAlternativeVariation());
         self::assertSame($webpVariation, $this->variation->getWebpAlternativeVariation());
     }
+
+    public function testPixelRatioVariations(): void
+    {
+        $variation2x = new Variation('test_variation@2x', Format::JPEG, $this->transformerChain, multiplier: 2.0);
+        $variation3x = new Variation('test_variation@3x', Format::JPEG, $this->transformerChain, multiplier: 3.0);
+
+        self::assertSame([], $this->variation->getPixelRatioVariations());
+
+        $this->variation->setPixelRatioVariations($variation3x, $this->variation, $variation2x);
+
+        self::assertSame([$this->variation, $variation2x, $variation3x], $this->variation->getPixelRatioVariations());
+        self::assertSame(
+            [$this->variation, $variation2x, $variation3x],
+            $this->variation->cloneWithOutputFormat(Format::PNG)->getPixelRatioVariations(),
+        );
+    }
 }
