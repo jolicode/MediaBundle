@@ -4,7 +4,9 @@ namespace JoliCode\MediaBundle\Twig;
 
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
+use JoliCode\MediaBundle\Model\Srcset;
 use JoliCode\MediaBundle\Resolver\Resolver;
+use JoliCode\MediaBundle\Srcset\SrcsetBuilder;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -13,6 +15,7 @@ class JoliMediaExtension extends AbstractExtension
 {
     public function __construct(
         private readonly Resolver $resolver,
+        private readonly SrcsetBuilder $srcsetBuilder,
     ) {
     }
 
@@ -23,7 +26,29 @@ class JoliMediaExtension extends AbstractExtension
             new TwigFilter('joli_media', $this->getMediaVariation(...)),
             new TwigFilter('joli_media_url', $this->getUrl(...)),
             new TwigFilter('joli_media_absolute_url', $this->getAbsoluteUrl(...)),
+            new TwigFilter('joli_media_srcset', $this->getSrcset(...)),
         ];
+    }
+
+    /**
+     * @param string[]|array<string, string> $variations a list of variation names, or a map of descriptors to variation names
+     */
+    private function getSrcset(
+        string|Media|MediaVariation $path,
+        array $variations,
+        ?string $libraryName = null,
+    ): Srcset {
+        if ($path instanceof MediaVariation) {
+            $path = $path->getMedia();
+        }
+
+        if ($path instanceof Media) {
+            $libraryName ??= $path->getLibrary()->getName();
+        }
+
+        return array_is_list($variations)
+            ? $this->srcsetBuilder->build($path, $variations, $libraryName)
+            : $this->srcsetBuilder->buildWithDescriptors($path, $variations, $libraryName);
     }
 
     private function getAbsoluteUrl(

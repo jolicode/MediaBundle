@@ -56,6 +56,11 @@ The bundle provides Twig filters to generate the URL of a media or a media varia
 
 - ``joli_media_absolute_url()`` is a shortcut to the ``joli_media_url()`` filter, in order to generate absolute URLs. It is equivalent to calling ``joli_media_url()`` with the ``UrlGeneratorInterface::ABSOLUTE_URL`` constant.
 
+- ``joli_media_srcset()`` to generate the value of a ``srcset`` attribute out of several variations of a media - see the `srcset generation documentation <srcset.rst#in-twig>`_. Available parameters are:
+
+  - the list of variation names, or a map of descriptors to variation names
+  - the library name
+
 Example
 ~~~~~~~
 

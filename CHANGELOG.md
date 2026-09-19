@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- feature - The `srcset` generation moved out of the Twig components into a `SrcsetBuilder` service, so that it can be used from anywhere - an API Platform normalizer, a JSON endpoint, or your own templating - along with a `joli_media_srcset` Twig filter and the `Srcset` / `SrcsetCandidate` models - see the [srcset generation documentation](doc/misc-features/srcset.rst)
 - bc break - `PreProcessorInterface` has a new `preservesPixelDimensions()` method, telling whether the pre-processor may change the pixel dimensions of the binary it is given. Pre-processors extending `AbstractPreProcessor` inherit a conservative `false` - see the [pre-processors documentation](doc/variations/pre-processors.rst)
 - fix - The pixel dimensions, mime type, format and file size guessed for a missing file are no longer cached for a whole day, and the timestamp they are keyed on is floored to the current hour, so that a missing file does not fill the cache pool with unreachable entries
 - fix - Photos carrying an EXIF `Orientation` tag (e.g. portrait shots from phones) were processed on their side: the new `AutoOrientPreProcessor`, registered by default, now rotates them before any transformer runs, and the pixel dimensions reported for the originals account for the tag - see the [pre-processors documentation](doc/variations/pre-processors.rst). Variations generated before this fix stay as they are until they are regenerated (e.g. with `joli:media:convert --force`), and the cached pixel dimensions of the originals until the cache pool is cleared

@@ -38,6 +38,7 @@ use JoliCode\MediaBundle\Processor\ProcessorContainer;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Routing\RouteChecker;
 use JoliCode\MediaBundle\Routing\RouteLoader;
+use JoliCode\MediaBundle\Srcset\SrcsetBuilder;
 use JoliCode\MediaBundle\Storage\CacheStorage;
 use JoliCode\MediaBundle\Storage\MediaPropertyAccessor;
 use JoliCode\MediaBundle\Storage\MediaVariationPropertyAccessor;
@@ -489,10 +490,21 @@ return static function (ContainerConfigurator $container): void {
             '$allowDownscale' => abstract_arg('allowDownscale'),
         ])
 
+        // srcset
+        ->set('joli_media.srcset_builder', SrcsetBuilder::class)
+        ->args([
+            '$resolver' => service('joli_media.resolver'),
+            '$dimensionPredictor' => service('joli_media.dimension_predictor'),
+            '$logger' => service('logger')->ignoreOnInvalid(),
+        ])
+        ->public()
+        ->alias(SrcsetBuilder::class, 'joli_media.srcset_builder')
+
         // twig
         ->set('joli_media.twig_extension', JoliMediaExtension::class)
         ->args([
-            service('joli_media.resolver'),
+            '$resolver' => service('joli_media.resolver'),
+            '$srcsetBuilder' => service('joli_media.srcset_builder'),
         ])
         ->tag('twig.extension')
 
