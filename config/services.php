@@ -150,6 +150,7 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             '$libraryContainer' => service('joli_media.library_container'),
             '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder')->ignoreOnInvalid(),
+            '$processingChainInspector' => service('joli_media.processing_chain_inspector')->ignoreOnInvalid(),
         ])
         ->tag('data_collector', ['id' => 'joli_media', 'template' => '@JoliMedia/inspector/data_collector.html.twig'])
 

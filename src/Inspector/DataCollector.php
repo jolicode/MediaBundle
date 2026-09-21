@@ -13,6 +13,7 @@ class DataCollector extends AbstractDataCollector
     public function __construct(
         private readonly LibraryContainer $libraryContainer,
         private readonly ?TransformationDataHolder $transformationDataHolder = null,
+        private readonly ?ProcessingChainInspector $processingChainInspector = null,
     ) {
     }
 
@@ -89,6 +90,7 @@ class DataCollector extends AbstractDataCollector
         }
 
         $collectedData['duration'] = $this->transformationDataHolder?->getTotalDuration() ?? 0;
+        $collectedData['processors'] = $this->collectProcessingChain();
 
         $this->data = $collectedData;
     }
@@ -106,6 +108,24 @@ class DataCollector extends AbstractDataCollector
         return 'joli_media';
     }
 
+    /**
+     * @return array{preProcessors: array<int, array<string, mixed>>, processors: array<int, array<string, mixed>>, postProcessors: array<int, array<string, mixed>>, brokenProcessorsCount: int, limitedToWebp: bool}|null
+     */
+    public function getProcessors(): ?array
+    {
+        return $this->data['processors'] ?? null;
+    }
+
+    /**
+     * A registered processor has a missing binary, or only WebP and GIF files can be output.
+     */
+    public function hasProcessingChainWarning(): bool
+    {
+        $processors = $this->getProcessors();
+
+        return null !== $processors && ($processors['brokenProcessorsCount'] > 0 || $processors['limitedToWebp']);
+    }
+
     public function getTotalDuration(): float
     {
         return $this->data['duration'] ?? 0;
@@ -117,5 +137,38 @@ class DataCollector extends AbstractDataCollector
     public function getTransformations(): array|Data
     {
         return $this->data['transformations'] ?? [];
+    }
+
+    /**
+     * The binaries are checked now: the profile is read later, possibly from another machine.
+     *
+     * @return array{preProcessors: array<int, array<string, mixed>>, processors: array<int, array<string, mixed>>, postProcessors: array<int, array<string, mixed>>, brokenProcessorsCount: int, limitedToWebp: bool}|null
+     */
+    private function collectProcessingChain(): ?array
+    {
+        $status = $this->processingChainInspector?->inspect();
+
+        if (!$status instanceof ProcessingChainStatus) {
+            return null;
+        }
+
+        $flatten = static fn (ProcessorStatus $processor): array => [
+            'name' => $processor->name,
+            'class' => $processor->class,
+            'registered' => $processor->registered,
+            'unavailabilityReason' => $processor->unavailabilityReason,
+            'inputFormats' => $processor->inputFormats,
+            'outputFormats' => $processor->outputFormats,
+            'binaries' => $processor->binaries,
+            'missingBinaries' => $processor->getMissingBinaries(),
+        ];
+
+        return [
+            'preProcessors' => array_map($flatten, $status->preProcessors),
+            'processors' => array_map($flatten, $status->processors),
+            'postProcessors' => array_map($flatten, $status->postProcessors),
+            'brokenProcessorsCount' => \count($status->getBrokenProcessors()),
+            'limitedToWebp' => $status->isLimitedToWebp(),
+        ];
     }
 }
