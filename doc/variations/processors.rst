@@ -73,7 +73,7 @@ Processor binaries
 
 All processors - except the ``imagine`` processor - have a ``binary`` key that defines the path to the binary to use, and an ``options`` key that defines the options to use when executing the binary.
 
-The ``imagine`` processor does not use a binary, it uses the Imagine library to process images. The ``driver`` key can be used to define which Imagine driver to use (e.g. ``gd``, ``imagick`` or ``gmagick``). If not set, ``gmagick`` will be used.
+The ``imagine`` processor does not use a binary, it uses the Imagine library to process images. The ``driver`` key can be used to define which Imagine driver to use (e.g. ``gd``, ``imagick`` or ``gmagick``). If not set, ``imagick`` will be used.
 
 Processes timeout
 ~~~~~~~~~~~~~~~~~
@@ -134,7 +134,7 @@ The ``gifsicle`` processor is used to convert GIF images into other GIF files. I
 imagine processor options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``imagine`` processor is used to convert AVIF, GIF, HEIF, JPEG, PNG, TIFF or WEBP images to the AVIF, GIF, JPEG, PNG or TIFF format using `the Imagine library <https://github.com/php-imagine/Imagine>`_. It supports the following configuration keys:
+The ``imagine`` processor is used to convert AVIF, GIF, HEIF, JPEG, PNG, TIFF or WEBP images to the AVIF, GIF, JPEG, PNG or WEBP format using `the Imagine library <https://github.com/php-imagine/Imagine>`_. It supports the following configuration keys:
 
 - ``jpeg_quality``: the quality of the JPEG images, from 0 to 100 (default: 80). It is mapped to Imagine's ``jpeg_quality`` option
 - ``png_quality``: the quality of the PNG images, from 0 to 100 (default: 80). It is mapped to Imagine's ``png_compression_level`` and ``png_compression_filter`` options

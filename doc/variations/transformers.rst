@@ -54,7 +54,7 @@ Options:
 
 - ``width``: the width of the resulting image. The value can either be an absolute pixel value (e.g. ``600``), or a percentage of the image width (e.g. ``200%`` to double the image width).
 - ``height``: the height of the resulting image. The value can either be an absolute pixel value (e.g. ``600``), or a percentage of the image height (e.g. ``200%`` to double the image height).
-- ``background_color``: the background color to use for the expansion. The value can be a color name (e.g. ``red``), a hex color (e.g. ``#ff0000``) or an RGB color (e.g. ``rgb(255,0,0)``). If not set, the background color will be transparent for PNG images, and white for JPEG images.
+- ``background_color``: the background color to use for the expansion. The value can be a color name (e.g. ``red``), a hex color (e.g. ``#ff0000``) or an RGB color (e.g. ``rgb(255,0,0)``). If not set, the background color will be white.
 - ``position_x``: the X position of the image in the expanded area. The value can either be an absolute pixel value (e.g. ``300``), a percentage of the image width (e.g. ``50%``), or one of the following: ``start``, ``center``, ``end``. If not set, the image will be centered in the expanded area.
 - ``position_y``: the Y position of the image in the expanded area. The value can either be an absolute pixel value (e.g. ``300``), a percentage of the image height (e.g. ``50%``), or one of the following: ``start``, ``center``, ``end``. If not set, the image will be centered in the expanded area.
 
