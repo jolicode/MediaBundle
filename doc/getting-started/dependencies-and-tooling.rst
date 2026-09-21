@@ -79,4 +79,13 @@ Imagine itself needs one of the ``imagick``, ``gmagick`` or ``gd`` PHP extension
 
 Use the ``driver`` key of the ``imagine`` `processor configuration <../variations/processors.rst>`_ to pick another extension.
 
-Once the dependencies are installed, make sure to `configure the bundle <../getting-started/configuration.rst#processors-configuration>`_ to use them.
+Checking the setup
+------------------
+
+Once the dependencies are installed, make sure to `configure the bundle <../getting-started/configuration.rst#processors-configuration>`_ to use them, then check that everything is in place:
+
+.. code-block:: terminal
+
+    $ php bin/console joli:media:debug:processors
+
+This command lists the pre-processors, processors and post-processors, tells why some of them are not registered, and checks that the binaries they rely on can be executed. It fails when a registered processor points at a missing binary, so it can be used as a smoke test when deploying.

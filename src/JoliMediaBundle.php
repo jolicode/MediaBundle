@@ -135,6 +135,77 @@ class JoliMediaBundle extends AbstractBundle
 
         // post-processors
         $this->createPostProcessorServices($container, $config['post_processors'], $config['process_timeout']);
+
+        $container->services()
+            ->get('joli_media.processing_chain_inspector')
+            ->arg('$processorDiagnostics', $this->buildProcessorDiagnostics($config['processors']))
+            ->arg('$postProcessorDiagnostics', $this->buildPostProcessorDiagnostics($config['post_processors']))
+        ;
+    }
+
+    /**
+     * Why each processor is, or is not, registered: only the extension knows it.
+     *
+     * @param array<string, mixed> $processorsConfig
+     *
+     * @return array<string, array{binaries: array<string, string>, unavailabilityReason: string|null}>
+     */
+    private function buildProcessorDiagnostics(array $processorsConfig): array
+    {
+        $binaries = [
+            'cwebp' => ['cwebp' => 'binary', 'identify' => 'identify_binary'],
+            'gif2webp' => ['gif2webp' => 'binary'],
+            'gifsicle' => ['gifsicle' => 'binary'],
+            'imagine' => [],
+        ];
+        $diagnostics = [];
+
+        foreach ($binaries as $name => $binaryKeys) {
+            $processorConfig = $processorsConfig[$name] ?? null;
+            $reason = null;
+
+            if (null === $processorConfig) {
+                $reason = 'it is not configured';
+            } elseif (true !== ($processorConfig['options']['enabled'] ?? false)) {
+                $reason = \sprintf('it is disabled in the "joli_media.processors.%s.options.enabled" configuration', $name);
+            }
+
+            $paths = [];
+
+            foreach ($binaryKeys as $binaryName => $configKey) {
+                if (isset($processorConfig[$configKey])) {
+                    $paths[$binaryName] = $processorConfig[$configKey];
+                }
+            }
+
+            $diagnostics[$name] = [
+                'binaries' => $paths,
+                'unavailabilityReason' => $reason,
+            ];
+        }
+
+        return $diagnostics;
+    }
+
+    /**
+     * @param array<string, mixed> $postProcessorsConfig
+     *
+     * @return array<string, array{binaries: array<string, string>, unavailabilityReason: string|null}>
+     */
+    private function buildPostProcessorDiagnostics(array $postProcessorsConfig): array
+    {
+        $diagnostics = [];
+
+        foreach (['gifsicle', 'jpegoptim', 'mozjpeg', 'oxipng', 'pngquant'] as $name) {
+            $postProcessorConfig = $postProcessorsConfig[$name] ?? null;
+
+            $diagnostics[$name] = [
+                'binaries' => isset($postProcessorConfig['binary']) ? [$name => $postProcessorConfig['binary']] : [],
+                'unavailabilityReason' => null === $postProcessorConfig ? 'it is not configured' : null,
+            ];
+        }
+
+        return $diagnostics;
     }
 
     public function prependExtension(ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder): void

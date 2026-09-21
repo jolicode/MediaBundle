@@ -19,7 +19,7 @@ The main processors configuration is defined in the ``processors`` key of the ``
 
 .. caution::
 
-    The ``cwebp``, ``gif2webp`` and ``gifsicle`` processors are specialized: they can only output WebP and GIF files. Any variation that outputs another format - JPEG, PNG or AVIF - requires the general-purpose ``imagine`` processor.
+    The ``cwebp``, ``gif2webp`` and ``gifsicle`` processors are specialized: they can only output WebP and GIF files. Any variation that outputs another format - JPEG, PNG or AVIF - requires the general-purpose ``imagine`` processor. Run the ``joli:media:debug:processors`` `command <../misc-features/commands.rst>`_ to check which processors are registered, and whether their binaries are available.
 
 Processors priority
 ~~~~~~~~~~~~~~~~~~~
