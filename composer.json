@@ -15,6 +15,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-mbstring": "*",
+        "imagine/imagine": "^1.5",
         "league/flysystem": "^3",
         "league/flysystem-read-only": "^3",
         "symfony/asset": "^7.0 || ^8.0",
@@ -47,7 +48,6 @@
         "ext-imagick": "*",
         "doctrine/doctrine-fixtures-bundle": "^4.1",
         "easycorp/easyadmin-bundle": "^4.26 || ^5.0",
-        "imagine/imagine": "^1.5",
         "league/flysystem-bundle": "^3.4",
         "league/flysystem-memory": "^3.0",
         "phpunit/phpunit": "^11",
@@ -68,8 +68,7 @@
         "sylius/grid-bundle": "<1.15 || >=2.0"
     },
     "suggest": {
-        "ext-imagick": "required to use imagine processor",
-        "imagine/imagine": "required to use imagine processor",
+        "ext-imagick": "required by the default \"imagick\" driver of the imagine processor",
         "league/flysystem-bundle": "Ease of use with FlySystem"
     },
     "license": "MIT",

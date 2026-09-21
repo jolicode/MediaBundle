@@ -17,6 +17,15 @@ The main processors configuration is defined in the ``processors`` key of the ``
 
     Read the documentation page about `dependencies and tooling <../getting-started/dependencies-and-tooling.rst>`_ to learn how to install these tools on your system.
 
+.. caution::
+
+    The ``cwebp``, ``gif2webp`` and ``gifsicle`` processors are specialized: they can only output WebP and GIF files. Any variation that outputs another format - JPEG, PNG or AVIF - requires the general-purpose ``imagine`` processor. Run the ``joli:media:debug:processors`` `command <../misc-features/commands.rst>`_ to check which processors are registered, and whether their binaries are available.
+
+Processors priority
+~~~~~~~~~~~~~~~~~~~
+
+Several processors may be able to handle the same conversion. They are tried in the following order, and the first one that succeeds wins: ``cwebp``, ``gif2webp``, ``gifsicle``, then ``imagine``. The specialized processors come first because they produce better results for the formats they handle.
+
 Default configuration
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -64,7 +73,7 @@ Processor binaries
 
 All processors - except the ``imagine`` processor - have a ``binary`` key that defines the path to the binary to use, and an ``options`` key that defines the options to use when executing the binary.
 
-The ``imagine`` processor does not use a binary, it uses the Imagine library to process images. The ``driver`` key can be used to define which Imagine driver to use (e.g. ``gd``, ``imagick`` or ``gmagick``). If not set, ``gmagick`` will be used.
+The ``imagine`` processor does not use a binary, it uses the Imagine library to process images. The ``driver`` key can be used to define which Imagine driver to use (e.g. ``gd``, ``imagick`` or ``gmagick``). If not set, ``imagick`` will be used.
 
 Processes timeout
 ~~~~~~~~~~~~~~~~~
@@ -125,7 +134,7 @@ The ``gifsicle`` processor is used to convert GIF images into other GIF files. I
 imagine processor options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``imagine`` processor is used to convert AVIF, GIF, HEIF, JPEG, PNG, TIFF or WEBP images to the AVIF, GIF, JPEG, PNG or TIFF format using `the Imagine library <https://github.com/php-imagine/Imagine>`_. It supports the following configuration keys:
+The ``imagine`` processor is used to convert AVIF, GIF, HEIF, JPEG, PNG, TIFF or WEBP images to the AVIF, GIF, JPEG, PNG or WEBP format using `the Imagine library <https://github.com/php-imagine/Imagine>`_. It supports the following configuration keys:
 
 - ``jpeg_quality``: the quality of the JPEG images, from 0 to 100 (default: 80). It is mapped to Imagine's ``jpeg_quality`` option
 - ``png_quality``: the quality of the PNG images, from 0 to 100 (default: 80). It is mapped to Imagine's ``png_compression_level`` and ``png_compression_filter`` options

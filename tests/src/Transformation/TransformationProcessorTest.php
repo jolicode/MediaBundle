@@ -2,11 +2,14 @@
 
 namespace JoliCode\MediaBundle\Tests\Transformation;
 
+use Imagine\Imagick\Imagine as ImagickImagine;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Exception\UnprocessableMediaException;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\PostProcessor\PostProcessorContainer;
+use JoliCode\MediaBundle\Processor\Gifsicle;
+use JoliCode\MediaBundle\Processor\Imagine;
 use JoliCode\MediaBundle\Processor\ProcessorContainer;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
 use JoliCode\MediaBundle\Transformation\Transformation;
@@ -114,6 +117,74 @@ class TransformationProcessorTest extends BaseTestCase
         } catch (UnprocessableMediaException $unprocessableMediaException) {
             self::assertStringContainsString('intermediate binary', $unprocessableMediaException->getMessage());
             self::assertFalse($immediateTransformer->transformCalled);
+        }
+    }
+
+    public function testProcessReportsThatNoProcessorIsRegistered(): void
+    {
+        $transformation = $this->createTransformation(self::getFixtureBinary('jpeg'), new TransformerChain([]));
+        $processor = new TransformationProcessor(new ProcessorContainer(), new PostProcessorContainer());
+
+        try {
+            $processor->process($transformation);
+            self::fail('An UnprocessableMediaException should have been thrown.');
+        } catch (UnprocessableMediaException $unprocessableMediaException) {
+            self::assertStringContainsString('no registered processor can output a "webp" file from a "jpeg" one', $unprocessableMediaException->getReason());
+            self::assertStringContainsString('No processor is registered at all', $unprocessableMediaException->getReason());
+            self::assertStringContainsString('joli:media:debug:processors', $unprocessableMediaException->getReason());
+        }
+    }
+
+    public function testProcessListsTheRegisteredProcessorsWhenNoneIsACandidate(): void
+    {
+        // processors are registered, but none of them can produce the requested format
+        $processorContainer = new ProcessorContainer();
+        $processorContainer->add('gifsicle', new Gifsicle());
+
+        $transformation = $this->createTransformation(self::getFixtureBinary('jpeg'), new TransformerChain([]));
+        $processor = new TransformationProcessor($processorContainer, new PostProcessorContainer());
+
+        try {
+            $processor->process($transformation);
+            self::fail('An UnprocessableMediaException should have been thrown.');
+        } catch (UnprocessableMediaException $unprocessableMediaException) {
+            self::assertStringContainsString('Registered processors: "gifsicle" (outputs: gif)', $unprocessableMediaException->getReason());
+            self::assertStringContainsString('The "imagine" processor is not registered', $unprocessableMediaException->getReason());
+        }
+    }
+
+    public function testProcessDoesNotSuggestEnablingAProcessorWhichIsAlreadyRegistered(): void
+    {
+        $processorContainer = new ProcessorContainer();
+        $processorContainer->add('imagine', new Imagine(new ImagickImagine()));
+
+        // the imagine processor is registered, but it cannot read this format
+        $transformation = $this->createTransformation(new Binary('image/svg+xml', 'svg', '<svg/>'), new TransformerChain([]));
+        $processor = new TransformationProcessor($processorContainer, new PostProcessorContainer());
+
+        try {
+            $processor->process($transformation);
+            self::fail('An UnprocessableMediaException should have been thrown.');
+        } catch (UnprocessableMediaException $unprocessableMediaException) {
+            self::assertStringContainsString('"imagine" (outputs: avif, gif, jpeg, png, webp)', $unprocessableMediaException->getReason());
+            self::assertStringNotContainsString('is not registered', $unprocessableMediaException->getReason());
+        }
+    }
+
+    public function testProcessReportsTheProcessorsThatFailed(): void
+    {
+        $processorContainer = new ProcessorContainer();
+        $processorContainer->add('imagine', new StubProcessor(self::getFixtureBinary('webp'), new \RuntimeException('the binary is missing')));
+
+        $transformation = $this->createTransformation(self::getFixtureBinary('jpeg'), new TransformerChain([]));
+        $processor = new TransformationProcessor($processorContainer, new PostProcessorContainer());
+
+        try {
+            $processor->process($transformation);
+            self::fail('An UnprocessableMediaException should have been thrown.');
+        } catch (UnprocessableMediaException $unprocessableMediaException) {
+            self::assertStringContainsString('every processor that could handle this conversion failed: "stub" (the binary is missing)', $unprocessableMediaException->getReason());
+            self::assertStringNotContainsString('no registered processor', $unprocessableMediaException->getReason());
         }
     }
 

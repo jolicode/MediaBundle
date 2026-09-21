@@ -9,6 +9,7 @@ use JoliCode\MediaBundle\Command\BatchConvertCommand;
 use JoliCode\MediaBundle\Command\Cache\PruneCommand;
 use JoliCode\MediaBundle\Command\Cache\RemoveCommand;
 use JoliCode\MediaBundle\Command\ConvertCommand;
+use JoliCode\MediaBundle\Command\Debug\ProcessorsCommand;
 use JoliCode\MediaBundle\Controller\MediaController;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Event\Listener\DeleteFolderEventListener;
@@ -17,6 +18,7 @@ use JoliCode\MediaBundle\Event\Listener\MoveFolderEventListener;
 use JoliCode\MediaBundle\Event\Listener\MoveMediaEventListener;
 use JoliCode\MediaBundle\Event\MediaEvents;
 use JoliCode\MediaBundle\Inspector\DataCollector;
+use JoliCode\MediaBundle\Inspector\ProcessingChainInspector;
 use JoliCode\MediaBundle\Inspector\TransformationDataHolder;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
@@ -98,6 +100,13 @@ return static function (ContainerConfigurator $container): void {
         ])
         ->tag('console.command')
 
+        ->set('joli_media.command.debug_processors', ProcessorsCommand::class)
+        ->public()
+        ->args([
+            service('joli_media.processing_chain_inspector'),
+        ])
+        ->tag('console.command')
+
         ->set('joli_media.command.prune_cache', PruneCommand::class)
         ->public()
         ->args([
@@ -141,8 +150,18 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             '$libraryContainer' => service('joli_media.library_container'),
             '$transformationDataHolder' => service('joli_media.data_collector.transformation_data_holder')->ignoreOnInvalid(),
+            '$processingChainInspector' => service('joli_media.processing_chain_inspector')->ignoreOnInvalid(),
         ])
         ->tag('data_collector', ['id' => 'joli_media', 'template' => '@JoliMedia/inspector/data_collector.html.twig'])
+
+        ->set('joli_media.processing_chain_inspector', ProcessingChainInspector::class)
+        ->args([
+            '$processorContainer' => service('joli_media.processor_container'),
+            '$postProcessorContainer' => service('joli_media.post_processor_container'),
+            '$preProcessors' => tagged_iterator('joli_media.pre_processor'),
+            '$processorDiagnostics' => abstract_arg('processor diagnostics'),
+            '$postProcessorDiagnostics' => abstract_arg('post-processor diagnostics'),
+        ])
 
         ->set('joli_media.data_collector.transformation_data_holder', TransformationDataHolder::class)
         ->args([

@@ -97,24 +97,26 @@
 {% endblock svg %}
 
 {% block menu %}
-    <span class="label {{ collector.libraries|length == 0 ? 'disabled' }}">
+    <span class="label {{ collector.processingChainWarning ? 'label-status-warning' }} {{ collector.libraries|length == 0 ? 'disabled' }}">
         <span class="icon">
             {{ block('svg') }}
         </span>
         <strong>Media</strong>
-        {% if collector.transformations|length %}
+        {# the profiler only colors the count badge, so it must be displayed for the warning to be visible #}
+        {% if collector.transformations|length or collector.processingChainWarning %}
             <span class="count">
-                {{ collector.transformations|length }}
+                {{ collector.transformations|length ?: '!' }}
             </span>
         {% endif %}
     </span>
 {% endblock %}
 
 {% block toolbar %}
-    {% if collector.transformations|length %}
+    {# a broken processing chain is displayed even when the request did not transform any media #}
+    {% if collector.transformations|length or collector.processingChainWarning %}
         {% set icon %}
             {{ block('svg') }}
-            <span class="sf-toolbar-value">{{ collector.transformations|length }}</span>
+            <span class="sf-toolbar-value">{{ collector.transformations|length ?: '!' }}</span>
         {% endset %}
 
         {% set text %}
@@ -128,9 +130,23 @@
                     <span class="sf-toolbar-status">{{ collector.totalDuration|number_format(2) }} ms</span>
                 </div>
             {% endif %}
+            {% if collector.processingChainWarning %}
+                {% if collector.processors.brokenProcessorsCount > 0 %}
+                    <div class="sf-toolbar-info-piece">
+                        <b>Processors with a missing binary</b>
+                        <span class="sf-toolbar-status sf-toolbar-status-yellow">{{ collector.processors.brokenProcessorsCount }}</span>
+                    </div>
+                {% endif %}
+                {% if collector.processors.limitedToWebp %}
+                    <div class="sf-toolbar-info-piece">
+                        <b>Output formats</b>
+                        <span class="sf-toolbar-status sf-toolbar-status-yellow">WebP and GIF only</span>
+                    </div>
+                {% endif %}
+            {% endif %}
         {% endset %}
 
-        {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: true }) }}
+        {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: true, status: collector.processingChainWarning ? 'yellow' }) }}
     {% endif %}
 {% endblock %}
 
@@ -358,6 +374,93 @@
                                 </table>
                             {% endif %}
                             <hr />
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            {% set processingChain = collector.processors %}
+            <div class="tab {{ processingChain is null ? 'disabled' }}">
+                <h3 class="tab-title">
+                    Processors
+                    {% if collector.processingChainWarning %}
+                        {# in a tab title, the profiler only colors the badges that carry a status-* class #}
+                        <span class="badge status-warning">!</span>
+                    {% endif %}
+                </h3>
+                <div class="tab-content">
+                    {% if processingChain is null %}
+                        <div class="empty">
+                            <p>The processing chain could not be inspected.</p>
+                        </div>
+                    {% else %}
+                        {% if processingChain.limitedToWebp %}
+                            <div class="empty">
+                                <p>
+                                    The registered processors cannot output anything other than WebP and GIF files, so any variation that produces another format will fail.
+                                    Enable the <code>imagine</code> processor to output the other formats.
+                                </p>
+                            </div>
+                        {% endif %}
+
+                        {% set processingChainSections = [
+                            { title: 'Pre-processors', processors: processingChain.preProcessors },
+                            { title: 'Processors', processors: processingChain.processors },
+                            { title: 'Post-processors', processors: processingChain.postProcessors },
+                        ] %}
+                        {% for section in processingChainSections %}
+                            {% set processors = section.processors %}
+                            <h4>{{ section.title }}</h4>
+
+                            {% if processors is empty %}
+                                <div class="empty">
+                                    <p>None is registered.</p>
+                                </div>
+                            {% else %}
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="key">Name</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Input formats</th>
+                                            <th scope="col">Output formats</th>
+                                            <th scope="col">Binaries</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for processor in processors %}
+                                            <tr>
+                                                <th scope="row">{{ processor.name }}</th>
+                                                <td>
+                                                    {% if not processor.registered %}
+                                                        <span class="badge">Not registered</span>
+                                                        {% if processor.unavailabilityReason %}<br /><small>{{ processor.unavailabilityReason }}</small>{% endif %}
+                                                    {% elseif processor.missingBinaries is not empty %}
+                                                        <span class="badge badge-warning">Binary missing</span>
+                                                    {% else %}
+                                                        <span class="badge badge-success">Registered</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ processor.inputFormats|join(', ')|default('-') }}</td>
+                                                <td>{{ processor.outputFormats|join(', ')|default('-') }}</td>
+                                                <td>
+                                                    {% for binaryName, path in processor.binaries %}
+                                                        <code>{{ path }}</code>
+                                                        {% if binaryName in processor.missingBinaries %}
+                                                            <span class="badge badge-warning">missing</span>
+                                                        {% else %}
+                                                            <span class="badge badge-success">ok</span>
+                                                        {% endif %}
+                                                        {% if not loop.last %}<br />{% endif %}
+                                                    {% else %}
+                                                        -
+                                                    {% endfor %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
                         {% endfor %}
                     {% endif %}
                 </div>

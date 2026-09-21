@@ -1,12 +1,23 @@
 Dependencies and tooling
 ========================
 
-The JoliMediaBundle has a few dependencies and uses some tools to ensure the quality of the code and the media processing. Unlike other Symfony bundles related to media management (for example ``LiipImagineBundle``), it does not require any external library to process media, and does not depend on any specific image processing library. Instead, it directly wraps common image processing software such as:
+The JoliMediaBundle has a few dependencies and uses some tools to ensure the quality of the code and the media processing. Unlike other Symfony bundles related to media management (for example ``LiipImagineBundle``), it does not rely on a single PHP image processing library. Instead, it directly wraps common image processing software, which must be installed on the server that runs the application, and uses `the Imagine library <https://github.com/php-imagine/Imagine>`_ as its general-purpose processor.
 
-- `cwebp <https://developers.google.com/speed/webp/docs/cwebp>`_
+.. caution::
+
+    The ``cwebp``, ``gif2webp`` and ``gifsicle`` processors are specialized: they can only output WebP and GIF files. Producing a JPEG, PNG or AVIF variation - which is what the admin bridges do for their thumbnails - requires the ``imagine`` processor. It is enabled by default, but it needs a PHP extension that Composer does not install: see `The Imagine library`_ below.
+
+    When this processor is not usable, such variations fail with an error naming the registered processors, or the ones that were tried and failed. Run the ``joli:media:debug:processors`` `command <../misc-features/commands.rst>`_ to check the setup.
+
+System binaries
+---------------
+
+The bundle wraps the following binaries:
+
+- `cwebp and gif2webp <https://developers.google.com/speed/webp/docs/cwebp>`_
 - `exiftool <https://exiftool.org/>`_
 - `gifsicle <https://www.lcdf.org/gifsicle/>`_
-- `Imagine <https://github.com/php-imagine/Imagine>`_
+- `ImageMagick <https://imagemagick.org/>`_ (its ``identify`` command)
 - `jpegoptim <https://github.com/tjko/jpegoptim>`_
 - `mozjpeg <https://github.com/mozilla/mozjpeg>`_
 - `oxipng <https://github.com/shssoichiro/oxipng>`_
@@ -57,4 +68,26 @@ Some tools are not available in the default repositories, so you will need to in
         && tar xzvf oxipng-9.1.5-x86_64-unknown-linux-musl.tar.gz \
         && cp oxipng-9.1.5-x86_64-unknown-linux-musl/oxipng /usr/local/bin/oxipng
 
-Once the dependencies are installed, make sure to `configure the bundle <../getting-started/configuration.rst#processors-configuration>`_ to use them.
+The Imagine library
+-------------------
+
+The ``imagine`` processor relies on `the Imagine library <https://github.com/php-imagine/Imagine>`_, which is not a system binary but a Composer package. The bundle requires it, so it is installed along with the bundle.
+
+Imagine itself needs one of the ``imagick``, ``gmagick`` or ``gd`` PHP extensions, which Composer does not check. The ``imagine`` processor uses the ``imagick`` one by default, which a Debian-based system can install with:
+
+.. code-block:: bash
+
+    sudo apt install php-imagick
+
+Use the ``driver`` key of the ``imagine`` `processor configuration <../variations/processors.rst>`_ to pick another extension.
+
+Checking the setup
+------------------
+
+Once the dependencies are installed, make sure to `configure the bundle <../getting-started/configuration.rst#processors-configuration>`_ to use them, then check that everything is in place:
+
+.. code-block:: terminal
+
+    $ php bin/console joli:media:debug:processors
+
+This command lists the pre-processors, processors and post-processors, tells why some of them are not registered, and checks that the binaries they rely on can be executed. It fails when a registered processor points at a missing binary, so it can be used as a smoke test when deploying.

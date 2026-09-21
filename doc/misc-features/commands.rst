@@ -13,6 +13,7 @@ The MediaBundle provides some commands to streamline the management of media and
         joli:media:cache:prune                     Remove files in the media cache storage, that are not associated with any media from the original storage
         joli:media:cache:remove                    Remove media cache files
         joli:media:convert                         Generate media cache files for specific files in a library
+        joli:media:debug:processors                Display the pre-processors, processors and post-processors, and whether their binaries are available
       ...
 
 
@@ -169,3 +170,40 @@ Options can be combined, eg:
     $ php ./bin/console joli:media:cache:remove --library=media --variation=profile_pictures --path=michel --force
 
 The above command will remove all cache files in the "media" library, for the "profile_pictures" variation, for all media that contain the word "michel" in their path.
+
+joli:media:debug:processors
+---------------------------
+
+Use this command to inspect the processing chain: it lists the `pre-processors <../variations/pre-processors.rst>`_, `processors <../variations/processors.rst>`_ and `post-processors <../variations/post-processors.rst>`_, tells why some of them are not registered, and checks that the binaries they rely on can actually be executed.
+
+It is the first thing to run when a variation fails with an error stating that no registered processor can output the requested format, or that every processor failed.
+
+.. code-block:: terminal
+
+    $ php ./bin/console joli:media:debug:processors [options]
+
+    Processors
+    ----------
+
+     ---------- ---------------- ----------------------- ---------------------------- ------------------------------------------
+      Name       Status           Input formats           Output formats               Binaries
+     ---------- ---------------- ----------------------- ---------------------------- ------------------------------------------
+      cwebp      binary missing   jpeg, png, webp, tiff   webp                         cwebp: /usr/local/bin/cwebp ok - 1.6.0
+                                                                                       identify: /usr/local/bin/identify missing
+      gif2webp   registered       gif                     webp                         gif2webp: /usr/local/bin/gif2webp ok
+      gifsicle   registered       gif                     gif                          gifsicle: /usr/bin/gifsicle ok
+      imagine    registered       avif, gif, heif, ...    avif, gif, jpeg, png, webp   none (runs in the PHP process)
+     ---------- ---------------- ----------------------- ---------------------------- ------------------------------------------
+
+The command warns when the registered processors can only output WebP and GIF files, which means that the ``imagine`` processor is not registered. In this situation, any variation that outputs another format will fail.
+
+The command exits with a non-zero status code when a registered processor points at a binary that cannot be executed, so it can be used as a smoke test when deploying the application.
+
+.. note::
+
+    Whether a processor is registered is decided when the container is compiled, but the binaries are looked for when the command runs. This makes the command reliable even when the container is compiled on another machine than the one that runs the application.
+
+Options
+~~~~~~~
+
+- ``--no-fail``: always exit successfully, even when a registered processor points at a missing binary.

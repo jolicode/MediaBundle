@@ -120,6 +120,14 @@ class ProcessorContainer
         return isset($this->processors[$name]);
     }
 
+    /**
+     * @return array<string, ProcessorInterface>
+     */
+    public function list(): array
+    {
+        return $this->processors;
+    }
+
     public function remove(string $name): void
     {
         if (!$this->has($name)) {

@@ -77,6 +77,7 @@ readonly class TransformationProcessor
         }
 
         $outputFormats = $transformation->getPossibleOutputFormats();
+        $failures = [];
 
         foreach ($outputFormats as $outputFormat) {
             $processors = $this->processorContainer->getProcessors($transformation->getInputFormat(), $outputFormat);
@@ -115,6 +116,7 @@ readonly class TransformationProcessor
                         'Failed to execute the transformation with the "%s" processor',
                         $processor->getName()
                     );
+                    $failures[$processor->getName()] = $e->getMessage();
                 } finally {
                     $this->transformationDataHolder?->addStep($transformation, $statusDescription, [
                         'transformation' => $transformation->getAsMetadata(),
@@ -125,7 +127,24 @@ readonly class TransformationProcessor
             }
         }
 
-        throw UnprocessableMediaException::fromTransformation($transformation, 'no processor worked for this variation');
+        if ([] === $failures) {
+            $this->logger?->error(\sprintf(
+                'Could not apply the variation "%s" to the media "%s": no registered processor can output any of the "%s" formats from a "%s" one.',
+                $transformation->getVariationName(),
+                $transformation->getBinary()->getPath() ?? '-',
+                implode('", "', $outputFormats),
+                $transformation->getInputFormat(),
+            ), [
+                'media' => $transformation->getBinary()->getPath() ?? '-',
+                'variation' => $transformation->getVariationName(),
+                'outputFormats' => $outputFormats,
+                'registeredProcessors' => array_keys($this->processorContainer->list()),
+            ]);
+
+            throw UnprocessableMediaException::noProcessorAvailable($transformation, $outputFormats, $this->processorContainer->list());
+        }
+
+        throw UnprocessableMediaException::allProcessorsFailed($transformation, $failures);
     }
 
     private function runPostProcessors(Transformation $transformation, Binary $binary): Binary

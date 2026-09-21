@@ -140,7 +140,7 @@ Built-in pre-processors
 Heif pre-processor
 ~~~~~~~~~~~~~~~~~~
 
-The bundle provides the ``HeifPreProcessor`` pre-processor, which is used to convert HEIF images to JPEG or PNG format. This pre-processor is automatically registered and does not need to be configured in the ``joli_media`` configuration.
+The bundle provides the ``HeifPreProcessor`` pre-processor, which is used to convert HEIF images to JPEG or PNG format. This pre-processor is automatically registered and does not need to be configured in the ``joli_media`` configuration. It relies on the Imagine library, so it is only registered when the ``imagine`` `processor <processors.rst>`_ is enabled.
 
 HEIF (High Efficiency Image File Format) is a modern image format that is not supported by all browsers and tools, but it is gaining traction due to its efficient compression and high quality. However, many web browsers do not support HEIF images, which can lead to compatibility issues when displaying images on the web. iPhone users can encounter this issue when they take photos in HEIF format, which is available on iOS devices since iOS 11.
 

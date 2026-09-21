@@ -84,7 +84,16 @@ readonly class Gif2webp extends AbstractProcessor implements ProcessorInterface
         }
 
         if (false === $transformed) {
-            throw new \RuntimeException('No processor worked for this variation');
+            if ([] === $gifProcessors) {
+                throw new \RuntimeException(\sprintf('No registered processor can output a "gif" file from a "%s" one, which the "gif2webp" processor needs before converting it to WebP. Run "php bin/console joli:media:debug:processors" to inspect the processing chain.', $binary->getFormat()));
+            }
+
+            $failedProcessorNames = array_map(
+                static fn (ProcessorInterface $processor): string => $processor->getName(),
+                $gifProcessors,
+            );
+
+            throw new \RuntimeException(\sprintf('Every processor that could produce the intermediate "gif" file failed: "%s".', implode('", "', $failedProcessorNames)));
         }
 
         // use gif2webp to convert the gif to webp
