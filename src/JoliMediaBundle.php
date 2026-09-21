@@ -34,6 +34,11 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 class JoliMediaBundle extends AbstractBundle
 {
+    /**
+     * Whether the "imagine" processor is enabled.
+     */
+    private bool $imagineProcessorEnabled = false;
+
     public function boot(): void
     {
         // media unserialization does not depend on Doctrine: this must be set
@@ -105,6 +110,8 @@ class JoliMediaBundle extends AbstractBundle
 
         $builder->setParameter('joli_media.process_timeout', $config['process_timeout']);
 
+        $this->imagineProcessorEnabled = isset($config['processors']['imagine']) && $config['processors']['imagine']['options']['enabled'];
+
         // libraries
         foreach ($config['libraries'] as $libraryName => $libraryConfig) {
             $this->createLibraryService($container, $builder, $libraryName, $libraryConfig);
@@ -116,8 +123,8 @@ class JoliMediaBundle extends AbstractBundle
         ;
 
         // pre-processors
-        if (!\array_key_exists(HeifPreProcessor::class, $config['pre_processors'])) {
-            // Automatically add the Heif pre-processor if it is not manually configured
+        if (!\array_key_exists(HeifPreProcessor::class, $config['pre_processors']) && $this->imagineProcessorEnabled) {
+            // the Heif pre-processor needs the Imagine service, which comes with the imagine processor
             $config['pre_processors'] = [HeifPreProcessor::class => []] + $config['pre_processors'];
         }
 
@@ -1064,6 +1071,10 @@ class JoliMediaBundle extends AbstractBundle
     private function createPreProcessorServices(ContainerConfigurator $container, ContainerBuilder $builder, array $preProcessorsConfig): void
     {
         if (\array_key_exists(HeifPreProcessor::class, $preProcessorsConfig)) {
+            if (!$this->imagineProcessorEnabled) {
+                throw new \LogicException('The HeifPreProcessor requires the "imagine" processor to be enabled.');
+            }
+
             $container->services()
                 ->get(HeifPreProcessor::class)
                 ->arg('$imagine', service('.joli_media.imagine.imagine'))
@@ -1135,7 +1146,7 @@ class JoliMediaBundle extends AbstractBundle
             $processorContainerService->call('add', ['gifsicle', service('.joli_media.processor.gifsicle')]);
         }
 
-        if (isset($processorsConfig['imagine']) && $processorsConfig['imagine']['options']['enabled']) {
+        if ($this->imagineProcessorEnabled) {
             $container->services()
                 ->set('.joli_media.imagine.metadata_reader', ExifMetadataReader::class)
             ;
@@ -1296,6 +1307,10 @@ class JoliMediaBundle extends AbstractBundle
                     '$width' => $normalizeDimension('width'),
                 ]);
         } elseif ('expand' === $transformerType) {
+            if (!$this->imagineProcessorEnabled) {
+                throw new \LogicException('The "expand" transformer requires the "imagine" processor to be enabled.');
+            }
+
             $container->services()
                 ->set($transformerServiceId)
                 ->parent('.joli_media.transformer.expand.abstract')

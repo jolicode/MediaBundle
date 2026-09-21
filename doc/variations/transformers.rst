@@ -60,6 +60,10 @@ Options:
 
 If the ``width`` or ``height`` is smaller than the original image, the image will be left unchanged.
 
+.. note::
+
+    This transformer requires the ``imagine`` `processor <processors.rst>`_ to be enabled.
+
 Heighten
 ~~~~~~~~
 
