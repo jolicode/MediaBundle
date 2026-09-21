@@ -7,6 +7,8 @@ The JoliMediaBundle has a few dependencies and uses some tools to ensure the qua
 
     The ``cwebp``, ``gif2webp`` and ``gifsicle`` processors are specialized: they can only output WebP and GIF files. Producing a JPEG, PNG or AVIF variation - which is what the admin bridges do for their thumbnails - requires the ``imagine`` processor. It is enabled by default, but it needs a PHP extension that Composer does not install: see `The Imagine library`_ below.
 
+    When this processor is not usable, such variations fail with an error naming the registered processors, or the ones that were tried and failed. Run the ``joli:media:debug:processors`` `command <../misc-features/commands.rst>`_ to check the setup.
+
 System binaries
 ---------------
 

@@ -20,6 +20,7 @@
 - bc break - The Sylius `dropzone` twig hookable of `joli_media_sylius_admin.media.index.content.header` was renamed to `uploader`
 - improvement - The `imagine/imagine` package is now required, instead of suggested: the default configuration needs it to output JPEG and PNG variations
 - feature - Add a `joli:media:debug:processors` command, which lists the processors and checks that their binaries can be executed - see the [commands documentation](doc/misc-features/commands.rst)
+- fix - A variation that cannot be processed now reports which processors are registered, or which ones failed and why, instead of "no processor worked for this variation"
 - fix - Disabling the `imagine` processor no longer breaks the container compilation
 
 ## [0.9.0] - 2026-08-18

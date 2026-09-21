@@ -9,8 +9,10 @@ use JoliCode\MediaBundle\Transformation\Transformation;
 
 class StubProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly Binary $result)
-    {
+    public function __construct(
+        private readonly Binary $result,
+        private readonly ?\Throwable $failure = null,
+    ) {
     }
 
     public function canProcessInputFormat(string $inputFormat): bool
@@ -40,6 +42,10 @@ class StubProcessor implements ProcessorInterface
 
     public function process(Binary $binary, Transformation $transformation, array $processingOptions = [], ?string $forceOutputFormat = null): Binary
     {
+        if ($this->failure instanceof \Throwable) {
+            throw $this->failure;
+        }
+
         return $this->result;
     }
 }
