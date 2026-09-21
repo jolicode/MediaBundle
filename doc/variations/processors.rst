@@ -17,6 +17,15 @@ The main processors configuration is defined in the ``processors`` key of the ``
 
     Read the documentation page about `dependencies and tooling <../getting-started/dependencies-and-tooling.rst>`_ to learn how to install these tools on your system.
 
+.. caution::
+
+    The ``cwebp``, ``gif2webp`` and ``gifsicle`` processors are specialized: they can only output WebP and GIF files. Any variation that outputs another format - JPEG, PNG or AVIF - requires the general-purpose ``imagine`` processor.
+
+Processors priority
+~~~~~~~~~~~~~~~~~~~
+
+Several processors may be able to handle the same conversion. They are tried in the following order, and the first one that succeeds wins: ``cwebp``, ``gif2webp``, ``gifsicle``, then ``imagine``. The specialized processors come first because they produce better results for the formats they handle.
+
 Default configuration
 ~~~~~~~~~~~~~~~~~~~~~
 

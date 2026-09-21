@@ -3,7 +3,6 @@
 namespace JoliCode\MediaBundle;
 
 use Doctrine\DBAL\Types\StringType;
-use Imagine\Image\ImagineInterface;
 use Imagine\Image\Metadata\ExifMetadataReader;
 use Imagine\Gd\Imagine as GdImagine;
 use Imagine\Gmagick\Imagine as GmagickImagine;
@@ -117,8 +116,8 @@ class JoliMediaBundle extends AbstractBundle
         ;
 
         // pre-processors
-        if (!\array_key_exists(HeifPreProcessor::class, $config['pre_processors']) && interface_exists(ImagineInterface::class)) {
-            // Automatically add the Heif pre-processor if it is not manually configured and Imagine is available
+        if (!\array_key_exists(HeifPreProcessor::class, $config['pre_processors'])) {
+            // Automatically add the Heif pre-processor if it is not manually configured
             $config['pre_processors'] = [HeifPreProcessor::class => []] + $config['pre_processors'];
         }
 
@@ -1065,10 +1064,6 @@ class JoliMediaBundle extends AbstractBundle
     private function createPreProcessorServices(ContainerConfigurator $container, ContainerBuilder $builder, array $preProcessorsConfig): void
     {
         if (\array_key_exists(HeifPreProcessor::class, $preProcessorsConfig)) {
-            if (!interface_exists(ImagineInterface::class)) {
-                throw new \LogicException('The HeifPreProcessor requires the Imagine library to be installed. Please install the "imagine/imagine" package.');
-            }
-
             $container->services()
                 ->get(HeifPreProcessor::class)
                 ->arg('$imagine', service('.joli_media.imagine.imagine'))
@@ -1140,7 +1135,7 @@ class JoliMediaBundle extends AbstractBundle
             $processorContainerService->call('add', ['gifsicle', service('.joli_media.processor.gifsicle')]);
         }
 
-        if (isset($processorsConfig['imagine']) && $processorsConfig['imagine']['options']['enabled'] && interface_exists(ImagineInterface::class)) {
+        if (isset($processorsConfig['imagine']) && $processorsConfig['imagine']['options']['enabled']) {
             $container->services()
                 ->set('.joli_media.imagine.metadata_reader', ExifMetadataReader::class)
             ;
@@ -1301,10 +1296,6 @@ class JoliMediaBundle extends AbstractBundle
                     '$width' => $normalizeDimension('width'),
                 ]);
         } elseif ('expand' === $transformerType) {
-            if (!interface_exists(ImagineInterface::class)) {
-                throw new \LogicException('The "Expand" transformer requires the Imagine library to be installed. Please install the "imagine/imagine" package.');
-            }
-
             $container->services()
                 ->set($transformerServiceId)
                 ->parent('.joli_media.transformer.expand.abstract')

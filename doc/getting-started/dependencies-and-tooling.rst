@@ -1,12 +1,21 @@
 Dependencies and tooling
 ========================
 
-The JoliMediaBundle has a few dependencies and uses some tools to ensure the quality of the code and the media processing. Unlike other Symfony bundles related to media management (for example ``LiipImagineBundle``), it does not require any external library to process media, and does not depend on any specific image processing library. Instead, it directly wraps common image processing software such as:
+The JoliMediaBundle has a few dependencies and uses some tools to ensure the quality of the code and the media processing. Unlike other Symfony bundles related to media management (for example ``LiipImagineBundle``), it does not rely on a single PHP image processing library. Instead, it directly wraps common image processing software, which must be installed on the server that runs the application, and uses `the Imagine library <https://github.com/php-imagine/Imagine>`_ as its general-purpose processor.
 
-- `cwebp <https://developers.google.com/speed/webp/docs/cwebp>`_
+.. caution::
+
+    The ``cwebp``, ``gif2webp`` and ``gifsicle`` processors are specialized: they can only output WebP and GIF files. Producing a JPEG, PNG or AVIF variation - which is what the admin bridges do for their thumbnails - requires the ``imagine`` processor. It is enabled by default, but it needs a PHP extension that Composer does not install: see `The Imagine library`_ below.
+
+System binaries
+---------------
+
+The bundle wraps the following binaries:
+
+- `cwebp and gif2webp <https://developers.google.com/speed/webp/docs/cwebp>`_
 - `exiftool <https://exiftool.org/>`_
 - `gifsicle <https://www.lcdf.org/gifsicle/>`_
-- `Imagine <https://github.com/php-imagine/Imagine>`_
+- `ImageMagick <https://imagemagick.org/>`_ (its ``identify`` command)
 - `jpegoptim <https://github.com/tjko/jpegoptim>`_
 - `mozjpeg <https://github.com/mozilla/mozjpeg>`_
 - `oxipng <https://github.com/shssoichiro/oxipng>`_
@@ -56,5 +65,18 @@ Some tools are not available in the default repositories, so you will need to in
         && wget -O oxipng-9.1.5-x86_64-unknown-linux-musl.tar.gz https://github.com/shssoichiro/oxipng/releases/download/v9.1.5/oxipng-9.1.5-x86_64-unknown-linux-musl.tar.gz \
         && tar xzvf oxipng-9.1.5-x86_64-unknown-linux-musl.tar.gz \
         && cp oxipng-9.1.5-x86_64-unknown-linux-musl/oxipng /usr/local/bin/oxipng
+
+The Imagine library
+-------------------
+
+The ``imagine`` processor relies on `the Imagine library <https://github.com/php-imagine/Imagine>`_, which is not a system binary but a Composer package. The bundle requires it, so it is installed along with the bundle.
+
+Imagine itself needs one of the ``imagick``, ``gmagick`` or ``gd`` PHP extensions, which Composer does not check. The ``imagine`` processor uses the ``imagick`` one by default, which a Debian-based system can install with:
+
+.. code-block:: bash
+
+    sudo apt install php-imagick
+
+Use the ``driver`` key of the ``imagine`` `processor configuration <../variations/processors.rst>`_ to pick another extension.
 
 Once the dependencies are installed, make sure to `configure the bundle <../getting-started/configuration.rst#processors-configuration>`_ to use them.
