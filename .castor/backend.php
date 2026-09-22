@@ -5,7 +5,7 @@ namespace backend;
 use Castor\Attribute\AsTask;
 
 use function Castor\io;
-use function docker\docker_run;
+use function tests\docker_run;
 
 #[AsTask(description: 'Install backend dependencies')]
 function install(

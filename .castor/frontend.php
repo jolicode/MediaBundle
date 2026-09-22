@@ -6,7 +6,7 @@ use Castor\Attribute\AsTask;
 
 use function Castor\io;
 use function Castor\notify;
-use function docker\docker_run;
+use function tests\docker_run;
 
 #[AsTask(description: 'Compile assets')]
 function compile(): void

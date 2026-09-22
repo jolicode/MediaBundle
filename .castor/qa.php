@@ -8,8 +8,8 @@ use Castor\Attribute\AsTask;
 use function Castor\context;
 use function Castor\exit_code;
 use function Castor\io;
-use function docker\docker_exit_code;
-use function docker\docker_run;
+use function tests\docker_exit_code;
+use function tests\docker_run;
 
 #[AsTask(description: 'Runs all QA tasks', aliases: ['qa'])]
 function all(): int
