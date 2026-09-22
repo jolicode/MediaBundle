@@ -146,7 +146,7 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link{% if displayed_tab == 1 %} active{% endif %}" href="#tab-general" id="tablist-tab-general" data-bs-toggle="tab" aria-selected="true" role="tab">
                         <span class="icon tab-nav-item-icon">
-                            <i class="fas fa-circle-info"></i>
+                            <i class="fa fa-circle-info"></i>
                         </span>
                         {{ 'general'|trans }}
                     </a>
@@ -154,7 +154,7 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link{% if displayed_tab == 2 %} active{% endif %}" href="#tab-variations" id="tablist-tab-variations" data-bs-toggle="tab" aria-selected="false" tabindex="-1" role="tab">
                         <span class="icon tab-nav-item-icon">
-                            <i class="fas fa-images"></i>
+                            <i class="fa fa-images"></i>
                         </span>
                         {{ 'variation.label_plural'|trans }}
                     </a>
@@ -224,7 +224,7 @@
                                                 <twig:ea:Button
                                                     htmlElement="a"
                                                     size="sm"
-                                                    icon="fa-regular fa-clone"
+                                                    icon="fa fa-clone"
                                                     href="{{ variation.url }}"
                                                     class="clipboard-btn"
                                                     data-clipboard-target="#media-{{ variation.variation.name }}-url"
@@ -234,7 +234,7 @@
                                                     <twig:ea:Button
                                                         htmlElement="a"
                                                         size="sm"
-                                                        icon="fa-solid fa-arrows-rotate"
+                                                        icon="fa fa-arrows-rotate"
                                                         href="{{ joli_media_admin_url('regenerateVariation', { key: media.path, variation: variation.variation.name }) }}"
                                                     >{{ 'action.regenerate'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
                                                 {% endif %}
@@ -273,7 +273,7 @@
                             type="button"
                             variant="primary"
                             size="sm"
-                            icon="fa-regular fa-clone"
+                            icon="fa fa-clone"
                             class="clipboard-btn"
                             data-clipboard-target="#media-url"
                         >{{ 'action.copy'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
@@ -290,7 +290,7 @@
                                 type="button"
                                 variant="primary"
                                 size="sm"
-                                icon="fa-regular fa-clone"
+                                icon="fa fa-clone"
                                 class="clipboard-btn"
                                 data-clipboard-target="#media-markdown-code"
                             >{{ 'action.copy'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
@@ -308,7 +308,7 @@
                                 type="button"
                                 variant="primary"
                                 size="sm"
-                                icon="fa-regular fa-clone"
+                                icon="fa fa-clone"
                                 class="clipboard-btn"
                                 data-clipboard-target="#media-html-code"
                             >{{ 'action.copy'|trans(domain: 'JoliMediaEasyAdminBundle') }}</twig:ea:Button>
