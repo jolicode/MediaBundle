@@ -1,101 +1,105 @@
 # JoliMediaBundle demo project
 
+This folder contains a Symfony application showcasing JoliMediaBundle, integrated
+with EasyAdmin and Sonata Admin. It always runs against the bundle sources of this
+repository, which makes it a convenient playground to develop the bundle.
+
 ## Running the application locally
 
 ### Requirements
 
-A Docker environment is provided and requires you to have these tools available:
+The Docker environment is driven by [Castor](https://github.com/jolicode/castor#installation)
+and the [castor-php/docker](https://castor-php.github.io/docker/) plugin, and requires:
 
- * Docker
- * Bash
+ * Docker (with Compose v2.23 or later)
  * [Castor](https://github.com/jolicode/castor#installation)
+ * [mkcert](https://github.com/FiloSottile/mkcert#installation) (optional, for locally trusted HTTPS certificates)
 
-#### Castor
+All the commands below are run from the root of the repository.
 
-Once `castor` is installed, in order to improve your usage of `castor` scripts, you
-can install console autocompletion script.
+#### Castor completion
 
+Once `castor` is installed, you can install the console autocompletion script.
 If you are using bash:
 
 ```bash
 castor completion | sudo tee /etc/bash_completion.d/castor
 ```
 
-If you are using something else, please refer to your shell documentation. You
-may need to use `castor completion > /to/somewhere`.
-
-`castor` supports completion for `bash`, `zsh` & `fish` shells.
+`castor` supports completion for `bash`, `zsh` & `fish` shells. For other
+shells, please refer to your shell documentation.
 
 ### Docker environment
 
-The Docker infrastructure provides a web stack with:
- - NGINX
- - PostgreSQL
- - PHP
- - Traefik
- - A container with some tooling:
-   - Composer
-   - Node
-   - Yarn / NPM
+The stack is described in PHP, in [`.castor/demo.php`](../.castor/demo.php),
+and the Docker Compose file is generated from it (`compose.generated.yaml`).
+All the tasks of the plugin are exposed under the `demo:` namespace
+(`demo:docker:*`, `demo:postgres:*`, `demo:worktree:*`).
+It provides:
+
+ - PostgreSQL 16
+ - the `demo` container: nginx + PHP-FPM 8.4, with the media toolchain the bundle
+   relies on (ImageMagick, exiftool, gifsicle, jpegoptim, pngquant, libwebp,
+   mozjpeg, oxipng), see [`Dockerfile`](Dockerfile)
+ - the `demo-builder` container, with Composer, Node.js and the QA tools
+
+HTTPS routing is handled by the global Caddy router of castor-php/docker, which
+binds ports 80 and 443 once for all the projects using the plugin.
 
 ### Domain configuration (first time only)
 
-Before running the application for the first time, ensure your domain names
-point the IP of your Docker daemon by editing your `/etc/hosts` file.
+Before running the application for the first time, ensure the domain name
+points to the IP of your Docker daemon by editing your `/etc/hosts` file.
+This IP is probably `127.0.0.1` unless you run Docker in a special VM.
 
-This IP is probably `127.0.0.1` unless you run Docker in a special VM (like docker-machine for example).
-
-> [!NOTE]
-> The router binds port 80 and 443, that's why it will work with `127.0.0.1`
-
-```
+```bash
 echo '127.0.0.1 jolimediabundle-demo.test' | sudo tee -a /etc/hosts
 ```
 
+### SSL certificates
+
+Certificates are minted on demand by the router. If `mkcert` is installed and
+its root CA is trusted (`mkcert -install`), the certificates are trusted by your
+browser. Otherwise, Caddy uses its own local CA and you will have to accept a
+security warning.
+
 ### Starting the stack
 
-Launch the stack by running this command:
-
 ```bash
-castor start
+castor demo:start
 ```
 
 > [!NOTE]
-> the first start of the stack should take a few minutes.
+> The first start of the stack takes a few minutes: the Docker images are built,
+> and the dependencies of the application are installed.
 
-The site is now accessible at the hostnames you have configured over HTTPS
-(you may need to accept self-signed SSL certificate if you do not have `mkcert`
-installed on your computer - see below).
-
-### SSL certificates
-
-HTTPS is supported out of the box. SSL certificates are not versioned and will
-be generated the first time you start the infrastructure (`castor start`) or if
-you run `castor docker:generate-certificates`.
-
-If you have `mkcert` installed on your computer, it will be used to generate
-locally trusted certificates. See [`mkcert` documentation](https://github.com/FiloSottile/mkcert#installation)
-to understand how to install it. Do not forget to install CA root from `mkcert`
-by running `mkcert -install`.
-
-If you don't have `mkcert`, then self-signed certificates will instead be
-generated with `openssl`. You can configure [infrastructure/docker/services/router/openssl.cnf](infrastructure/docker/services/router/openssl.cnf)
-to tweak certificates.
-
-You can run `castor docker:generate-certificates --force` to recreate new certificates
-if some were already generated. Remember to restart the infrastructure to make
-use of the new certificates with `castor build && castor up` or `castor start`.
-
-### Builder
-
-Having some composer, yarn or other modifications to make on the project?
-Start the builder which will give you access to a container with all these
-tools available:
+The application is then available on https://jolimediabundle-demo.test. Load some
+fixtures with:
 
 ```bash
-castor docker:builder
+castor demo:db:fixtures
 ```
+
+`castor demo:docker:about` sums up the project and lists its URLs.
+
+### Working with the local bundle
+
+`castor demo:app:install` generates a `docker-composer.json` file which requires
+`jolicode/media-bundle` from the repository root (a Composer path repository,
+symlinked), and installs the dependencies with it. Any change made to the bundle
+sources is immediately visible in the demo application.
+
+When working on the assets of the admin bridges, run `castor frontend:watch` to
+rebuild them, and `castor demo:app:front:watch` to install them in the demo
+application each time they change.
 
 ### Other tasks
 
-Checkout `castor` to have the list of available tasks.
+ - `castor demo:bash`: open a shell in the builder container
+ - `castor demo:composer <args>`, `castor demo:symfony <args>`: run Composer or the Symfony console
+ - `castor demo:cache-clear`, `castor demo:db:migrate`: usual application chores
+ - `castor demo:qa:cs`, `castor demo:qa:phpstan`, `castor demo:qa:rector`, `castor demo:qa:twig-cs`: QA tools of the demo application
+ - `castor demo:postgres:client`: open a psql session
+ - `castor demo:docker:stop`, `castor demo:docker:destroy`, `castor demo:docker:logs`, `castor demo:docker:ps`: drive the infrastructure
+
+Run `castor` to list all the available tasks.

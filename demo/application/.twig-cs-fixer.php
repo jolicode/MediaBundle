@@ -9,7 +9,7 @@ $ruleset->overrideRule(new TwigCsFixer\Rules\Punctuation\PunctuationSpacingRule(
 
 $finder = new TwigCsFixer\File\Finder();
 $finder
-    ->in('application/templates')
+    ->in('templates')
 ;
 
 $config = new TwigCsFixer\Config\Config();

@@ -1,0 +1,18 @@
+parameters:
+    level: 8
+    paths:
+        - src
+        - public
+    # the autoloader, not scanDirectories, so phpstan does not recurse into the
+    # symlinked jolicode/media-bundle package
+    bootstrapFiles:
+        - vendor/autoload.php
+    tmpDir: var/phpstan
+    inferPrivatePropertyTypeFromConstructor: true
+
+    ignoreErrors:
+        -
+            identifier: missingType.generics
+
+    symfony:
+        containerXmlPath: 'var/cache/dev/App_KernelDevDebugContainer.xml'
