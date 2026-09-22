@@ -19,13 +19,13 @@
                     class="btn btn-sm btn-link text-primary"
                     data-component="media-choice-edit"
                 >
-                    <i class="fas fa-plus"></i> {{ 'action.choose_a_file'|trans(domain: 'JoliMediaSyliusBundle') }}
+                    {{ ux_icon('tabler:plus') }} {{ 'action.choose_a_file'|trans(domain: 'JoliMediaSyliusBundle') }}
                 </a>
                 <button
                     class="btn btn-sm btn-link text-danger ms-2 hide-when-empty"
                     data-component="media-choice-delete"
                 >
-                    <i class="fas fa-minus-circle"></i> {{ 'action.remove'|trans(domain: 'JoliMediaSyliusBundle') }}
+                    {{ ux_icon('tabler:circle-minus') }} {{ 'action.remove'|trans(domain: 'JoliMediaSyliusBundle') }}
                 </button>
             </span>
         </span>
