@@ -59,6 +59,7 @@
         "symfony/css-selector": "^7.0 || ^8.0",
         "symfony/monolog-bundle": "^3.10",
         "symfony/stopwatch": "^7.0 || ^8.0",
+        "symfony/ux-icons": "^2.20 || ^3.0",
         "symfony/yaml": "^7.2 || ^8.0"
     },
     "conflict": {
