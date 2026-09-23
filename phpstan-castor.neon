@@ -5,9 +5,9 @@ parameters:
         - castor.php
         - .castor/
     excludePaths:
-        - .castor/vendor
+        analyse:
+            - .castor/vendor
     scanFiles:
         - .castor.stub.php
-    # castor-php/docker, used by .castor/demo.php
-    bootstrapFiles:
-        - .castor/vendor/autoload.php
+    scanDirectories:
+        - .castor/vendor/castor-php/docker/src
