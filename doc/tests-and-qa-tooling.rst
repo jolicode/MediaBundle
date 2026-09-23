@@ -9,9 +9,20 @@ Tests and Quality Assurance Tooling
 
     backend
         backend:install   Install backend dependencies
-    docker
-        docker:build      Build the test infrastructure
-        docker:builder    Open a shell (bash) into the tests container
+    demo
+        demo:start        Builds and starts the infrastructure, then installs the demo application
+        demo:app:install  Installs the demo application (composer, yarn, ...), using the local bundle
+        demo:bash         Run a bash shell inside the PHP container
+        demo:composer     Run composer for this service
+        demo:symfony      Run a Symfony console command
+        demo:qa:cs        Fixes Coding Style
+        demo:qa:phpstan   Runs PHPStan
+        demo:docker:build Builds the infrastructure
+        demo:docker:up    Builds and starts the infrastructure
+        demo:docker:stop  Stops the infrastructure
+        demo:docker:destroy Cleans the infrastructure (remove container, volume, networks)
+        demo:postgres:client Open a psql session on the database
+        ...
     frontend
         frontend:compile  Compile assets
         frontend:install  Install assets
@@ -26,8 +37,11 @@ Tests and Quality Assurance Tooling
         qa:rector         Run the rector upgrade
         qa:twig-cs        Fix twig files
         qa:update         Updates the tooling
+    tests
+        tests:build       Build the test infrastructure
+        tests:builder     Open a shell (bash) into the tests container
 
-The ``qa`` commands are used to run quality assurance tasks, such as running tests, checking coding style, and updating dependencies.
+The ``qa`` commands are used to run quality assurance tasks, such as running tests, checking coding style, and updating dependencies. The ``demo`` commands drive the demo application and its Docker stack, see :doc:`the demo documentation </getting-started/demo>`.
 
 Running tests
 -------------
@@ -51,6 +65,6 @@ Before contributing to the project, make sure to run the tests and check the cod
 
 .. code-block:: terminal
 
-    $ castor docker:build
+    $ castor tests:build
     $ castor qa:install
     $ castor qa:all

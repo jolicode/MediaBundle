@@ -30,7 +30,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and start the test infrastructure
-        run: castor docker:build
+        run: castor tests:build
 
       - name: Install dependencies
         run: castor backend:install
@@ -86,7 +86,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and start the test infrastructure
-        run: castor docker:build --php-version ${{ matrix.php-versions }}
+        run: castor tests:build --php-version ${{ matrix.php-versions }}
 
       - name: Install dependencies
         run: castor backend:install --php-version ${{ matrix.php-versions }} --easy-admin-version ${{ matrix.easyadmin-versions }}

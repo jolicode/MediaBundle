@@ -1,6 +1,6 @@
 <?php
 
-namespace docker;
+namespace tests;
 
 use Castor\Attribute\AsOption;
 use Castor\Attribute\AsTask;
@@ -100,7 +100,7 @@ function docker_run(
     ), context: context()->withAllowFailure(true)->withQuiet(true));
 
     if (false === $process->isSuccessful()) {
-        throw new \LogicException(\sprintf('Unable to find %s image. Did you forget to run castor docker:build ?', getImageName($phpVersion)));
+        throw new \LogicException(\sprintf('Unable to find %s image. Did you forget to run castor tests:build ?', getImageName($phpVersion)));
     }
 
     $command = [

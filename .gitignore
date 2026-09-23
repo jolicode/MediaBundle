@@ -17,3 +17,8 @@ phpunit.xml
 node_modules
 npm-debug.log
 yarn-error.log
+
+# castor-php/docker
+/compose.generated.yaml
+/.castor/vendor/
+/.home/

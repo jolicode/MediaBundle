@@ -19,23 +19,28 @@ To start the demo application, you need to have Docker and `Castor <https://gith
 
         echo '127.0.0.1 jolimediabundle-demo.test' | sudo tee -a /etc/hosts
 
-3. Start the application using Castor:
+3. (Optional) Install `mkcert <https://github.com/FiloSottile/mkcert#installation>`_ and its root CA, so that the demo is served over HTTPS with a locally trusted certificate:
+    .. code-block:: terminal
+
+        $ mkcert -install
+
+4. Start the application using Castor:
     .. code-block:: terminal
 
         $ castor demo:start
 
-    The first start of the stack should take a few minutes: docker images will be built, and dependencies will be installed.
+    The first start of the stack should take a few minutes: docker images will be built, and dependencies will be installed. The stack is powered by the `castor-php/docker <https://castor-php.github.io/docker/>`_ plugin, which also starts a global Caddy router listening on ports 80 and 443.
 
-4. Once the application is started, insert some fixture data:
+5. Once the application is started, insert some fixture data:
     .. code-block:: terminal
 
-        $ castor demo:app:db:fixtures
+        $ castor demo:db:fixtures
 
-5. Finally, open your browser and navigate to https://jolimediabundle-demo.test. You should see the demo application homepage.
+6. Finally, open your browser and navigate to https://jolimediabundle-demo.test. You should see the demo application homepage.
 
 .. tip::
 
-    The ``demo`` castor commands namespace contains other useful commands to interact with the demo application (clearing the cache, loading fixtures, etc.). You can list them by running the ``castor`` command. You can also get detailed usage instructions by reading `the demo README file <https://github.com/jolicode/MediaBundle/blob/main/demo/README.md>`_.
+    The ``demo`` castor commands namespace contains other useful commands to interact with the demo application (clearing the cache, loading fixtures, running the Symfony console or Composer, opening a shell, etc.), including the ``demo:docker`` sub-namespace which drives the infrastructure itself. You can list them by running the ``castor`` command. You can also get detailed usage instructions by reading `the demo README file <https://github.com/jolicode/MediaBundle/blob/main/demo/README.md>`_.
 
 Stopping the demo application
 -----------------------------

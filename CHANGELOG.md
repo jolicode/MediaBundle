@@ -23,6 +23,7 @@
 - feature - The profiler panel has a new "Processors" tab, and warns when a binary is missing or when only WebP and GIF files can be output
 - fix - A variation that cannot be processed now reports which processors are registered, or which ones failed and why, instead of "no processor worked for this variation"
 - fix - Disabling the `imagine` processor no longer breaks the container compilation
+- improvement - The demo application now uses `castor-php/docker` for its development environment
 
 ## [0.9.0] - 2026-08-18
 
