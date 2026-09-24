@@ -568,7 +568,7 @@ class MediaAdminController extends AbstractController
                     'name' => $filename,
                     'size' => $size,
                     'type' => $mime,
-                    'link' => $this->generateUrl('joli_media_sylius_admin_explore', ['key' => $media->getPath()]),
+                    'link' => $this->generateUrl('joli_media_sylius_admin_show', ['key' => $media->getPath()]),
                     'mediaUrl' => $media->getPath(),
                     'mediaFolder' => $media->getFolderPath(),
                     'mediaTemplate' => $this->twig->render('@JoliMediaSylius/_preview.html.twig', [

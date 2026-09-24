@@ -128,12 +128,14 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertArrayHasKey('size', $response['files'][0]);
         $this->assertArrayHasKey('type', $response['files'][0]);
         $this->assertArrayHasKey('thumbnailUrl', $response['files'][0]);
+        $this->assertArrayHasKey('link', $response['files'][0]);
 
         $this->assertSame('circle-pattern.png', $response['files'][0]['name']);
         $this->assertSame('/media/original/circle-pattern.png', $response['files'][0]['url']);
         $this->assertSame(62563, $response['files'][0]['size']);
         $this->assertSame('image/png', $response['files'][0]['type']);
         $this->assertSame('/media/cache/joli-media-easy-admin/circle-pattern.png', $response['files'][0]['thumbnailUrl']);
+        $this->assertSame('http://localhost/admin/media/show/circle-pattern.png', $response['files'][0]['link']);
     }
 
     public function testViewMode(): void
