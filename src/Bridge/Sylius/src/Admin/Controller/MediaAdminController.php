@@ -403,6 +403,11 @@ class MediaAdminController extends AbstractController
             return $this->redirectToRoute('joli_media_sylius_admin_explore', ['key' => '']);
         }
 
+        // exploring a file makes no sense: send the user to the page of that media
+        if ('' !== $currentKey && $this->getOriginalStorage()->has($currentKey)) {
+            return $this->redirectToRoute('joli_media_sylius_admin_show', ['key' => $currentKey]);
+        }
+
         $sortingByPath = $request->query->all('sorting')['path'] ?? null;
         $searchValue = $request->query->all('criteria')['search']['value'] ?? null;
 

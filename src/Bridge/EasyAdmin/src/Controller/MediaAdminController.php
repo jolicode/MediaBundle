@@ -731,6 +731,11 @@ class MediaAdminController extends AbstractController
         try {
             $this->getOriginalStorage()->assertPathIsNotTrash($currentKey);
 
+            // exploring a file makes no sense: send the user to the page of that media
+            if ('explore' === $action && '' !== $currentKey && $this->getOriginalStorage()->has($currentKey)) {
+                return $this->redirect($this->mediaAdminRouter->generateUrl('show', ['key' => $currentKey]));
+            }
+
             $dirFilter = null;
             if ($hasSearch) {
                 $dirFilter = static fn (string $directory): bool => str_contains(strtolower($directory), strtolower($searchValue));

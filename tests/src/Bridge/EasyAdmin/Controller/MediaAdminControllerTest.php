@@ -186,6 +186,25 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertSelectorCount(3, '.gallery-list-item');
     }
 
+    public function testExploringAFileRedirectsToItsShowPage(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/admin/media/explore/sub/folder/circle-pattern.png');
+        $this->assertResponseRedirects('http://localhost/admin/media/show/sub/folder/circle-pattern.png');
+
+        $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function testExploringAMissingDirectoryShowsAnEmptyFolder(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/explore/does-not-exist');
+        $this->assertResponseIsSuccessful();
+
+        $this->assertSelectorExists('.gallery');
+        $this->assertCount(0, $crawler->filter('ul.gallery-grid--folders .gallery-grid-item:not(.gallery-grid-item--back)'));
+        $this->assertCount(0, $crawler->filter('ul.gallery-grid--files .gallery-grid-item'));
+    }
+
     public function testTheMediaLibraryRootRedirectsToTheExplorer(): void
     {
         $this->client->request(Request::METHOD_GET, '/admin/media');
