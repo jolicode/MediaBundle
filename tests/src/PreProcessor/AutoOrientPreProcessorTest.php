@@ -65,6 +65,18 @@ class AutoOrientPreProcessorTest extends BaseTestCase
         self::assertSame($binary, (new AutoOrientPreProcessor($this->createImagine('imagick')))->process($binary, $this->createMediaVariation($binary)));
     }
 
+    public function testItPreservesTheReportedPixelDimensions(): void
+    {
+        $binary = $this->getOrientedFixtureBinary();
+        $preProcessor = new AutoOrientPreProcessor($this->createImagine('imagick'));
+        $result = $preProcessor->process($binary, $this->createMediaVariation($binary));
+
+        self::assertTrue($preProcessor->preservesPixelDimensions());
+        // the source reports the displayed 40x60, so the rotation does not change the dimensions
+        self::assertSame(['height' => 60, 'width' => 40], $binary->getPixelDimensions());
+        self::assertSame($binary->getPixelDimensions(), $result->getPixelDimensions());
+    }
+
     public function testItOnlySupportsJpegAndTiff(): void
     {
         $preProcessor = new AutoOrientPreProcessor($this->createImagine('imagick'));

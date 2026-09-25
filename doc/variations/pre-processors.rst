@@ -174,7 +174,7 @@ Phones and cameras often store a portrait photo as landscape pixels, along with 
 
 The ``AutoOrientPreProcessor`` physically rotates the pixels once, before any transformer runs, and resets the ``Orientation`` tag so that nothing rotates the image twice. Images which are already upright are left untouched, without any re-encoding. It runs after the ``HeifPreProcessor``, so that the orientation is applied to the JPEG this one produces, and before the pre-processors defined in the configuration.
 
-The pixel dimensions reported by the bundle for the original media (for example in the ``width`` and ``height`` attributes of the ``joli:Img`` component) also account for the ``Orientation`` tag, so they match what the browser displays.
+The pixel dimensions reported by the bundle for the original media (for example in the ``width`` and ``height`` attributes of the ``joli:Img`` component) also account for the ``Orientation`` tag, so they match what the browser displays. As the rotation only makes these reported dimensions real, the pre-processor answers ``true`` to ``preservesPixelDimensions()``, and the dimensions of the variations stay predictable.
 
 Exif removal pre-processor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
