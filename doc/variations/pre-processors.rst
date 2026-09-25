@@ -17,7 +17,7 @@ The pre-processors configuration is defined in the ``pre_processors`` key of the
             - App\Media\PreProcessor\AutoRotateImagePreProcessor
             # - ...
 
-In the example above, the ``AutoRotateImagePreProcessor`` will be applied to the media before any of its variation is computed. The pre-processors are executed sequentially, in the order they are defined in the configuration file.
+In the example above, the ``AutoRotateImagePreProcessor`` will be applied to the media before any of its variation is computed. The pre-processors are executed sequentially: first the ones the bundle registers automatically (see below), then the ones defined in the configuration file, in the order they are defined.
 
 Pre-processors that use an external binary (such as the ``ExifRemovalPreProcessor``) execute it in an external process, which times out after the duration defined in the global ``joli_media.process_timeout`` directive (60 seconds by default). To override this value for a given pre-processor, use the alternative map syntax of the ``pre_processors`` configuration and define its ``process_timeout`` key, in seconds (``0`` disables the timeout):
 
@@ -145,6 +145,17 @@ The bundle provides the ``HeifPreProcessor`` pre-processor, which is used to con
 HEIF (High Efficiency Image File Format) is a modern image format that is not supported by all browsers and tools, but it is gaining traction due to its efficient compression and high quality. However, many web browsers do not support HEIF images, which can lead to compatibility issues when displaying images on the web. iPhone users can encounter this issue when they take photos in HEIF format, which is available on iOS devices since iOS 11.
 
 Therefore, the ``HeifPreProcessor`` will automatically convert HEIF images to JPEG format, so that they can be used in variations and displayed in the browser.
+
+Auto-orient pre-processor
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The bundle provides the ``AutoOrientPreProcessor`` pre-processor, which rotates JPEG and TIFF images according to their EXIF ``Orientation`` tag. This pre-processor is automatically registered and does not need to be configured in the ``joli_media`` configuration. It relies on the Imagine library, so it is only registered when the ``imagine`` `processor <processors.rst>`_ is enabled, and on the ``exif`` PHP extension to read the tag: it does nothing when this extension is not loaded.
+
+Phones and cameras often store a portrait photo as landscape pixels, along with an ``Orientation`` tag which tells the viewer to rotate it. Browsers honor this tag, but the image processing tools do not: without this pre-processor, the transformers would compute their dimensions on the stored, landscape pixels, and the processors and post-processors which drop the metadata (``cwebp``, ``jpegoptim``, ``mozjpeg``...) would produce variations displayed on their side.
+
+The ``AutoOrientPreProcessor`` physically rotates the pixels once, before any transformer runs, and resets the ``Orientation`` tag so that nothing rotates the image twice. Images which are already upright are left untouched, without any re-encoding. It runs after the ``HeifPreProcessor``, so that the orientation is applied to the JPEG this one produces, and before the pre-processors defined in the configuration.
+
+The pixel dimensions reported by the bundle for the original media (for example in the ``width`` and ``height`` attributes of the ``joli:Img`` component) also account for the ``Orientation`` tag, so they match what the browser displays.
 
 Exif removal pre-processor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

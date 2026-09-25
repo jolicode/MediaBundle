@@ -46,6 +46,8 @@ class BaseTestCase extends WebTestCase
 
     public const HEIF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.heic';
 
+    public const ORIENTED_JPEG_FIXTURE_PATH = __DIR__ . '/../fixtures/orientation-6.jpeg';
+
     public const PNG_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.png';
 
     public const TIFF_FIXTURE_PATH = __DIR__ . '/../fixtures/circle-pattern.tiff';

@@ -18,7 +18,7 @@ use Symfony\Component\Process\Process;
  * This listener sanitizes the original itself, before it is written to the storage.
  *
  * Note that it uses "-all=" and not the "-ifd1:all=" of the ExifRemovalPreProcessor,
- * which only clears the thumbnail IFD.
+ * which only clears the thumbnail IFD. The orientation tag is kept, though.
  */
 final readonly class StripExifMetadataListener
 {
@@ -48,6 +48,8 @@ final readonly class StripExifMetadataListener
             $process = new Process([
                 $this->exiftoolBinary,
                 '-all=',
+                '-tagsFromFile', '@',
+                '-Orientation',
                 '-m',
                 '-overwrite_original',
                 $temporaryFile,

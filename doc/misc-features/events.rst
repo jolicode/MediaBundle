@@ -84,7 +84,7 @@ Sanitizing a Media Before It Is Stored
 
 The ``PreCreateMediaEvent`` is dispatched by the ``OriginalStorage`` before anything is written to the storage, and its ``binary`` property is writable. A listener can therefore replace the content which is about to be stored, and the storage will write the replacement instead of the uploaded content - without any additional read or write.
 
-A typical use case is stripping the metadata of the uploaded images: the ``ExifRemovalPreProcessor`` shipped by the bundle only runs in the variation pipeline, so the originals keep their metadata, GPS coordinates included. The following listener sanitizes the original itself::
+A typical use case is stripping the metadata of the uploaded images: the ``ExifRemovalPreProcessor`` shipped by the bundle only runs in the variation pipeline, so the originals keep their metadata, GPS coordinates included. The following listener sanitizes the original itself, but keeps the EXIF orientation tag: without it, a photo stored on its side (as phones do) would be displayed on its side, as the ``AutoOrientPreProcessor`` could not rotate it anymore::
 
     namespace App\EventListener;
 
@@ -114,7 +114,7 @@ A typical use case is stripping the metadata of the uploaded images: the ``ExifR
             file_put_contents($temporaryFile, $event->binary->getContent());
 
             try {
-                (new Process([$this->exiftoolBinary, '-all=', '-m', '-overwrite_original', $temporaryFile]))->mustRun();
+                (new Process([$this->exiftoolBinary, '-all=', '-tagsFromFile', '@', '-Orientation', '-m', '-overwrite_original', $temporaryFile]))->mustRun();
                 $event->binary = $event->binary->withContent(file_get_contents($temporaryFile));
             } finally {
                 unlink($temporaryFile);

@@ -28,6 +28,7 @@ use JoliCode\MediaBundle\PostProcessor\Mozjpeg;
 use JoliCode\MediaBundle\PostProcessor\Oxipng;
 use JoliCode\MediaBundle\PostProcessor\Pngquant;
 use JoliCode\MediaBundle\PostProcessor\PostProcessorContainer;
+use JoliCode\MediaBundle\PreProcessor\AutoOrientPreProcessor;
 use JoliCode\MediaBundle\PreProcessor\ExifRemovalPreProcessor;
 use JoliCode\MediaBundle\PreProcessor\HeifPreProcessor;
 use JoliCode\MediaBundle\Processor\Cwebp;
@@ -247,6 +248,12 @@ return static function (ContainerConfigurator $container): void {
         ->set('joli_media.mime_type_guesser.inner', FileBinaryMimeTypeGuesser::class)
 
         // pre processors
+        ->set(AutoOrientPreProcessor::class, AutoOrientPreProcessor::class)
+        ->args([
+            '$imagine' => abstract_arg('.joli_media.imagine.imagine'),
+            '$logger' => service('logger')->ignoreOnInvalid(),
+        ])
+
         ->set(ExifRemovalPreProcessor::class, ExifRemovalPreProcessor::class)
         ->args([
             '$exiftoolBinary' => param('joli_media.binary.exiftool'),

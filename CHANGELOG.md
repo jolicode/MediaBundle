@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- fix - Photos carrying an EXIF `Orientation` tag (e.g. portrait shots from phones) were processed on their side: the new `AutoOrientPreProcessor`, registered by default, now rotates them before any transformer runs, and the pixel dimensions reported for the originals account for the tag - see the [pre-processors documentation](doc/variations/pre-processors.rst). Variations generated before this fix stay as they are until they are regenerated (e.g. with `joli:media:convert --force`), and the cached pixel dimensions of the originals until the cache pool is cleared
+- improvement - The pre-processors registered by the bundle (`HeifPreProcessor`, `AutoOrientPreProcessor`) now always run before the ones defined in the configuration, through a `priority` on the `joli_media.pre_processor` tag
 - fix - In the Sylius bridge, the thumbnail displayed after an upload now links to the page of the media instead of the explore page of its path
 - improvement - Exploring a path that is a file now redirects to the page of this media, in the three admin bridges
 - feature - The `must_store_when_generating_url` setting can now be defined per variation, overriding the library-level `cache` setting - see the [variations documentation](doc/variations/variations.rst)
