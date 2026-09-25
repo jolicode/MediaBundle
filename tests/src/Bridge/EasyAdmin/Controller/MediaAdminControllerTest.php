@@ -128,12 +128,14 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertArrayHasKey('size', $response['files'][0]);
         $this->assertArrayHasKey('type', $response['files'][0]);
         $this->assertArrayHasKey('thumbnailUrl', $response['files'][0]);
+        $this->assertArrayHasKey('link', $response['files'][0]);
 
         $this->assertSame('circle-pattern.png', $response['files'][0]['name']);
         $this->assertSame('/media/original/circle-pattern.png', $response['files'][0]['url']);
         $this->assertSame(62563, $response['files'][0]['size']);
         $this->assertSame('image/png', $response['files'][0]['type']);
         $this->assertSame('/media/cache/joli-media-easy-admin/circle-pattern.png', $response['files'][0]['thumbnailUrl']);
+        $this->assertSame('http://localhost/admin/media/show/circle-pattern.png', $response['files'][0]['link']);
     }
 
     public function testViewMode(): void
@@ -182,6 +184,25 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertStringContainsString('active', (string) $listViewLink->attr('class'));
         $this->assertSelectorNotExists('.gallery-grid-item');
         $this->assertSelectorCount(3, '.gallery-list-item');
+    }
+
+    public function testExploringAFileRedirectsToItsShowPage(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/admin/media/explore/sub/folder/circle-pattern.png');
+        $this->assertResponseRedirects('http://localhost/admin/media/show/sub/folder/circle-pattern.png');
+
+        $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function testExploringAMissingDirectoryShowsAnEmptyFolder(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/explore/does-not-exist');
+        $this->assertResponseIsSuccessful();
+
+        $this->assertSelectorExists('.gallery');
+        $this->assertCount(0, $crawler->filter('ul.gallery-grid--folders .gallery-grid-item:not(.gallery-grid-item--back)'));
+        $this->assertCount(0, $crawler->filter('ul.gallery-grid--files .gallery-grid-item'));
     }
 
     public function testTheMediaLibraryRootRedirectsToTheExplorer(): void

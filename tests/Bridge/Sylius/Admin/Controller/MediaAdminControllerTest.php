@@ -388,12 +388,14 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertArrayHasKey('size', $response['files'][0]);
         $this->assertArrayHasKey('type', $response['files'][0]);
         $this->assertArrayHasKey('thumbnailUrl', $response['files'][0]);
+        $this->assertArrayHasKey('link', $response['files'][0]);
 
         $this->assertSame('circle-pattern.png', $response['files'][0]['name']);
         $this->assertSame('/media/original/circle-pattern.png', $response['files'][0]['url']);
         $this->assertSame(62563, $response['files'][0]['size']);
         $this->assertSame('image/png', $response['files'][0]['type']);
         $this->assertSame('/media/cache/joli-media-sylius-admin/circle-pattern.png', $response['files'][0]['thumbnailUrl']);
+        $this->assertSame('/sylius-admin/media/show/circle-pattern.png', $response['files'][0]['link']);
     }
 
     public function testUploadMediaOnSubDirectory(): void
@@ -435,12 +437,32 @@ final class MediaAdminControllerTest extends WebTestCase
         $this->assertArrayHasKey('size', $response['files'][0]);
         $this->assertArrayHasKey('type', $response['files'][0]);
         $this->assertArrayHasKey('thumbnailUrl', $response['files'][0]);
+        $this->assertArrayHasKey('link', $response['files'][0]);
 
         $this->assertSame('circle-pattern.png', $response['files'][0]['name']);
         $this->assertSame('/media/original/sub/circle-pattern.png', $response['files'][0]['url']);
         $this->assertSame(62563, $response['files'][0]['size']);
         $this->assertSame('image/png', $response['files'][0]['type']);
         $this->assertSame('/media/cache/joli-media-sylius-admin/sub/circle-pattern.png', $response['files'][0]['thumbnailUrl']);
+        $this->assertSame('/sylius-admin/media/show/sub/circle-pattern.png', $response['files'][0]['link']);
+    }
+
+    public function testExploringAFileRedirectsToItsShowPage(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore/sub/folder/circle-pattern.png');
+        $this->assertResponseRedirects('/sylius-admin/media/show/sub/folder/circle-pattern.png');
+
+        $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function testExploringAMissingDirectoryShowsAnEmptyFolder(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/sylius-admin/media/explore/does-not-exist');
+        $this->assertResponseIsSuccessful();
+
+        $this->assertSame(0, $this->getDirectoryCount($crawler));
+        $this->assertSame(0, $this->getMediaCount($crawler));
     }
 
     public function testMoveMediaFromRootToSubdirectory(): void
