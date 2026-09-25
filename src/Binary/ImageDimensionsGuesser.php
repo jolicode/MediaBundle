@@ -30,9 +30,18 @@ final class ImageDimensionsGuesser
             return false;
         }
 
+        [$width, $height] = $imageSize;
+
+        // a JPEG or TIFF rotated by its EXIF orientation is displayed with its dimensions swapped
+        if (\in_array($imageSize[2], [\IMAGETYPE_JPEG, \IMAGETYPE_TIFF_II, \IMAGETYPE_TIFF_MM], true)
+            && ExifOrientation::swapsDimensions(ExifOrientation::read($content))
+        ) {
+            [$width, $height] = [$height, $width];
+        }
+
         return [
-            'height' => $imageSize[1],
-            'width' => $imageSize[0],
+            'height' => $height,
+            'width' => $width,
         ];
     }
 }

@@ -15,6 +15,7 @@ use JoliCode\MediaBundle\Doctrine\Types;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
+use JoliCode\MediaBundle\PreProcessor\AutoOrientPreProcessor;
 use JoliCode\MediaBundle\PreProcessor\HeifPreProcessor;
 use JoliCode\MediaBundle\Processor\Imagine;
 use JoliCode\MediaBundle\Resolver\Resolver;
@@ -34,6 +35,14 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 class JoliMediaBundle extends AbstractBundle
 {
+    /**
+     * Imagine-based, registered by default: the HEIF conversion must run before the orientation.
+     */
+    private const PRE_PROCESSOR_PRIORITIES = [
+        HeifPreProcessor::class => 20,
+        AutoOrientPreProcessor::class => 10,
+    ];
+
     /**
      * Whether the "imagine" processor is enabled.
      */
@@ -123,9 +132,12 @@ class JoliMediaBundle extends AbstractBundle
         ;
 
         // pre-processors
-        if (!\array_key_exists(HeifPreProcessor::class, $config['pre_processors']) && $this->imagineProcessorEnabled) {
-            // the Heif pre-processor needs the Imagine service, which comes with the imagine processor
-            $config['pre_processors'] = [HeifPreProcessor::class => []] + $config['pre_processors'];
+        if ($this->imagineProcessorEnabled) {
+            foreach (array_keys(self::PRE_PROCESSOR_PRIORITIES) as $preProcessorClass) {
+                if (!\array_key_exists($preProcessorClass, $config['pre_processors'])) {
+                    $config['pre_processors'] = [$preProcessorClass => []] + $config['pre_processors'];
+                }
+            }
         }
 
         $this->createPreProcessorServices($container, $builder, $config['pre_processors']);
@@ -1141,15 +1153,17 @@ class JoliMediaBundle extends AbstractBundle
 
     private function createPreProcessorServices(ContainerConfigurator $container, ContainerBuilder $builder, array $preProcessorsConfig): void
     {
-        if (\array_key_exists(HeifPreProcessor::class, $preProcessorsConfig)) {
-            if (!$this->imagineProcessorEnabled) {
-                throw new \LogicException('The HeifPreProcessor requires the "imagine" processor to be enabled.');
-            }
+        foreach (array_keys(self::PRE_PROCESSOR_PRIORITIES) as $preProcessorClass) {
+            if (\array_key_exists($preProcessorClass, $preProcessorsConfig)) {
+                if (!$this->imagineProcessorEnabled) {
+                    throw new \LogicException(\sprintf('The %s requires the "imagine" processor to be enabled.', substr($preProcessorClass, strrpos($preProcessorClass, '\\') + 1)));
+                }
 
-            $container->services()
-                ->get(HeifPreProcessor::class)
-                ->arg('$imagine', service('.joli_media.imagine.imagine'))
-            ;
+                $container->services()
+                    ->get($preProcessorClass)
+                    ->arg('$imagine', service('.joli_media.imagine.imagine'))
+                ;
+            }
         }
 
         foreach ($preProcessorsConfig as $preProcessorClass => $preProcessorConfig) {
@@ -1158,7 +1172,10 @@ class JoliMediaBundle extends AbstractBundle
             if ($builder->hasDefinition($preProcessorClass)) {
                 $preProcessorService = $container->services()
                     ->get($preProcessorClass)
-                    ->tag('joli_media.pre_processor', ['name' => $preProcessorClass])
+                    ->tag('joli_media.pre_processor', [
+                        'name' => $preProcessorClass,
+                        'priority' => self::PRE_PROCESSOR_PRIORITIES[$preProcessorClass] ?? 0,
+                    ])
                 ;
 
                 if (null !== $processTimeout) {

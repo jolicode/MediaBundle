@@ -8,6 +8,9 @@ use JoliCode\MediaBundle\Processor\AbstractProcessCreator;
 
 abstract readonly class AbstractPreProcessor extends AbstractProcessCreator implements PreProcessorInterface
 {
+    // the processors re-encode the intermediate binaries: do not lose quality twice
+    protected const INTERMEDIATE_OUTPUT_OPTIONS = ['jpeg_quality' => 100];
+
     public function getDefaultOutputFormat(): ?Format
     {
         return null;
