@@ -53,7 +53,7 @@ class Media implements StorableInterface
         }
 
         $this->path = $path;
-        $this->storage = self::getLibraryContainer()->get($libraryName)->getOriginalStorage();
+        $this->storage = $this->getLibraryContainer()->get($libraryName)->getOriginalStorage();
         $this->binary = null;
         $this->stored = null;
         $this->variations = [];
@@ -246,7 +246,7 @@ class Media implements StorableInterface
         $this->stored = true;
     }
 
-    private static function getLibraryContainer(): LibraryContainer
+    private function getLibraryContainer(): LibraryContainer
     {
         if (!isset(self::$libraryContainerInitializer)) {
             throw new \LogicException('Library container initializer is not set.');

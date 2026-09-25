@@ -16,7 +16,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final readonly class Package implements PackageInterface
 {
     public const NAME = 'joli-media-easy-admin';
+
     public const CSS_FILE = 'joli-media-easy-admin.css';
+
     public const JS_FILE = 'joli-media-easy-admin.js';
 
     private PackageInterface $package;

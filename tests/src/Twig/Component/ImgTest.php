@@ -109,7 +109,7 @@ class ImgTest extends BaseTestCase
         );
         $crawler = new Crawler(\sprintf('<!DOCTYPE html><html><body>%s</body></html>', $rendered));
         $img = $crawler->filterXPath('//body/*')->first();
-        $html = preg_replace(['/(\n\s*)+/', '/\s+/'], ['', ' '], (string) $img->outerHtml());
+        $html = preg_replace(['/(\n\s*)+/', '/\s+/'], ['', ' '], $img->outerHtml());
 
         if ($expected !== $html) {
             echo "\n\n" . $html . "\n\n";
