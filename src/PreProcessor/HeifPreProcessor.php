@@ -32,6 +32,7 @@ readonly class HeifPreProcessor extends AbstractPreProcessor implements PreProce
         $image = $this->imagine->load($binary->getContent());
         $width = $image->getSize()->getWidth();
         $height = $image->getSize()->getHeight();
+        // a fresh canvas drops the HEIF metadata, orientation tag included
         $canvas = $this->imagine->create(
             new Box($width, $height),
         );
@@ -41,7 +42,7 @@ readonly class HeifPreProcessor extends AbstractPreProcessor implements PreProce
         return new Binary(
             'image/jpeg',
             Format::JPEG->value,
-            $canvas->__toString(),
+            $canvas->get(Format::JPEG->value, self::INTERMEDIATE_OUTPUT_OPTIONS),
         );
     }
 

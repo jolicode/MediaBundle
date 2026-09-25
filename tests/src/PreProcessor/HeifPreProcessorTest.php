@@ -25,6 +25,7 @@ class HeifPreProcessorTest extends BaseTestCase
         self::assertEquals('jpeg', $binary->getFormat());
         self::assertNotEmpty($binary->getContent());
         self::assertNotEquals($heifBinary->getContent(), $binary->getContent());
+        self::assertSame('image/jpeg', getimagesizefromstring($binary->getContent())['mime'] ?? null);
     }
 
     public function testConvert(): void

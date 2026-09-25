@@ -93,35 +93,35 @@ class ConverterTest extends BaseTestCase
         yield ['avif', null, 21960, 'image/avif'];
         yield ['jpeg', null, 34092, 'image/jpeg'];
         yield ['png', null, 24406, 'image/png'];
-        yield ['heif', null, 21070, 'image/jpeg'];
+        yield ['heif', null, 23542, 'image/jpeg'];
         yield ['tiff', null, 21072, 'image/jpeg'];
         yield ['webp', null, 4280, 'image/webp'];
 
         yield ['avif', 'jpeg', 34072, 'image/jpeg'];
         yield ['jpeg', 'jpeg', 34092, 'image/jpeg'];
         yield ['png', 'jpeg', 21072, 'image/jpeg'];
-        yield ['heif', 'jpeg', 21070, 'image/jpeg'];
+        yield ['heif', 'jpeg', 23542, 'image/jpeg'];
         yield ['tiff', 'jpeg', 21072, 'image/jpeg'];
         yield ['webp', 'jpeg', 21144, 'image/jpeg'];
 
         yield ['avif', 'png', 42562, 'image/png'];
         yield ['jpeg', 'png', 39179, 'image/png'];
         yield ['png', 'png', 24406, 'image/png'];
-        yield ['heif', 'png', 26977, 'image/png'];
+        yield ['heif', 'png', 27046, 'image/png'];
         yield ['tiff', 'png', 24513, 'image/png'];
         yield ['webp', 'png', 24244, 'image/png'];
 
         yield ['avif', 'webp', 21240, 'image/webp'];
         yield ['jpeg', 'webp', 7018, 'image/webp'];
         yield ['png', 'webp', 4368, 'image/webp'];
-        yield ['heif', 'webp', 7122, 'image/webp'];
+        yield ['heif', 'webp', 7092, 'image/webp'];
         yield ['tiff', 'webp', 7068, 'image/webp'];
         yield ['webp', 'webp', 4280, 'image/webp'];
 
         yield ['avif', 'avif', 21960, 'image/avif'];
         yield ['jpeg', 'avif', 20926, 'image/avif'];
         yield ['png', 'avif', 7826, 'image/avif'];
-        yield ['heif', 'avif', 7860, 'image/avif'];
+        yield ['heif', 'avif', 7906, 'image/avif'];
         yield ['tiff', 'avif', 7826, 'image/avif'];
         yield ['webp', 'avif', 7675, 'image/avif'];
     }
