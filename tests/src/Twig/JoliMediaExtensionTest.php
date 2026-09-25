@@ -92,6 +92,38 @@ class JoliMediaExtensionTest extends BaseTestCase
         self::assertTrue($this->isVariationStored('auto_generate', self::DIRECT_MEDIA, 'variation-standard'));
     }
 
+    public function testTheSrcsetFilterBuildsWidthDescriptorsFromAListOfVariations(): void
+    {
+        /** @var Environment $twig */
+        $twig = static::getContainer()->get('twig');
+
+        $srcset = $twig
+            ->createTemplate("{{ path|joli_media_srcset(['variation-standard', 'variation-large'], 'default') }}")
+            ->render(['path' => self::FILTER_MEDIA])
+        ;
+
+        self::assertSame(
+            '/media/cache/variation-standard/' . self::FILTER_MEDIA . ' 145w, /media/cache/variation-large/' . self::FILTER_MEDIA . ' 800w',
+            $srcset,
+        );
+    }
+
+    public function testTheSrcsetFilterKeepsTheDescriptorsItIsGiven(): void
+    {
+        /** @var Environment $twig */
+        $twig = static::getContainer()->get('twig');
+
+        $srcset = $twig
+            ->createTemplate("{{ path|joli_media_srcset({ '': 'variation-standard', '2x': 'variation-large' }, 'default') }}")
+            ->render(['path' => self::FILTER_MEDIA])
+        ;
+
+        self::assertSame(
+            '/media/cache/variation-standard/' . self::FILTER_MEDIA . ', /media/cache/variation-large/' . self::FILTER_MEDIA . ' 2x',
+            $srcset,
+        );
+    }
+
     protected static function getKernelClass(): string
     {
         return Kernel::class;

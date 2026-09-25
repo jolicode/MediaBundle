@@ -1,4 +1,11 @@
-{%- if this.webpAlternativeSource is not null -%}
+{%- if this.webpAlternativeSrcset is not empty -%}
+    <twig:joli:Source
+        srcset="{{ this.webpAlternativeSrcset }}"
+        sizes="{{ this.sizes }}"
+        media="{{ this.media.media }}"
+        skipAutoDimensions="{{ skipAutoDimensions }}"
+    />
+{% elseif this.webpAlternativeSource is not null -%}
     <twig:joli:Source
         variation="{{ this.webpAlternativeSource }}"
         media="{{ this.media.media }}"
@@ -10,12 +17,7 @@
     {{- attributes.defaults({ loading: 'lazy', decoding: 'async' }) }}
     {{- attributes.nested('img') }}
     {% if this.srcset is not empty -%}
-        srcset="
-            {%- for width, srcset in this.srcset %}
-                {{- (loop.first ? '' : ', ') -}}
-                {{- srcset }} {{ width }}w
-            {%- endfor -%}
-        "
+        srcset="{{ this.srcset }}"
     {% endif %}
     {% if this.sizes is not null -%}
         sizes="{{ this.sizes }}"

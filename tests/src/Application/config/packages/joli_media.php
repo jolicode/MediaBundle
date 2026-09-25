@@ -60,6 +60,26 @@ return static function (ContainerConfigurator $container): void {
                             ],
                         ],
                     ],
+                    'variation-retina' => [
+                        'pixel_ratios' => [1, 2],
+                        'transformers' => [
+                            'resize' => [
+                                'width' => 100,
+                                'height' => 100,
+                                'mode' => 'inside',
+                                'allow_upscale' => false,
+                            ],
+                        ],
+                    ],
+                    'variation-expanded' => [
+                        'transformers' => [
+                            'expand' => [
+                                'width' => 400,
+                                'height' => 400,
+                                'background_color' => '#ffffff',
+                            ],
+                        ],
+                    ],
                     // overrides the library-level "must_store_when_generating_url" setting
                     'variation-auto-stored' => [
                         'must_store_when_generating_url' => true,

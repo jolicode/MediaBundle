@@ -23,6 +23,11 @@ readonly class HeifPreProcessor extends AbstractPreProcessor implements PreProce
         return Format::JPEG;
     }
 
+    public function preservesPixelDimensions(): bool
+    {
+        return true;
+    }
+
     public function process(Binary $binary, MediaVariation $mediaVariation): Binary
     {
         if (!$this->supports($binary)) {

@@ -12,6 +12,7 @@ It proposes multiple features:
 - Twig components to output ``<img>`` and ``<picture>`` tags
 - `CLI commands <misc-features/commands.rst>`_ to generate and inspect media variations that are high quality yet lightweight
 - `Twig components <misc-features/twig-components.rst>`_ to display media using best practices
+- `srcset generation <misc-features/srcset.rst>`_, usable from the Twig components as well as from your own code
 - the ability to generate `URLs for media <misc-features/url-generation.rst>`_ and their `variations <variations/variations.rst>`_
 - `events <misc-features/events.rst>`_ to allow you to hook into the media processing pipeline
 - an `integration with Doctrine entities <misc-features/using-in-doctrine-entities.rst>`_ is provided, so you can easily manage media in your entities

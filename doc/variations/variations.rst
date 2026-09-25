@@ -82,7 +82,7 @@ This is an array of integers that defines the pixel ratios for which the variati
 
 For example, if you define a variation named "``thumbnail``" and set this option to ``[1, 2]``, it will duplicate the variation for pixel ratios 2x, in addition to the 1x version. Two variations will be available: "``thumbnail``" (for the 1x version) and "``thumbnail@2x``" (for the 2x version). You'll be able to explicitly request either variation. If the ``enable_auto_webp`` option is also enabled, the WebP versions will also be generated, resulting in four variations: "``thumbnail``", "``thumbnail@2x``", "``thumbnail_webp``" and "``thumbnail_webp@2x``".
 
-If you use the `twig:joli:Img <../misc-features/twig-components.rst>`_ or  `twig:joli:Picture <../misc-features/twig-components.rst>`_ component with this ``thumbnail`` variation, the generated HTML markup will include all the derivated variations, so that the correct pixel-ratio version is used by devices with higher pixel-density screens.
+If you use the `twig:joli:Img <../misc-features/twig-components.rst>`_ or  `twig:joli:Picture <../misc-features/twig-components.rst>`_ component with this ``thumbnail`` variation, the generated HTML markup will include all the derivated variations in a ``srcset`` attribute, so that the correct pixel-ratio version is used by devices with higher pixel-density screens. You do not have to name the derivated variations: they are found from the definition of the variation you asked for. Set the ``autoSrcset`` attribute of the component to ``false`` to opt out.
 
 If ``pixel_ratios`` is not defined in a variation, the value of the ``pixel_ratios`` option defined in the library configuration is used instead.
 

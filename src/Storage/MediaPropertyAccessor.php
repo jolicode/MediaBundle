@@ -12,6 +12,8 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class MediaPropertyAccessor
 {
+    use MissingFileCacheTrait;
+
     public function __construct(
         private readonly string $libraryName,
         private readonly Filesystem $filesystem,
@@ -34,7 +36,11 @@ class MediaPropertyAccessor
     {
         return $this->cache->get(
             $this->getCacheKey($path, 'mime_type'),
-            fn (ItemInterface $item): string => $this->guessMimeType($path),
+            function (ItemInterface $item) use ($path): string {
+                $this->expireEarlyWhenMissing($item, $path);
+
+                return $this->guessMimeType($path);
+            },
         );
     }
 
@@ -42,7 +48,11 @@ class MediaPropertyAccessor
     {
         return $this->cache->get(
             $this->getCacheKey($path, 'format'),
-            fn (ItemInterface $item): string => $this->guessFormat($path),
+            function (ItemInterface $item) use ($path): string {
+                $this->expireEarlyWhenMissing($item, $path);
+
+                return $this->guessFormat($path);
+            },
         );
     }
 
@@ -50,7 +60,11 @@ class MediaPropertyAccessor
     {
         return $this->cache->get(
             $this->getCacheKey($path, 'filesize'),
-            fn (ItemInterface $item): int => $this->guessFilesize($path)
+            function (ItemInterface $item) use ($path): int {
+                $this->expireEarlyWhenMissing($item, $path);
+
+                return $this->guessFilesize($path);
+            },
         );
     }
 
@@ -64,7 +78,11 @@ class MediaPropertyAccessor
             /**
              * @return false|array{height: int, width: int}
              */
-            fn (ItemInterface $item): array|false => $this->guessPixelDimensions($path)
+            function (ItemInterface $item) use ($path): array|false {
+                $this->expireEarlyWhenMissing($item, $path);
+
+                return $this->guessPixelDimensions($path);
+            },
         );
     }
 
@@ -78,7 +96,9 @@ class MediaPropertyAccessor
                 try {
                     return $this->filesystem->lastModified($path);
                 } catch (UnableToRetrieveMetadata) {
-                    return time();
+                    $item->expiresAfter(self::MISSING_FILE_EXPIRES_AFTER);
+
+                    return $this->getMissingFileTimestamp();
                 }
             },
         );

@@ -9,13 +9,21 @@ use JoliCode\MediaBundle\PreProcessor\PreProcessorInterface;
 
 class TestPreProcessor implements PreProcessorInterface
 {
-    public function __construct(private readonly ?Format $defaultOutputFormat = null, private readonly bool $shouldSupport = true)
-    {
+    public function __construct(
+        private readonly ?Format $defaultOutputFormat = null,
+        private readonly bool $shouldSupport = true,
+        private readonly bool $preservesPixelDimensions = false,
+    ) {
     }
 
     public function getDefaultOutputFormat(): ?Format
     {
         return $this->defaultOutputFormat;
+    }
+
+    public function preservesPixelDimensions(): bool
+    {
+        return $this->preservesPixelDimensions;
     }
 
     public function process(Binary $binary, MediaVariation $mediaVariation): Binary

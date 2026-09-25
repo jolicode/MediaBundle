@@ -25,6 +25,12 @@ readonly class AutoOrientPreProcessor extends AbstractPreProcessor implements Pr
     ) {
     }
 
+    public function preservesPixelDimensions(): bool
+    {
+        // the dimensions reported for the source already account for the orientation tag
+        return true;
+    }
+
     public function process(Binary $binary, MediaVariation $mediaVariation): Binary
     {
         if (!$this->supports($binary)) {

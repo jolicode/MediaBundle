@@ -7,7 +7,10 @@ use JoliCode\MediaBundle\Library\LibraryContainer;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Model\NullMedia;
+use JoliCode\MediaBundle\Model\Srcset;
 use JoliCode\MediaBundle\Resolver\Resolver;
+use JoliCode\MediaBundle\Srcset\SrcsetBuilder;
+use JoliCode\MediaBundle\Transformation\DimensionPredictor;
 use JoliCode\MediaBundle\Variation\Variation;
 use League\Flysystem\UnableToReadFile;
 use Psr\Log\LoggerInterface;
@@ -31,17 +34,22 @@ class Img
     public ?string $webpAlternativeSource = null;
 
     /**
-     * @var array<int, string> key is the width, value is the URL
+     * @var array<string, string> key is the descriptor, value is the WebP variation name
      */
-    public array $srcset = [];
+    public array $webpAlternativeSrcset = [];
+
+    public Srcset $srcset;
 
     public ?string $sizes = null;
 
     public function __construct(
         private readonly Resolver $resolver,
         private readonly LibraryContainer $libraries,
+        private readonly SrcsetBuilder $srcsetBuilder,
+        private readonly DimensionPredictor $dimensionPredictor,
         private readonly ?LoggerInterface $logger = null,
     ) {
+        $this->srcset = new Srcset();
     }
 
     /**
@@ -58,14 +66,18 @@ class Img
         ?string $height = null,
         bool $skipAutoDimensions = false,
         bool $allowAppendWebpAlternativeSource = false,
+        bool $autoSrcset = true,
     ): void {
+        // an explicit list of variations is used as-is
+        $expandPixelRatios = $autoSrcset && !\is_array($variation);
+
         if (null === $variation) {
-            $srcset = [];
+            $srcsetVariations = [];
         } elseif (\is_array($variation)) {
-            $srcset = $variation;
-            $variation = ([] !== $srcset) ? $srcset[0] : null;
+            $srcsetVariations = $variation;
+            $variation = ([] !== $srcsetVariations) ? $srcsetVariations[0] : null;
         } else {
-            $srcset = [$variation];
+            $srcsetVariations = [$variation];
         }
 
         if ($media instanceof NullMedia) {
@@ -161,82 +173,110 @@ class Img
                 null !== $library ? \sprintf(' in the library "%s"', $library) : '',
                 null !== $variation ? \sprintf(' with variation "%s"', $variation) : '',
             ));
-        } else {
-            $binary = $media->getBinary();
+        } elseif (!str_starts_with($media->getMimeType(), 'image/')) {
+            $this->logger?->warning(\sprintf(
+                'The media "%s"%s is not an image',
+                $path,
+                null !== $library ? \sprintf(' in the library "%s"', $library) : '',
+            ));
 
-            if (!str_starts_with($binary->getMimeType(), 'image/')) {
-                $this->logger?->warning(\sprintf(
-                    'The media "%s"%s is not an image',
-                    $path,
-                    null !== $library ? \sprintf(' in the library "%s"', $library) : '',
-                ));
-
-                return;
-            }
+            return;
         }
 
         if (null !== $width || null !== $height) {
             $this->width = null !== $width ? (int) $width : null;
             $this->height = null !== $height ? (int) $height : null;
-        } elseif ($media->isStored() && !$skipAutoDimensions) {
-            $dimensions = $binary->getPixelDimensions();
+        } elseif (!$skipAutoDimensions) {
+            $dimensions = $this->getDimensions($media);
 
-            if (false !== $dimensions) {
+            if (null !== $dimensions) {
                 $this->width = $dimensions['width'];
                 $this->height = $dimensions['height'];
             }
         }
 
-        if (\count($srcset) > 1) {
-            $library = $this->media->getLibrary()->getName();
-
-            foreach ($srcset as $variationName) {
-                $variationMedia = $this->resolver->resolveMediaVariation($path, $variationName, $library);
-
-                if (!$variationMedia instanceof MediaVariation) {
-                    $this->logger?->warning(\sprintf(
-                        'The media variation "%s" for media "%s" could not be resolved in the library "%s"',
-                        $variationName,
-                        $path,
-                        $library,
-                    ));
-
-                    continue;
-                }
-
-                $url = $variationMedia->getUrl();
-
-                if (!$variationMedia->isStored()) {
-                    continue;
-                }
-
-                $binary = $variationMedia->getBinary();
-                $dimensions = $binary->getPixelDimensions();
-
-                if (false !== $dimensions) {
-                    $this->srcset[$dimensions['width']] = $url;
-                }
-            }
+        if ($expandPixelRatios && null !== $variation) {
+            $srcsetVariations = $this->expandPixelRatioVariations($media, $variation);
         }
 
-        ksort($this->srcset, \SORT_NUMERIC);
+        if (\count($srcsetVariations) > 1) {
+            $this->srcset = $this->srcsetBuilder->build(
+                $media instanceof MediaVariation ? $media->getMedia() : $media,
+                $srcsetVariations,
+            );
+        }
 
         if (\count($this->srcset) > 1) {
-            if (null === $sizes) {
-                // if no sizes are provided, assume the image will be displayed at its original width
-                if (null !== $this->width) {
-                    $this->sizes = $this->width . 'px';
-                } else {
-                    $minWidth = min(array_keys($this->srcset));
-                    $this->sizes = $minWidth . 'px';
-                }
-            } else {
-                $this->sizes = $sizes;
+            // if no sizes are provided, assume the image will be displayed at its original width
+            $this->sizes = $sizes ?? ($this->width ?? $this->srcset->getSmallestWidth()) . 'px';
+
+            if (null !== $this->webpAlternativeSource) {
+                $this->webpAlternativeSrcset = $this->getWebpAlternativeSrcset();
             }
         } else {
             // only one variation, simply output its URL
-            $this->srcset = [];
+            $this->srcset = new Srcset();
             $this->sizes = $sizes;
         }
+    }
+
+    /**
+     * @return array{height: int, width: int}|null
+     */
+    private function getDimensions(Media|MediaVariation $media): ?array
+    {
+        if ($media->isStored()) {
+            $dimensions = $media->getPixelDimensions();
+
+            return false === $dimensions ? null : $dimensions;
+        }
+
+        if ($media instanceof MediaVariation) {
+            // the variation is not generated yet, compute its dimensions from its definition
+            return $this->dimensionPredictor->predict($media);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function getWebpAlternativeSrcset(): array
+    {
+        $webpAlternativeSrcset = [];
+
+        foreach ($this->srcset as $candidate) {
+            $webpAlternativeVariation = $candidate->mediaVariation->getVariation()->getWebpAlternativeVariation();
+
+            if (!$webpAlternativeVariation instanceof Variation) {
+                // keep the single WebP source
+                return [];
+            }
+
+            $webpAlternativeSrcset[$candidate->descriptor] = $webpAlternativeVariation->getName();
+        }
+
+        return $webpAlternativeSrcset;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function expandPixelRatioVariations(Media|MediaVariation $media, string $variationName): array
+    {
+        $variationContainer = $media->getLibrary()->getVariationContainer();
+
+        if (!$variationContainer->has($variationName)) {
+            return [$variationName];
+        }
+
+        $pixelRatioVariations = $variationContainer->get($variationName)->getPixelRatioVariations();
+
+        if ([] === $pixelRatioVariations) {
+            return [$variationName];
+        }
+
+        return array_map(static fn (Variation $variation): string => $variation->getName(), $pixelRatioVariations);
     }
 }

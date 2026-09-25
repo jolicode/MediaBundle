@@ -38,12 +38,14 @@ use JoliCode\MediaBundle\Processor\ProcessorContainer;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Routing\RouteChecker;
 use JoliCode\MediaBundle\Routing\RouteLoader;
+use JoliCode\MediaBundle\Srcset\SrcsetBuilder;
 use JoliCode\MediaBundle\Storage\CacheStorage;
 use JoliCode\MediaBundle\Storage\MediaPropertyAccessor;
 use JoliCode\MediaBundle\Storage\MediaVariationPropertyAccessor;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Storage\Strategy\FolderStorageStrategy;
 use JoliCode\MediaBundle\Storage\Strategy\IdentityStorageStrategy;
+use JoliCode\MediaBundle\Transformation\DimensionPredictor;
 use JoliCode\MediaBundle\Transformation\TransformationProcessor;
 use JoliCode\MediaBundle\Transformer\Crop;
 use JoliCode\MediaBundle\Transformer\Expand;
@@ -413,6 +415,13 @@ return static function (ContainerConfigurator $container): void {
         ])
 
         // transformation
+        ->set('joli_media.dimension_predictor', DimensionPredictor::class)
+        ->args([
+            '$logger' => service('logger')->ignoreOnInvalid(),
+        ])
+        ->public()
+        ->alias(DimensionPredictor::class, 'joli_media.dimension_predictor')
+
         ->set('joli_media.transformation_processor', TransformationProcessor::class)
         ->args([
             '$processorContainer' => service('joli_media.processor_container'),
@@ -481,10 +490,21 @@ return static function (ContainerConfigurator $container): void {
             '$allowDownscale' => abstract_arg('allowDownscale'),
         ])
 
+        // srcset
+        ->set('joli_media.srcset_builder', SrcsetBuilder::class)
+        ->args([
+            '$resolver' => service('joli_media.resolver'),
+            '$dimensionPredictor' => service('joli_media.dimension_predictor'),
+            '$logger' => service('logger')->ignoreOnInvalid(),
+        ])
+        ->public()
+        ->alias(SrcsetBuilder::class, 'joli_media.srcset_builder')
+
         // twig
         ->set('joli_media.twig_extension', JoliMediaExtension::class)
         ->args([
-            service('joli_media.resolver'),
+            '$resolver' => service('joli_media.resolver'),
+            '$srcsetBuilder' => service('joli_media.srcset_builder'),
         ])
         ->tag('twig.extension')
 
@@ -492,6 +512,8 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             '$resolver' => service('joli_media.resolver'),
             '$libraries' => service('joli_media.library_container'),
+            '$srcsetBuilder' => service('joli_media.srcset_builder'),
+            '$dimensionPredictor' => service('joli_media.dimension_predictor'),
             '$logger' => service('logger')->ignoreOnInvalid(),
         ])
         ->tag('twig.component')
@@ -505,7 +527,7 @@ return static function (ContainerConfigurator $container): void {
 
         ->set('joli_media.twig.component.source', Source::class)
         ->args([
-            '$resolver' => service('joli_media.resolver'),
+            '$srcsetBuilder' => service('joli_media.srcset_builder'),
             '$logger' => service('logger')->ignoreOnInvalid(),
         ])
         ->tag('twig.component')

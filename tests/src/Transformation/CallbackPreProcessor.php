@@ -9,13 +9,20 @@ use JoliCode\MediaBundle\PreProcessor\PreProcessorInterface;
 
 class CallbackPreProcessor implements PreProcessorInterface
 {
-    public function __construct(private readonly \Closure $callback)
-    {
+    public function __construct(
+        private readonly \Closure $callback,
+        private readonly bool $preservesPixelDimensions = false,
+    ) {
     }
 
     public function getDefaultOutputFormat(): ?Format
     {
         return null;
+    }
+
+    public function preservesPixelDimensions(): bool
+    {
+        return $this->preservesPixelDimensions;
     }
 
     public function process(Binary $binary, MediaVariation $mediaVariation): Binary
