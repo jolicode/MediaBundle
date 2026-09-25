@@ -170,6 +170,7 @@ class MediaVariationTest extends BaseTestCase
         $library = $this->createLibrary(true, temporaryUrlGenerator: new RecordingTemporaryUrlGenerator());
         $media = new Media('test.gif', $library->getOriginalStorage(), self::getFixtureBinary('gif'));
         $media->store();
+
         $mediaVariation = $media->createVariation('thumbnail');
 
         $this->expectException(MediaVariationNotStoredException::class);
