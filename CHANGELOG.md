@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- feature - `Media`, `MediaVariation`, `OriginalStorage` and `CacheStorage` now expose a `getTemporaryUrl()` method, generating pre-signed URLs on the Flysystem adapters that support them, with a per-call expiration (one hour by default) - see the [URL generation documentation](doc/misc-features/url-generation.rst)
+- feature - Add `CacheStorage::getFilesystem()`, for parity with `OriginalStorage::getFilesystem()`
+- bc break - The bundle no longer forces a `public` visibility when writing media and variation files: the visibility configured on the Flysystem storage now applies. Declare `visibility: public` on your Flysystem storage if you relied on the forced visibility
 - feature - The `srcset` generation moved out of the Twig components into a `SrcsetBuilder` service, so that it can be used from anywhere - an API Platform normalizer, a JSON endpoint, or your own templating - along with a `joli_media_srcset` Twig filter and the `Srcset` / `SrcsetCandidate` models - see the [srcset generation documentation](doc/misc-features/srcset.rst)
 - feature - The `joli:Img` component now builds the `srcset` of a variation configured with several `pixel_ratios` out of its name alone, instead of requiring the derivated variations to be listed by hand - set its new `autoSrcset` attribute to `false` to opt out. Within a `joli:Picture` component, the WebP alternative `source` tag carries the matching `srcset` - see the [Twig components documentation](doc/misc-features/twig-components.rst)
 - feature - The pixel dimensions of a variation which has not been generated yet are now computed from the variation definition, instead of being left out: the `srcset` carries its width descriptors, and the `img` and `source` tags their `width` and `height`, even on a cold cache - see the [srcset generation documentation](doc/misc-features/srcset.rst)

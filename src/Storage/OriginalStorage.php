@@ -24,10 +24,10 @@ use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Storage\Strategy\StorageStrategyInterface;
-use League\Flysystem\Config;
 use League\Flysystem\DirectoryListing;
 use League\Flysystem\Filesystem;
 use League\Flysystem\StorageAttributes;
+use League\Flysystem\UnableToGenerateTemporaryUrl;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -111,10 +111,7 @@ class OriginalStorage
         }
 
         $this->getLibrary()->deleteAllVariations($path);
-        $this->filesystem->write($path, $binary->getContent(), [
-            Config::OPTION_VISIBILITY => 'public',
-            Config::OPTION_DIRECTORY_VISIBILITY => 'public',
-        ]);
+        $this->filesystem->write($path, $binary->getContent());
         $this->mediaPropertyAccessor->clearCache($path);
         $media = new Media($path, $this, $binary);
 
@@ -246,6 +243,26 @@ class OriginalStorage
     public function getStrategy(): StorageStrategyInterface
     {
         return $this->strategy;
+    }
+
+    /**
+     * Generates a pre-signed URL pointing directly at the storage backend, valid
+     * until the given expiration date (one hour by default).
+     *
+     * @param array<string, mixed> $config extra options forwarded to the filesystem adapter
+     *
+     * @throws UnableToGenerateTemporaryUrl when unsupported by the configured filesystem adapter
+     */
+    public function getTemporaryUrl(
+        string $path,
+        \DateTimeInterface|\DateInterval|null $expiresAt = null,
+        array $config = [],
+    ): string {
+        return $this->filesystem->temporaryUrl(
+            $this->strategy->getPath(Resolver::normalizePath($path)),
+            TemporaryUrlExpiration::resolve($expiresAt),
+            $config,
+        );
     }
 
     public function getTrashPath(): string

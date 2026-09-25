@@ -11,6 +11,7 @@ use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
+use JoliCode\MediaBundle\Tests\Storage\RecordingTemporaryUrlGenerator;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class MediaTest extends BaseTestCase
@@ -31,6 +32,18 @@ class MediaTest extends BaseTestCase
     public function testGetPath(): void
     {
         self::assertEquals('test.jpg', $this->media->getPath());
+    }
+
+    public function testGetTemporaryUrl(): void
+    {
+        $temporaryUrlGenerator = new RecordingTemporaryUrlGenerator();
+        $storage = $this->createOriginalStorage('default', $this->createFilesystem($temporaryUrlGenerator), '/media', $this->urlGenerator);
+        $media = new Media('folder/test.jpg', $storage, $this->binary);
+
+        $url = $media->getTemporaryUrl();
+
+        self::assertSame('folder/test.jpg', $temporaryUrlGenerator->calls[0]['path']);
+        self::assertStringStartsWith('https://signed.example.com/folder/test.jpg?expires=', $url);
     }
 
     public function testGetFilename(): void
