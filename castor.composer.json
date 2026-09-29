@@ -1,5 +1,5 @@
 {
     "require": {
-        "castor-php/docker": "^0.7.1"
+        "castor-php/docker": "^0.8.1"
     }
 }

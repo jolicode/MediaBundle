@@ -34,7 +34,8 @@ shells, please refer to your shell documentation.
 The stack is described in PHP, in [`.castor/demo.php`](../.castor/demo.php),
 and the Docker Compose file is generated from it (`compose.generated.yaml`).
 All the tasks of the plugin are exposed under the `demo:` namespace
-(`demo:docker:*`, `demo:postgres:*`, `demo:worktree:*`).
+(`demo:docker:*`, `demo:postgres:*`, ...), except the `worktree:*` ones,
+which act on the repository rather than on the demo stack.
 It provides:
 
  - PostgreSQL 16
