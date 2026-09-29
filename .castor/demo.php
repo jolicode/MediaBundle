@@ -39,7 +39,7 @@ function register_services(RegisterServiceEvent $event): void
             ->withVersion('8.4')
             ->withMode(PhpMode::Fpm)
             ->withDockerfile(\dirname(__DIR__) . '/demo/Dockerfile')
-            ->withDatabaseService($postgres)
+            ->link($postgres)
             ->withDomain('jolimediabundle-demo.test')
             ->addExtension('imagick')
             ->withPhpStanVersion('^2.2.6')
@@ -78,7 +78,7 @@ function prefix_docker_tasks(FunctionsResolvedEvent $event): void
         $file = $descriptor->function->getFileName();
         $namespace = $descriptor->taskAttribute->namespace;
 
-        if (false === $file || !str_starts_with($file, $pluginDirectory) || null === $namespace || str_starts_with($namespace, 'demo')) {
+        if (false === $file || !str_starts_with($file, $pluginDirectory) || null === $namespace || str_starts_with($namespace, 'demo') || str_starts_with($namespace, 'worktree')) {
             continue;
         }
 
