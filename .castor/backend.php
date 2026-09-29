@@ -15,7 +15,7 @@ function install(
     io()->title('Installing backend dependencies');
 
     if (null !== $easyAdminVersion) {
-        docker_run(\sprintf('composer require --dev easycorp/easyadmin-bundle %s --no-update', $easyAdminVersion), phpVersion: $phpVersion);
+        docker_run(\sprintf('composer require --dev easycorp/easyadmin-bundle %s --no-update', escapeshellarg($easyAdminVersion)), phpVersion: $phpVersion);
     }
 
     docker_run('composer install', phpVersion: $phpVersion);

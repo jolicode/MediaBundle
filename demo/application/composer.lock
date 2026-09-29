@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "834492c371c189cc4177f5ad5fe92a1d",
+    "content-hash": "e2a5879157c78081dc01f8d371a99991",
     "packages": [
         {
             "name": "babdev/pagerfanta-bundle",
@@ -1295,16 +1295,16 @@
         },
         {
             "name": "easycorp/easyadmin-bundle",
-            "version": "v5.4.0",
+            "version": "v5.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EasyCorp/EasyAdminBundle.git",
-                "reference": "ab2a7a1ced04b724accc2fc828b9a86df5668187"
+                "reference": "e02a2b6b38630e53b40a6342b6efbe34b8dda3e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/ab2a7a1ced04b724accc2fc828b9a86df5668187",
-                "reference": "ab2a7a1ced04b724accc2fc828b9a86df5668187",
+                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/e02a2b6b38630e53b40a6342b6efbe34b8dda3e3",
+                "reference": "e02a2b6b38630e53b40a6342b6efbe34b8dda3e3",
                 "shasum": ""
             },
             "require": {
@@ -1393,7 +1393,7 @@
             ],
             "support": {
                 "issues": "https://github.com/EasyCorp/EasyAdminBundle/issues",
-                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v5.4.0"
+                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v5.6.0"
             },
             "funding": [
                 {
@@ -1401,7 +1401,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-07-30T06:03:38+00:00"
+            "time": "2026-09-17T19:03:00+00:00"
         },
         {
             "name": "fakerphp/faker",
@@ -10641,5 +10641,5 @@
         "ext-iconv": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
