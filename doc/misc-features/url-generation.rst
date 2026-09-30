@@ -71,7 +71,9 @@ Unlike ``getUrl()``, which points at a route handled by the ``MediaController``:
 
 .. tip::
 
-    ``MediaVariation::getTemporaryUrl()`` checks the existence of the variation file on the storage, which adds a round-trip to the storage backend. For hot endpoints, pre-generate the variation files with the ``joli:media:convert`` command.
+    ``MediaVariation::getTemporaryUrl()`` checks the existence of the variation file on the storage. Once a variation file is known to exist, this is cached like its other properties (for one day), so that signing its URL does not reach the storage backend anymore; a missing variation file is not cached, and is checked again on the next call. For hot endpoints, pre-generate the variation files with the ``joli:media:convert`` command.
+
+    The bundle clears this cache when it deletes a variation file. A variation file deleted outside of the bundle (by a lifecycle rule of the bucket, for instance) is still considered as stored until this cache expires.
 
 .. warning::
 

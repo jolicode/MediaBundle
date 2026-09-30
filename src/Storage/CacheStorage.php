@@ -162,6 +162,11 @@ class CacheStorage
         return $this->filesystem->has($this->strategy->getPath($path, $variation));
     }
 
+    public function isStored(string $path, Variation $variation): bool
+    {
+        return $this->mediaVariationPropertyAccessor->isStored($path, $variation);
+    }
+
     /**
      * @return string[]
      */

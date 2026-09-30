@@ -145,7 +145,7 @@ class MediaVariation implements StorableInterface
     public function isStored(): bool
     {
         if (null === $this->stored) {
-            $this->stored = $this->getStorage()->has(
+            $this->stored = $this->getStorage()->isStored(
                 $this->media->getPath(),
                 $this->variation,
             );
