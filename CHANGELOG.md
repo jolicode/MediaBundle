@@ -40,6 +40,8 @@
 - fix - A variation that cannot be processed now reports which processors are registered, or which ones failed and why, instead of "no processor worked for this variation"
 - fix - Disabling the `imagine` processor no longer breaks the container compilation
 - improvement - The demo application now uses `castor-php/docker` for its development environment
+- fix - Moving a folder, and deleting a folder when a `POST_DELETE_FOLDER` listener is registered, failed on S3-compatible storages, which cannot move a directory in one operation: the files are now moved one by one. Moving a folder into itself or moving the root folder is refused before anything is written
+- fix - The recursive folder listing now includes, on S3-compatible storages, the folders that only exist through the files they contain
 
 ## [0.9.0] - 2026-08-18
 
