@@ -221,12 +221,7 @@ class BaseTestCase extends WebTestCase
     ): OriginalStorage {
         // every storage of a test case shares the same dispatcher, as they would in an application
         $this->eventDispatcher ??= new EventDispatcher();
-        $cache = $this->createMock(CacheInterface::class);
-        $cache->method('get')->willReturnCallback(function (string $key, callable $callback) {
-            $item = $this->createMock(ItemInterface::class);
-
-            return $callback($item);
-        });
+        $cache = $this->createCache();
         $mimeTypeGuesser = new MimeTypeGuesser(
             new MimeTypes(),
             new FileBinaryMimeTypeGuesser()
@@ -258,12 +253,7 @@ class BaseTestCase extends WebTestCase
         UrlGeneratorInterface $urlGenerator,
         bool $mustStoreWhenGeneratingUrl = false,
     ): CacheStorage {
-        $cache = $this->createMock(CacheInterface::class);
-        $cache->method('get')->willReturnCallback(function (string $key, callable $callback) {
-            $item = $this->createMock(ItemInterface::class);
-
-            return $callback($item);
-        });
+        $cache = $this->createCache();
         $mimeTypeGuesser = new MimeTypeGuesser(
             new MimeTypes(),
             new FileBinaryMimeTypeGuesser()
@@ -286,6 +276,18 @@ class BaseTestCase extends WebTestCase
             $mimeTypeGuesser,
             $mediaVariationPropertyAccessor,
         );
+    }
+
+    protected function createCache(): CacheInterface
+    {
+        $cache = $this->createMock(CacheInterface::class);
+        $cache->method('get')->willReturnCallback(function (string $key, callable $callback) {
+            $item = $this->createMock(ItemInterface::class);
+
+            return $callback($item);
+        });
+
+        return $cache;
     }
 
     /**

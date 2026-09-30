@@ -2,7 +2,10 @@
 
 namespace JoliCode\MediaBundle\Tests\Storage\S3;
 
+use Aws\CommandInterface;
+use Aws\Middleware;
 use Aws\S3\S3Client;
+use GuzzleHttp\Client;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\Filesystem;
@@ -16,6 +19,11 @@ abstract class S3TestCase extends BaseTestCase
     protected S3Client $s3Client;
 
     protected string $bucket;
+
+    /**
+     * @var list<string>
+     */
+    protected array $commands = [];
 
     private int $filesystemCount = 0;
 
@@ -37,6 +45,9 @@ abstract class S3TestCase extends BaseTestCase
                 'secret' => getenv('S3_SECRET_KEY') ?: '',
             ],
         ]);
+        $this->s3Client->getHandlerList()->appendSign(Middleware::tap(function (CommandInterface $command): void {
+            $this->commands[] = $command->getName();
+        }));
         $this->bucket = 'joli-media-' . bin2hex(random_bytes(6));
         $this->createBucket($this->bucket);
 
@@ -69,6 +80,20 @@ abstract class S3TestCase extends BaseTestCase
     {
         $this->s3Client->createBucket(['Bucket' => $bucket]);
         $this->s3Client->waitUntil('BucketExists', ['Bucket' => $bucket]);
+    }
+
+    /**
+     * @return array{status: int, contentType: string, body: string}
+     */
+    protected function fetch(string $url): array
+    {
+        $response = (new Client(['http_errors' => false]))->get($url);
+
+        return [
+            'status' => $response->getStatusCode(),
+            'contentType' => $response->getHeaderLine('Content-Type'),
+            'body' => (string) $response->getBody(),
+        ];
     }
 
     private function deleteBucket(string $bucket): void
