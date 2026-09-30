@@ -67,6 +67,7 @@ This requires a Flysystem adapter able to generate temporary URLs (the AWS S3 an
 Unlike ``getUrl()``, which points at a route handled by the ``MediaController``:
 
 - there is no ``$referenceType`` parameter: the URL host comes from the storage backend and the signature, not from the Symfony router;
+- the signed path is the storage path of the file, so the ``url_generator.path`` prefix of the library has no effect on it;
 - ``MediaVariation::getTemporaryUrl()`` always makes sure the variation file exists before signing its URL, whatever the value of the ``must_store_when_generating_url`` setting: a pre-signed URL bypasses the ``MediaController``, so a missing variation file could not be generated on the fly when the URL is requested. The variation file is converted and stored when missing, and a ``JoliCode\MediaBundle\Exception\MediaVariationNotStoredException`` is thrown when it cannot be generated - a conversion failure is not swallowed, as it would produce a signed URL to a missing object.
 
 .. tip::

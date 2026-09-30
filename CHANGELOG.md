@@ -4,7 +4,7 @@
 
 - feature - `Media`, `MediaVariation`, `OriginalStorage` and `CacheStorage` now expose a `getTemporaryUrl()` method, generating pre-signed URLs on the Flysystem adapters that support them, with a per-call expiration (one hour by default) - see the [URL generation documentation](doc/misc-features/url-generation.rst)
 - feature - Add `CacheStorage::getFilesystem()`, for parity with `OriginalStorage::getFilesystem()`
-- bc break - The bundle no longer forces a `public` visibility when writing media and variation files: the visibility configured on the Flysystem storage now applies. Declare `visibility: public` on your Flysystem storage if you relied on the forced visibility
+- bc break - The bundle no longer forces a `public` visibility when writing media and variation files: the visibility configured on the Flysystem storage now applies. On Amazon S3, the forced visibility made every file public through a `public-read` ACL, and failed on the buckets where ACLs are disabled. Declare `visibility: public` on your Flysystem storage if you relied on the forced visibility
 - improvement - The existence of a variation file is cached once it is known to be stored, so that rendering a variation, or signing its temporary URL, no longer reaches the storage backend on every call
 - bc break - `league/flysystem` 3.10 or newer is now required
 - feature - The `srcset` generation moved out of the Twig components into a `SrcsetBuilder` service, so that it can be used from anywhere - an API Platform normalizer, a JSON endpoint, or your own templating - along with a `joli_media_srcset` Twig filter and the `Srcset` / `SrcsetCandidate` models - see the [srcset generation documentation](doc/misc-features/srcset.rst)
