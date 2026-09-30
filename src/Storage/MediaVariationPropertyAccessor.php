@@ -33,6 +33,20 @@ class MediaVariationPropertyAccessor
         $this->cache->delete($this->getCacheKey($path, $variation, 'mime_type'));
         $this->cache->delete($this->getCacheKey($path, $variation, 'pixel_dimensions'));
         $this->cache->delete($this->getLastModifiedCacheKey($path, $variation));
+        $this->cache->delete($this->getStoredCacheKey($path, $variation));
+    }
+
+    public function isStored(string $path, Variation $variation): bool
+    {
+        return $this->cache->get(
+            $this->getStoredCacheKey($path, $variation),
+            function (ItemInterface $item, bool &$save = true) use ($path, $variation): bool {
+                $item->expiresAfter($this->expiresAfter);
+
+                // a missing variation may be generated at any time, so only its presence is cached
+                return $save = $this->filesystem->has($this->strategy->getPath($path, $variation));
+            },
+        );
     }
 
     public function getMimeType(string $path, Variation $variation): string
@@ -120,6 +134,16 @@ class MediaVariationPropertyAccessor
     {
         return CacheKeySanitizer::sanitize(\sprintf(
             'joli_media_property_%s_%s_%s_lastModified',
+            $this->libraryName,
+            $variation->getName(),
+            Resolver::normalizePath($path),
+        ));
+    }
+
+    private function getStoredCacheKey(string $path, Variation $variation): string
+    {
+        return CacheKeySanitizer::sanitize(\sprintf(
+            'joli_media_property_%s_%s_%s_stored',
             $this->libraryName,
             $variation->getName(),
             Resolver::normalizePath($path),
