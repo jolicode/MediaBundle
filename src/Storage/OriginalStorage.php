@@ -28,6 +28,7 @@ use League\Flysystem\Config;
 use League\Flysystem\DirectoryListing;
 use League\Flysystem\Filesystem;
 use League\Flysystem\StorageAttributes;
+use League\Flysystem\UnableToMoveFile;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -153,14 +154,14 @@ class OriginalStorage
             $trashDirectory = \sprintf('%s/%s', $this->trashPath, uniqid());
             $this->filesystem->createDirectory($trashDirectory);
             $trashPath = \sprintf('%s/%s', $trashDirectory, $path);
-            $this->filesystem->move($path, $trashPath);
+            $this->moveDirectory($path, $trashPath);
 
             try {
                 $event = new PostDeleteFolderEvent($this, $path);
                 $this->dispatcher->dispatch($event, MediaEvents::POST_DELETE_FOLDER);
             } catch (\Throwable $e) {
                 // if an exception is thrown, we rollback the deletion
-                $this->filesystem->move($trashPath, $path);
+                $this->moveDirectory($trashPath, $path);
                 $this->filesystem->deleteDirectory($trashDirectory);
 
                 throw $e;
@@ -305,11 +306,15 @@ class OriginalStorage
         ?callable $filter = null,
         ?callable $sort = null,
     ): array {
-        $listing = $this->list($path, $contains, 'dir', $recursive)
-            ->sortByPath()
-            ->map(static fn (StorageAttributes $attributes): string => $attributes->path())
-            ->toArray()
-        ;
+        if ($recursive) {
+            $listing = $this->listDirectoriesRecursively($path, $contains);
+        } else {
+            $listing = $this->list($path, $contains, 'dir', false)
+                ->sortByPath()
+                ->map(static fn (StorageAttributes $attributes): string => $attributes->path())
+                ->toArray()
+            ;
+        }
 
         if (null !== $filter) {
             $listing = array_values(array_filter($listing, $filter));
@@ -464,7 +469,7 @@ class OriginalStorage
             $this->dispatcher->dispatch($event, MediaEvents::PRE_MOVE_FOLDER);
         }
 
-        $this->filesystem->move($from, $to);
+        $this->moveDirectory($from, $to);
 
         if ($this->dispatcher->hasListeners(MediaEvents::POST_MOVE_FOLDER)) {
             try {
@@ -479,7 +484,7 @@ class OriginalStorage
                 }
             } catch (\Throwable $e) {
                 // if an exception is thrown, we rollback the move
-                $this->filesystem->move($to, $from);
+                $this->moveDirectory($to, $from);
 
                 throw $e;
             }
@@ -611,6 +616,39 @@ class OriginalStorage
     }
 
     /**
+     * A bucket only lists the folders created explicitly, the others are derived from the file paths.
+     *
+     * @return string[]
+     */
+    private function listDirectoriesRecursively(?string $path, ?string $contains): array
+    {
+        $base = null !== $path && '.' !== $path ? $this->strategy->getPath($path) : '';
+        $directories = [];
+
+        foreach ($this->list($path) as $attributes) {
+            $directory = $attributes->isDir() ? $attributes->path() : \dirname((string) $attributes->path());
+
+            while ('.' !== $directory && '' !== $directory && $directory !== $base) {
+                $directories[$directory] = true;
+                $directory = \dirname((string) $directory);
+            }
+        }
+
+        $directories = array_map(strval(...), array_keys($directories));
+
+        if (null !== $contains) {
+            $directories = array_values(array_filter($directories, static fn (string $directory): bool => (bool) preg_match(
+                '/' . preg_quote($contains, '/') . '/',
+                $directory,
+            )));
+        }
+
+        usort($directories, static fn (string $a, string $b): int => $a <=> $b);
+
+        return $directories;
+    }
+
+    /**
      * The trash is hidden from the public listings, but the folder deletion has to
      * iterate over the medias it has just moved into it.
      *
@@ -622,5 +660,29 @@ class OriginalStorage
             ->map(fn (StorageAttributes $attributes): Media => new Media(Resolver::normalizePath($attributes->path()), $this))
             ->toArray()
         ;
+    }
+
+    /**
+     * A bucket has no directory to rename, so the files are moved one by one.
+     */
+    private function moveDirectory(string $from, string $to): void
+    {
+        if ('' === $from || str_starts_with($to . '/', $from . '/')) {
+            throw UnableToMoveFile::fromLocationTo($from, $to);
+        }
+
+        $this->filesystem->createDirectory($to);
+
+        foreach ($this->filesystem->listContents($from, true)->toArray() as $attributes) {
+            $destination = $to . substr($attributes->path(), \strlen($from));
+
+            if ($attributes->isDir()) {
+                $this->filesystem->createDirectory($destination);
+            } else {
+                $this->filesystem->move($attributes->path(), $destination);
+            }
+        }
+
+        $this->filesystem->deleteDirectory($from);
     }
 }

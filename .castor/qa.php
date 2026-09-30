@@ -8,8 +8,12 @@ use Castor\Attribute\AsTask;
 use function Castor\context;
 use function Castor\exit_code;
 use function Castor\io;
-use function tests\docker_exit_code;
-use function tests\docker_run;
+use function infra\docker_exit_code;
+use function infra\docker_run;
+use function infra\s3_start;
+
+use const infra\S3_ENVIRONMENT;
+use const infra\S3_NETWORK;
 
 #[AsTask(description: 'Runs all QA tasks', aliases: ['qa'])]
 function all(): int
@@ -102,7 +106,37 @@ function phpunit(?string $phpVersion = null, #[AsRawTokens] array $rawTokens = [
 
     docker_run('composer update -n --prefer-dist --optimize-autoloader', null, $phpVersion);
 
-    return docker_exit_code('vendor/bin/phpunit ' . implode(' ', $filteredTokens), null, $phpVersion);
+    if (!runs_s3_group($filteredTokens)) {
+        return docker_exit_code('vendor/bin/phpunit ' . implode(' ', $filteredTokens), null, $phpVersion);
+    }
+
+    s3_start($phpVersion);
+
+    return docker_exit_code('vendor/bin/phpunit ' . implode(' ', $filteredTokens), null, $phpVersion, network: S3_NETWORK, environment: S3_ENVIRONMENT);
+}
+
+/**
+ * @param string[] $tokens
+ */
+function runs_s3_group(array $tokens): bool
+{
+    $groups = ['--group' => [], '--exclude-group' => []];
+
+    foreach ($tokens as $i => $token) {
+        foreach (array_keys($groups) as $option) {
+            if ($option === $token && isset($tokens[$i + 1])) {
+                array_push($groups[$option], ...explode(',', $tokens[$i + 1]));
+            } elseif (str_starts_with($token, $option . '=')) {
+                array_push($groups[$option], ...explode(',', substr($token, \strlen($option) + 1)));
+            }
+        }
+    }
+
+    if (\in_array('s3', $groups['--exclude-group'], true)) {
+        return false;
+    }
+
+    return [] === $groups['--group'] || \in_array('s3', $groups['--group'], true);
 }
 
 #[AsTask(description: 'Run the rector upgrade')]
