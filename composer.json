@@ -48,6 +48,7 @@
         "ext-imagick": "*",
         "doctrine/doctrine-fixtures-bundle": "^4.1",
         "easycorp/easyadmin-bundle": "^4.26 || ^5.0",
+        "league/flysystem-aws-s3-v3": "^3",
         "league/flysystem-bundle": "^3.4",
         "league/flysystem-memory": "^3.0",
         "phpunit/phpunit": "^11",
