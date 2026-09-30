@@ -6,6 +6,7 @@ use Aws\S3\S3Client;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\Filesystem;
+use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
 
 /**
  * Runs the storages against a real S3-compatible server, started by "castor tests:s3".
@@ -51,10 +52,17 @@ abstract class S3TestCase extends BaseTestCase
         parent::tearDown();
     }
 
-    protected function createFilesystem(): Filesystem
+    /**
+     * @param array<string, mixed> $config
+     */
+    protected function createFilesystem(?TemporaryUrlGenerator $temporaryUrlGenerator = null, array $config = []): Filesystem
     {
         // every filesystem gets its own prefix in the bucket, as distinct libraries would
-        return new Filesystem(new AwsS3V3Adapter($this->s3Client, $this->bucket, 'fs' . ++$this->filesystemCount));
+        return new Filesystem(
+            new AwsS3V3Adapter($this->s3Client, $this->bucket, 'fs' . ++$this->filesystemCount),
+            $config,
+            temporaryUrlGenerator: $temporaryUrlGenerator,
+        );
     }
 
     protected function createBucket(string $bucket): void
