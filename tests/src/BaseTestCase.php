@@ -252,6 +252,7 @@ class BaseTestCase extends WebTestCase
         string $urlPath,
         UrlGeneratorInterface $urlGenerator,
         bool $mustStoreWhenGeneratingUrl = false,
+        bool $storeOnCreate = false,
     ): CacheStorage {
         $cache = $this->createCache();
         $mimeTypeGuesser = new MimeTypeGuesser(
@@ -275,6 +276,7 @@ class BaseTestCase extends WebTestCase
             $urlGenerator,
             $mimeTypeGuesser,
             $mediaVariationPropertyAccessor,
+            $storeOnCreate,
         );
     }
 
