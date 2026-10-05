@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- feature - Add `Resolver::isPathProcessable()`, telling from the extension of a path alone whether the media can be processed, without reaching the storage backend like `Resolver::isMediaProcessable()` does - see the [URL generation documentation](doc/misc-features/url-generation.rst)
 - feature - `Media`, `MediaVariation`, `OriginalStorage` and `CacheStorage` now expose a `getTemporaryUrl()` method, generating pre-signed URLs on the Flysystem adapters that support them, with a per-call expiration (one hour by default) - see the [URL generation documentation](doc/misc-features/url-generation.rst)
 - feature - Add `CacheStorage::getFilesystem()`, for parity with `OriginalStorage::getFilesystem()`
 - bc break - The bundle no longer forces a `public` visibility when writing media and variation files: the visibility configured on the Flysystem storage now applies. On Amazon S3, the forced visibility made every file public through a `public-read` ACL, and failed on the buckets where ACLs are disabled. Declare `visibility: public` on your Flysystem storage if you relied on the forced visibility

@@ -71,6 +71,22 @@ readonly class Resolver
         return !$media instanceof NullMedia && $this->processorContainer->canProcessInputFormat($media->getFormat());
     }
 
+    /**
+     * Tells whether the media stored at the given path can be processed,
+     * based on the extension of the path alone.
+     *
+     * Unlike isMediaProcessable(), this never reaches the storage backend, so
+     * that it can be called for every media of a large collection - for
+     * instance to decide whether to sign the URLs of its variations. The
+     * extension is trusted: a file whose extension does not match its
+     * content gets the wrong answer, use isMediaProcessable() when that
+     * matters.
+     */
+    public function isPathProcessable(string $path): bool
+    {
+        return $this->processorContainer->canProcessInputFormat(pathinfo($path, \PATHINFO_EXTENSION));
+    }
+
     public static function normalizePath(string $path): string
     {
         return (string) preg_replace(
