@@ -34,6 +34,19 @@ There are few chances that you need to instanciate the ``Media`` or ``MediaVaria
         $media = $resolver->resolve('example-image.png');
         $mediaVariation = $resolver->resolve('example-image.png', null, 'variation_name');
 
+Knowing whether a media has variations
+--------------------------------------
+
+Only the media that a processor can read get variations: a PDF or an SVG file, for instance, has none, and a variation URL generated for it would point at a file that is never generated. The ``Resolver`` tells whether a media can be processed::
+
+    // reads the format of the media, which may reach the storage backend
+    $resolver->isMediaProcessable($media);
+
+    // relies on the extension of the path alone, and never reaches the storage backend
+    $resolver->isPathProcessable('example-image.png');
+
+``isPathProcessable()`` is meant for the places where the storage backend should not be queried for every media, such as an API endpoint listing many media along with the URLs of their variations. It trusts the extension of the path: when a file may have an extension that does not match its content, prefer ``isMediaProcessable()``.
+
 Generating the variation file along with its URL
 ------------------------------------------------
 
