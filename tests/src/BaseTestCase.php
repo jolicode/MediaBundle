@@ -23,6 +23,7 @@ use JoliCode\MediaBundle\Variation\Variation;
 use JoliCode\MediaBundle\Variation\VariationContainer;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -199,9 +200,16 @@ class BaseTestCase extends WebTestCase
         return $content;
     }
 
-    protected function createFilesystem(): Filesystem
+    /**
+     * @param array<string, mixed> $config
+     */
+    protected function createFilesystem(?TemporaryUrlGenerator $temporaryUrlGenerator = null, array $config = []): Filesystem
     {
-        return new Filesystem(new InMemoryFilesystemAdapter());
+        return new Filesystem(
+            new InMemoryFilesystemAdapter(),
+            $config,
+            temporaryUrlGenerator: $temporaryUrlGenerator,
+        );
     }
 
     protected function createOriginalStorage(
@@ -213,12 +221,7 @@ class BaseTestCase extends WebTestCase
     ): OriginalStorage {
         // every storage of a test case shares the same dispatcher, as they would in an application
         $this->eventDispatcher ??= new EventDispatcher();
-        $cache = $this->createMock(CacheInterface::class);
-        $cache->method('get')->willReturnCallback(function (string $key, callable $callback) {
-            $item = $this->createMock(ItemInterface::class);
-
-            return $callback($item);
-        });
+        $cache = $this->createCache();
         $mimeTypeGuesser = new MimeTypeGuesser(
             new MimeTypes(),
             new FileBinaryMimeTypeGuesser()
@@ -250,12 +253,7 @@ class BaseTestCase extends WebTestCase
         UrlGeneratorInterface $urlGenerator,
         bool $mustStoreWhenGeneratingUrl = false,
     ): CacheStorage {
-        $cache = $this->createMock(CacheInterface::class);
-        $cache->method('get')->willReturnCallback(function (string $key, callable $callback) {
-            $item = $this->createMock(ItemInterface::class);
-
-            return $callback($item);
-        });
+        $cache = $this->createCache();
         $mimeTypeGuesser = new MimeTypeGuesser(
             new MimeTypes(),
             new FileBinaryMimeTypeGuesser()
@@ -278,6 +276,18 @@ class BaseTestCase extends WebTestCase
             $mimeTypeGuesser,
             $mediaVariationPropertyAccessor,
         );
+    }
+
+    protected function createCache(): CacheInterface
+    {
+        $cache = $this->createMock(CacheInterface::class);
+        $cache->method('get')->willReturnCallback(function (string $key, callable $callback) {
+            $item = $this->createMock(ItemInterface::class);
+
+            return $callback($item);
+        });
+
+        return $cache;
     }
 
     /**
