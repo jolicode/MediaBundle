@@ -76,6 +76,13 @@ class NullMedia extends Media
         throw new MediaNotResolvedException('Cannot get storage from a NullMedia', $this);
     }
 
+    public function getTemporaryUrl(
+        \DateTimeInterface|\DateInterval|null $expiresAt = null,
+        array $config = [],
+    ): string {
+        throw new MediaNotResolvedException('Cannot get temporary URL from a NullMedia', $this);
+    }
+
     public function getUrl(
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH,
     ): string {

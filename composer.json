@@ -16,7 +16,7 @@
         "ext-iconv": "*",
         "ext-mbstring": "*",
         "imagine/imagine": "^1.5",
-        "league/flysystem": "^3",
+        "league/flysystem": "^3.10",
         "league/flysystem-read-only": "^3",
         "symfony/asset": "^7.0 || ^8.0",
         "symfony/cache": "^7.0 || ^8.0",
