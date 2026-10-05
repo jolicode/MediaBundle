@@ -328,6 +328,10 @@ class JoliMediaBundle extends AbstractBundle
                     ->defaultFalse()
                     ->info('If true, variation files will be generated, if missing, when their URL is generated.')
                 ->end()
+                ->booleanNode('store_on_create')
+                    ->defaultFalse()
+                    ->info('If true, all the variation files of a media are generated and stored when the media is created or moved, so that they never have to be generated on the fly.')
+                ->end()
                 ->arrayNode('url_generator')
                     ->children()
                         ->scalarNode('path')
@@ -1300,6 +1304,7 @@ class JoliMediaBundle extends AbstractBundle
             ->arg('$strategy', service(sprintf('.joli_media.storage.strategy.%s', $libraryConfig['cache']['url_generator']['strategy'])))
             ->arg('$urlPath', $libraryConfig['cache']['url_generator']['path'])
             ->arg('$mustStoreWhenGeneratingUrl', $libraryConfig['cache']['must_store_when_generating_url'])
+            ->arg('$storeOnCreate', $libraryConfig['cache']['store_on_create'])
             ->arg('$mediaVariationPropertyAccessor', service($mediaVariationPropertyAccessorServiceId))
         ;
 

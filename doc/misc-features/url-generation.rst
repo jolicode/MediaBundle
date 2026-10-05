@@ -92,6 +92,35 @@ Pre-signed URLs are mostly useful on private buckets. The bundle writes the medi
                 visibility: private
                 directory_visibility: private
 
+Generating the variation files on creation
+------------------------------------------
+
+Generating variation files lazily suits a local filesystem, where checking whether a file exists is cheap, and where the application serves the files itself, so that it can generate a missing one when it is requested. Neither holds on a bucket (Amazon S3, MinIO, etc.):
+
+- each existence check is a request to the storage backend, so a page or an API response listing many media would send one per variation;
+- the variations are often served by the storage backend itself (pre-signed URLs, a CDN), without going through the application and its ``MediaController``, so a missing variation file is never generated.
+
+Enable the ``store_on_create`` setting of the library's ``cache`` configuration to generate and store all the variations of a media as soon as it is created:
+
+.. code-block:: yaml
+
+    # config/packages/joli_media.yaml
+    joli_media:
+        libraries:
+            default:
+                cache:
+                    flysystem: default.cache.storage
+                    store_on_create: true
+
+With this setting:
+
+- every variation that can be applied to the media (see the `voters <../variations/variation-voters.rst>`_) is generated, including the pixel-ratio variations and the automatic WebP alternatives. A media that no processor can read (a PDF, an SVG) is stored without variations;
+- the variations are generated again at the new path when a media is moved with ``OriginalStorage::move()``, as the variations of its previous path are deleted. Moving a folder does not generate them: run the ``joli:media:convert`` command afterwards;
+- the variations are generated synchronously, without checking whether they already exist: creating a media takes longer, but does not send any existence check to the storage backend;
+- a conversion failure is not swallowed: the exception is thrown from ``createMedia()`` (the original file is stored nevertheless) or from ``move()`` (the move is rolled back).
+
+The setting only applies to the media created or moved after it was enabled. Generate the variations of the existing media, and those of variations added later to the configuration, with the ``joli:media:convert`` command.
+
 Twig extension
 --------------
 
