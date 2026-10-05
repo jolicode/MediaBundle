@@ -5,17 +5,22 @@ namespace JoliCode\MediaBundle\Event\Listener;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Event\PostCreateMediaEvent;
 use JoliCode\MediaBundle\Event\PostMoveMediaEvent;
+use JoliCode\MediaBundle\Message\StoreVariations;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Storage\OriginalStorage;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Generates and stores all the variations of a media when it is created or
- * moved, in the libraries where the cache.store_on_create setting is enabled.
+ * moved, in the libraries where the cache.store_on_create setting is enabled:
+ * synchronously, or through a Messenger bus when the store_on_create_message_bus
+ * setting names one.
  */
 readonly class StoreVariationsEventListener
 {
     public function __construct(
         private Converter $converter,
+        private ?MessageBusInterface $messageBus = null,
     ) {
     }
 
@@ -34,6 +39,12 @@ readonly class StoreVariationsEventListener
         $library = $originalStorage->getLibrary();
 
         if (!$library->getCacheStorage()->mustStoreOnCreate()) {
+            return;
+        }
+
+        if (null !== $this->messageBus) {
+            $this->messageBus->dispatch(new StoreVariations($library->getName(), $media instanceof Media ? $media->getPath() : $media));
+
             return;
         }
 

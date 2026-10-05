@@ -23,6 +23,7 @@ use JoliCode\MediaBundle\Inspector\ProcessingChainInspector;
 use JoliCode\MediaBundle\Inspector\TransformationDataHolder;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
+use JoliCode\MediaBundle\Message\StoreVariationsHandler;
 use JoliCode\MediaBundle\PostProcessor\Gifsicle as GifsiclePostProcessor;
 use JoliCode\MediaBundle\PostProcessor\Jpegoptim;
 use JoliCode\MediaBundle\PostProcessor\Mozjpeg;
@@ -237,6 +238,11 @@ return static function (ContainerConfigurator $container): void {
             'event' => MediaEvents::POST_MOVE_MEDIA,
             'method' => 'onMediaPostMove',
         ])
+        ->set('joli_media.message_handler.store_variations', StoreVariationsHandler::class)
+        ->args([
+            service('joli_media.converter'),
+        ])
+        ->tag('messenger.message_handler')
 
         // library
         ->set('joli_media.library_container', LibraryContainer::class)

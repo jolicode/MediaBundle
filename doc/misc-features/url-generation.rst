@@ -116,10 +116,41 @@ With this setting:
 
 - every variation that can be applied to the media (see the `voters <../variations/variation-voters.rst>`_) is generated, including the pixel-ratio variations and the automatic WebP alternatives. A media that no processor can read (a PDF, an SVG) is stored without variations;
 - the variations are generated again at the new path when a media is moved with ``OriginalStorage::move()``, as the variations of its previous path are deleted. Moving a folder does not generate them: run the ``joli:media:convert`` command afterwards;
-- the variations are generated synchronously, without checking whether they already exist: creating a media takes longer, but does not send any existence check to the storage backend;
-- a conversion failure is not swallowed: the exception is thrown from ``createMedia()`` (the original file is stored nevertheless) or from ``move()`` (the move is rolled back).
+- the variations are generated without checking whether they already exist, so that it does not send any existence check to the storage backend;
+- by default, they are generated synchronously: creating a media takes longer, and a conversion failure is not swallowed - the exception is thrown from ``createMedia()`` (the original file is stored nevertheless) or from ``move()`` (the move is rolled back).
 
 The setting only applies to the media created or moved after it was enabled. Generate the variations of the existing media, and those of variations added later to the configuration, with the ``joli:media:convert`` command.
+
+Generating them in the background
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To keep the creation of a media fast, the generation can be handed over to `Symfony Messenger <https://symfony.com/doc/current/messenger.html>`_. Name the bus to dispatch it to in the ``store_on_create_message_bus`` setting:
+
+.. code-block:: yaml
+
+    # config/packages/joli_media.yaml
+    joli_media:
+        store_on_create_message_bus: messenger.default_bus
+
+A ``JoliCode\MediaBundle\Message\StoreVariations`` message is then dispatched for each created or moved media, instead of generating its variations right away. As with any message, Messenger handles it synchronously unless it is routed to a transport - route it to an asynchronous one to generate the variations in a worker:
+
+.. code-block:: yaml
+
+    # config/packages/messenger.yaml
+    framework:
+        messenger:
+            transports:
+                async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            routing:
+                JoliCode\MediaBundle\Message\StoreVariations: async
+
+The setting is checked when the container is compiled: it fails if the Messenger component is not installed, or if the service is not a Messenger bus.
+
+When the variations are generated in the background:
+
+- they do not exist until the worker has handled the message - a URL that bypasses the ``MediaController`` (a pre-signed URL, a CDN) points at a missing file in the meantime;
+- a conversion failure follows the retry strategy of the transport, instead of being thrown from ``createMedia()`` or ``move()``;
+- a media deleted or moved before its message is handled is skipped - a move dispatches a message of its own for the new path.
 
 Twig extension
 --------------
