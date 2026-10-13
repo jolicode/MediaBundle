@@ -7,20 +7,17 @@ use Sylius\Bundle\GridBundle\Builder\Action\Action;
 use Sylius\Bundle\GridBundle\Builder\Action\DeleteAction;
 use Sylius\Bundle\GridBundle\Builder\Action\ShowAction;
 use Sylius\Bundle\GridBundle\Builder\Action\UpdateAction;
-use Sylius\Bundle\GridBundle\Builder\ActionGroup\ItemActionGroup;
-use Sylius\Bundle\GridBundle\Builder\ActionGroup\MainActionGroup;
 use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
 use Sylius\Bundle\GridBundle\Builder\Filter\StringFilter;
-use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
-use Sylius\Bundle\GridBundle\Grid\AbstractGrid;
 use Sylius\Component\Grid\Attribute\AsGrid;
+use Sylius\Component\Grid\Builder\GridBuilderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsGrid(
     name: 'joli_media_sylius_admin_media',
     provider: 'joli_media_sylius_admin.grid_provider.media',
 )]
-final class MediaGrid extends AbstractGrid
+final class MediaGrid
 {
     public function __construct(
         private readonly Config $config,
@@ -61,7 +58,7 @@ final class MediaGrid extends AbstractGrid
                 TwigField::create('pixelDimensions', '@JoliMediaSylius/admin/media/grid/field/dimensions.html.twig')
                     ->setLabel($this->trans('media.dimensions')),
             )
-            ->addActionGroup(MainActionGroup::create(
+            ->withMainActions(
                 Action::create('delete_directory', 'custom')
                     ->setLabel($this->trans('action.delete_directory'))
                     ->setIcon('tabler:pencil')
@@ -81,8 +78,8 @@ final class MediaGrid extends AbstractGrid
                 Action::create('add_media', 'custom')
                     ->setLabel($this->trans('media.add'))
                     ->setTemplate('@JoliMediaSylius/admin/media/grid/action/add_media.html.twig'),
-            ))
-            ->addActionGroup(ItemActionGroup::create(
+            )
+            ->withItemActions(
                 ShowAction::create()
                     ->setTemplate('@JoliMediaSylius/admin/media/grid/action/show.html.twig'),
                 UpdateAction::create()
@@ -90,7 +87,7 @@ final class MediaGrid extends AbstractGrid
                     ->setLabel($this->trans('action.rename')),
                 DeleteAction::create()
                     ->setTemplate('@JoliMediaSylius/admin/media/grid/action/delete.html.twig'),
-            ))
+            )
         ;
     }
 
