@@ -25,6 +25,7 @@ class CacheStorage
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MimeTypeGuesser $mimeTypeGuesser,
         private readonly MediaVariationPropertyAccessor $mediaVariationPropertyAccessor,
+        private readonly bool $storeOnCreate = false,
     ) {
     }
 
@@ -248,6 +249,16 @@ class CacheStorage
             $mediaVariation->getVariation(),
         );
         $this->filesystem->write($path, $mediaVariation->getBinary()->getContent());
+    }
+
+    /**
+     * Whether all the variations of a media are generated and stored when it
+     * is created or moved (cache.store_on_create setting), so that they exist
+     * without having to check for them.
+     */
+    public function mustStoreOnCreate(): bool
+    {
+        return $this->storeOnCreate;
     }
 
     public function mustStoreWhenGeneratingUrl(MediaVariation $mediaVariation): bool

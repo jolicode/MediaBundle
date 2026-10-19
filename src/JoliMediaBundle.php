@@ -9,6 +9,7 @@ use Imagine\Gmagick\Imagine as GmagickImagine;
 use Imagine\Imagick\Imagine as ImagickImagine;
 use JoliCode\MediaBundle\DependencyInjection\Compiler\CollectorPass;
 use JoliCode\MediaBundle\DependencyInjection\Compiler\DoctrinePass;
+use JoliCode\MediaBundle\DependencyInjection\Compiler\MessageBusPass;
 use JoliCode\MediaBundle\Doctrine\Type\MediaLongType;
 use JoliCode\MediaBundle\Doctrine\Type\MediaType;
 use JoliCode\MediaBundle\Doctrine\Types;
@@ -71,6 +72,7 @@ class JoliMediaBundle extends AbstractBundle
 
         $container->addCompilerPass(new CollectorPass());
         $container->addCompilerPass(new DoctrinePass());
+        $container->addCompilerPass(new MessageBusPass());
     }
 
     public function configure(DefinitionConfigurator $definition): void
@@ -84,6 +86,10 @@ class JoliMediaBundle extends AbstractBundle
                     ->min(0)
                     ->defaultValue(60.0)
                     ->info('Default timeout, in seconds, of the external binary processes created by the processors, pre-processors and post-processors. Use 0 to disable the timeout.')
+                ->end()
+                ->scalarNode('store_on_create_message_bus')
+                    ->defaultNull()
+                    ->info('The id of a Messenger bus (e.g. "messenger.default_bus") to which the generation of the variations is dispatched, in the libraries where cache.store_on_create is enabled. When null, the variations are generated synchronously.')
                 ->end()
                 ->append($this->addLibrariesNode())
                 ->append($this->addPreProcessorsNode())
@@ -118,6 +124,12 @@ class JoliMediaBundle extends AbstractBundle
         $builder->setParameter('joli_media.binary.pngquant', '%env(JOLI_MEDIA_PNGQUANT_BINARY)%');
 
         $builder->setParameter('joli_media.process_timeout', $config['process_timeout']);
+
+        if (null !== $config['store_on_create_message_bus']) {
+            $container->services()->get('joli_media.event_listener.store_variations')
+                ->arg('$messageBus', service($config['store_on_create_message_bus']))
+            ;
+        }
 
         $this->imagineProcessorEnabled = isset($config['processors']['imagine']) && $config['processors']['imagine']['options']['enabled'];
 
@@ -327,6 +339,10 @@ class JoliMediaBundle extends AbstractBundle
                 ->booleanNode('must_store_when_generating_url')
                     ->defaultFalse()
                     ->info('If true, variation files will be generated, if missing, when their URL is generated.')
+                ->end()
+                ->booleanNode('store_on_create')
+                    ->defaultFalse()
+                    ->info('If true, all the variation files of a media are generated and stored when the media is created or moved, so that they never have to be generated on the fly.')
                 ->end()
                 ->arrayNode('url_generator')
                     ->children()
@@ -1300,6 +1316,7 @@ class JoliMediaBundle extends AbstractBundle
             ->arg('$strategy', service(sprintf('.joli_media.storage.strategy.%s', $libraryConfig['cache']['url_generator']['strategy'])))
             ->arg('$urlPath', $libraryConfig['cache']['url_generator']['path'])
             ->arg('$mustStoreWhenGeneratingUrl', $libraryConfig['cache']['must_store_when_generating_url'])
+            ->arg('$storeOnCreate', $libraryConfig['cache']['store_on_create'])
             ->arg('$mediaVariationPropertyAccessor', service($mediaVariationPropertyAccessorServiceId))
         ;
 

@@ -16,12 +16,14 @@ use JoliCode\MediaBundle\Event\Listener\DeleteFolderEventListener;
 use JoliCode\MediaBundle\Event\Listener\DeleteMediaEventListener;
 use JoliCode\MediaBundle\Event\Listener\MoveFolderEventListener;
 use JoliCode\MediaBundle\Event\Listener\MoveMediaEventListener;
+use JoliCode\MediaBundle\Event\Listener\StoreVariationsEventListener;
 use JoliCode\MediaBundle\Event\MediaEvents;
 use JoliCode\MediaBundle\Inspector\DataCollector;
 use JoliCode\MediaBundle\Inspector\ProcessingChainInspector;
 use JoliCode\MediaBundle\Inspector\TransformationDataHolder;
 use JoliCode\MediaBundle\Library\Library;
 use JoliCode\MediaBundle\Library\LibraryContainer;
+use JoliCode\MediaBundle\Message\StoreVariationsHandler;
 use JoliCode\MediaBundle\PostProcessor\Gifsicle as GifsiclePostProcessor;
 use JoliCode\MediaBundle\PostProcessor\Jpegoptim;
 use JoliCode\MediaBundle\PostProcessor\Mozjpeg;
@@ -224,6 +226,23 @@ return static function (ContainerConfigurator $container): void {
             'event' => MediaEvents::POST_MOVE_MEDIA,
             'method' => 'onMediaPostMove',
         ])
+        ->set('joli_media.event_listener.store_variations', StoreVariationsEventListener::class)
+        ->args([
+            service('joli_media.converter'),
+        ])
+        ->tag('kernel.event_listener', [
+            'event' => MediaEvents::POST_CREATE_MEDIA,
+            'method' => 'onMediaPostCreate',
+        ])
+        ->tag('kernel.event_listener', [
+            'event' => MediaEvents::POST_MOVE_MEDIA,
+            'method' => 'onMediaPostMove',
+        ])
+        ->set('joli_media.message_handler.store_variations', StoreVariationsHandler::class)
+        ->args([
+            service('joli_media.converter'),
+        ])
+        ->tag('messenger.message_handler')
 
         // library
         ->set('joli_media.library_container', LibraryContainer::class)
