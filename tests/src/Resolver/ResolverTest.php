@@ -27,6 +27,30 @@ class ResolverTest extends BaseTestCase
         self::assertTrue($this->resolver->isMediaProcessable($media));
     }
 
+    #[DataProvider('provideProcessablePathCases')]
+    public function testIsPathProcessable(string $path, bool $expected): void
+    {
+        self::assertSame($expected, $this->resolver->isPathProcessable($path));
+    }
+
+    public static function provideProcessablePathCases(): \Generator
+    {
+        yield 'jpeg' => ['folder/test.jpeg', true];
+        yield 'jpg alias' => ['folder/test.jpg', true];
+        yield 'png' => ['test.png', true];
+        yield 'uppercase extension' => ['test.PNG', true];
+        yield 'pdf' => ['folder/document.pdf', false];
+        yield 'svg' => ['logo.svg', false];
+        yield 'no extension' => ['folder/test', false];
+        yield 'dot in folder name only' => ['folder.png/test', false];
+    }
+
+    public function testIsPathProcessableDoesNotReachTheStorage(): void
+    {
+        self::assertTrue($this->resolver->isPathProcessable('missing.jpg'));
+        self::assertFalse($this->originalFilesystem->has('missing.jpg'));
+    }
+
     #[DataProvider('providePathNormalizationCases')]
     public function testPathNormalization(string $input, string $expected): void
     {
