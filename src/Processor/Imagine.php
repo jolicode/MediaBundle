@@ -26,6 +26,7 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
         private ImagineInterface $imagine,
         private array $options = [],
         private ?LoggerInterface $logger = null,
+        private bool $rasterizeSvg = false,
     ) {
     }
 
@@ -44,7 +45,13 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
      */
     public function getProcessableInputFormats(): array
     {
-        return [Format::AVIF, Format::GIF, Format::HEIF, Format::JPEG, Format::PNG, Format::TIFF, Format::WEBP];
+        $formats = [Format::AVIF, Format::GIF, Format::HEIF, Format::JPEG, Format::PNG, Format::TIFF, Format::WEBP];
+
+        if ($this->rasterizeSvg) {
+            $formats[] = Format::SVG;
+        }
+
+        return $formats;
     }
 
     /**
@@ -66,8 +73,16 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
                     'original size' => $binary->getContentSize(),
                     'transformation' => $transformation,
                 ]);
-                $image = $this->imagine->load($binary->getContent());
-                $image = $transformation->getAsImagineCallback()($image);
+                $sourceScale = 1.0;
+
+                if (Format::SVG->value === $binary->getFormat()) {
+                    [$content, $sourceScale] = $this->renderSvg($binary, $transformation);
+                    $image = $this->imagine->load($content);
+                } else {
+                    $image = $this->imagine->load($binary->getContent());
+                }
+
+                $image = $transformation->getAsImagineCallback($sourceScale)($image);
                 $options = $this->parseOptions($processingOptions);
 
                 if (\in_array(Format::fromName($outputFormat), [Format::GIF, Format::WEBP], true)) {
@@ -132,5 +147,37 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
         }
 
         return $parsedOptions;
+    }
+
+    /**
+     * Renders the SVG binary as a transparent PNG, at a density high enough for
+     * the transformation to only downscale it, so that the variation is sharp.
+     *
+     * @return array{string, float} the PNG content, and its scale relative to the binary
+     */
+    private function renderSvg(Binary $binary, Transformation $transformation): array
+    {
+        $scale = 1.0;
+        $output = $transformation->getOutputDimensions();
+
+        if (null !== $output) {
+            $scale = max(
+                $scale,
+                $output['width'] / ($transformation->cropWidth ?? $transformation->binaryWidth),
+                $output['height'] / ($transformation->cropHeight ?? $transformation->binaryHeight),
+            );
+        }
+
+        $imagick = new \Imagick();
+        $imagick->setBackgroundColor(new \ImagickPixel('transparent'));
+        // 96 dpi is the density at which the SVG pixel units are rendered as is
+        $imagick->setResolution(96 * $scale, 96 * $scale);
+        $imagick->readImageBlob($binary->getContent());
+        $imagick->setImageFormat(Format::PNG->value);
+
+        // the rendered width may slightly differ from the requested one
+        $sourceScale = null !== $transformation->binaryWidth ? $imagick->getImageWidth() / $transformation->binaryWidth : 1.0;
+
+        return [$imagick->getImageBlob(), $sourceScale];
     }
 }

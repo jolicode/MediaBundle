@@ -81,6 +81,10 @@ Imagine itself needs one of the ``imagick``, ``gmagick`` or ``gd`` PHP extension
 
 Use the ``driver`` key of the ``imagine`` `processor configuration <../variations/processors.rst>`_ to pick another extension.
 
+.. note::
+
+    `Rasterizing SVG images <../variations/processors.rst#rasterizing-svg-images>`_ is optional and disabled by default. When it is enabled, it requires the ``imagick`` driver, and an ImageMagick built with SVG support, which a Debian-based system provides with the ``libmagickcore-7.q16-10-extra`` package (already installed by the ``libmagickcore-dev`` package above). Run ``php -r "var_dump(Imagick::queryFormats('SVG'));"`` to check that SVG is supported.
+
 Checking the setup
 ------------------
 

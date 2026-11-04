@@ -9,6 +9,7 @@ use Imagine\Gmagick\Imagine as GmagickImagine;
 use Imagine\Imagick\Imagine as ImagickImagine;
 use JoliCode\MediaBundle\DependencyInjection\Compiler\CollectorPass;
 use JoliCode\MediaBundle\DependencyInjection\Compiler\DoctrinePass;
+use JoliCode\MediaBundle\DependencyInjection\Compiler\SvgRasterizationPass;
 use JoliCode\MediaBundle\Doctrine\Type\MediaLongType;
 use JoliCode\MediaBundle\Doctrine\Type\MediaType;
 use JoliCode\MediaBundle\Doctrine\Types;
@@ -71,6 +72,7 @@ class JoliMediaBundle extends AbstractBundle
 
         $container->addCompilerPass(new CollectorPass());
         $container->addCompilerPass(new DoctrinePass());
+        $container->addCompilerPass(new SvgRasterizationPass());
     }
 
     public function configure(DefinitionConfigurator $definition): void
@@ -818,6 +820,10 @@ class JoliMediaBundle extends AbstractBundle
                     ->defaultValue('imagick')
                     ->info('The Imagine driver to use for image processing. Available options: "gd", "gmagick", "imagick".')
                 ->end()
+                ->booleanNode('rasterize_svg')
+                    ->defaultFalse()
+                    ->info('Whether SVG media can be rasterized into variations. Requires the "imagick" driver, with the SVG support of ImageMagick.')
+                ->end()
                 ->append($this->addImagineProcessorOptionsNode('options'))
             ->end()
         ;
@@ -1256,6 +1262,7 @@ class JoliMediaBundle extends AbstractBundle
                     '$imagine' => service('.joli_media.imagine.imagine'),
                     '$options' => $processorsConfig['imagine']['options'],
                     '$logger' => service('logger')->ignoreOnInvalid(),
+                    '$rasterizeSvg' => $processorsConfig['imagine']['rasterize_svg'],
                 ])
             ;
             $processorContainerService->call('add', ['imagine', service('.joli_media.processor.imagine')]);
