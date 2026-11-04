@@ -109,38 +109,44 @@ class Transformation
         return $options;
     }
 
-    public function getAsImagineCallback(): callable
+    /**
+     * @param float $sourceScale the ratio between the size of the image given to the callback and the binary
+     *                           one, when the image was rendered larger than the binary (e.g. a rasterized SVG)
+     */
+    public function getAsImagineCallback(float $sourceScale = 1.0): callable
     {
-        return function (ImageInterface $image): ImageInterface {
+        return function (ImageInterface $image) use ($sourceScale): ImageInterface {
             $targetWidth = null !== $this->targetWidth ? $this->multiply($this->targetWidth) : null;
             $targetHeight = null !== $this->targetHeight ? $this->multiply($this->targetHeight) : null;
 
             if ($this->hasCrop()) {
-                if ($targetWidth <= $this->cropWidth / 2 && $targetHeight <= $this->cropHeight / 2) {
+                $cropX = $this->cropX * $sourceScale;
+                $cropY = $this->cropY * $sourceScale;
+                $cropWidth = $this->cropWidth * $sourceScale;
+                $cropHeight = $this->cropHeight * $sourceScale;
+
+                if ($targetWidth <= $cropWidth / 2 && $targetHeight <= $cropHeight / 2) {
                     // the transformation properties are computed to be applied in the crop then resize order
                     // if the image has both to be cropped and resized, we update the transformation values to
                     // apply first the resize then the crop
-                    $xResizeRatio = $targetWidth / $this->cropWidth;
-                    $yResizeRatio = $targetHeight / $this->cropHeight;
+                    $xResizeRatio = $targetWidth / $cropWidth;
+                    $yResizeRatio = $targetHeight / $cropHeight;
 
                     // If the target size is more than double the original size, we resize first
-                    $resizeWidth = ceil($this->binaryWidth * $xResizeRatio);
-                    $resizeHeight = ceil($this->binaryHeight * $yResizeRatio);
+                    $resizeWidth = ceil($this->binaryWidth * $sourceScale * $xResizeRatio);
+                    $resizeHeight = ceil($this->binaryHeight * $sourceScale * $yResizeRatio);
                     $image = $image->resize(new Box((int) $resizeWidth, (int) $resizeHeight));
 
                     // the crop it to its final shape
-                    $cropX = (int) ($this->cropX * $xResizeRatio);
-                    $cropY = (int) ($this->cropY * $yResizeRatio);
-
                     return $image->crop(
-                        new Point($cropX, $cropY),
+                        new Point((int) ($cropX * $xResizeRatio), (int) ($cropY * $yResizeRatio)),
                         new Box((int) $targetWidth, (int) $targetHeight),
                     );
                 }
 
                 $image = $image->crop(
-                    new Point((int) $this->cropX, (int) $this->cropY),
-                    new Box((int) $this->cropWidth, (int) $this->cropHeight),
+                    new Point((int) $cropX, (int) $cropY),
+                    new Box((int) $cropWidth, (int) $cropHeight),
                 );
             }
 

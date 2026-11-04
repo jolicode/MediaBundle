@@ -9,6 +9,7 @@ enum Format: string
     case HEIF = 'heif';
     case JPEG = 'jpeg';
     case PNG = 'png';
+    case SVG = 'svg';
     case TIFF = 'tiff';
     case WEBP = 'webp';
 
@@ -29,12 +30,13 @@ enum Format: string
      * this method returns an alternative format that can be used as a fallback.
      *
      * For example, if no processor is able to output HEIF, a variation that does not define a specific target
-     * format will return a JPEG content instead.
+     * format will return a JPEG content instead. As no processor outputs SVG, a SVG media is rasterized to PNG.
      */
     public function getAlternativeFormat(): ?Format
     {
         return match ($this) {
             self::HEIF => self::JPEG,
+            self::SVG => self::PNG,
             self::TIFF => self::JPEG,
             default => null,
         };
@@ -51,6 +53,7 @@ enum Format: string
             self::HEIF => ['heic', 'heif'],
             self::JPEG => ['jpg', 'jpeg'],
             self::PNG => ['png'],
+            self::SVG => ['svg'],
             self::TIFF => ['tiff', 'tif'],
             self::WEBP => ['webp'],
         };
@@ -64,6 +67,7 @@ enum Format: string
             self::HEIF => 'image/heif',
             self::JPEG => 'image/jpeg',
             self::PNG => 'image/png',
+            self::SVG => 'image/svg+xml',
             self::TIFF => 'image/tiff',
             self::WEBP => 'image/webp',
         };
