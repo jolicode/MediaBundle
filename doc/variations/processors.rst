@@ -63,6 +63,8 @@ Here is the default configuration that defines the processors options. These def
                     colors: 256
             imagine:
                 rasterize_svg: false
+                svg_renderer: imagick
+                rsvg_convert_binary: '%joli_media.binary.rsvg_convert%'
                 options:
                     jpeg_quality: 80
                     png_quality: 80
@@ -168,7 +170,23 @@ Browsers display SVG images as they are, but some contexts cannot: most email cl
 
 SVG is an input format only: no processor outputs SVG, so a variation that does not define a ``format`` turns a SVG media into a PNG one. The transformers use the intrinsic size of the SVG image, read from the ``width`` and ``height`` attributes of its root element (unitless or in pixels), or else from its ``viewBox``. The image is rendered at the size of the variation, so that it stays sharp when it is enlarged, and on a transparent background.
 
-This setting is disabled by default, and only applies to the whole ``imagine`` processor, not to a library or a variation. It requires the ``imagick`` driver, along with the SVG support of ImageMagick (see the `dependencies documentation <../getting-started/dependencies-and-tooling.rst#the-imagine-library>`_): when one of them is missing, the container fails to compile with an error that tells what to install.
+This setting is disabled by default, and only applies to the whole ``imagine`` processor, not to a library or a variation. With the default ``imagick`` SVG renderer, it requires the ``imagick`` driver, along with the SVG support of ImageMagick (see the `dependencies documentation <../getting-started/dependencies-and-tooling.rst#the-imagine-library>`_): when one of them is missing, the container fails to compile with an error that tells what to install.
+
+Choosing the SVG renderer
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, ImageMagick renders the SVG images. Most distributions build it without librsvg, so it uses its internal renderer, which draws simple shapes well, but not gradients, masks, filters or CSS: a logo with a gradient comes out black. Set the ``svg_renderer`` setting to ``rsvg-convert`` to render them with `librsvg <https://gitlab.gnome.org/GNOME/librsvg>`_ instead:
+
+.. code-block:: yaml
+
+    joli_media:
+        processors:
+            imagine:
+                rasterize_svg: true
+                svg_renderer: rsvg-convert
+                # rsvg_convert_binary: /usr/bin/rsvg-convert
+
+The ``rsvg-convert`` renderer only needs the ``rsvg-convert`` binary (the ``librsvg2-bin`` package of a Debian-based system), and works with any Imagine driver. Its path defaults to the ``JOLI_MEDIA_RSVG_CONVERT_BINARY`` environment variable, or else ``/usr/bin/rsvg-convert``, and the ``joli:media:debug:processors`` `command <../misc-features/commands.rst>`_ checks that it can be executed. The SVG is given to ``rsvg-convert`` on its standard input, so that it does not load the files the SVG references. As for the other binaries, the ``process_timeout`` setting of the ``imagine`` processor overrides the global one.
 
 .. caution::
 

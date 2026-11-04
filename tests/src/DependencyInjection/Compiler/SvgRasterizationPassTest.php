@@ -43,12 +43,22 @@ class SvgRasterizationPassTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    private function createContainer(string $driverClass, bool $rasterizeSvg): ContainerBuilder
+    public function testTheRsvgConvertRendererDoesNotRequireImagick(): void
+    {
+        $container = $this->createContainer(GdImagine::class, true, '/usr/bin/rsvg-convert');
+
+        (new SvgRasterizationPass())->process($container);
+
+        $this->addToAssertionCount(1);
+    }
+
+    private function createContainer(string $driverClass, bool $rasterizeSvg, ?string $rsvgConvertBinary = null): ContainerBuilder
     {
         $container = new ContainerBuilder();
         $container->register('.joli_media.imagine.imagine', $driverClass);
         $container->register('.joli_media.processor.imagine', Imagine::class)
             ->setArgument('$rasterizeSvg', $rasterizeSvg)
+            ->setArgument('$rsvgConvertBinary', $rsvgConvertBinary)
         ;
 
         return $container;

@@ -26,6 +26,49 @@ class ConfigurationTest extends TestCase
         $this->assertNull($config['post_processors']['mozjpeg']['process_timeout']);
         $this->assertNull($config['post_processors']['oxipng']['process_timeout']);
         $this->assertNull($config['post_processors']['pngquant']['process_timeout']);
+        $this->assertNull($config['processors']['imagine']['process_timeout']);
+    }
+
+    public function testDefaultSvgRendererConfiguration(): void
+    {
+        $config = $this->processConfiguration([]);
+
+        $this->assertFalse($config['processors']['imagine']['rasterize_svg']);
+        $this->assertSame('imagick', $config['processors']['imagine']['svg_renderer']);
+        $this->assertSame('%joli_media.binary.rsvg_convert%', $config['processors']['imagine']['rsvg_convert_binary']);
+    }
+
+    public function testRsvgConvertSvgRendererConfiguration(): void
+    {
+        $config = $this->processConfiguration([
+            [
+                'processors' => [
+                    'imagine' => [
+                        'rasterize_svg' => true,
+                        'svg_renderer' => 'rsvg-convert',
+                        'rsvg_convert_binary' => '/opt/librsvg/bin/rsvg-convert',
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertSame('rsvg-convert', $config['processors']['imagine']['svg_renderer']);
+        $this->assertSame('/opt/librsvg/bin/rsvg-convert', $config['processors']['imagine']['rsvg_convert_binary']);
+    }
+
+    public function testUnknownSvgRendererIsRejected(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->processConfiguration([
+            [
+                'processors' => [
+                    'imagine' => [
+                        'svg_renderer' => 'inkscape',
+                    ],
+                ],
+            ],
+        ]);
     }
 
     public function testGlobalProcessTimeoutConfiguration(): void

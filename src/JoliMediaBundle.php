@@ -108,6 +108,7 @@ class JoliMediaBundle extends AbstractBundle
         $builder->setParameter('env(JOLI_MEDIA_MOZJPEG_BINARY)', '/usr/local/bin/mozjpeg');
         $builder->setParameter('env(JOLI_MEDIA_OXIPNG_BINARY)', '/usr/local/bin/oxipng');
         $builder->setParameter('env(JOLI_MEDIA_PNGQUANT_BINARY)', '/usr/local/bin/pngquant');
+        $builder->setParameter('env(JOLI_MEDIA_RSVG_CONVERT_BINARY)', '/usr/bin/rsvg-convert');
 
         $builder->setParameter('joli_media.binary.cwebp', '%env(JOLI_MEDIA_CWEBP_BINARY)%');
         $builder->setParameter('joli_media.binary.exiftool', '%env(JOLI_MEDIA_EXIFTOOL_BINARY)%');
@@ -118,6 +119,7 @@ class JoliMediaBundle extends AbstractBundle
         $builder->setParameter('joli_media.binary.mozjpeg', '%env(JOLI_MEDIA_MOZJPEG_BINARY)%');
         $builder->setParameter('joli_media.binary.oxipng', '%env(JOLI_MEDIA_OXIPNG_BINARY)%');
         $builder->setParameter('joli_media.binary.pngquant', '%env(JOLI_MEDIA_PNGQUANT_BINARY)%');
+        $builder->setParameter('joli_media.binary.rsvg_convert', '%env(JOLI_MEDIA_RSVG_CONVERT_BINARY)%');
 
         $builder->setParameter('joli_media.process_timeout', $config['process_timeout']);
 
@@ -170,7 +172,7 @@ class JoliMediaBundle extends AbstractBundle
             'cwebp' => ['cwebp' => 'binary', 'identify' => 'identify_binary'],
             'gif2webp' => ['gif2webp' => 'binary'],
             'gifsicle' => ['gifsicle' => 'binary'],
-            'imagine' => [],
+            'imagine' => self::usesRsvgConvert($processorsConfig) ? ['rsvg-convert' => 'rsvg_convert_binary'] : [],
         ];
         $diagnostics = [];
 
@@ -199,6 +201,18 @@ class JoliMediaBundle extends AbstractBundle
         }
 
         return $diagnostics;
+    }
+
+    /**
+     * Whether the imagine processor renders the SVG media with rsvg-convert,
+     * rather than with the SVG support of ImageMagick.
+     *
+     * @param array<string, mixed> $processorsConfig
+     */
+    private static function usesRsvgConvert(array $processorsConfig): bool
+    {
+        return true === ($processorsConfig['imagine']['rasterize_svg'] ?? false)
+            && 'rsvg-convert' === ($processorsConfig['imagine']['svg_renderer'] ?? null);
     }
 
     /**
@@ -822,8 +836,17 @@ class JoliMediaBundle extends AbstractBundle
                 ->end()
                 ->booleanNode('rasterize_svg')
                     ->defaultFalse()
-                    ->info('Whether SVG media can be rasterized into variations. Requires the "imagick" driver, with the SVG support of ImageMagick.')
+                    ->info('Whether SVG media can be rasterized into variations. With the "imagick" SVG renderer, requires the "imagick" driver, with the SVG support of ImageMagick.')
                 ->end()
+                ->enumNode('svg_renderer')
+                    ->values(['imagick', 'rsvg-convert'])
+                    ->defaultValue('imagick')
+                    ->info('How the SVG media are rendered when "rasterize_svg" is enabled: "imagick" uses the SVG support of ImageMagick, "rsvg-convert" the librsvg binary, which renders the gradients, masks, filters and CSS that the ImageMagick internal renderer does not, with any Imagine driver.')
+                ->end()
+                ->scalarNode('rsvg_convert_binary')
+                    ->defaultValue('%joli_media.binary.rsvg_convert%')
+                ->end()
+                ->append($this->addProcessTimeoutNode())
                 ->append($this->addImagineProcessorOptionsNode('options'))
             ->end()
         ;
@@ -1263,6 +1286,8 @@ class JoliMediaBundle extends AbstractBundle
                     '$options' => $processorsConfig['imagine']['options'],
                     '$logger' => service('logger')->ignoreOnInvalid(),
                     '$rasterizeSvg' => $processorsConfig['imagine']['rasterize_svg'],
+                    '$rsvgConvertBinary' => self::usesRsvgConvert($processorsConfig) ? $processorsConfig['imagine']['rsvg_convert_binary'] : null,
+                    '$processTimeout' => $processorsConfig['imagine']['process_timeout'] ?? $defaultProcessTimeout,
                 ])
             ;
             $processorContainerService->call('add', ['imagine', service('.joli_media.processor.imagine')]);
