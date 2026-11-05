@@ -11,3 +11,4 @@ parameters:
         - .castor.stub.php
     scanDirectories:
         - .castor/vendor/castor-php/docker/src
+        - .castor/vendor/lyrixx/php-wasm-builder/src

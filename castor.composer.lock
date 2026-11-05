@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "844c2fcafd8e825649445282f2eeb358",
+    "content-hash": "a4abb69382983bd0004fc4bb9d88b1c9",
     "packages": [
         {
             "name": "castor-php/docker",
@@ -59,6 +59,51 @@
                 "source": "https://github.com/castor-php/docker/tree/v0.8.1"
             },
             "time": "2026-09-29T15:13:23+00:00"
+        },
+        {
+            "name": "lyrixx/php-wasm-builder",
+            "version": "v0.12.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lyrixx/php-wasm-builder.git",
+                "reference": "f072e1d02d53d3cbe54e6571b3f7647b461b488d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lyrixx/php-wasm-builder/zipball/f072e1d02d53d3cbe54e6571b3f7647b461b488d",
+                "reference": "f072e1d02d53d3cbe54e6571b3f7647b461b488d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions-internal.php",
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "PhpWasm\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Builds PHP as WebAssembly: a Dockerfile, and a castor function to build stacks (a PHP version, extensions, what to embed) with one command",
+            "keywords": [
+                "castor",
+                "emscripten",
+                "php",
+                "wasm",
+                "webassembly"
+            ],
+            "support": {
+                "issues": "https://github.com/lyrixx/php-wasm-builder/issues",
+                "source": "https://github.com/lyrixx/php-wasm-builder/tree/v0.12.1"
+            },
+            "time": "2026-11-05T17:55:57+00:00"
         },
         {
             "name": "nikic/php-parser",
