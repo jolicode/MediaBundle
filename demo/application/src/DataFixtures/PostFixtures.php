@@ -26,7 +26,11 @@ class PostFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        $extensions = ['avif', 'gif', 'jpeg', 'png', 'webp'];
+        // The build for the browser leaves out what gd does not read
+        $extensions = array_values(array_filter(
+            ['avif', 'gif', 'jpeg', 'png', 'webp'],
+            static fn (string $extension): bool => is_file(__DIR__ . '/media/articles/circle-pattern.' . $extension),
+        ));
 
         for ($i = 0; $i < 100; ++$i) {
             $extension = $extensions[$this->faker->numberBetween(0, \count($extensions) - 1)];

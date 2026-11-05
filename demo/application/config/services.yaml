@@ -58,3 +58,15 @@ services:
         class: App\Admin\UserAdmin
         tags:
             - { name: sonata.admin, model_class: App\Entity\User, controller: ~, manager_type: orm, group: admin, label: Users }
+
+when@wasm:
+    services:
+        # There is no other process to run in WebAssembly. The bundle runs the
+        # "file" command by default
+        joli_media.mime_type_guesser.inner:
+            class: Symfony\Component\Mime\FileinfoMimeTypeGuesser
+
+        # Without the tag of the bundle: it leaves the pre-processors, as it
+        # runs exiftool
+        JoliCode\MediaBundle\PreProcessor\ExifRemovalPreProcessor:
+            class: App\Media\PreProcessor\PassthroughPreProcessor

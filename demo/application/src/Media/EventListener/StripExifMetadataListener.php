@@ -7,6 +7,7 @@ use JoliCode\MediaBundle\Event\PreCreateMediaEvent;
 use JoliCode\MediaBundle\Model\Format;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\WhenNot;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Process\Process;
 
@@ -20,6 +21,7 @@ use Symfony\Component\Process\Process;
  * Note that it uses "-all=" and not the "-ifd1:all=" of the ExifRemovalPreProcessor,
  * which only clears the thumbnail IFD. The orientation tag is kept, though.
  */
+#[WhenNot(env: 'wasm')]
 final readonly class StripExifMetadataListener
 {
     public function __construct(
