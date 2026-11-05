@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- fix - The assets of the Sonata Admin bridge are now found when the application runs in a subfolder: their URLs lacked its base path
+
 ## [0.10.0] - 2026-10-05
 
 - bc break - The bundle no longer forces a `public` visibility when writing media and variation files: the visibility configured on the Flysystem storage now applies. On Amazon S3, the forced visibility made every file public through a `public-read` ACL, and failed on the buckets where ACLs are disabled. Declare `visibility: public` on your Flysystem storage if you relied on the forced visibility

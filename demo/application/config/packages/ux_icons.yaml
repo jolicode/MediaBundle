@@ -18,3 +18,10 @@ when@prod:
     ux_icons:
         # Suppress exceptions for missing icons in production
         ignore_not_found: true
+
+when@wasm:
+    ux_icons:
+        # There is no network in WebAssembly: the build imports the icons
+        iconify:
+            on_demand: false
+        ignore_not_found: true

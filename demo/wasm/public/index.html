@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JoliMediaBundle, in your browser</title>
+    <style>
+        :root {
+            color-scheme: light dark;
+            font: 0.875rem/1.5 system-ui, sans-serif;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            display: flex;
+            gap: 1rem;
+            align-items: baseline;
+            padding: 0.4rem 1rem;
+            background: #1c1e26;
+            color: #e2e3ea;
+        }
+        header p {
+            margin: 0;
+        }
+        #message {
+            margin-left: auto;
+            color: #9a9eb0;
+        }
+        iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <strong>JoliMediaBundle</strong>
+        <p>Symfony and gd run in this page, compiled to WebAssembly: no server runs PHP. What you upload stays in your browser.</p>
+        <p id="message">Loading PHP…</p>
+    </header>
+    <iframe id="frame" title="The demo application"></iframe>
+
+    <script type="module">
+        import { createPhpInWorker, serveInFrame } from './build/php-web.mjs';
+
+        const message = document.getElementById('message');
+        const frame = document.getElementById('frame');
+
+        // Keep in sync with DATABASE_URL in ../../application/.env.wasm
+        const data = '/media-bundle-demo';
+        const php = await createPhpInWorker({ persist: data });
+
+        // What PHP reads before its first run
+        await php.FS.mkdirTree('/usr/local/lib');
+        await php.FS.writeFile('/usr/local/lib/php.ini', ['memory_limit=320M', 'post_max_size=110M', 'upload_max_filesize=10M'].join('\n'));
+
+        async function runConsole(...args) {
+            const { exitCode, stdout, stderr } = await php.runFile('/app/bin/console', { args: [...args, '--no-interaction'] });
+            if (0 !== exitCode) {
+                message.textContent = `The console exits with ${exitCode}: ${stdout}${stderr}`;
+                throw new Error(message.textContent);
+            }
+        }
+
+        // The media stay with the database
+        const { stdout: seeded } = await php.runCode(`
+            @mkdir('${data}/media');
+            symlink('${data}/media', '/app/public/media');
+            echo (int) is_file('${data}/seeded');
+        `);
+
+        await runConsole('doctrine:schema:update', '--force');
+
+        // Once: what the fixtures make is kept in IndexedDB
+        if ('0' === seeded) {
+            message.textContent = 'Creating the media and the posts…';
+            await runConsole('doctrine:fixtures:load');
+            await php.runCode(`touch('${data}/seeded');`);
+        }
+
+        message.textContent = 'Starting the service worker…';
+        await serveInFrame(php, { frame, documentRoot: '/app/public' }).finally(() => {
+            message.textContent = '';
+        });
+    </script>
+</body>
+</html>

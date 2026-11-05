@@ -1,0 +1,73 @@
+name: Pages
+
+# Builds the demo of demo/wasm/, checks it, and deploys it to GitHub Pages, in
+# demo/. Nothing is deployed if the checks fail.
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time, and the one in progress is not cancelled
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy the demo
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}demo/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # Symfony needs PHP 8.4 or later on the host too: assets:install
+      - name: Setup PHP and castor
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          tools: castor
+
+      # The checks run on node, with fetch-files.mjs: the version it is made for
+      - name: Setup node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      # The cache needs the docker-container driver of buildx…
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      # …and the runtime token and URLs of GitHub Actions, that only actions get
+      - name: Expose the runtime of GitHub Actions
+        uses: crazy-max/ghaction-github-runtime@v4
+
+      - name: Build
+        run: castor demo:wasm:build --set '*.cache-from=type=gha,scope=demo-wasm' --set '*.cache-to=type=gha,scope=demo-wasm,mode=max,ignore-error=true'
+
+      - name: Check
+        run: castor demo:wasm:check
+
+      - name: Lay out the site
+        run: castor demo:wasm:site
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: demo/wasm/build/site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
