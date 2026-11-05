@@ -2,7 +2,6 @@
 
 namespace JoliCode\MediaBundle\Bridge\SonataAdmin;
 
-use Symfony\Component\Asset\PathPackage;
 use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -157,17 +156,16 @@ class JoliMediaSonataAdminBundle extends AbstractBundle
                 '@JoliMediaSonataAdmin/form/media_choice.html.twig',
             ],
         ]);
-        $package =  new PathPackage(
-            '/bundles/jolimediasonataadmin',
-            new JsonManifestVersionStrategy(__DIR__ . '/../public/manifest.json'),
-        );
+
+        // Relative: Sonata gives them to asset(), that adds the base path of the request
+        $manifest = new JsonManifestVersionStrategy(__DIR__ . '/../public/manifest.json');
         $containerBuilder->prependExtensionConfig('sonata_admin', [
             'assets' => [
                 'extra_javascripts' => [
-                    $package->getUrl('joli-media-sonata-admin.js'),
+                    'bundles/jolimediasonataadmin/' . $manifest->applyVersion('joli-media-sonata-admin.js'),
                 ],
                 'extra_stylesheets' => [
-                    $package->getUrl('joli-media-sonata-admin.css'),
+                    'bundles/jolimediasonataadmin/' . $manifest->applyVersion('joli-media-sonata-admin.css'),
                 ],
             ],
         ]);

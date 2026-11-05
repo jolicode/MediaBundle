@@ -67,6 +67,7 @@ test('the pages of the application answer', async () => {
     }
 
     assert.match(text(await get('/')), /\/app\/media\/cache\//, 'The URLs of the media are under the base path.');
+    assert.match(text(await get('/sonata-admin/dashboard')), /"\/app\/bundles\/jolimediasonataadmin\//, 'The assets of the bridges are under the base path.');
 });
 
 test('gd makes the variations', async () => {

@@ -6,6 +6,7 @@
 - feature - SVG media can be rasterized with librsvg's `rsvg-convert` binary rather than with ImageMagick, by setting the `svg_renderer` setting of the `imagine` processor to `rsvg-convert`. It renders the gradients, masks, filters and CSS that the internal SVG renderer of ImageMagick does not, and works with any Imagine driver. Its path is set by the `rsvg_convert_binary` setting, or the `JOLI_MEDIA_RSVG_CONVERT_BINARY` environment variable (default: `/usr/bin/rsvg-convert`)
 - improvement - The pixel dimensions of the SVG media are now read from their `width`, `height` or `viewBox` attributes, whether the rasterization is enabled or not. The dimensions cached for SVG media before this change stay unknown until the cache pool is cleared
 - bc break - The `Format` enum has a new `SVG` case: an exhaustive `match` on it without a `default` arm must handle it
+- fix - The assets of the Sonata Admin bridge are now found when the application runs in a subfolder: their URLs lacked its base path
 
 ## [0.10.0] - 2026-10-05
 
