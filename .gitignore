@@ -1,5 +1,8 @@
 demo/application/config/reference.php
 
+# php-wasm-builder
+/build/
+
 # dependencies
 /composer.lock
 vendor
