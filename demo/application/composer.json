@@ -20,7 +20,7 @@
         "sylius/ui-translations": "^0.12.3",
         "symfony/console": "7.4.*",
         "symfony/dotenv": "7.4.*",
-        "symfony/flex": "^2.11",
+        "symfony/flex": "^2.12",
         "symfony/framework-bundle": "7.4.*",
         "symfony/runtime": "7.4.*",
         "symfony/yaml": "7.4.*"
@@ -78,7 +78,7 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3.1",
         "symfony/debug-bundle": "7.4.*",
-        "symfony/maker-bundle": "^1.67.0",
+        "symfony/maker-bundle": "^1.68.0",
         "symfony/web-profiler-bundle": "7.4.*"
     }
 }
