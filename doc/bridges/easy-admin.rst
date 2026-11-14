@@ -276,7 +276,7 @@ When most of your text editors share the same variation, define it once for the 
         text_editor:
             variation: blog_content
 
-The variation configured on a field always takes precedence over this default one. The variation must be defined in the default library, otherwise the media picker returns a "400 Bad Request" error. Media for which the variation does not apply - because of the variation `voters <../variations/variation-voters.html>`_, or because they are not images - are inserted as their original file.
+The variation configured on a field always takes precedence over this default one. The variation must be defined in the default library, otherwise the media picker returns a "400 Bad Request" error. Media for which the variation does not apply - because of the variation `voters <../variations/variation-voters.rst>`_, or because they are not images - are inserted as their original file.
 
 Restricting access to the Media library controller
 --------------------------------------------------
