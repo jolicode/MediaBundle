@@ -2,7 +2,10 @@
 
 namespace JoliCode\MediaBundle\Processor;
 
+use Imagine\Image\ImageInterface;
 use Imagine\Image\ImagineInterface;
+use Imagine\Image\Palette\RGB;
+use Imagine\Image\Point;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Transformation\Transformation;
@@ -85,6 +88,11 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
                 }
 
                 $image = $transformation->getAsImagineCallback($sourceScale)($image);
+
+                if (Format::SVG->value === $binary->getFormat() && Format::JPEG === Format::fromName($outputFormat)) {
+                    $image = $this->flattenOnWhite($image);
+                }
+
                 $options = $this->parseOptions($processingOptions);
 
                 if (\in_array(Format::fromName($outputFormat), [Format::GIF, Format::WEBP], true)) {
@@ -154,6 +162,17 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
     protected function getProcessTimeout(): ?float
     {
         return $this->processTimeout;
+    }
+
+    /**
+     * JPEG has no transparency: the transparent background of a rasterized
+     * SVG would otherwise come out black.
+     */
+    private function flattenOnWhite(ImageInterface $image): ImageInterface
+    {
+        $canvas = $this->imagine->create($image->getSize(), (new RGB())->color('#ffffff'));
+
+        return $canvas->paste($image, new Point(0, 0));
     }
 
     /**

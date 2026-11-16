@@ -197,7 +197,7 @@ The ``rsvg-convert`` renderer only needs the ``rsvg-convert`` binary (the ``libr
 
 .. note::
 
-    JPEG has no transparency: prefer the PNG, WebP or AVIF formats for the variations of SVG images with a transparent background.
+    JPEG has no transparency: the transparent background of a SVG image is flattened on white in its JPEG variations. Prefer the PNG, WebP or AVIF formats to keep it transparent.
 
 Customizing processor options for a library or a variation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
