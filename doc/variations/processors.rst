@@ -75,7 +75,7 @@ Processor binaries
 
 All processors - except the ``imagine`` processor - have a ``binary`` key that defines the path to the binary to use, and an ``options`` key that defines the options to use when executing the binary.
 
-The ``imagine`` processor does not use a binary, it uses the Imagine library to process images. The ``driver`` key can be used to define which Imagine driver to use (e.g. ``gd``, ``imagick`` or ``gmagick``). If not set, ``imagick`` will be used.
+The ``imagine`` processor does not use a binary, it uses the Imagine library to process images. The ``driver`` key can be used to define which Imagine driver to use (e.g. ``gd``, ``imagick`` or ``gmagick``). If not set, ``imagick`` will be used. The only binary it may call is ``rsvg-convert``, when `rasterizing SVG images`_ with its ``svg_renderer`` setting set to ``rsvg-convert``.
 
 Processes timeout
 ~~~~~~~~~~~~~~~~~
@@ -94,6 +94,9 @@ The processors that use a binary execute it in an external process, which times 
             gifsicle:
                 # disables the timeout for the gifsicle processor
                 process_timeout: 0
+            imagine:
+                # applies to the rsvg-convert processes, when the processor rasterizes SVG images with it
+                process_timeout: 30
 
 cwebp processor options
 ~~~~~~~~~~~~~~~~~~~~~~~
