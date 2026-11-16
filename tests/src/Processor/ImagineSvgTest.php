@@ -73,6 +73,12 @@ class ImagineSvgTest extends BaseTestCase
         self::assertNull($this->convert('email-logo', false, $this->getRsvgConvertBinary($renderer)));
     }
 
+    #[DataProvider('provideSvgRenderers')]
+    public function testAVariationThatDoesNotRasterizeSvgLeavesTheSvgAside(string $renderer): void
+    {
+        self::assertNull($this->convert('thumbnail', true, $this->getRsvgConvertBinary($renderer)));
+    }
+
     public static function provideSvgRenderers(): \Generator
     {
         yield 'imagick' => ['imagick'];
@@ -137,17 +143,26 @@ class ImagineSvgTest extends BaseTestCase
                     'email-logo',
                     null,
                     new TransformerChain([new Heighten(168)]),
+                    rasterizeSvg: true,
                 ),
                 'email-logo-right-half' => static fn (): Variation => new Variation(
                     'email-logo-right-half',
                     Format::WEBP,
                     new TransformerChain([new Crop(60, 0, 60, 40), new Heighten(168)]),
+                    rasterizeSvg: true,
+                ),
+                // does not rasterize the SVG media
+                'thumbnail' => static fn (): Variation => new Variation(
+                    'thumbnail',
+                    null,
+                    new TransformerChain([new Heighten(168)]),
                 ),
             ]),
         );
         $libraries = new LibraryContainer(new ServiceLocator(['default' => static fn (): Library => $library]), 'default');
         $processorContainer = new ProcessorContainer();
         $processorContainer->add('imagine', new Imagine($imagine, rasterizeSvg: $rasterizeSvg, rsvgConvertBinary: $rsvgConvertBinary));
+
         $converter = new Converter($libraries, new Resolver($libraries, $processorContainer), new TransformationProcessor(
             $processorContainer,
             new PostProcessorContainer(),

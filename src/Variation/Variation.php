@@ -34,11 +34,17 @@ class Variation
         private readonly float $multiplier = 1.0,
         private readonly ?bool $mustStoreWhenGeneratingUrl = null,
         private array $pixelRatioVariations = [],
+        private readonly bool $rasterizeSvg = false,
     ) {
     }
 
     public function canBeAppliedTo(Media $media): bool
     {
+        // by extension, so that it never reaches the storage: the resolver checks the actual format
+        if (!$this->rasterizeSvg && Format::SVG === Format::fromName(pathinfo($media->getPath(), \PATHINFO_EXTENSION))) {
+            return false;
+        }
+
         foreach ($this->voters as $voter) {
             if (!$voter->vote($media)) {
                 return false;
@@ -64,6 +70,7 @@ class Variation
             $this->multiplier,
             $this->mustStoreWhenGeneratingUrl,
             $this->pixelRatioVariations,
+            $this->rasterizeSvg,
         );
     }
 
@@ -79,7 +86,7 @@ class Variation
         }
 
         if (!$this->canBeAppliedTo($media)) {
-            throw new \RuntimeException(\sprintf('The voters for the variation "%s" prevent to process the media "%s"', $this->name, $media->getPath()));
+            throw new \RuntimeException(\sprintf('The variation "%s" cannot be applied to the media "%s"', $this->name, $media->getPath()));
         }
 
         $outputFormat = null;
@@ -109,6 +116,11 @@ class Variation
     public function mustStoreWhenGeneratingUrl(): ?bool
     {
         return $this->mustStoreWhenGeneratingUrl;
+    }
+
+    public function rasterizesSvg(): bool
+    {
+        return $this->rasterizeSvg;
     }
 
     /**

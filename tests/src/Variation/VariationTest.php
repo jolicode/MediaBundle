@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Tests\Variation;
 
 use Imagine\Imagick\Imagine;
+use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\PreProcessor\HeifPreProcessor;
@@ -128,9 +129,23 @@ class VariationTest extends BaseTestCase
         );
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The voters for the variation "test_variation_png" prevent to process the media "test.jpg"');
+        $this->expectExceptionMessage('The variation "test_variation_png" cannot be applied to the media "test.jpg"');
 
         $variation->getForMedia($this->media);
+    }
+
+    public function testAnSvgMediaRequiresTheVariationToRasterizeIt(): void
+    {
+        $originalStorage = $this->createOriginalStorage('default', $this->createFilesystem(), '/media', $this->urlGenerator);
+        $svg = new Media('logo.svg', $originalStorage, new Binary('image/svg+xml', Format::SVG->value, '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>'));
+        $variation = new Variation('test_variation_svg', null, $this->transformerChain);
+        $rasterizingVariation = new Variation('test_variation_svg', null, $this->transformerChain, rasterizeSvg: true);
+
+        self::assertFalse($variation->canBeAppliedTo($svg));
+        self::assertTrue($variation->canBeAppliedTo($this->media));
+        self::assertTrue($rasterizingVariation->canBeAppliedTo($svg));
+        self::assertFalse($variation->cloneWithOutputFormat(Format::PNG)->rasterizesSvg());
+        self::assertTrue($rasterizingVariation->cloneWithOutputFormat(Format::PNG)->rasterizesSvg());
     }
 
     public function testCloneWithOutputFormat(): void

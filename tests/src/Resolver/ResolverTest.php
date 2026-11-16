@@ -2,13 +2,17 @@
 
 namespace JoliCode\MediaBundle\Tests\Resolver;
 
+use Imagine\Imagick\Imagine as ImagickImagine;
 use JoliCode\MediaBundle\Binary\Binary;
 use JoliCode\MediaBundle\Exception\MediaNotFoundException;
 use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
+use JoliCode\MediaBundle\Processor\Imagine;
 use JoliCode\MediaBundle\Resolver\Resolver;
 use JoliCode\MediaBundle\Tests\BaseTestCase;
+use JoliCode\MediaBundle\Transformer\TransformerChain;
+use JoliCode\MediaBundle\Variation\Variation;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class ResolverTest extends BaseTestCase
@@ -25,6 +29,22 @@ class ResolverTest extends BaseTestCase
 
         $media = new Media('test.png', $this->originalStorage, new Binary('image/png', Format::PNG->value, BaseTestCase::getFixtureBinaryContent(BaseTestCase::PNG_FIXTURE_PATH)));
         self::assertTrue($this->resolver->isMediaProcessable($media));
+    }
+
+    public function testAnSvgMediaIsOnlyProcessableByTheVariationsThatRasterizeIt(): void
+    {
+        $this->processorContainer->add('imagine', new Imagine(new ImagickImagine(), rasterizeSvg: true));
+        $media = new Media('logo.svg', $this->originalStorage, new Binary('image/svg+xml', Format::SVG->value, '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>'));
+        $variation = new Variation('raw', null, new TransformerChain([]));
+        $rasterizingVariation = new Variation('raster', null, new TransformerChain([]), rasterizeSvg: true);
+
+        self::assertTrue($this->resolver->isMediaProcessable($media));
+        self::assertFalse($this->resolver->isMediaProcessable($media, $variation));
+        self::assertTrue($this->resolver->isMediaProcessable($media, $rasterizingVariation));
+        self::assertNull($this->resolver->guessMediaVariationFormat($media, $variation));
+        self::assertSame('png', $this->resolver->guessMediaVariationFormat($media, $rasterizingVariation));
+        self::assertNull($this->resolver->resolveMediaVariation($media, $variation));
+        self::assertInstanceOf(MediaVariation::class, $this->resolver->resolveMediaVariation($media, $rasterizingVariation));
     }
 
     #[DataProvider('provideProcessablePathCases')]

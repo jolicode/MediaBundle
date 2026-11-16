@@ -62,7 +62,6 @@ Here is the default configuration that defines the processors options. These def
                     lossy: 20
                     colors: 256
             imagine:
-                rasterize_svg: false
                 svg_renderer: imagick
                 rsvg_convert_binary: '%joli_media.binary.rsvg_convert%'
                 options:
@@ -150,7 +149,7 @@ The ``imagine`` processor is used to convert AVIF, GIF, HEIF, JPEG, PNG, TIFF or
 Rasterizing SVG images
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Browsers display SVG images as they are, but some contexts cannot: most email clients (Gmail, Outlook...) do not display SVG at all, and need a raster version of, for example, a logo. The ``imagine`` processor can rasterize SVG media into variations, once the ``rasterize_svg`` setting is enabled:
+Browsers display SVG images as they are, but some contexts cannot: most email clients (Gmail, Outlook...) do not display SVG at all, and need a raster version of, for example, a logo. The ``imagine`` processor can rasterize SVG media into variations, for the libraries and variations that enable the ``rasterize_svg`` setting:
 
 .. code-block:: yaml
 
@@ -158,19 +157,24 @@ Browsers display SVG images as they are, but some contexts cannot: most email cl
         processors:
             imagine:
                 driver: imagick
-                rasterize_svg: true
         libraries:
             default:
+                # the default, the variations of this library leave the SVG media as they are
+                rasterize_svg: false
                 variations:
                     email_logo:
+                        # this variation rasterizes them
+                        rasterize_svg: true
                         format: png
                         transformers:
                             heighten:
                                 height: 168
 
-SVG is an input format only: no processor outputs SVG, so a variation that does not define a ``format`` turns a SVG media into a PNG one. The transformers use the intrinsic size of the SVG image, read from the ``width`` and ``height`` attributes of its root element (unitless or in pixels), or else from its ``viewBox``. The image is rendered at the size of the variation, so that it stays sharp when it is enlarged, and on a transparent background.
+The setting is disabled by default. It is set on a library, for all its variations, and each variation can override it, as in the example above. A variation that does not rasterize SVG leaves the SVG media aside: it is not generated for them, and the ``joli:Img`` and ``joli:Picture`` `Twig components <../misc-features/twig-components.rst>`_ output the original SVG instead, as they do for any format the bundle cannot process.
 
-This setting is disabled by default, and only applies to the whole ``imagine`` processor, not to a library or a variation. With the default ``imagick`` SVG renderer, it requires the ``imagick`` driver, along with the SVG support of ImageMagick (see the `dependencies documentation <../getting-started/dependencies-and-tooling.rst#the-imagine-library>`_): when one of them is missing, the container fails to compile with an error that tells what to install.
+SVG is an input format only: no processor outputs SVG, and the configuration rejects a variation whose ``format`` is ``svg``. A variation that does not define a ``format`` turns a SVG media into a PNG one. The transformers use the intrinsic size of the SVG image, read from the ``width`` and ``height`` attributes of its root element (unitless or in pixels), or else from its ``viewBox``. The image is rendered at the size of the variation, so that it stays sharp when it is enlarged, and on a transparent background.
+
+With the default ``imagick`` SVG renderer, rasterizing requires the ``imagick`` driver, along with the SVG support of ImageMagick (see the `dependencies documentation <../getting-started/dependencies-and-tooling.rst#the-imagine-library>`_): when one of them is missing, the container fails to compile with an error that tells what to install.
 
 Choosing the SVG renderer
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -182,7 +186,6 @@ By default, ImageMagick renders the SVG images. Most distributions build it with
     joli_media:
         processors:
             imagine:
-                rasterize_svg: true
                 svg_renderer: rsvg-convert
                 # rsvg_convert_binary: /usr/bin/rsvg-convert
 

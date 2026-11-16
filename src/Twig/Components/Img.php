@@ -126,7 +126,7 @@ class Img
                 try {
                     $media = $originalMedia ?? $this->resolver->resolveMedia($path, $library);
 
-                    if ($this->resolver->isMediaProcessable($media)) {
+                    if ($this->resolver->isMediaProcessable($media, $variation)) {
                         // the media variation should have been resolved as it is processable
                         // output the expected url of the media variation
                         $this->path = $media->createVariation($variation)->getUrl();
