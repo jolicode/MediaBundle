@@ -26,6 +26,9 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
         private ImagineInterface $imagine,
         private array $options = [],
         private ?LoggerInterface $logger = null,
+        private bool $rasterizeSvg = false,
+        private ?string $rsvgConvertBinary = null,
+        private ?float $processTimeout = null,
     ) {
     }
 
@@ -44,7 +47,13 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
      */
     public function getProcessableInputFormats(): array
     {
-        return [Format::AVIF, Format::GIF, Format::HEIF, Format::JPEG, Format::PNG, Format::TIFF, Format::WEBP];
+        $formats = [Format::AVIF, Format::GIF, Format::HEIF, Format::JPEG, Format::PNG, Format::TIFF, Format::WEBP];
+
+        if ($this->rasterizeSvg) {
+            $formats[] = Format::SVG;
+        }
+
+        return $formats;
     }
 
     /**
@@ -66,8 +75,16 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
                     'original size' => $binary->getContentSize(),
                     'transformation' => $transformation,
                 ]);
-                $image = $this->imagine->load($binary->getContent());
-                $image = $transformation->getAsImagineCallback()($image);
+                $sourceScale = 1.0;
+
+                if (Format::SVG->value === $binary->getFormat()) {
+                    [$content, $sourceScale] = $this->renderSvg($binary, $transformation);
+                    $image = $this->imagine->load($content);
+                } else {
+                    $image = $this->imagine->load($binary->getContent());
+                }
+
+                $image = $transformation->getAsImagineCallback($sourceScale)($image);
                 $options = $this->parseOptions($processingOptions);
 
                 if (\in_array(Format::fromName($outputFormat), [Format::GIF, Format::WEBP], true)) {
@@ -132,5 +149,90 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
         }
 
         return $parsedOptions;
+    }
+
+    protected function getProcessTimeout(): ?float
+    {
+        return $this->processTimeout;
+    }
+
+    /**
+     * Renders the SVG binary as a transparent PNG, at a density high enough for
+     * the transformation to only downscale it, so that the variation is sharp.
+     *
+     * @return array{string, float} the PNG content, and its scale relative to the binary
+     */
+    private function renderSvg(Binary $binary, Transformation $transformation): array
+    {
+        $scale = 1.0;
+        $output = $transformation->getOutputDimensions();
+
+        if (null !== $output) {
+            $scale = max(
+                $scale,
+                $output['width'] / ($transformation->cropWidth ?? $transformation->binaryWidth),
+                $output['height'] / ($transformation->cropHeight ?? $transformation->binaryHeight),
+            );
+        }
+
+        if (null !== $this->rsvgConvertBinary) {
+            return $this->renderSvgWithRsvgConvert($binary, $transformation, $scale);
+        }
+
+        $imagick = new \Imagick();
+        $imagick->setBackgroundColor(new \ImagickPixel('transparent'));
+        // 96 dpi is the density at which the SVG pixel units are rendered as is
+        $imagick->setResolution(96 * $scale, 96 * $scale);
+        $imagick->readImageBlob($binary->getContent());
+        $imagick->setImageFormat(Format::PNG->value);
+
+        // the rendered width may slightly differ from the requested one
+        $sourceScale = null !== $transformation->binaryWidth ? $imagick->getImageWidth() / $transformation->binaryWidth : 1.0;
+
+        return [$imagick->getImageBlob(), $sourceScale];
+    }
+
+    /**
+     * Renders the SVG binary with librsvg, which supports the gradients, masks,
+     * filters and CSS that the internal renderer of ImageMagick does not. The SVG
+     * is given on the standard input: without a base URI, librsvg does not load
+     * the files it references.
+     *
+     * @return array{string, float} the PNG content, and its scale relative to the binary
+     */
+    private function renderSvgWithRsvgConvert(Binary $binary, Transformation $transformation, float $scale): array
+    {
+        $arguments = [$this->rsvgConvertBinary, '--format', 'png'];
+
+        if (null !== $transformation->binaryWidth && null !== $transformation->binaryHeight) {
+            // the intrinsic size the transformation was computed from, at the scale it needs
+            $arguments[] = '--width';
+            $arguments[] = (string) max(1, (int) round($transformation->binaryWidth * $scale));
+            $arguments[] = '--height';
+            $arguments[] = (string) max(1, (int) round($transformation->binaryHeight * $scale));
+        }
+
+        $process = $this->createProcess($arguments);
+        $process->setInput($binary->getContent());
+        $this->logger?->info('Rendering SVG image with rsvg-convert', [
+            'command' => $process->getCommandLine(),
+        ]);
+        $process->mustRun();
+        $content = $process->getOutput();
+
+        $sourceScale = 1.0;
+
+        if (null !== $transformation->binaryWidth) {
+            $size = getimagesizefromstring($content);
+
+            if (false === $size) {
+                throw new \RuntimeException(\sprintf('rsvg-convert did not output a PNG image: %s', $process->getErrorOutput()));
+            }
+
+            // the rendered width may slightly differ from the requested one
+            $sourceScale = $size[0] / $transformation->binaryWidth;
+        }
+
+        return [$content, $sourceScale];
     }
 }

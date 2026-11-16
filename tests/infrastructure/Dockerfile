@@ -52,6 +52,7 @@ RUN apt-get update \
         libheif1 \
         libimage-exiftool-perl \
         libmagickcore-dev \
+        librsvg2-bin \
         pngquant \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
