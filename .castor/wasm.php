@@ -89,6 +89,7 @@ function stack(): Stack
         ->opcache(Opcache::Runtime)
         // The application, and the images that gd opens, uncompressed
         ->memory('512mb')
+        ->ini(['memory_limit' => '320M', 'post_max_size' => '110M', 'upload_max_filesize' => '10M'])
         // It runs in node too
         ->targets(Target::Web)
         ->outputDir('demo/wasm/public/build')
@@ -150,7 +151,7 @@ function prepare_embed(): void
 {
     $application = WASM_DIR . '/build/application';
     $embed = WASM_DIR . '/build/embed';
-    $assets = WASM_DIR . '/public/app/bundles';
+    $assets = WASM_DIR . '/public/bundles';
 
     fs()->remove([$embed, $assets]);
     fs()->mirror("{$application}/public/bundles", $assets);
@@ -164,7 +165,7 @@ function prepare_embed(): void
     fs()->remove(finder()->in("{$embed}/vendor/symfony/intl/Resources/data")->files()->notName(['en.php', 'meta.php', 'root.php']));
     // Only Imagick reads the color profiles, for CMYK images
     fs()->remove("{$embed}/vendor/imagine/imagine/src/resources/Adobe");
-    // The assets are in public/app/bundles/: PHP reads their manifests, and the icons of EasyAdmin
+    // The assets are in public/bundles/: PHP reads their manifests, and the icons of EasyAdmin
     fs()->remove(finder()->in("{$embed}/public/bundles")->files()->notName('*.json'));
     fs()->remove(finder()->in("{$embed}/vendor")->files()->path('#/public/#')->notName(['*.json', '*.php']));
     fs()->remove(finder()->in("{$embed}/vendor/easycorp/easyadmin-bundle/assets")->depth(0)->notName('icons'));
@@ -174,9 +175,16 @@ function prepare_embed(): void
     fs()->remove(finder()->in("{$embed}/vendor")->directories()->name(['doc', 'docs', 'Tests', 'tests'])->notPath('#/(Test|Tests)/#'));
     fs()->remove(finder()->in("{$embed}/vendor")->files()->name(['*.md', '*.rst', 'LICENSE', 'CHANGELOG*']));
 
+    // What the service worker runs the console for once, not each time PHP
+    // starts: the name of what is embedded, the same when it does not change.
+    // Keep in sync with ../demo/wasm/public/sw.js
     $size = 0;
-    foreach (finder()->in($embed)->ignoreDotFiles(false)->files() as $file) {
+    $buildId = hash_init('xxh128');
+    foreach (finder()->in($embed)->ignoreDotFiles(false)->files()->sortByName() as $file) {
         $size += $file->getSize();
+        hash_update($buildId, $file->getRelativePathname());
+        hash_update_file($buildId, $file->getPathname());
     }
+    fs()->dumpFile("{$embed}/build-id", hash_final($buildId));
     io()->writeln(\sprintf(' %d MB embedded.', $size / 1_000_000));
 }
