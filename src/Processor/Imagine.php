@@ -89,7 +89,7 @@ readonly class Imagine extends AbstractProcessor implements ProcessorInterface
 
                 $image = $transformation->getAsImagineCallback($sourceScale)($image);
 
-                if (Format::SVG->value === $binary->getFormat() && Format::JPEG === Format::fromName($outputFormat)) {
+                if (Format::SVG->value === $binary->getFormat() && false === Format::fromName($outputFormat)?->supportsTransparency()) {
                     $image = $this->flattenOnWhite($image);
                 }
 
