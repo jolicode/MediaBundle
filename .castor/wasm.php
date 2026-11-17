@@ -70,12 +70,28 @@ function check(): void
 }
 
 #[AsTask(description: 'Lays out what GitHub Pages serves in demo/wasm/build/site/, and builds the demo first when it is not built', namespace: 'demo:wasm')]
-function site(): void
-{
+function site(
+    #[AsOption(description: 'Where the site is in its URLs: /MediaBundle/ on GitHub Pages, for jolicode/MediaBundle')]
+    string $basePath = '/',
+): void {
+    if (!str_starts_with($basePath, '/') || !str_ends_with($basePath, '/')) {
+        throw new \InvalidArgumentException(\sprintf('The base path "%s" must start and end with "/".', $basePath));
+    }
+
     build_unless_built();
 
     fs()->remove(SITE_DIR);
     fs()->mirror(WASM_DIR . '/public', SITE_DIR . '/demo');
+
+    // What GitHub Pages answers for what it does not have, as a link to a page
+    // of the demo in a browser that does not have its service worker yet: the
+    // page that registers it, from the directory of the demo
+    $base = \sprintf('<base href="%sdemo/">', htmlspecialchars($basePath));
+    $notFound = str_replace('<head>', "<head>\n    {$base}", fs()->readFile(WASM_DIR . '/public/index.html'), $count);
+    if (1 !== $count) {
+        throw new \LogicException('The page of the demo must have one <head>, for the <base> of the 404 page.');
+    }
+    fs()->dumpFile(SITE_DIR . '/404.html', $notFound);
 }
 
 function stack(): Stack
