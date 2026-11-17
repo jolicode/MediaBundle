@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "844c2fcafd8e825649445282f2eeb358",
+    "content-hash": "cf5deb96e63eec6f632dc285214bd9d6",
     "packages": [
         {
             "name": "castor-php/docker",
@@ -61,6 +61,52 @@
             "time": "2026-09-29T15:13:23+00:00"
         },
         {
+            "name": "lyrixx/php-wasm-builder",
+            "version": "v0.13.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lyrixx/php-wasm-builder.git",
+                "reference": "a7ce2cee5096290a55d0eef68dfe47d81ce74300"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lyrixx/php-wasm-builder/zipball/a7ce2cee5096290a55d0eef68dfe47d81ce74300",
+                "reference": "a7ce2cee5096290a55d0eef68dfe47d81ce74300",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions-internal.php",
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "PhpWasm\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Builds PHP as WebAssembly: a Dockerfile, and a castor function to build stacks (a PHP version, extensions, what to embed) with one command",
+            "keywords": [
+                "castor",
+                "emscripten",
+                "php",
+                "wasm",
+                "webassembly"
+            ],
+            "support": {
+                "issues": "https://github.com/lyrixx/php-wasm-builder/issues",
+                "source": "https://github.com/lyrixx/php-wasm-builder/tree/v0.13.1"
+            },
+            "time": "2026-11-17T13:57:20+00:00",
+            "published-time": "2026-11-17T13:57:34+00:00"
+        },
+        {
             "name": "nikic/php-parser",
             "version": "v5.9.0",
             "type": "metapackage",
@@ -79,5 +125,5 @@
     "prefer-lowest": false,
     "platform": {},
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }

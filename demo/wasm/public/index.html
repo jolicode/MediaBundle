@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JoliMediaBundle, in your browser</title>
+    <style>
+        :root {
+            color-scheme: light dark;
+            background: light-dark(#fff, #121318);
+            color: light-dark(#1c1d23, #e2e3ea);
+            font: 1rem/1.5 system-ui, sans-serif;
+        }
+        body {
+            max-width: 46rem;
+            margin: 0 auto;
+            padding: 2rem 1.25rem;
+        }
+        #message {
+            color: light-dark(#5e6272, #9a9eb0);
+        }
+    </style>
+</head>
+<body>
+    <!-- What the browser shows until the service worker answers in its place,
+         with the application. The 404 page of GitHub Pages too, with a <base>
+         (castor demo:wasm:site): a link to a page of the demo, in a browser
+         that does not have its service worker yet -->
+    <h1>JoliMediaBundle</h1>
+    <p>Symfony and gd run in your browser, compiled to WebAssembly: no server runs PHP. What you upload stays in your browser.</p>
+    <p id="message">Downloading PHP and the application…</p>
+
+    <script type="module">
+        const message = document.getElementById('message');
+        // The directory of this page, or the one that <base> names
+        const demo = new URL('./', document.baseURI).href;
+
+        // What the service worker does not answer: the 404 page out of the
+        // demo, or for a file of the website that is missing. A reload would
+        // show this page again
+        if (!location.href.startsWith(demo) || navigator.serviceWorker?.controller) {
+            message.textContent = 'This page does not exist. ';
+            message.append(Object.assign(document.createElement('a'), { href: demo, textContent: 'Open the demo.' }));
+        } else {
+            try {
+                // Not a static import: the page would say nothing when it fails
+                const { startServiceWorker } = await import('./build/php-web.mjs');
+                await startServiceWorker();
+
+                // The service worker answers now, with the application: the
+                // browser shows this page until PHP starts
+                location.reload();
+            } catch (error) {
+                message.textContent = `The demo does not start. ${error.message}`;
+                throw error;
+            }
+        }
+    </script>
+</body>
+</html>

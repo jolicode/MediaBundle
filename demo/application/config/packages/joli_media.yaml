@@ -137,3 +137,20 @@ joli_media:
             process_timeout: 120
 
     processors: ~
+
+when@wasm:
+    joli_media:
+        # There is no other process to run in WebAssembly: only Imagine, with
+        # gd, processes the images
+        processors:
+            cwebp:
+                options:
+                    enabled: false
+            gif2webp:
+                options:
+                    enabled: false
+            gifsicle:
+                options:
+                    enabled: false
+            imagine:
+                driver: gd
