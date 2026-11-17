@@ -62,16 +62,16 @@
         },
         {
             "name": "lyrixx/php-wasm-builder",
-            "version": "v0.13.0",
+            "version": "v0.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lyrixx/php-wasm-builder.git",
-                "reference": "676101e90e573a93cdde260c45532e780b854c63"
+                "reference": "a7ce2cee5096290a55d0eef68dfe47d81ce74300"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lyrixx/php-wasm-builder/zipball/676101e90e573a93cdde260c45532e780b854c63",
-                "reference": "676101e90e573a93cdde260c45532e780b854c63",
+                "url": "https://api.github.com/repos/lyrixx/php-wasm-builder/zipball/a7ce2cee5096290a55d0eef68dfe47d81ce74300",
+                "reference": "a7ce2cee5096290a55d0eef68dfe47d81ce74300",
                 "shasum": ""
             },
             "require": {
@@ -101,10 +101,10 @@
             ],
             "support": {
                 "issues": "https://github.com/lyrixx/php-wasm-builder/issues",
-                "source": "https://github.com/lyrixx/php-wasm-builder/tree/v0.13.0"
+                "source": "https://github.com/lyrixx/php-wasm-builder/tree/v0.13.1"
             },
-            "time": "2026-11-17T11:23:39+00:00",
-            "published-time": "2026-11-17T11:25:30+00:00"
+            "time": "2026-11-17T13:57:20+00:00",
+            "published-time": "2026-11-17T13:57:34+00:00"
         },
         {
             "name": "nikic/php-parser",
