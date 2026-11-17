@@ -60,8 +60,9 @@ jobs:
       - name: Check
         run: castor demo:wasm:check
 
+      # GitHub Pages publishes it under the name of the repository
       - name: Lay out the site
-        run: castor demo:wasm:site
+        run: castor demo:wasm:site --base-path="/${GITHUB_REPOSITORY#*/}/"
 
       - name: Upload the site
         uses: actions/upload-pages-artifact@v5
