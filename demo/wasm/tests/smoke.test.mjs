@@ -7,11 +7,9 @@ import { test } from 'node:test';
 import createPhp from '../public/build/php-web.mjs';
 
 const php = await createPhp();
-// Keep in sync with ../public/index.html
+// Keep in sync with ../public/sw.js
 php.FS.mkdirTree('/media-bundle-demo/media');
 php.FS.symlink('/media-bundle-demo/media', '/app/public/media');
-php.FS.mkdirTree('/usr/local/lib');
-php.FS.writeFile('/usr/local/lib/php.ini', ['memory_limit=320M', 'post_max_size=110M', 'upload_max_filesize=10M'].join('\n'));
 
 const cookies = new Map();
 
