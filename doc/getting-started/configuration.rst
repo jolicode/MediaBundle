@@ -42,6 +42,7 @@ A library is defined by a name and contains the multiple information:
 
 - ``variations`` that can be created from the original media. See the `Variation configuration <../variations/variations.rst>`_ section for more information
 - ``enable_auto_webp`` is a boolean (default: ``false``) that enables the automatic generation of WebP variations for the media. When enabled, the configured variations in the ``variations`` above node will be duplicated in WebP format, in addition to the original format.
+- ``rasterize_svg`` is a boolean (default: ``false``) that lets the variations of the library rasterize the SVG media into PNG, WebP, AVIF, JPEG or GIF images - see the `SVG rasterization documentation <../variations/processors.rst#rasterizing-svg-images>`_. Each variation can override it with its own ``rasterize_svg`` attribute.
 - ``pixel_ratios``: an array of pixel ratios (default: ``[1]``) that will be applied by default to all variations. For example, if you define a variation named ``thumbnail`` with a width of ``100px``, and the pixel ratios ``[1, 2]``, two variations will be generated: ``thumbnail`` (100px width) and ``thumbnail@2x`` (200px width). You can override this configuration on each variation.
 
 Processors configuration

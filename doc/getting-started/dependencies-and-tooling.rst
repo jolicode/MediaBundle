@@ -84,7 +84,7 @@ Use the ``driver`` key of the ``imagine`` `processor configuration <../variation
 
 .. note::
 
-    `Rasterizing SVG images <../variations/processors.rst#rasterizing-svg-images>`_ is optional and disabled by default. When it is enabled, it requires the ``imagick`` driver, and an ImageMagick built with SVG support, which a Debian-based system provides with the ``libmagickcore-7.q16-10-extra`` package (already installed by the ``libmagickcore-dev`` package above). Run ``php -r "var_dump(Imagick::queryFormats('SVG'));"`` to check that SVG is supported.
+    `Rasterizing SVG images <../variations/processors.rst#rasterizing-svg-images>`_ is optional and disabled by default. When a library or a variation enables it, it requires the ``imagick`` driver, and an ImageMagick built with SVG support, which a Debian-based system provides with the ``libmagickcore-7.q16-10-extra`` package (already installed by the ``libmagickcore-dev`` package above). Run ``php -r "var_dump(Imagick::queryFormats('SVG'));"`` to check that SVG is supported.
 
     The internal SVG renderer of ImageMagick, which most distributions ship, draws simple shapes well, but not gradients, masks, filters or CSS: a gradient comes out black. To render such SVG images, set the ``svg_renderer`` setting to ``rsvg-convert``, which uses librsvg instead and works with any driver. A Debian-based system installs it with the ``librsvg2-bin`` package.
 

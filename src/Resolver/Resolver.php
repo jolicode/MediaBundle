@@ -48,7 +48,13 @@ readonly class Resolver
             $variation = $media->getLibrary()->getVariationContainer()->get($variation);
         }
 
-        $outputFormat = $variation->getFormat()->value ?? $media->getFormat();
+        $mediaFormat = $media->getFormat();
+
+        if (!$this->acceptsFormat($variation, $mediaFormat)) {
+            return null;
+        }
+
+        $outputFormat = $variation->getFormat()->value ?? $mediaFormat;
         $outputFormats = [$outputFormat];
 
         if ($alternativeOutputFormat = Format::fromName($outputFormat)?->getAlternativeFormat()?->value) {
@@ -56,7 +62,7 @@ readonly class Resolver
         }
 
         foreach ($outputFormats as $outputFormat) {
-            $processors = $this->processorContainer->getProcessors($media->getFormat(), $outputFormat);
+            $processors = $this->processorContainer->getProcessors($mediaFormat, $outputFormat);
 
             if ([] !== $processors) {
                 return $outputFormat;
@@ -66,9 +72,24 @@ readonly class Resolver
         return null;
     }
 
-    public function isMediaProcessable(Media $media): bool
+    /**
+     * With a variation, also tells whether that variation accepts the format
+     * of the media: a SVG media is only processable by the variations that
+     * rasterize it.
+     */
+    public function isMediaProcessable(Media $media, Variation|string|null $variation = null): bool
     {
-        return !$media instanceof NullMedia && $this->processorContainer->canProcessInputFormat($media->getFormat());
+        if ($media instanceof NullMedia) {
+            return false;
+        }
+
+        $mediaFormat = $media->getFormat();
+
+        if (!$this->processorContainer->canProcessInputFormat($mediaFormat)) {
+            return false;
+        }
+
+        return null === $variation || $this->acceptsFormat($this->getVariation($variation, $media->getLibrary()->getName()), $mediaFormat);
     }
 
     /**
@@ -157,7 +178,7 @@ readonly class Resolver
             $libraryName = $media->getLibrary()->getName();
         }
 
-        if (!$this->isMediaProcessable($media)) {
+        if (!$this->isMediaProcessable($media, $variation)) {
             // the media is not processable, we won't be able to get the variation
             return null;
         }
@@ -181,6 +202,11 @@ readonly class Resolver
         }
 
         return $this->resolveMediaVariation($media, $variation, $libraryName);
+    }
+
+    private function acceptsFormat(Variation $variation, string $mediaFormat): bool
+    {
+        return $variation->rasterizesSvg() || Format::SVG !== Format::fromName($mediaFormat);
     }
 
     private function getVariation(Variation|string $variation, ?string $libraryName = null): Variation

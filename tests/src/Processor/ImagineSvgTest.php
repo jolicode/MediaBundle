@@ -68,9 +68,29 @@ class ImagineSvgTest extends BaseTestCase
     }
 
     #[DataProvider('provideSvgRenderers')]
+    public function testTheJpegVariationFlattensTheTransparentBackgroundOnWhite(string $renderer): void
+    {
+        $mediaVariation = $this->convert('email-logo-jpeg', true, $this->getRsvgConvertBinary($renderer));
+        $image = $this->readImage($mediaVariation);
+
+        self::assertSame('image/jpeg', $mediaVariation?->getBinary()->getMimeType());
+        self::assertSame([504, 168], [$image->getImageWidth(), $image->getImageHeight()]);
+        self::assertSame('white', $this->getColor($image, 0, 0));
+        self::assertSame('white', $this->getColor($image, 503, 167));
+        self::assertSame('red', $this->getColor($image, 200, 84));
+        self::assertSame('blue', $this->getColor($image, 300, 84));
+    }
+
+    #[DataProvider('provideSvgRenderers')]
     public function testTheSvgIsNotConvertedWhenDisabled(string $renderer): void
     {
         self::assertNull($this->convert('email-logo', false, $this->getRsvgConvertBinary($renderer)));
+    }
+
+    #[DataProvider('provideSvgRenderers')]
+    public function testAVariationThatDoesNotRasterizeSvgLeavesTheSvgAside(string $renderer): void
+    {
+        self::assertNull($this->convert('thumbnail', true, $this->getRsvgConvertBinary($renderer)));
     }
 
     public static function provideSvgRenderers(): \Generator
@@ -137,17 +157,32 @@ class ImagineSvgTest extends BaseTestCase
                     'email-logo',
                     null,
                     new TransformerChain([new Heighten(168)]),
+                    rasterizeSvg: true,
                 ),
                 'email-logo-right-half' => static fn (): Variation => new Variation(
                     'email-logo-right-half',
                     Format::WEBP,
                     new TransformerChain([new Crop(60, 0, 60, 40), new Heighten(168)]),
+                    rasterizeSvg: true,
+                ),
+                'email-logo-jpeg' => static fn (): Variation => new Variation(
+                    'email-logo-jpeg',
+                    Format::JPEG,
+                    new TransformerChain([new Heighten(168)]),
+                    rasterizeSvg: true,
+                ),
+                // does not rasterize the SVG media
+                'thumbnail' => static fn (): Variation => new Variation(
+                    'thumbnail',
+                    null,
+                    new TransformerChain([new Heighten(168)]),
                 ),
             ]),
         );
         $libraries = new LibraryContainer(new ServiceLocator(['default' => static fn (): Library => $library]), 'default');
         $processorContainer = new ProcessorContainer();
         $processorContainer->add('imagine', new Imagine($imagine, rasterizeSvg: $rasterizeSvg, rsvgConvertBinary: $rsvgConvertBinary));
+
         $converter = new Converter($libraries, new Resolver($libraries, $processorContainer), new TransformationProcessor(
             $processorContainer,
             new PostProcessorContainer(),
@@ -190,6 +225,7 @@ class ImagineSvgTest extends BaseTestCase
         return match (true) {
             $red > 0.9 && $green < 0.1 && $blue < 0.1 => 'red',
             $red < 0.1 && $green < 0.1 && $blue > 0.9 => 'blue',
+            $red > 0.9 && $green > 0.9 && $blue > 0.9 => 'white',
             default => 'blended',
         };
     }

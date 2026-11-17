@@ -73,6 +73,11 @@ enum Format: string
         };
     }
 
+    public function supportsTransparency(): bool
+    {
+        return self::JPEG !== $this;
+    }
+
     public function identical(string $value): bool
     {
         return $this === self::fromName($value);

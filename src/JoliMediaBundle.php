@@ -49,6 +49,11 @@ class JoliMediaBundle extends AbstractBundle
      */
     private bool $imagineProcessorEnabled = false;
 
+    /**
+     * Whether a library or a variation rasterizes the SVG media.
+     */
+    private bool $svgRasterizationEnabled = false;
+
     public function boot(): void
     {
         // media unserialization does not depend on Doctrine: this must be set
@@ -135,6 +140,10 @@ class JoliMediaBundle extends AbstractBundle
             ->setArgument('$defaultLibraryName', $config['default_library'])
         ;
 
+        if ($this->svgRasterizationEnabled && !$this->imagineProcessorEnabled) {
+            throw new \LogicException('The "rasterize_svg" setting of a library or a variation requires the "imagine" processor to be enabled.');
+        }
+
         // pre-processors
         if ($this->imagineProcessorEnabled) {
             foreach (array_keys(self::PRE_PROCESSOR_PRIORITIES) as $preProcessorClass) {
@@ -172,7 +181,7 @@ class JoliMediaBundle extends AbstractBundle
             'cwebp' => ['cwebp' => 'binary', 'identify' => 'identify_binary'],
             'gif2webp' => ['gif2webp' => 'binary'],
             'gifsicle' => ['gifsicle' => 'binary'],
-            'imagine' => self::usesRsvgConvert($processorsConfig) ? ['rsvg-convert' => 'rsvg_convert_binary'] : [],
+            'imagine' => $this->usesRsvgConvert($processorsConfig) ? ['rsvg-convert' => 'rsvg_convert_binary'] : [],
         ];
         $diagnostics = [];
 
@@ -209,9 +218,9 @@ class JoliMediaBundle extends AbstractBundle
      *
      * @param array<string, mixed> $processorsConfig
      */
-    private static function usesRsvgConvert(array $processorsConfig): bool
+    private function usesRsvgConvert(array $processorsConfig): bool
     {
-        return true === ($processorsConfig['imagine']['rasterize_svg'] ?? false)
+        return $this->svgRasterizationEnabled
             && 'rsvg-convert' === ($processorsConfig['imagine']['svg_renderer'] ?? null);
     }
 
@@ -276,6 +285,10 @@ class JoliMediaBundle extends AbstractBundle
                     ->booleanNode('enable_auto_webp')
                         ->defaultFalse()
                         ->info('If true, enables automatic generation of WebP variations for the media: the configured variations will all be duplicated in WebP format, in addition to the original format.')
+                    ->end()
+                    ->booleanNode('rasterize_svg')
+                        ->defaultFalse()
+                        ->info('If true, the variations rasterize the SVG media into PNG, WebP, AVIF, JPEG or GIF images. Requires the "imagine" processor, with the "imagick" driver and the SVG support of ImageMagick, or its "svg_renderer" setting set to "rsvg-convert". Each variation can override this value.')
                     ->end()
                     ->append($this->addPixelRatiosNode())
                     ->append($this->addVariationsNode())
@@ -365,9 +378,18 @@ class JoliMediaBundle extends AbstractBundle
             ->useAttributeAsKey('name')
             ->arrayPrototype()
                 ->children()
-                    ->scalarNode('format')->end()
+                    ->scalarNode('format')
+                        ->validate()
+                            ->ifTrue(static fn (mixed $value): bool => \is_string($value) && Format::SVG === Format::fromName($value))
+                            ->thenInvalid('Invalid variation format %s: SVG is an input-only format, no variation can output it.')
+                        ->end()
+                    ->end()
                     ->booleanNode('enable_auto_webp')
                         ->info('If true and the format config attribute is not set or different from "webp", enables an additionnal webp version of the variation.')
+                    ->end()
+                    ->booleanNode('rasterize_svg')
+                        ->defaultNull()
+                        ->info('If true, this variation rasterizes the SVG media. Overrides the library-level rasterize_svg setting; when null, falls back to it.')
                     ->end()
                     ->booleanNode('must_store_when_generating_url')
                         ->defaultNull()
@@ -834,14 +856,10 @@ class JoliMediaBundle extends AbstractBundle
                     ->defaultValue('imagick')
                     ->info('The Imagine driver to use for image processing. Available options: "gd", "gmagick", "imagick".')
                 ->end()
-                ->booleanNode('rasterize_svg')
-                    ->defaultFalse()
-                    ->info('Whether SVG media can be rasterized into variations. With the "imagick" SVG renderer, requires the "imagick" driver, with the SVG support of ImageMagick.')
-                ->end()
                 ->enumNode('svg_renderer')
                     ->values(['imagick', 'rsvg-convert'])
                     ->defaultValue('imagick')
-                    ->info('How the SVG media are rendered when "rasterize_svg" is enabled: "imagick" uses the SVG support of ImageMagick, "rsvg-convert" the librsvg binary, which renders the gradients, masks, filters and CSS that the ImageMagick internal renderer does not, with any Imagine driver.')
+                    ->info('How the SVG media are rendered by the libraries and variations that enable "rasterize_svg": "imagick" uses the SVG support of ImageMagick, and requires the "imagick" driver, "rsvg-convert" the librsvg binary, which renders the gradients, masks, filters and CSS that the ImageMagick internal renderer does not, with any Imagine driver.')
                 ->end()
                 ->scalarNode('rsvg_convert_binary')
                     ->defaultValue('%joli_media.binary.rsvg_convert%')
@@ -1285,8 +1303,8 @@ class JoliMediaBundle extends AbstractBundle
                     '$imagine' => service('.joli_media.imagine.imagine'),
                     '$options' => $processorsConfig['imagine']['options'],
                     '$logger' => service('logger')->ignoreOnInvalid(),
-                    '$rasterizeSvg' => $processorsConfig['imagine']['rasterize_svg'],
-                    '$rsvgConvertBinary' => self::usesRsvgConvert($processorsConfig) ? $processorsConfig['imagine']['rsvg_convert_binary'] : null,
+                    '$rasterizeSvg' => $this->svgRasterizationEnabled,
+                    '$rsvgConvertBinary' => $this->usesRsvgConvert($processorsConfig) ? $processorsConfig['imagine']['rsvg_convert_binary'] : null,
                     '$processTimeout' => $processorsConfig['imagine']['process_timeout'] ?? $defaultProcessTimeout,
                 ])
             ;
@@ -1574,6 +1592,9 @@ class JoliMediaBundle extends AbstractBundle
             $variationName
         );
 
+        $rasterizeSvg = $variationConfig['rasterize_svg'] ?? $libraryConfig['rasterize_svg'];
+        $this->svgRasterizationEnabled = $this->svgRasterizationEnabled || $rasterizeSvg;
+
         $transformerIds = [];
 
         foreach ($variationConfig['transformers'] as $transformerName => $transformerConfig) {
@@ -1618,6 +1639,7 @@ class JoliMediaBundle extends AbstractBundle
                 '$voters' => array_map(service(...), $voterServiceIds),
                 '$multiplier' => $variationConfig['pixel_ratio'],
                 '$mustStoreWhenGeneratingUrl' => $variationConfig['must_store_when_generating_url'] ?? null,
+                '$rasterizeSvg' => $rasterizeSvg,
             ])
             ->tag($variationServiceTag, ['name' => $slugger->slug($variationName)->lower()->toString()])
         ;

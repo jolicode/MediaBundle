@@ -14,4 +14,13 @@ class FormatTest extends TestCase
         self::assertSame(['svg'], Format::SVG->getPossibleExtensions());
         self::assertSame(Format::PNG, Format::SVG->getAlternativeFormat());
     }
+
+    public function testOnlyJpegDoesNotSupportTransparency(): void
+    {
+        self::assertFalse(Format::JPEG->supportsTransparency());
+        self::assertTrue(Format::AVIF->supportsTransparency());
+        self::assertTrue(Format::GIF->supportsTransparency());
+        self::assertTrue(Format::PNG->supportsTransparency());
+        self::assertTrue(Format::WEBP->supportsTransparency());
+    }
 }

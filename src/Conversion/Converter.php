@@ -3,7 +3,6 @@
 namespace JoliCode\MediaBundle\Conversion;
 
 use JoliCode\MediaBundle\Library\LibraryContainer;
-use JoliCode\MediaBundle\Model\Format;
 use JoliCode\MediaBundle\Model\Media;
 use JoliCode\MediaBundle\Model\MediaVariation;
 use JoliCode\MediaBundle\Resolver\Resolver;
@@ -42,7 +41,7 @@ readonly class Converter
         foreach ($variations as $variation) {
             if (!$variation->canBeAppliedTo($media)) {
                 $this->logger?->info(\sprintf(
-                    'Variation "%s" cannot be applied to media "%s" du to a voter restriction',
+                    'Variation "%s" cannot be applied to media "%s"',
                     $variation->getName(),
                     $media->getPath(),
                 ));
@@ -60,7 +59,7 @@ readonly class Converter
 
     public function convertMediaVariation(MediaVariation $mediaVariation, bool $force = true): void
     {
-        if (!\in_array(Format::fromName($mediaVariation->getMedia()->getFormat()), $this->transformationProcessor->getProcessableInputFormats(), true)) {
+        if (!$this->resolver->isMediaProcessable($mediaVariation->getMedia(), $mediaVariation->getVariation())) {
             return;
         }
 

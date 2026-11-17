@@ -33,7 +33,7 @@ class ConfigurationTest extends TestCase
     {
         $config = $this->processConfiguration([]);
 
-        $this->assertFalse($config['processors']['imagine']['rasterize_svg']);
+        $this->assertArrayNotHasKey('rasterize_svg', $config['processors']['imagine']);
         $this->assertSame('imagick', $config['processors']['imagine']['svg_renderer']);
         $this->assertSame('%joli_media.binary.rsvg_convert%', $config['processors']['imagine']['rsvg_convert_binary']);
     }
@@ -44,7 +44,6 @@ class ConfigurationTest extends TestCase
             [
                 'processors' => [
                     'imagine' => [
-                        'rasterize_svg' => true,
                         'svg_renderer' => 'rsvg-convert',
                         'rsvg_convert_binary' => '/opt/librsvg/bin/rsvg-convert',
                     ],
@@ -54,6 +53,80 @@ class ConfigurationTest extends TestCase
 
         $this->assertSame('rsvg-convert', $config['processors']['imagine']['svg_renderer']);
         $this->assertSame('/opt/librsvg/bin/rsvg-convert', $config['processors']['imagine']['rsvg_convert_binary']);
+    }
+
+    public function testRasterizeSvgIsDisabledByDefault(): void
+    {
+        $config = $this->processConfiguration([
+            [
+                'libraries' => [
+                    'default' => [
+                        'original' => ['flysystem' => 'flysystem.original'],
+                        'cache' => ['flysystem' => 'flysystem.cache'],
+                        'variations' => [
+                            'thumbnail' => [],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertFalse($config['libraries']['default']['rasterize_svg']);
+        // when not set, the value is null and falls back to the library-level setting
+        $this->assertNull($config['libraries']['default']['variations']['thumbnail']['rasterize_svg']);
+    }
+
+    public function testRasterizeSvgConfiguration(): void
+    {
+        $config = $this->processConfiguration([
+            [
+                'libraries' => [
+                    'default' => [
+                        'original' => ['flysystem' => 'flysystem.original'],
+                        'cache' => ['flysystem' => 'flysystem.cache'],
+                        'rasterize_svg' => true,
+                        'variations' => [
+                            'thumbnail' => [
+                                'rasterize_svg' => false,
+                            ],
+                            'email_logo' => [
+                                'rasterize_svg' => true,
+                            ],
+                            'large' => [],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $library = $config['libraries']['default'];
+
+        $this->assertTrue($library['rasterize_svg']);
+        $this->assertFalse($library['variations']['thumbnail']['rasterize_svg']);
+        $this->assertTrue($library['variations']['email_logo']['rasterize_svg']);
+        $this->assertNull($library['variations']['large']['rasterize_svg']);
+    }
+
+    public function testTheSvgFormatIsRejectedForAVariation(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('SVG is an input-only format');
+
+        $this->processConfiguration([
+            [
+                'libraries' => [
+                    'default' => [
+                        'original' => ['flysystem' => 'flysystem.original'],
+                        'cache' => ['flysystem' => 'flysystem.cache'],
+                        'variations' => [
+                            'vector' => [
+                                'format' => 'svg',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
     }
 
     public function testUnknownSvgRendererIsRejected(): void

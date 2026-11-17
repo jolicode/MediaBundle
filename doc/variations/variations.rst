@@ -44,7 +44,7 @@ If ``enable_auto_webp`` is not defined in a variation, the value of the ``enable
 format
 ~~~~~~
 
-This is a string that defines the format of the variation. If not set, the original format of the media will be used. If set to "webp", for example, the variation will be generated in WebP format.
+This is a string that defines the format of the variation. If not set, the original format of the media will be used. If set to "webp", for example, the variation will be generated in WebP format. It cannot be set to "svg": SVG is an input-only format, which the variations `rasterize <processors.rst#rasterizing-svg-images>`_ into PNG when they do not define a format.
 
 .. tip::
 
@@ -95,6 +95,29 @@ processors
 ~~~~~~~~~~
 
 This allows to override the processor options for the variation. This is useful if you want to apply different processing options to a variation than the ones defined in the library configuration. The processor options are defined in the `processors <processors.rst>`_ documentation.
+
+rasterize_svg
+~~~~~~~~~~~~~
+
+This is a boolean that defines whether the variation rasterizes the SVG media into PNG, WebP, AVIF, JPEG or GIF images - see the `SVG rasterization documentation <processors.rst#rasterizing-svg-images>`_. When it is ``false``, the variation is not generated for the SVG media, and the Twig components output the original SVG instead.
+
+If not defined (or set to ``null``), the value of the ``rasterize_svg`` option defined in the library configuration is used instead. Setting it explicitly to ``true`` or ``false`` overrides the library-level value for this variation only. The variation clones (the ``@2x`` pixel-ratio variations and the automatic WebP alternatives) inherit the value of the variation they are cloned from.
+
+.. code-block:: yaml
+
+    joli_media:
+        libraries:
+            default:
+                rasterize_svg: false
+                variations:
+                    email_logo:
+                        # this variation rasterizes the SVG media,
+                        # even though the library does not enable the setting
+                        rasterize_svg: true
+                        format: png
+                        transformers:
+                            heighten:
+                                height: 168
 
 transformers
 ~~~~~~~~~~~~
