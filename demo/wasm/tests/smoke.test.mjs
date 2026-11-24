@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import createPhp from '../public/build/php-web.mjs';
+import createPhp, { keepCookies, withCookies } from '../public/build/php-web.mjs';
 
 const php = await createPhp();
 // Keep in sync with ../public/sw.js
@@ -14,17 +14,11 @@ php.FS.symlink('/media-bundle-demo/media', '/app/public/media');
 const cookies = new Map();
 
 async function get(path) {
-    const cookie = [...cookies].map(([name, value]) => `${name}=${value}`).join('; ');
     const response = await php.request(
-        { url: `https://demo.test/app${path}`, headers: '' === cookie ? {} : { Cookie: cookie } },
+        { url: `https://demo.test/app${path}`, headers: withCookies([], cookies) },
         { documentRoot: '/app/public', basePath: '/app' },
     );
-    for (const [name, value] of response.headers) {
-        if ('set-cookie' === name.toLowerCase()) {
-            const [pair] = value.split(';');
-            cookies.set(pair.slice(0, pair.indexOf('=')), pair.slice(pair.indexOf('=') + 1));
-        }
-    }
+    keepCookies(cookies, response.headers);
 
     return response;
 }
