@@ -1,6 +1,6 @@
 {
     "require": {
         "castor-php/docker": "^0.8.1",
-        "lyrixx/php-wasm-builder": "^0.13"
+        "lyrixx/php-wasm-builder": "^1.0"
     }
 }

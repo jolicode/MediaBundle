@@ -23,7 +23,7 @@ const WASM_DIR = __DIR__ . '/../demo/wasm';
 
 const SITE_DIR = WASM_DIR . '/build/site';
 
-const WASM_PHP_VERSION = '8.5.12';
+const WASM_PHP_VERSION = '8.5.13';
 
 /**
  * @param list<string> $set
