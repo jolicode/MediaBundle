@@ -208,6 +208,7 @@ class MediaAdminController extends AbstractController
         }
 
         try {
+            $this->config->assertPathIsAccepted($newPath);
             $this->getOriginalStorage()->move($oldPath, $newPath);
 
             $this->addFlash('success', $this->translator->trans(
@@ -542,6 +543,7 @@ class MediaAdminController extends AbstractController
             $uploadedFile = $form->get('file')->getData();
             $filename = $uploadedFile->getClientOriginalName();
             $key = \sprintf('%s/%s', $form->get('path')->getData(), $filename);
+            $this->config->assertPathIsAccepted($key);
             $storage = $this->getOriginalStorage();
 
             if ($storage->has($key)) {

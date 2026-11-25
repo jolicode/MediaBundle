@@ -546,6 +546,7 @@ class MediaAdminController extends AbstractController
             if ($renameFileForm->isValid()) {
                 try {
                     $target = Resolver::normalizePath(\sprintf('%s/%s', $media->getFolderPath(), $to));
+                    $this->config->assertPathIsAccepted($target);
                     $this->denyAccessUnlessGranted(AdminAction::MOVE, new AdminAction(
                         libraryName: $this->getLibrary()->getName(),
                         path: Resolver::normalizePath($key),
@@ -629,6 +630,7 @@ class MediaAdminController extends AbstractController
             $uploadedFile = $form->get('file')->getData();
             $filename = $uploadedFile->getClientOriginalName();
             $key = \sprintf('%s/%s', $form->get('path')->getData(), $filename);
+            $this->config->assertPathIsAccepted($key);
             $storage = $this->getOriginalStorage();
 
             $this->denyAccessUnlessGranted(AdminAction::UPLOAD, new AdminAction(

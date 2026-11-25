@@ -2,6 +2,10 @@
 
 namespace JoliCode\MediaBundle\Bridge\Config;
 
+use League\Flysystem\PathTraversalDetected;
+use League\Flysystem\WhitespacePathNormalizer;
+use Symfony\Component\HttpFoundation\File\Exception\UploadException;
+use Symfony\Component\Mime\MimeTypes;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract readonly class AbstractConfig
@@ -36,6 +40,61 @@ abstract readonly class AbstractConfig
             'maxFiles' => $this->maxFiles,
             default => throw new \InvalidArgumentException(\sprintf('Unknown upload option "%s".', $name)),
         };
+    }
+
+    /**
+     * Tells whether a media may be stored under the given path.
+     *
+     * The "accepted_files" option is checked against the content of an uploaded
+     * file. As the web server and the browsers rather trust the name of a file,
+     * the extension of its path must also be the one of an accepted type:
+     * otherwise, a file whose content is accepted could be stored, or renamed,
+     * under a name which makes it served as another type.
+     *
+     * Any path is accepted when the option is empty.
+     */
+    public function acceptsPath(string $path): bool
+    {
+        if ([] === $this->acceptedFiles) {
+            return true;
+        }
+
+        try {
+            // the name of the file Flysystem will write, e.g. "file.html" for "file.html/."
+            $path = (new WhitespacePathNormalizer())->normalizePath($path);
+        } catch (PathTraversalDetected) {
+            return false;
+        }
+
+        $extension = strtolower(pathinfo($path, \PATHINFO_EXTENSION));
+
+        if ('' === $extension) {
+            return false;
+        }
+
+        foreach (MimeTypes::getDefault()->getMimeTypes($extension) as $mimeType) {
+            foreach ($this->acceptedFiles as $acceptedFile) {
+                if ($acceptedFile === $mimeType) {
+                    return true;
+                }
+
+                if (str_ends_with($acceptedFile, '/*') && str_starts_with($mimeType, substr($acceptedFile, 0, -1))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @throws UploadException when no media may be stored under the given path
+     */
+    public function assertPathIsAccepted(string $path): void
+    {
+        if (!$this->acceptsPath($path)) {
+            throw new UploadException($this->translator->trans('media.upload.uploader.invalid_file_type', domain: $this->getTranslationDomain()));
+        }
     }
 
     /**

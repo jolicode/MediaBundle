@@ -7,6 +7,9 @@ return static function (ContainerConfigurator $container): void {
         'text_editor' => [
             'variation' => 'variation-standard',
         ],
+        'upload' => [
+            'accepted_files' => ['image/*', 'application/pdf'],
+        ],
         'visibility' => [
             'show_variations_stored' => true,
         ],

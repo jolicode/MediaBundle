@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- fix - The `accepted_files` option of the admin bridges now also applies to the name of the files: it was only checked against the content of an uploaded file, so that a file with an accepted content could be uploaded as, or renamed to, `image.html`, and be served as such by the web server. When the option is set, the extension of an uploaded or renamed file must be the one of an accepted type. Nothing changes when the option is empty, which is its default value
+
 ## [0.11.0] - 2026-11-26
 
 - bc break - The `Format` enum has a new `SVG` case: an exhaustive `match` on it without a `default` arm must handle it
