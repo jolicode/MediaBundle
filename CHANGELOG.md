@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - feature - The EasyAdmin, SonataAdmin and Sylius bridges have a new `accepted_extensions` upload option, listing the extensions a file may have when it is uploaded or renamed. It is empty by default, which accepts any extension. The [storage documentation](doc/storage/storage.rst) explains why a web server may serve a file whose extension does not match its content as another type
+- fix - The assets of the Sonata Admin bridge are now found when the application runs in a subfolder: their URLs lacked its base path
 
 ## [0.11.0] - 2026-11-26
 

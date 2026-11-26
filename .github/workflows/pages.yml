@@ -1,5 +1,9 @@
 name: Pages
 
+# Builds the documentation, and the demo of demo/wasm/ that it checks, then
+# deploys them to GitHub Pages, the demo in demo/. Nothing is deployed if a
+# build or the checks fail.
+
 on:
   push:
     branches:
@@ -37,9 +41,53 @@ jobs:
           path: doc-website/var/output
           if-no-files-found: error
 
+  demo:
+    name: Build the demo
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # Symfony needs PHP 8.4 or later on the host too: assets:install
+      - name: Setup PHP and castor
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          tools: castor
+
+      # The checks run on node, with fetch-files.mjs: the version it is made for
+      - name: Setup node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      # The cache needs the docker-container driver of buildx…
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      # …and the runtime token and URLs of GitHub Actions, that only actions get
+      - name: Expose the runtime of GitHub Actions
+        uses: crazy-max/ghaction-github-runtime@v4
+
+      - name: Build
+        run: castor demo:wasm:build --set '*.cache-from=type=gha,scope=demo-wasm' --set '*.cache-to=type=gha,scope=demo-wasm,mode=max,ignore-error=true'
+
+      - name: Check
+        run: castor demo:wasm:check
+
+      - name: Upload the demo
+        uses: actions/upload-artifact@v7
+        with:
+          name: demo
+          path: demo/wasm/public
+          if-no-files-found: error
+
   deploy:
     name: Deploy to GitHub Pages
-    needs: [doc]
+    needs: [doc, demo]
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -48,16 +96,40 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup castor
+        uses: castor-php/setup-castor@v1
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
       - name: Download the documentation
         uses: actions/download-artifact@v8
         with:
           name: doc
-          path: site
+          path: doc-website/var/output
+
+      - name: Download the demo
+        uses: actions/download-artifact@v8
+        with:
+          name: demo
+          path: demo/wasm/public
+
+      # The base path is empty on a custom domain, /MediaBundle without one
+      - name: Lay out the site
+        run: castor pages:site --base-path="${BASE_PATH}/"
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
 
       - name: Upload the site
         uses: actions/upload-pages-artifact@v5
         with:
-          path: site
+          path: doc-website/var/site
 
       - name: Deploy
         id: deployment

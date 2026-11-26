@@ -13,3 +13,11 @@ when@test:
         test: true
         session:
             storage_factory_id: session.storage.factory.mock_file
+
+when@wasm:
+    framework:
+        session:
+            # The browser stops the service worker that runs PHP when it has
+            # nothing to do, and its memory is gone: the sessions are kept in
+            # IndexedDB. Keep in sync with data in ../../../wasm/public/sw.js
+            save_path: /media-bundle-demo/sessions
