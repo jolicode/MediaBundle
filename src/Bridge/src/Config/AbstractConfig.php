@@ -5,11 +5,18 @@ namespace JoliCode\MediaBundle\Bridge\Config;
 use League\Flysystem\PathTraversalDetected;
 use League\Flysystem\WhitespacePathNormalizer;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
-use Symfony\Component\Mime\MimeTypes;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract readonly class AbstractConfig
 {
+    /**
+     * @var array<string>
+     */
+    protected array $acceptedExtensions;
+
+    /**
+     * @param array<string> $acceptedExtensions
+     */
     public function __construct(
         protected TranslatorInterface $translator,
         /**
@@ -22,7 +29,12 @@ abstract readonly class AbstractConfig
         protected array $acceptedFiles,
         protected int $maxFileSize,
         protected ?int $maxFiles = null,
+        array $acceptedExtensions = [],
     ) {
+        $this->acceptedExtensions = array_map(
+            static fn (string $extension): string => strtolower(ltrim($extension, '.')),
+            $acceptedExtensions,
+        );
     }
 
     abstract public function getTranslationDomain(): string;
@@ -42,20 +54,9 @@ abstract readonly class AbstractConfig
         };
     }
 
-    /**
-     * Tells whether a media may be stored under the given path.
-     *
-     * The "accepted_files" option is checked against the content of an uploaded
-     * file. As the web server and the browsers rather trust the name of a file,
-     * the extension of its path must also be the one of an accepted type:
-     * otherwise, a file whose content is accepted could be stored, or renamed,
-     * under a name which makes it served as another type.
-     *
-     * Any path is accepted when the option is empty.
-     */
     public function acceptsPath(string $path): bool
     {
-        if ([] === $this->acceptedFiles) {
+        if ([] === $this->acceptedExtensions) {
             return true;
         }
 
@@ -68,27 +69,11 @@ abstract readonly class AbstractConfig
 
         $extension = strtolower(pathinfo($path, \PATHINFO_EXTENSION));
 
-        if ('' === $extension) {
-            return false;
-        }
-
-        foreach (MimeTypes::getDefault()->getMimeTypes($extension) as $mimeType) {
-            foreach ($this->acceptedFiles as $acceptedFile) {
-                if ($acceptedFile === $mimeType) {
-                    return true;
-                }
-
-                if (str_ends_with($acceptedFile, '/*') && str_starts_with($mimeType, substr($acceptedFile, 0, -1))) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return '' !== $extension && \in_array($extension, $this->acceptedExtensions, true);
     }
 
     /**
-     * @throws UploadException when no media may be stored under the given path
+     * @throws UploadException
      */
     public function assertPathIsAccepted(string $path): void
     {

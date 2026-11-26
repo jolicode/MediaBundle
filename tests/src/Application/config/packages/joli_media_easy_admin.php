@@ -8,7 +8,7 @@ return static function (ContainerConfigurator $container): void {
             'variation' => 'variation-standard',
         ],
         'upload' => [
-            'accepted_files' => ['image/*', 'application/pdf'],
+            'accepted_extensions' => ['gif', 'jpeg', 'jpg', 'pdf', 'png'],
         ],
         'visibility' => [
             'show_variations_stored' => true,

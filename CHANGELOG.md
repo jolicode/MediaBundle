@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- fix - The `accepted_files` option of the admin bridges now also applies to the name of the files: it was only checked against the content of an uploaded file, so that a file with an accepted content could be uploaded as, or renamed to, `image.html`, and be served as such by the web server. When the option is set, the extension of an uploaded or renamed file must be the one of an accepted type. Nothing changes when the option is empty, which is its default value
+- feature - The EasyAdmin, SonataAdmin and Sylius bridges have a new `accepted_extensions` upload option, listing the extensions a file may have when it is uploaded or renamed. It is empty by default, which accepts any extension. The [storage documentation](doc/storage/storage.rst) explains why a web server may serve a file whose extension does not match its content as another type
 
 ## [0.11.0] - 2026-11-26
 

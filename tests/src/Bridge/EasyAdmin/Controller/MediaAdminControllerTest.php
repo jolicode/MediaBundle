@@ -140,13 +140,13 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertSame('http://localhost/admin/media/show/circle-pattern.png', $response['files'][0]['link']);
     }
 
-    public function testUploadRefusesAFileWhoseExtensionIsNotTheOneOfAnAcceptedType(): void
+    public function testUploadRefusesAnExtensionWhichIsNotAccepted(): void
     {
         $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/explore');
         $this->assertResponseIsSuccessful();
         $form = $crawler->filter('form[name="upload"]')->form();
 
-        // the content is the one of an accepted type, the name is not
+        // a GIF image, uploaded under a name the web server would serve as HTML
         $tmpFile = tempnam(sys_get_temp_dir(), 'upload-test');
         copy(__DIR__ . '/../../../../fixtures/circle-pattern.gif', $tmpFile);
 
@@ -172,7 +172,7 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertFalse($this->getOriginalStorage()->has('circle-pattern.html'));
     }
 
-    public function testRenameRefusesAnExtensionWhichIsNotTheOneOfAnAcceptedType(): void
+    public function testRenameRefusesAnExtensionWhichIsNotAccepted(): void
     {
         $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/show/default.pdf');
         $this->assertResponseIsSuccessful();

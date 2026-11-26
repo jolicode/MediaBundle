@@ -100,6 +100,7 @@ class ServiceTest extends TestCase
                 'max_files' => null,
                 'max_file_size' => 20,
                 'accepted_files' => [],
+                'accepted_extensions' => [],
             ],
             'visibility' => [
                 'show_markdown_code' => false,

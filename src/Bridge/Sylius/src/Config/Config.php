@@ -11,6 +11,7 @@ readonly class Config extends AbstractConfig
      * @param array<string, bool> $visibility
      * @param array<string>       $acceptedFiles
      * @param int[]               $paginationSizes
+     * @param array<string>       $acceptedExtensions
      */
     public function __construct(
         TranslatorInterface $translator,
@@ -19,8 +20,9 @@ readonly class Config extends AbstractConfig
         int $maxFileSize,
         private array $paginationSizes,
         ?int $maxFiles = null,
+        array $acceptedExtensions = [],
     ) {
-        parent::__construct($translator, $visibility, $acceptedFiles, $maxFileSize, $maxFiles);
+        parent::__construct($translator, $visibility, $acceptedFiles, $maxFileSize, $maxFiles, $acceptedExtensions);
     }
 
     #[\Override]
