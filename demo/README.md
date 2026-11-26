@@ -39,7 +39,7 @@ which act on the repository rather than on the demo stack.
 It provides:
 
  - PostgreSQL 16
- - the `demo` container: nginx + PHP-FPM 8.4, with the media toolchain the bundle
+ - the `demo` container: nginx + PHP-FPM 8.6, with the media toolchain the bundle
    relies on (ImageMagick, exiftool, gifsicle, jpegoptim, pngquant, libwebp,
    mozjpeg, oxipng), see [`Dockerfile`](Dockerfile)
  - the `demo-builder` container, with Composer, Node.js and the QA tools

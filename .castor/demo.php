@@ -36,7 +36,7 @@ function register_services(RegisterServiceEvent $event): void
         (new SymfonyService('demo'))
             ->withDirectory(\dirname(__DIR__))
             ->withWorkingDirectory('demo/application')
-            ->withVersion('8.4')
+            ->withVersion('8.6')
             ->withMode(PhpMode::Fpm)
             ->withDockerfile(\dirname(__DIR__) . '/demo/Dockerfile')
             ->link($postgres)

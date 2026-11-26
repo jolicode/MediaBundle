@@ -122,9 +122,7 @@ function install_application(): void
     fs()->dumpFile("{$application}/composer.json", json_encode($composer, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_THROW_ON_ERROR));
 
     $context = context()->withWorkingDirectory($application);
-    // The lock of the application is for the PHP of its Docker image, 8.2:
-    // laminas/laminas-stdlib 3.21.0 refuses PHP 8.6, and 3.22.0 refuses 8.2
-    run(['composer', 'update', 'jolicode/media-bundle', 'laminas/laminas-stdlib', '--with-dependencies', '--minimal-changes', '--no-dev', '--no-scripts', '--no-interaction', '--no-progress', '--classmap-authoritative'], context: $context);
+    run(['composer', 'update', 'jolicode/media-bundle', '--with-dependencies', '--minimal-changes', '--no-dev', '--no-scripts', '--no-interaction', '--no-progress', '--classmap-authoritative'], context: $context);
     $console = $context->withEnvironment(['APP_ENV' => 'wasm']);
     run(['php', 'bin/console', 'assets:install', 'public', '--no-interaction'], context: $console);
     // Elsewhere they are downloaded as they are rendered: there is no network in WebAssembly

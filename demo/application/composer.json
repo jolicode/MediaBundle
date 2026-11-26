@@ -4,27 +4,27 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/doctrine-fixtures-bundle": "^4.3.1",
-        "doctrine/doctrine-migrations-bundle": "^3.7",
-        "easycorp/easyadmin-bundle": "^5.6.0",
+        "doctrine/doctrine-migrations-bundle": "^4.0.1",
+        "easycorp/easyadmin-bundle": "^5.10.4",
         "fakerphp/faker": "^1.24.1",
         "imagine/imagine": "^1.5.4",
-        "jolicode/media-bundle": "^0.8.0",
-        "nikic/php-parser": "^5.8.0",
-        "pagerfanta/doctrine-orm-adapter": "^4.8",
-        "sonata-project/doctrine-orm-admin-bundle": "^4.21",
+        "jolicode/media-bundle": "^0.11.0",
+        "nikic/php-parser": "^5.9.0",
+        "pagerfanta/doctrine-orm-adapter": "^4.11",
+        "sonata-project/doctrine-orm-admin-bundle": "^4.22",
         "stof/doctrine-extensions-bundle": "^1.15.3",
-        "sylius/bootstrap-admin-ui": "^0.12.3",
-        "sylius/ui-translations": "^0.12.3",
-        "symfony/console": "7.4.*",
-        "symfony/dotenv": "7.4.*",
+        "sylius/bootstrap-admin-ui": "^0.14.3",
+        "sylius/ui-translations": "^0.14.3",
+        "symfony/console": "8.1.*",
+        "symfony/dotenv": "8.1.*",
         "symfony/flex": "^2.12",
-        "symfony/framework-bundle": "7.4.*",
-        "symfony/runtime": "7.4.*",
-        "symfony/yaml": "7.4.*"
+        "symfony/framework-bundle": "8.1.*",
+        "symfony/runtime": "8.1.*",
+        "symfony/yaml": "8.1.*"
     },
     "config": {
         "allow-plugins": {
@@ -73,12 +73,12 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.4.*"
+            "require": "8.1.*"
         }
     },
     "require-dev": {
-        "symfony/debug-bundle": "7.4.*",
+        "symfony/debug-bundle": "8.1.*",
         "symfony/maker-bundle": "^1.68.0",
-        "symfony/web-profiler-bundle": "7.4.*"
+        "symfony/web-profiler-bundle": "8.1.*"
     }
 }
