@@ -47,6 +47,7 @@ media:
     dimensions: 'Dimensions'
     search_label: 'Rechercher un média...'
     error:
+        invalid_extension: 'L''extension du fichier est invalide (%extension%). Les extensions autorisées sont %extensions%.'
         forbidden: 'Le média "%media%" est stocké dans un dossier réservé et ne peut pas être modifié.'
         in_use: 'Le media "%media%" est utilisé dans le champ "%field%" de l''entité "%entity%". Il ne peut pas être supprimé.'
     inaccessible:

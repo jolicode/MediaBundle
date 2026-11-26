@@ -2,9 +2,6 @@
 
 namespace JoliCode\MediaBundle\Bridge\Config;
 
-use League\Flysystem\PathTraversalDetected;
-use League\Flysystem\WhitespacePathNormalizer;
-use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract readonly class AbstractConfig
@@ -47,39 +44,12 @@ abstract readonly class AbstractConfig
     public function getUploadOption(string $name): mixed
     {
         return match ($name) {
+            'acceptedExtensions' => $this->acceptedExtensions,
             'acceptedFiles' => $this->acceptedFiles,
             'maxFileSize' => $this->maxFileSize,
             'maxFiles' => $this->maxFiles,
             default => throw new \InvalidArgumentException(\sprintf('Unknown upload option "%s".', $name)),
         };
-    }
-
-    public function acceptsPath(string $path): bool
-    {
-        if ([] === $this->acceptedExtensions) {
-            return true;
-        }
-
-        try {
-            // the name of the file Flysystem will write, e.g. "file.html" for "file.html/."
-            $path = (new WhitespacePathNormalizer())->normalizePath($path);
-        } catch (PathTraversalDetected) {
-            return false;
-        }
-
-        $extension = strtolower(pathinfo($path, \PATHINFO_EXTENSION));
-
-        return '' !== $extension && \in_array($extension, $this->acceptedExtensions, true);
-    }
-
-    /**
-     * @throws UploadException
-     */
-    public function assertPathIsAccepted(string $path): void
-    {
-        if (!$this->acceptsPath($path)) {
-            throw new UploadException($this->translator->trans('media.upload.uploader.invalid_file_type', domain: $this->getTranslationDomain()));
-        }
     }
 
     /**

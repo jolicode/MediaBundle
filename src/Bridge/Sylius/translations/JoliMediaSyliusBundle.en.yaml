@@ -59,6 +59,7 @@ media:
         explanation: 'The media "%media%" is not accessible. It may have been deleted or moved.'
         label: 'Inaccessible media'
     error:
+        invalid_extension: 'The extension of the file is invalid (%extension%). Allowed extensions are %extensions%.'
         required: 'Please choose a media file.'
         forbidden: 'The media "%media%" is stored in a reserved directory and cannot be modified.'
     move_modal:

@@ -4,6 +4,7 @@ namespace JoliCode\MediaBundle\Bridge\Sylius\Admin\Controller;
 
 use JoliCode\MediaBundle\Bridge\Form\Type\UploadType;
 use JoliCode\MediaBundle\Bridge\Sylius\Config\Config;
+use JoliCode\MediaBundle\Bridge\Validator\AcceptedExtension;
 use JoliCode\MediaBundle\Conversion\Converter;
 use JoliCode\MediaBundle\Exception\ForbiddenPathException;
 use JoliCode\MediaBundle\Exception\UnprocessableMediaException;
@@ -35,6 +36,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
@@ -56,6 +58,7 @@ class MediaAdminController extends AbstractController
         private readonly Config $config,
         private readonly TranslatorInterface $translator,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly ValidatorInterface $validator,
     ) {
     }
 
@@ -207,8 +210,18 @@ class MediaAdminController extends AbstractController
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
         }
 
+        $violations = $this->validator->validate($newPath, new AcceptedExtension(
+            $this->config->getUploadOption('acceptedExtensions'),
+            translationDomain: $this->config->getTranslationDomain(),
+        ));
+
+        if (\count($violations) > 0) {
+            $this->addFlash('error', (string) $violations->get(0)->getMessage());
+
+            return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('joli_media_sylius_admin_explore'));
+        }
+
         try {
-            $this->config->assertPathIsAccepted($newPath);
             $this->getOriginalStorage()->move($oldPath, $newPath);
 
             $this->addFlash('success', $this->translator->trans(
@@ -534,6 +547,12 @@ class MediaAdminController extends AbstractController
 
         try {
             if (!$form->isSubmitted() || !$form->isValid()) {
+                foreach ($form->getErrors(true) as $error) {
+                    return new JsonResponse([
+                        'error' => $error->getMessage(),
+                    ], Response::HTTP_BAD_REQUEST);
+                }
+
                 return new JsonResponse([
                     'error' => 'Invalid form',
                 ], Response::HTTP_BAD_REQUEST);
@@ -543,7 +562,6 @@ class MediaAdminController extends AbstractController
             $uploadedFile = $form->get('file')->getData();
             $filename = $uploadedFile->getClientOriginalName();
             $key = \sprintf('%s/%s', $form->get('path')->getData(), $filename);
-            $this->config->assertPathIsAccepted($key);
             $storage = $this->getOriginalStorage();
 
             if ($storage->has($key)) {

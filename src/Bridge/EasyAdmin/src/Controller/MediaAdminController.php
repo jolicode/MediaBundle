@@ -523,7 +523,6 @@ class MediaAdminController extends AbstractController
             if ($renameFileForm->isValid()) {
                 try {
                     $target = Resolver::normalizePath(\sprintf('%s/%s', $media->getFolderPath(), $to));
-                    $this->config->assertPathIsAccepted($target);
                     $this->denyAccessUnlessGranted(AdminAction::MOVE, new AdminAction(
                         libraryName: $this->getLibrary()->getName(),
                         path: Resolver::normalizePath($key),
@@ -604,6 +603,10 @@ class MediaAdminController extends AbstractController
 
         try {
             if (!$form->isSubmitted() || !$form->isValid()) {
+                foreach ($form->getErrors(true) as $error) {
+                    throw new UploadException($error->getMessage());
+                }
+
                 throw new UploadException($this->translator->trans('media.upload.error.invalid_form', domain: 'JoliMediaEasyAdminBundle'));
             }
 
@@ -611,7 +614,6 @@ class MediaAdminController extends AbstractController
             $uploadedFile = $form->get('file')->getData();
             $filename = $uploadedFile->getClientOriginalName();
             $key = \sprintf('%s/%s', $form->get('path')->getData(), $filename);
-            $this->config->assertPathIsAccepted($key);
             $storage = $this->getOriginalStorage();
 
             $this->denyAccessUnlessGranted(AdminAction::UPLOAD, new AdminAction(
@@ -892,6 +894,7 @@ class MediaAdminController extends AbstractController
             'action' => $this->mediaAdminRouter->generateUrl('show', ['key' => $path]),
             'method' => Request::METHOD_POST,
             'translation_domain' => $this->config->getTranslationDomain(),
+            'accepted_extensions' => $this->config->getUploadOption('acceptedExtensions'),
         ]);
 
         if (null !== $path) {

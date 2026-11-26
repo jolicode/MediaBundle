@@ -168,8 +168,36 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(400);
         $responseContent = $this->client->getResponse()->getContent();
         $this->assertIsString($responseContent);
-        $this->assertSame(['error' => 'This file type is not allowed.'], json_decode($responseContent, true));
+        $this->assertSame(['error' => 'The extension of the file is invalid ("html"). Allowed extensions are "gif", "jpeg", "jpg", "pdf", "png".'], json_decode($responseContent, true));
         $this->assertFalse($this->getOriginalStorage()->has('circle-pattern.html'));
+    }
+
+    public function testUploadDoesNotCheckTheContentAgainstTheExtension(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/explore');
+        $this->assertResponseIsSuccessful();
+        $form = $crawler->filter('form[name="upload"]')->form();
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'upload-test');
+        copy(__DIR__ . '/../../../../fixtures/circle-pattern.gif', $tmpFile);
+
+        $phpValues = $form->getPhpValues();
+        unset($phpValues['upload']['path']);
+
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues, [
+            'upload' => [
+                'file' => new UploadedFile(
+                    $tmpFile,
+                    'circle-pattern-gif.png',
+                    'image/gif',
+                    null,
+                    true,
+                ),
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertTrue($this->getOriginalStorage()->has('circle-pattern-gif.png'));
     }
 
     public function testRenameRefusesAnExtensionWhichIsNotAccepted(): void
@@ -185,7 +213,7 @@ class MediaAdminControllerTest extends WebTestCase
             $this->client->followRedirect();
         }
 
-        $this->assertSelectorTextContains('.alert-danger', 'This file type is not allowed.');
+        $this->assertSelectorTextContains('.alert-danger', 'The extension of the file is invalid ("html"). Allowed extensions are "gif", "jpeg", "jpg", "pdf", "png".');
         $this->assertTrue($this->getOriginalStorage()->has('default.pdf'));
         $this->assertFalse($this->getOriginalStorage()->has('default.html'));
     }

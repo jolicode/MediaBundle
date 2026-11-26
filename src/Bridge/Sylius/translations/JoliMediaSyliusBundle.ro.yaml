@@ -59,6 +59,7 @@ media:
         explanation: 'Fișierul „%media%” nu este accesibil. Poate a fost șters sau mutat.'
         label: 'Fișier inaccesibil'
     error:
+        invalid_extension: 'Extensia fișierului este invalidă (%extension%). Extensiile permise sunt %extensions%.'
         required: 'Alegeți un fișier.'
         forbidden: 'Fișierul „%media%” se află într-un dosar rezervat și nu poate fi modificat.'
     move_modal:

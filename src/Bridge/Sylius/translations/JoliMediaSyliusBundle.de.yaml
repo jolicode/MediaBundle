@@ -59,6 +59,7 @@ media:
         explanation: 'Die Mediendatei "%media%" ist nicht verfügbar. Möglicherweise wurde sie gelöscht oder verschoben.'
         label: 'Nicht verfügbare Mediendatei'
     error:
+        invalid_extension: 'Die Dateiendung ist ungültig (%extension%). Erlaubte Dateiendungen sind %extensions%.'
         required: 'Bitte wählen Sie eine Mediendatei aus.'
         forbidden: 'Die Mediendatei "%media%" liegt in einem reservierten Verzeichnis und kann nicht geändert werden.'
     move_modal:

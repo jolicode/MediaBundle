@@ -3,6 +3,7 @@
 namespace JoliCode\MediaBundle\Bridge\Form\Type;
 
 use JoliCode\MediaBundle\Bridge\Config\AbstractConfig;
+use JoliCode\MediaBundle\Bridge\Validator\AcceptedExtension;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -31,6 +32,10 @@ class UploadType extends AbstractType
                     new File(
                         maxSize: null !== $maxFilesize ? \sprintf('%dM', $maxFilesize) : null,
                         mimeTypes: $acceptedFiles,
+                    ),
+                    new AcceptedExtension(
+                        $config->getUploadOption('acceptedExtensions'),
+                        translationDomain: $config->getTranslationDomain(),
                     ),
                 ],
             ])

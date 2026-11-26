@@ -58,6 +58,7 @@ media:
         explanation: 'Le média "%media%" n''est pas accessible. Il a peut-être été supprimé ou déplacé.'
         label: 'Média inaccessible'
     error:
+        invalid_extension: 'L''extension du fichier est invalide (%extension%). Les extensions autorisées sont %extensions%.'
         required: 'Veuillez choisir un fichier média.'
         forbidden: 'Le média "%media%" est stocké dans un dossier réservé et ne peut pas être modifié.'
     move_modal:
