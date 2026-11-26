@@ -33,7 +33,7 @@ class PostFixtures extends Fixture implements DependentFixtureInterface
         ));
 
         for ($i = 0; $i < 100; ++$i) {
-            $extension = $extensions[$this->faker->numberBetween(0, \count($extensions) - 1)];
+            $extension = $this->faker->randomElement($extensions);
             $media = $this->resolver->resolve('articles/circle-pattern.' . $extension);
             $paragraphs = [];
 

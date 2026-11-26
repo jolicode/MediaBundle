@@ -25,7 +25,7 @@ use Symfony\Component\Process\Process;
 final readonly class StripExifMetadataListener
 {
     public function __construct(
-        #[Autowire('%joli_media.binary.exiftool%')]
+        #[Autowire(param: 'joli_media.binary.exiftool')]
         private string $exiftoolBinary,
         private ?LoggerInterface $logger = null,
     ) {

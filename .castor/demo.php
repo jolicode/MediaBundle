@@ -42,13 +42,13 @@ function register_services(RegisterServiceEvent $event): void
             ->link($postgres)
             ->withDomain('jolimediabundle-demo.test')
             ->addExtension('imagick')
-            ->withPhpStanVersion('^2.2.6')
+            ->withPhpStanVersion('^2.3.7')
             ->addPhpStanExtraDependency('phpstan/extension-installer', '^1.4.3')
-            ->addPhpStanExtraDependency('phpstan/phpstan-deprecation-rules', '^2.0.5')
-            ->addPhpStanExtraDependency('phpstan/phpstan-symfony', '^2.0.20')
-            ->withPhpCsFixerVersion('^3.95.17')
-            ->withRectorVersion('^2.5.8')
-            ->withPhpTwigCsFixerVersion('^4.0.2')
+            ->addPhpStanExtraDependency('phpstan/phpstan-deprecation-rules', '^2.0.6')
+            ->addPhpStanExtraDependency('phpstan/phpstan-symfony', '^2.1.1')
+            ->withPhpCsFixerVersion('^3.95.32')
+            ->withRectorVersion('^2.9.2')
+            ->withPhpTwigCsFixerVersion('^4.2.0')
     );
 }
 
