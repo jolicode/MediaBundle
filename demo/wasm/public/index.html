@@ -23,22 +23,21 @@
 </head>
 <body>
     <!-- What the browser shows until the service worker answers in its place,
-         with the application. The 404 page of GitHub Pages too, with a <base>
-         (castor demo:wasm:site): a link to a page of the demo, in a browser
-         that does not have its service worker yet -->
+         with the application. The 404 page of the website sends a link to a
+         page of the demo here, in ?path=, when the browser does not have the
+         service worker yet (castor pages:site) -->
     <h1>JoliMediaBundle</h1>
     <p>Symfony and gd run in your browser, compiled to WebAssembly: no server runs PHP. What you upload stays in your browser.</p>
     <p id="message">Downloading PHP and the application…</p>
 
     <script type="module">
         const message = document.getElementById('message');
-        // The directory of this page, or the one that <base> names
+        // The directory of this page
         const demo = new URL('./', document.baseURI).href;
 
-        // What the service worker does not answer: the 404 page out of the
-        // demo, or for a file of the website that is missing. A reload would
-        // show this page again
-        if (!location.href.startsWith(demo) || navigator.serviceWorker?.controller) {
+        // What the service worker does not answer: a file of the website that
+        // is missing. A reload would show this page again
+        if (navigator.serviceWorker?.controller) {
             message.textContent = 'This page does not exist. ';
             message.append(Object.assign(document.createElement('a'), { href: demo, textContent: 'Open the demo.' }));
         } else {
@@ -49,7 +48,13 @@
 
                 // The service worker answers now, with the application: the
                 // browser shows this page until PHP starts
-                location.reload();
+                const path = new URLSearchParams(location.search).get('path');
+                const page = path ? new URL(path, location.origin).href : null;
+                if (page?.startsWith(demo)) {
+                    location.replace(page);
+                } else {
+                    location.reload();
+                }
             } catch (error) {
                 message.textContent = `The demo does not start. ${error.message}`;
                 throw error;

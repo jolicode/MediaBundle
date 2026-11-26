@@ -2,8 +2,8 @@
 
 [The demo application](../application/), its three admins included, compiled to WebAssembly with
 [php-wasm-builder](https://lyrixx.github.io/php-wasm-builder/): no server runs PHP, and what you
-upload stays in your browser. It is deployed on each push to `main`, on
-<https://jolicode.github.io/MediaBundle/demo/>.
+upload stays in your browser. It is deployed on each push to `main`, with the documentation, on
+<https://mediabundle.jolicode.com/demo/>.
 
 ```bash
 castor demo:wasm:serve   # builds it when it is not built, then serves it on http://127.0.0.1:8000/
@@ -13,9 +13,10 @@ castor demo:wasm:check   # checks what is built in node, without a browser
 
 PHP runs in the service worker of the demo, `public/sw.js`: it answers every request under its
 directory, so the URLs of the application are in the address bar, and a reload stays on the page.
-`public/index.html` only shows until the service worker answers: it registers it, then reloads. It
-is the 404 page of GitHub Pages too: a link to a page of the demo works in a browser that does not
-have the service worker yet. The browser stops a service worker that has nothing to do, after 30 s in Chrome: the next request starts
+`public/index.html` only shows until the service worker answers: it registers it, then reloads. A
+link to a page of the demo works in a browser that does not have the service worker yet: the 404
+page of the website sends it to `public/index.html`, that opens the page once the service worker
+answers (`castor pages:site`). The browser stops a service worker that has nothing to do, after 30 s in Chrome: the next request starts
 PHP again, that finds the database, the media and the sessions in IndexedDB.
 
 What differs from Docker is in the `wasm` environment of the application: `.env.wasm`, and the
