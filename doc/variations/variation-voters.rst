@@ -1,6 +1,9 @@
 Variation voters
 ================
 
+.. meta::
+    :description: Restrict which media a variation applies to with JoliMediaBundle variation voters: folder, file size, format, MIME type, and their allOf and oneOf combinations.
+
 There are cases where you want to restrict the media that are eligible to be converted using a given `variation <variations.rst>`_. For example, you could want to restrict the use of a certain variation to the files located in a specific directory, or to the files that are larger than a minimal size.
 
 The MediaBundle provides a way to define *voters* that can be used to restrict the media that can be converted using a given variation. A voter is a service that implements the ``Joli\MediaBundle\Variation\Voter\VoterInterface`` interface. This interface defines a single method, ``vote(Media $media)``, that should return a boolean indicating whether the voter supports the given media.

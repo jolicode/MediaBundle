@@ -1,6 +1,9 @@
 Sylius Integration
 ==================
 
+.. meta::
+    :description: Add a media library, a media browser and media form fields to Sylius and Sylius Stack admins with the JoliMediaBundle bridge: setup and configuration.
+
 The ``JoliMediaBundle`` provides seamless integration with `Sylius <https://sylius.com>`_ and `Sylius Stack <https://stack.sylius.com/>`_, enabling you to manage media directly within your Sylius interface. This integration includes features such as a media library, media browser, and media preview capabilities.
 
 .. image:: ../images/bridges/sylius/grid-view.png

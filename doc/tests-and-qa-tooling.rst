@@ -1,6 +1,9 @@
 Tests and Quality Assurance Tooling
 ===================================
 
+.. meta::
+    :description: Run the tests and QA tools of JoliMediaBundle with Castor: PHPUnit, PHPStan, PHP CS Fixer, Rector, Twig CS Fixer and doctor-rst for the documentation.
+
 `Castor <https://castor.jolicode.com/>`_ is used as a task runner to streamline common maintenance tasks. It is also used to run the tests.
 
 .. code-block:: terminal

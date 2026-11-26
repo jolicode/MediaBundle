@@ -1,6 +1,9 @@
 Dependencies and tooling
 ========================
 
+.. meta::
+    :description: The system binaries and PHP libraries JoliMediaBundle relies on to process images (Imagine, cwebp, gifsicle, mozjpeg, oxipng...) and how to install them.
+
 The JoliMediaBundle has a few dependencies and uses some tools to ensure the quality of the code and the media processing. Unlike other Symfony bundles related to media management (for example ``LiipImagineBundle``), it does not rely on a single PHP image processing library. Instead, it directly wraps common image processing software, which must be installed on the server that runs the application, and uses `the Imagine library <https://github.com/php-imagine/Imagine>`_ as its general-purpose processor.
 
 .. caution::

@@ -1,7 +1,14 @@
 JoliMediaBundle
 ===============
 
+.. meta::
+    :description: JoliMediaBundle manages media in Symfony applications: storage, variations, optimization, Twig components, and EasyAdmin, SonataAdmin and Sylius integrations.
+
 The JoliMediaBundle provides a set of tools to manage media in Symfony applications.
+
+.. tip::
+
+    **Try it without installing anything:** the `demo application <https://mediabundle.jolicode.com/demo/>`_ runs in your browser, compiled to WebAssembly, with its EasyAdmin, SonataAdmin and Sylius admins. Upload your own images and see their variations: nothing leaves your browser. The `demo page <getting-started/demo.rst>`_ explains how to run it locally with Docker.
 
 It proposes multiple features:
 

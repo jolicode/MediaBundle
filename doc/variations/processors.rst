@@ -1,6 +1,9 @@
 Processors
 ==========
 
+.. meta::
+    :description: Configure the JoliMediaBundle processors that compute the variations: Imagine, cwebp, gif2webp and gifsicle, their options and binary paths.
+
 Processors are responsible to "process" (i.e., *execute*) the transformations. In other words, processors apply a transformation to a media to change its shape or properties.
 
 Configuration

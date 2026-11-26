@@ -1,6 +1,9 @@
 EasyAdmin Integration
 =====================
 
+.. meta::
+    :description: Add a media library, a media browser and media form fields to EasyAdmin with the JoliMediaBundle bridge: setup, configuration and customization.
+
 The ``JoliMediaBundle`` provides seamless integration with `EasyAdmin <https://symfony.com/bundles/EasyAdminBundle/current/index.html>`_, enabling you to manage media directly within your EasyAdmin interface. This integration includes features such as a media library, media browser, and media preview capabilities.
 
 .. image:: ../images/bridges/easyadmin/grid-view.png

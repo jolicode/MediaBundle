@@ -1,5 +1,8 @@
-Variations
-==========
+Configuring variations
+======================
+
+.. meta::
+    :description: Configure media variations in JoliMediaBundle: output format, transformers, pixel ratios, automatic WebP, SVG rasterization, processors and voters.
 
 Variations describe the multiple versions of a media file. For example, you might want to generate a thumbnail of an image, or a cropped version, or convert the original image to an alternative format. Variations are defined in the configuration file of the MediaBundle.
 

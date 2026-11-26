@@ -1,6 +1,9 @@
 Transformers
 ============
 
+.. meta::
+    :description: The JoliMediaBundle transformers that build a variation: crop, expand, heighten, resize, thumbnail and widen, with the options of each operation.
+
 Transformers represent the successive operations that can be applied to a *media* to create a `variation <variations.rst>`_.
 
 Available transformers

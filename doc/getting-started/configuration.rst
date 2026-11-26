@@ -1,6 +1,9 @@
 Configuration
 =============
 
+.. meta::
+    :description: Configure JoliMediaBundle in joli_media.yaml: media libraries, default library, pre-processors, processors, post-processors and process timeout.
+
 The bundle can be configured in the ``config/packages/joli_media.yaml`` file with directives under the ``joli_media`` key:
 
 - ``libraries``: defines the media libraries configuration

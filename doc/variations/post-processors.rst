@@ -1,6 +1,9 @@
 Post-processors
 ===============
 
+.. meta::
+    :description: Optimize image variations with the JoliMediaBundle post-processors: gifsicle, jpegoptim, mozjpeg, oxipng and more, with their configuration options.
+
 Post-processors are responsible for optimizing the media variations after the transformation. They are applied after the transformation has been computed and the media has been transformed to its final shape.
 
 Configuration

@@ -6,6 +6,7 @@ use Castor\Attribute\AsTask;
 use Castor\Context;
 use Symfony\Component\Process\Process;
 
+use function Castor\capture;
 use function Castor\context;
 use function Castor\exit_code;
 use function Castor\finder;
@@ -88,10 +89,23 @@ function rst_to_md(): void
 
     $script = <<<'SH'
         for file; do
-            pandoc -f rst -t gfm --wrap=none --lua-filter=pandoc/links-to-md.lua "../doc/$file" -o "var/input/${file%.rst}.md"
+            pandoc -f rst -t gfm --wrap=none --lua-filter=pandoc/meta-to-front-matter.lua --lua-filter=pandoc/links-to-md.lua "../doc/$file" -o "var/input/${file%.rst}.md"
         done
         SH;
     docker_run(['sh', '-c', $script, 'sh', ...$files]);
+
+    // The first and the last commits of a page date it, for its structured data
+    foreach ($files as $file) {
+        $dates = array_filter(explode("\n", capture(['git', 'log', '--follow', '--format=%cI', '--', 'doc/' . $file], context: context()->withWorkingDirectory(ROOT_DIR))));
+        if (!$dates) {
+            continue;
+        }
+
+        $markdownFile = INPUT_DIR . '/' . substr($file, 0, -4) . '.md';
+        $markdown = fs()->readFile($markdownFile);
+        $markdown = str_starts_with($markdown, "---\n") ? substr($markdown, 4) : "---\n" . $markdown;
+        fs()->dumpFile($markdownFile, \sprintf("---\ndate_published: \"%s\"\ndate_modified: \"%s\"\n", end($dates), reset($dates)) . $markdown);
+    }
 
     docker_run(['node_modules/prettier/bin/prettier.cjs', '--parser', 'markdown', '--ignore-path', '/dev/null', '--write', 'var/input/**/*.md']);
     docker_run(['yarn', 'build']);

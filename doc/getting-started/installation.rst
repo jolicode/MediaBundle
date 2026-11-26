@@ -1,6 +1,9 @@
 Installation
 ============
 
+.. meta::
+    :description: Install JoliMediaBundle in a Symfony application: require it with Composer, register the bundle, install the image tools and configure it.
+
 To install the JoliMediaBundle, you need to follow these steps:
 
 1. **Install the bundle** using Composer:

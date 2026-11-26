@@ -1,6 +1,9 @@
 Sonata Admin Integration
 ========================
 
+.. meta::
+    :description: Add a media library, a media browser and media form fields to Sonata Admin with the JoliMediaBundle bridge: setup, configuration and customization.
+
 The ``JoliMediaBundle`` provides seamless integration with `Sonata Admin <https://symfony.com/bundles/SonataAdminBundle/current/index.html>`_, enabling you to manage media directly within your Sonata Admin interface. This integration includes features such as a media library, media browser, and media preview capabilities.
 
 .. image:: ../images/bridges/sonata-admin/grid-view.png

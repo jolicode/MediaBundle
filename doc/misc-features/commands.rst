@@ -1,6 +1,9 @@
 Commands
 ========
 
+.. meta::
+    :description: The console commands of JoliMediaBundle: audit media, generate variations in batch, prune or remove cached files and inspect the processing setup.
+
 The MediaBundle provides some commands to streamline the management of media and their variations.
 
 .. code-block:: terminal
