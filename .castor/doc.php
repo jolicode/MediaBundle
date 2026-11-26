@@ -102,7 +102,9 @@ function rst_to_md(): void
         }
 
         $markdownFile = INPUT_DIR . '/' . substr($file, 0, -4) . '.md';
-        fs()->dumpFile($markdownFile, preg_replace('/^---\n/', \sprintf("---\ndate_published: \"%s\"\ndate_modified: \"%s\"\n", end($dates), reset($dates)), fs()->readFile($markdownFile), 1));
+        $markdown = fs()->readFile($markdownFile);
+        $markdown = str_starts_with($markdown, "---\n") ? substr($markdown, 4) : "---\n" . $markdown;
+        fs()->dumpFile($markdownFile, \sprintf("---\ndate_published: \"%s\"\ndate_modified: \"%s\"\n", end($dates), reset($dates)) . $markdown);
     }
 
     docker_run(['node_modules/prettier/bin/prettier.cjs', '--parser', 'markdown', '--ignore-path', '/dev/null', '--write', 'var/input/**/*.md']);
