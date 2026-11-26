@@ -23,5 +23,6 @@
 /yarn.lock              export-ignore
 /demo                   export-ignore
 /doc                    export-ignore
+/doc-website            export-ignore
 /tests                  export-ignore
 /tools                  export-ignore
