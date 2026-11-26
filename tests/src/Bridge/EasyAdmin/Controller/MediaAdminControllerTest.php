@@ -140,6 +140,84 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertSame('http://localhost/admin/media/show/circle-pattern.png', $response['files'][0]['link']);
     }
 
+    public function testUploadRefusesAnExtensionWhichIsNotAccepted(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/explore');
+        $this->assertResponseIsSuccessful();
+        $form = $crawler->filter('form[name="upload"]')->form();
+
+        // a GIF image, uploaded under a name the web server would serve as HTML
+        $tmpFile = tempnam(sys_get_temp_dir(), 'upload-test');
+        copy(__DIR__ . '/../../../../fixtures/circle-pattern.gif', $tmpFile);
+
+        $phpValues = $form->getPhpValues();
+        unset($phpValues['upload']['path']);
+
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues, [
+            'upload' => [
+                'file' => new UploadedFile(
+                    $tmpFile,
+                    'circle-pattern.html',
+                    'image/gif',
+                    null,
+                    true,
+                ),
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(400);
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertIsString($responseContent);
+        $this->assertSame(['error' => 'The extension of the file is invalid ("html"). Allowed extensions are "gif", "jpeg", "jpg", "pdf", "png".'], json_decode($responseContent, true));
+        $this->assertFalse($this->getOriginalStorage()->has('circle-pattern.html'));
+    }
+
+    public function testUploadDoesNotCheckTheContentAgainstTheExtension(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/explore');
+        $this->assertResponseIsSuccessful();
+        $form = $crawler->filter('form[name="upload"]')->form();
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'upload-test');
+        copy(__DIR__ . '/../../../../fixtures/circle-pattern.gif', $tmpFile);
+
+        $phpValues = $form->getPhpValues();
+        unset($phpValues['upload']['path']);
+
+        $this->client->request($form->getMethod(), $form->getUri(), $phpValues, [
+            'upload' => [
+                'file' => new UploadedFile(
+                    $tmpFile,
+                    'circle-pattern-gif.png',
+                    'image/gif',
+                    null,
+                    true,
+                ),
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertTrue($this->getOriginalStorage()->has('circle-pattern-gif.png'));
+    }
+
+    public function testRenameRefusesAnExtensionWhichIsNotAccepted(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/show/default.pdf');
+        $this->assertResponseIsSuccessful();
+
+        $this->client->submit($crawler->filter('form[name="rename"]')->form([
+            'rename[to]' => 'default.html',
+        ]));
+
+        if ($this->client->getResponse()->isRedirect()) {
+            $this->client->followRedirect();
+        }
+
+        $this->assertSelectorTextContains('.alert-danger', 'The extension of the file is invalid ("html"). Allowed extensions are "gif", "jpeg", "jpg", "pdf", "png".');
+        $this->assertTrue($this->getOriginalStorage()->has('default.pdf'));
+        $this->assertFalse($this->getOriginalStorage()->has('default.html'));
+    }
+
     public function testRenameAtRoot(): void
     {
         $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/show/default.pdf');

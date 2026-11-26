@@ -48,6 +48,7 @@ media:
     dimensions: 'Dimensions'
     search_label: 'Rechercher un média...'
     error:
+        invalid_extension: 'L''extension du fichier est invalide (%extension%). Les extensions autorisées sont %extensions%.'
         forbidden: 'Le média "%media%" est stocké dans un dossier réservé et ne peut pas être modifié.'
         in_use: 'Le media "%media%" est utilisé dans le champ "%field%" de l''entité "%entity%". Il ne peut pas être supprimé.'
     inaccessible:
@@ -87,7 +88,7 @@ media:
         uploader:
             default_message: 'Déposez vos fichiers ici ou cliquez pour télécharger'
             file_too_big: 'Le fichier est trop volumineux ({{filesize}}Mo). La taille maximale autorisée est de {{maxFilesize}}Mo.'
-            invalid_file_type: 'Type de fichier non autorisé.'
+            invalid_file_type: 'Ce type de fichier ({{type}}) n''est pas autorisé. Les types autorisés sont {{acceptedFiles}}.'
             max_files_exceeded: 'Vous ne pouvez pas télécharger plus de {{maxFiles}} fichiers.'
             response_error: 'Le serveur a répondu par une erreur (code {{statusCode}}).'
         error:

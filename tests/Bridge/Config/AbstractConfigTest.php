@@ -45,6 +45,13 @@ class AbstractConfigTest extends TestCase
         $this->assertEquals($acceptedFiles, $config->getUploadOption('acceptedFiles'));
     }
 
+    public function testGetUploadOptionAcceptedExtensionsIgnoresTheCaseAndTheLeadingDot(): void
+    {
+        $config = new ConcreteConfig($this->translator, [], [], 20, acceptedExtensions: ['.PNG', 'Jpg']);
+
+        $this->assertSame(['png', 'jpg'], $config->getUploadOption('acceptedExtensions'));
+    }
+
     public function testGetUploadOptionMaxFileSize(): void
     {
         $config = $this->createConfig(maxFileSize: 50);

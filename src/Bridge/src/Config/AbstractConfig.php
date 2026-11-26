@@ -6,6 +6,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract readonly class AbstractConfig
 {
+    /**
+     * @var array<string>
+     */
+    protected array $acceptedExtensions;
+
+    /**
+     * @param array<string> $acceptedExtensions
+     */
     public function __construct(
         protected TranslatorInterface $translator,
         /**
@@ -18,7 +26,12 @@ abstract readonly class AbstractConfig
         protected array $acceptedFiles,
         protected int $maxFileSize,
         protected ?int $maxFiles = null,
+        array $acceptedExtensions = [],
     ) {
+        $this->acceptedExtensions = array_map(
+            static fn (string $extension): string => strtolower(ltrim($extension, '.')),
+            $acceptedExtensions,
+        );
     }
 
     abstract public function getTranslationDomain(): string;
@@ -31,6 +44,7 @@ abstract readonly class AbstractConfig
     public function getUploadOption(string $name): mixed
     {
         return match ($name) {
+            'acceptedExtensions' => $this->acceptedExtensions,
             'acceptedFiles' => $this->acceptedFiles,
             'maxFileSize' => $this->maxFileSize,
             'maxFiles' => $this->maxFiles,

@@ -25,6 +25,7 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             '$visibility' => param('joli_media_sonata_admin.visibility'),
             '$acceptedFiles' => param('joli_media_sonata_admin.upload.accepted_files'),
+            '$acceptedExtensions' => param('joli_media_sonata_admin.upload.accepted_extensions'),
             '$maxFiles' => param('joli_media_sonata_admin.upload.max_files'),
             '$maxFileSize' => param('joli_media_sonata_admin.upload.max_file_size'),
             '$translator' => service('translator')->ignoreOnInvalid(),

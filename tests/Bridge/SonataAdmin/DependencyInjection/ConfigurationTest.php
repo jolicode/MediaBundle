@@ -40,6 +40,7 @@ class ConfigurationTest extends TestCase
                     'max_files' => 20,
                     'max_file_size' => 50,
                     'accepted_files' => ['image/*', 'video/*'],
+                    'accepted_extensions' => ['png', 'jpg'],
                 ],
             ],
         ]);
@@ -48,6 +49,7 @@ class ConfigurationTest extends TestCase
         $this->assertEquals(20, $config['upload']['max_files']);
         $this->assertEquals(50, $config['upload']['max_file_size']);
         $this->assertEquals(['image/*', 'video/*'], $config['upload']['accepted_files']);
+        $this->assertEquals(['png', 'jpg'], $config['upload']['accepted_extensions']);
     }
 
     public function testVisibilityConfiguration(): void
@@ -76,6 +78,7 @@ class ConfigurationTest extends TestCase
         $this->assertNull($config['upload']['max_files']);
         $this->assertEquals(20, $config['upload']['max_file_size']);
         $this->assertEquals([], $config['upload']['accepted_files']);
+        $this->assertEquals([], $config['upload']['accepted_extensions']);
     }
 
     public function testDefaultVisibilityConfiguration(): void

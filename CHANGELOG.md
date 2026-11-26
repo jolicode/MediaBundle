@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- feature - The EasyAdmin, SonataAdmin and Sylius bridges have a new `accepted_extensions` upload option, listing the extensions a file may have when it is uploaded or renamed. It is empty by default, which accepts any extension. The [storage documentation](doc/storage/storage.rst) explains why a web server may serve a file whose extension does not match its content as another type
+
 ## [0.11.0] - 2026-11-26
 
 - bc break - The `Format` enum has a new `SVG` case: an exhaustive `match` on it without a `default` arm must handle it

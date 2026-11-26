@@ -28,6 +28,7 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             '$visibility' => param('joli_media_sylius_admin.visibility'),
             '$acceptedFiles' => param('joli_media_sylius_admin.upload.accepted_files'),
+            '$acceptedExtensions' => param('joli_media_sylius_admin.upload.accepted_extensions'),
             '$maxFiles' => param('joli_media_sylius_admin.upload.max_files'),
             '$maxFileSize' => param('joli_media_sylius_admin.upload.max_file_size'),
             '$translator' => service('translator')->ignoreOnInvalid(),
@@ -46,6 +47,7 @@ return static function (ContainerConfigurator $container): void {
             service('joli_media_sylius_admin.config'),
             service('translator'),
             service('security.csrf.token_manager'),
+            service('validator'),
         ])
         ->call('setContainer', [service('service_container')])
         ->tag('controller.service_arguments')

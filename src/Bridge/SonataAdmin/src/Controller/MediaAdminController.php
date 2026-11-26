@@ -622,6 +622,10 @@ class MediaAdminController extends AbstractController
 
         try {
             if (!$form->isSubmitted() || !$form->isValid()) {
+                foreach ($form->getErrors(true) as $error) {
+                    throw new UploadException($error->getMessage());
+                }
+
                 throw new UploadException($this->translator->trans('media.upload.error.invalid_form', domain: 'JoliMediaSonataAdminBundle'));
             }
 
@@ -799,6 +803,7 @@ class MediaAdminController extends AbstractController
             'action' => $this->generateUrl('joli_media_sonata_admin_show', ['key' => $path]),
             'method' => Request::METHOD_POST,
             'translation_domain' => $this->config->getTranslationDomain(),
+            'accepted_extensions' => $this->config->getUploadOption('acceptedExtensions'),
         ]);
 
         if (null !== $path) {

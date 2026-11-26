@@ -111,6 +111,25 @@ However, there are cases where you might want to serve the original media files 
 
     Remember that, by doing to, every request to an original media file will go through the Symfony application, which can have a significant impact on performance. It is therefore recommended to use this option only when necessary, and to ensure that the web server is properly configured to serve the media files directly whenever possible.
 
+Content type of the served files
+--------------------------------
+
+Most web servers choose the ``Content-Type`` header of a static file from its extension. A file whose content and extension do not match is then served as what its extension says: for example, an image renamed to ``image.html`` is served as an HTML page, and a script it contains runs on the domain the media files are served from.
+
+This only concerns the files served by such a web server. The ``media`` controller sends the content type detected from the content of the file, and an object storage such as Amazon S3 sends the content type stored with each file, which Flysystem detects from the content when the file is written.
+
+The admin bridges provide an ``accepted_extensions`` option, which restricts the extensions a file may have when it is uploaded or renamed (see the `EasyAdmin <../bridges/easy-admin.rst>`_, `SonataAdmin <../bridges/sonata-admin.rst>`_ and `Sylius <../bridges/sylius.rst>`_ bridges). Depending on your needs, you can also configure the web server to send, with the original media files, headers which prevent the browsers from running their scripts:
+
+.. code-block:: nginx
+
+    location /media/original/ {
+        add_header Content-Security-Policy "sandbox" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        try_files $uri /index.php$is_args$args;
+    }
+
+With an object storage, such headers are usually added by the CDN in front of it. Do not add them if your media library is meant to serve HTML documents whose scripts must run, and check that your files are still displayed as expected: some browsers, for example, refuse to display a PDF file served with the ``sandbox`` directive.
+
 Media Property Accessor
 -----------------------
 

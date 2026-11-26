@@ -61,6 +61,7 @@ The integration can be configured in the ``config/packages/joli_media_easy_admin
                 - image/*
                 - video/*
                 - application/pdf
+            accepted_extensions: [jpg, jpeg, png, webp, mp4, pdf]
         visibility:
             show_variations_stored: true
             show_variations_action_regenerate: true
@@ -85,6 +86,7 @@ The ``upload`` section of the configuration allows you to control the media uplo
 - ``max_files``: Sets the maximum number of files that can be uploaded at once.
 - ``max_file_size``: Sets the maximum file size for uploads (in megabytes).
 - ``accepted_files``: Specifies the MIME types of files that can be uploaded. You can use wildcards like ``image/*`` or specific types like ``application/pdf``.
+- ``accepted_extensions``: Specifies the extensions a file may have, both when it is uploaded and when it is renamed, for example ``png`` or ``jpg`` (case-insensitive, without the leading dot). When this option is set, a file without extension is refused. Leave it empty, which is the default, to accept any extension. This option is independent from ``accepted_files``, which checks the content of the uploaded files: set both to make sure that, for example, an image cannot be stored as ``image.html``. See `Content type of the served files <../storage/storage.rst#content-type-of-the-served-files>`_.
 
 The ``visibility`` section of the configuration allows you to control the visibility of various features in the EasyAdmin media interface:
 
