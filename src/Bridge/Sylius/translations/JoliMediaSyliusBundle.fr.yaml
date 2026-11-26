@@ -72,7 +72,7 @@ media:
         uploader:
             default_message: 'Déposez les fichiers ici pour les télécharger'
             file_too_big: 'Le fichier est trop volumineux ({{filesize}}Mo). Taille maximale: {{maxFilesize}}Mo.'
-            invalid_file_type: 'Vous ne pouvez pas télécharger de fichiers de ce type.'
+            invalid_file_type: 'Vous ne pouvez pas télécharger de fichiers de ce type ({{type}}). Les types autorisés sont {{acceptedFiles}}.'
             max_files_exceeded: 'Vous ne pouvez plus télécharger de fichiers.'
             response_error: 'Le serveur a répondu par une erreur (code {{statusCode}}).'
 document:

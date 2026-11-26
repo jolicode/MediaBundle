@@ -21,7 +21,7 @@ const defaultOptions = {
   messages: {
     default: 'Drop files here to upload',
     fileTooBig: 'File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.',
-    invalidFileType: "You can't upload files of this type.",
+    invalidFileType: "You can't upload files of this type ({{type}}). Allowed types are {{acceptedFiles}}.",
     maxFilesExceeded: 'You cannot upload any more files.',
     responseError: 'Server responded with {{statusCode}} code.',
   },
@@ -282,7 +282,10 @@ export default class Uploader {
     }
 
     if (!isAcceptedType(file, acceptedFiles)) {
-      return messages.invalidFileType;
+      return interpolate(messages.invalidFileType, {
+        type: file.type || 'application/octet-stream',
+        acceptedFiles: acceptedFiles.split(',').map((type) => type.trim()).join(', '),
+      });
     }
 
     if (null != maxFiles && this.files.filter((f) => f.accepted).length >= maxFiles) {

@@ -87,7 +87,7 @@ media:
         uploader:
             default_message: 'Drop your files here or click to upload'
             file_too_big: 'The file is too big ({{filesize}}MiB). Maximum allowed size is {{maxFilesize}}MiB.'
-            invalid_file_type: This file type is not allowed.
+            invalid_file_type: 'This file type ({{type}}) is not allowed. Allowed types are {{acceptedFiles}}.'
             max_files_exceeded: 'You cannot upload more than {{maxFiles}} files.'
             response_error: 'The server responded with an error (code {{statusCode}}).'
         error:
