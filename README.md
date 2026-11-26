@@ -33,6 +33,9 @@ composer require jolicode/media-bundle
 
 Read the detailed [documentation of the bundle](https://mediabundle.jolicode.com/).
 
+Its sources are in `doc/`, and its website is built from them in `doc-website/`: run
+`castor doc:start` to build it, then `castor doc:serve` to browse it on http://localhost:8000/.
+
 ## License
 
 This software is published under the [MIT License](LICENSE.md).

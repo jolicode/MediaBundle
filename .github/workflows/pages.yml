@@ -1,0 +1,64 @@
+name: Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deployment at a time, and the one in progress is not cancelled
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  doc:
+    name: Build the documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup castor
+        uses: castor-php/setup-castor@v1
+
+      - name: Build the documentation
+        run: castor doc:start
+
+      - name: Upload the documentation
+        uses: actions/upload-artifact@v7
+        with:
+          name: doc
+          path: doc-website/var/output
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: [doc]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download the documentation
+        uses: actions/download-artifact@v8
+        with:
+          name: doc
+          path: site
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5

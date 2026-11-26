@@ -1,0 +1,5 @@
+/.cache/
+/node_modules/
+/var/
+/assets/stylesheets/jolicode.css
+/templates/overrides/partials/jolicode-footer.html

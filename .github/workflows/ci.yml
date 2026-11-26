@@ -50,6 +50,19 @@ jobs:
       - name: Lint the documentation
         run: castor qa:doctor-rst --error-format=github
 
+  doc:
+    name: Build the documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup castor
+        uses: castor-php/setup-castor@v0.1.0
+
+      - name: Build the documentation
+        run: castor doc:start
+
   tests:
     name: Run tests (PHP ${{ matrix.php-versions }}, EasyAdmin ${{ matrix.easyadmin-versions }})
     runs-on: ubuntu-latest
