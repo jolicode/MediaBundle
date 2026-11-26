@@ -4,6 +4,8 @@ namespace JoliCode\MediaBundle\Tests\Bridge\EasyAdmin\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use JoliCode\MediaBundle\Library\LibraryContainer;
+use JoliCode\MediaBundle\Storage\OriginalStorage;
 use JoliCode\MediaBundle\Tests\Application\Entity\Page;
 use JoliCode\MediaBundle\Tests\Application\Kernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -136,6 +138,20 @@ class MediaAdminControllerTest extends WebTestCase
         $this->assertSame('image/png', $response['files'][0]['type']);
         $this->assertSame('/media/cache/joli-media-easy-admin/circle-pattern.png', $response['files'][0]['thumbnailUrl']);
         $this->assertSame('http://localhost/admin/media/show/circle-pattern.png', $response['files'][0]['link']);
+    }
+
+    public function testRenameAtRoot(): void
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/media/show/default.pdf');
+        $this->assertResponseIsSuccessful();
+
+        $this->client->submit($crawler->filter('form[name="rename"]')->form([
+            'rename[to]' => 'renamed.pdf',
+        ]));
+
+        $this->assertResponseRedirects('/admin/media/show/renamed.pdf');
+        $this->assertTrue($this->getOriginalStorage()->has('renamed.pdf'));
+        $this->assertFalse($this->getOriginalStorage()->has('default.pdf'));
     }
 
     public function testViewMode(): void
@@ -363,6 +379,14 @@ class MediaAdminControllerTest extends WebTestCase
     protected static function getKernelClass(): string
     {
         return Kernel::class;
+    }
+
+    private function getOriginalStorage(): OriginalStorage
+    {
+        $libraryContainer = static::getContainer()->get('joli_media.library_container');
+        \assert($libraryContainer instanceof LibraryContainer);
+
+        return $libraryContainer->get('default')->getOriginalStorage();
     }
 
     private function findInGalleryFromName(Crawler $crawler, string $name): Crawler

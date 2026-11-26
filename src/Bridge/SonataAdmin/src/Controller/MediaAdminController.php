@@ -194,7 +194,7 @@ class MediaAdminController extends AbstractController
             );
         }
 
-        return $this->redirectToRoute('joli_media_sonata_admin_explore', ['key' => \dirname((string) $key)]);
+        return $this->redirectToRoute('joli_media_sonata_admin_explore', ['key' => $this->getParentKey((string) $key)]);
     }
 
     #[Route(path: '/delete-directory', name: 'delete_directory', methods: [Request::METHOD_POST])]
@@ -252,7 +252,7 @@ class MediaAdminController extends AbstractController
             );
         }
 
-        return $this->redirectToRoute('joli_media_sonata_admin_explore', ['key' => \dirname((string) $key)]);
+        return $this->redirectToRoute('joli_media_sonata_admin_explore', ['key' => $this->getParentKey((string) $key)]);
     }
 
     #[Route(path: '/choose-directory/{key}', name: 'choose_directory', requirements: ['key' => '.*'], methods: [Request::METHOD_GET])]
@@ -545,7 +545,7 @@ class MediaAdminController extends AbstractController
 
             if ($renameFileForm->isValid()) {
                 try {
-                    $target = \sprintf('%s/%s', $media->getFolderPath(), $to);
+                    $target = Resolver::normalizePath(\sprintf('%s/%s', $media->getFolderPath(), $to));
                     $this->denyAccessUnlessGranted(AdminAction::MOVE, new AdminAction(
                         libraryName: $this->getLibrary()->getName(),
                         path: Resolver::normalizePath($key),
@@ -823,6 +823,14 @@ class MediaAdminController extends AbstractController
         }
 
         return $form;
+    }
+
+    // the root directory is identified by an empty key, not by the "." returned by dirname()
+    private function getParentKey(string $key): string
+    {
+        $parentKey = \dirname($key);
+
+        return '.' === $parentKey ? '' : $parentKey;
     }
 
     private function getOriginalStorage(): OriginalStorage

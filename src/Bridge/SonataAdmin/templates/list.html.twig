@@ -132,7 +132,7 @@
                             {% if parent_key != '' and current_key != '.' -%}
                                 <tr>
                                     <td class="sonata-ba-list-field sonata-ba-list-field-string">
-                                        <a class="sonata-link-identifier gallery-list-item gallery-list-item--back" href="{{ path(app.request.attributes.get('_route'), { key: parent_key }) }}">
+                                        <a class="sonata-link-identifier gallery-list-item gallery-list-item--back" href="{{ path(app.request.attributes.get('_route'), { key: '.' != parent_key ? parent_key : '' }) }}">
                                             <span class="gallery-list-item__icon"><i class="fas fa-arrow-left"></i></span>
                                             {{ 'back'|trans }}
                                         </a>
@@ -185,7 +185,7 @@
             <ul class="gallery-grid gallery-grid--folders">
                 {% if parent_key != '' and current_key != '.' -%}
                     <li class="gallery-grid-item gallery-grid-item--back">
-                        <a href="{{ path(app.request.attributes.get('_route'), { key: parent_key }) }}" class="gallery-grid-item__link">
+                        <a href="{{ path(app.request.attributes.get('_route'), { key: '.' != parent_key ? parent_key : '' }) }}" class="gallery-grid-item__link">
                             <span class="gallery-grid-item__icon"><i class="fas fa-arrow-left"></i></span>
                             <span class="gallery-grid-item__name">{{ 'back'|trans }}</span>
                         </a>
