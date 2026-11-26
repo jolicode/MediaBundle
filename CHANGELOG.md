@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.11.0] - 2026-11-26
 
 - bc break - The `Format` enum has a new `SVG` case: an exhaustive `match` on it without a `default` arm must handle it
 - bc break - `Resolver::isMediaProcessable()` takes an optional variation, and `Variation::canBeAppliedTo()` refuses the SVG media unless the variation rasterizes them. The `Converter` and the `Variation` messages about a variation that cannot be applied to a media no longer mention the voters
@@ -217,3 +217,4 @@ This is the initial release of the bundle.
 [0.8.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.8.0
 [0.9.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.9.0
 [0.10.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.10.0
+[0.11.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.11.0
