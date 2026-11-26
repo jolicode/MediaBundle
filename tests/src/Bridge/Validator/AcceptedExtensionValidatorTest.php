@@ -6,9 +6,8 @@ use JoliCode\MediaBundle\Bridge\Validator\AcceptedExtension;
 use JoliCode\MediaBundle\Bridge\Validator\AcceptedExtensionValidator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Validation;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -57,12 +56,11 @@ class AcceptedExtensionValidatorTest extends ConstraintValidatorTestCase
             ->with('media.error.invalid_extension', ['%extension%' => '"html"', '%extensions%' => '"png"'], 'JoliMediaEasyAdminBundle')
             ->willReturn('translated')
         ;
-        $context = new ExecutionContext($this->createStub(ValidatorInterface::class), null, $translator);
-        $this->validator->initialize($context);
+        $validator = Validation::createValidatorBuilder()->setTranslator($translator)->getValidator();
 
-        $this->validator->validate('page.html', new AcceptedExtension(['png'], translationDomain: 'JoliMediaEasyAdminBundle'));
+        $violations = $validator->validate('page.html', new AcceptedExtension(['png'], translationDomain: 'JoliMediaEasyAdminBundle'));
 
-        self::assertSame('translated', $context->getViolations()->get(0)->getMessage());
+        self::assertSame('translated', $violations->get(0)->getMessage());
     }
 
     public function testTheNameOfAnUploadedFileIsChecked(): void
