@@ -1,0 +1,119 @@
+action:
+    choose_a_file: 'Datei auswählen'
+    copy: 'Kopieren'
+    delete_directory: 'Dieses Verzeichnis löschen'
+    delete_file: 'Diese Datei löschen'
+    move_file: 'Diese Datei verschieben'
+    move_to_this_directory: 'In dieses Verzeichnis verschieben'
+    regenerate: 'Neu generieren'
+    remove: 'Entfernen'
+    rename_directory: 'Verzeichnis umbenennen'
+    rename_file: 'Datei umbenennen'
+    search: 'Suchen'
+browser:
+    audio:
+        unsupported: 'Ihr Browser unterstützt das Audio-Element nicht.'
+    video:
+        unsupported: 'Ihr Browser unterstützt das Video-Element nicht.'
+directory:
+    add: 'Dieses Verzeichnis hinzufügen'
+    create: 'Neues Verzeichnis erstellen'
+    created_failure: 'Das Verzeichnis "%directory%" konnte nicht erstellt werden: %error%'
+    created_success: 'Verzeichnis "%directory%" erfolgreich erstellt'
+    create_this_directory: 'Dieses Verzeichnis erstellen'
+    delete_modal:
+        content: 'Möchten Sie dieses Verzeichnis wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden. Alle Dateien und Unterverzeichnisse werden gelöscht.'
+        title: 'Dieses Verzeichnis löschen'
+    deleted_success: 'Verzeichnis "%directory%" erfolgreich gelöscht'
+    forbidden: 'Das Verzeichnis "%directory%" ist reserviert und kann nicht geändert werden.'
+    label: 'Verzeichnis'
+    list_failure: 'Der Inhalt des Verzeichnisses "%directory%" konnte nicht aufgelistet werden'
+    move:
+        failure: 'Das Verzeichnis "%from%" konnte nicht nach "%to%" verschoben werden: %error%'
+        success: 'Das Verzeichnis "%from%" wurde erfolgreich nach "%to%" verschoben'
+    placeholder: 'Geben Sie einen Namen für das neue Verzeichnis ein'
+    rename:
+        failure: 'Das Verzeichnis "%from%" konnte nicht in "%to%" umbenannt werden: %error%'
+        placeholder: 'Geben Sie einen neuen Namen für dieses Verzeichnis ein'
+        success: 'Das Verzeichnis "%from%" wurde erfolgreich in "%to%" umbenannt'
+    sub:
+        add: 'Neues Unterverzeichnis hinzufügen'
+document:
+    download: 'Dokument herunterladen'
+general: 'Allgemein'
+media:
+    add: 'Medien hinzufügen'
+    deleted_success: 'Mediendatei "%media%" erfolgreich gelöscht'
+    dimensions: 'Abmessungen'
+    search_label: 'Medien suchen …'
+    error:
+        invalid_extension: 'Die Dateiendung ist ungültig (%extension%). Erlaubte Dateiendungen sind %extensions%.'
+        forbidden: 'Die Mediendatei "%media%" liegt in einem reservierten Verzeichnis und kann nicht geändert werden.'
+        in_use: 'Die Mediendatei "%media%" wird im Feld "%field%" der Entität "%entity%" verwendet. Sie kann nicht gelöscht werden.'
+        required: 'Bitte wählen Sie eine Mediendatei aus.'
+    inaccessible:
+        explanation: 'Die Mediendatei "%media%" ist nicht verfügbar. Möglicherweise wurde sie gelöscht oder verschoben.'
+        label: 'Nicht verfügbare Mediendatei'
+    move_failure: 'Die Mediendatei "%from%" konnte nicht in das Verzeichnis "%to%" verschoben werden: %error%'
+    move_modal:
+        content: 'Möchten Sie diese Mediendatei wirklich in das Verzeichnis "%directory%" verschieben?'
+        title: 'Mediendatei verschieben'
+    move_success: 'Die Datei "%from%" wurde erfolgreich nach "%to%" verschoben'
+    name: 'Name'
+    placeholder: 'Geben Sie einen neuen Dateinamen für diese Mediendatei ein'
+    renamed_failure: 'Die Mediendatei "%from%" konnte nicht in "%to%" umbenannt werden: %error%'
+    renamed_success: 'Die Mediendatei "%from%" wurde erfolgreich in "%to%" umbenannt'
+    size:
+        label: 'Größe'
+        label_long: 'Dateigröße'
+    type:
+        audio: 'Audio'
+        csv: 'CSV'
+        excel: 'Excel'
+        file: 'Datei'
+        html: 'HTML'
+        image: 'Bild'
+        label: 'Typ'
+        label_long: 'Dateityp'
+        pdf: 'PDF'
+        powerpoint: 'PowerPoint'
+        text: 'Text'
+        video: 'Video'
+        word: 'Word'
+        xml: 'XML'
+        zip: 'ZIP'
+    unavailable:
+        simple: 'Die Mediendatei ist nicht verfügbar.'
+    upload:
+        uploader:
+            default_message: 'Dateien hier ablegen oder zum Hochladen klicken'
+            file_too_big: 'Die Datei ist zu groß ({{filesize}} MiB). Maximale Dateigröße: {{maxFilesize}} MiB.'
+            invalid_file_type: 'Dateien dieses Typs ({{type}}) können nicht hochgeladen werden. Erlaubte Typen sind {{acceptedFiles}}.'
+            max_files_exceeded: 'Sie können nicht mehr als {{maxFiles}} Dateien hochladen.'
+            response_error: 'Der Server hat mit einem Fehler geantwortet (Code {{statusCode}}).'
+        error:
+            already_exists: 'Die Datei "%file%" existiert bereits, bitte ändern Sie den Dateinamen.'
+            default: 'Die Datei konnte nicht hochgeladen werden.'
+            invalid_form: 'Das Formular ist ungültig. Bitte versuchen Sie es erneut.'
+            unable_to_write_file: 'Die Datei "%file%" konnte nicht geschrieben werden.'
+    url:
+        label: 'URL'
+        label_long: 'Medien-URL'
+media_explorer: 'Medien-Explorer'
+media_library: 'Medienbibliothek'
+no_file_found: 'Keine Datei gefunden'
+back: 'Zurück'
+preview:
+    label: 'Vorschau'
+    unavailable: 'Vorschau nicht verfügbar.'
+root: 'Stammverzeichnis'
+variation:
+    label: 'Variante'
+    label_plural: 'Varianten'
+    regenerated_failure: 'Die Variante "%variation%" der Mediendatei "%media%" konnte nicht neu generiert werden'
+    regenerated_success: 'Die Variante "%variation%" der Mediendatei "%media%" wurde erfolgreich neu generiert'
+    stored: 'Gespeichert?'
+view:
+    grid: 'Rasteransicht'
+    label: 'Ansicht ändern'
+    list: 'Listenansicht'

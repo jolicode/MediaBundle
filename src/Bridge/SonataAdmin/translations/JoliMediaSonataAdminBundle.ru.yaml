@@ -1,0 +1,118 @@
+action:
+    choose_a_file: 'Выбрать файл'
+    copy: 'Копировать'
+    delete_directory: 'Удалить эту папку'
+    delete_file: 'Удалить этот файл'
+    move_file: 'Переместить этот файл'
+    move_to_this_directory: 'Переместить в эту папку'
+    regenerate: 'Пересоздать'
+    remove: 'Убрать'
+    rename_directory: 'Переименовать папку'
+    rename_file: 'Переименовать файл'
+    search: 'Поиск'
+browser:
+    audio:
+        unsupported: 'Ваш браузер не поддерживает аудио.'
+    video:
+        unsupported: 'Ваш браузер не поддерживает видео.'
+directory:
+    add: 'Добавить эту папку'
+    create: 'Создать новую папку'
+    created_failure: 'Не удалось создать папку «%directory%»: %error%'
+    created_success: 'Папка «%directory%» создана.'
+    create_this_directory: 'Создать эту папку'
+    delete:
+        confirm: 'Действительно удалить эту папку? Это действие нельзя отменить. Все файлы и вложенные папки будут удалены.'
+    deleted_success: 'Папка «%directory%» удалена.'
+    forbidden: 'Папка «%directory%» зарезервирована и не может быть изменена.'
+    label: 'Папка'
+    list_failure: 'Не удалось получить содержимое папки «%directory%».'
+    move:
+        failure: 'Не удалось переместить папку «%from%» в «%to%»: %error%'
+        success: 'Папка «%from%» перемещена в «%to%».'
+    placeholder: 'Введите название новой папки'
+    rename:
+        failure: 'Не удалось переименовать папку «%from%» в «%to%»: %error%'
+        placeholder: 'Введите новое название этой папки'
+        success: 'Папка «%from%» переименована в «%to%».'
+    sub:
+        add: 'Добавить вложенную папку'
+document:
+    download: 'Скачать документ'
+general: 'Общее'
+media:
+    add: 'Добавить файлы'
+    delete:
+        confirm: 'Действительно удалить этот файл? Это действие нельзя отменить.'
+    deleted_success: 'Файл «%media%» удалён.'
+    dimensions: 'Размеры'
+    search_label: 'Поиск файлов…'
+    error:
+        invalid_extension: 'Недопустимое расширение файла (%extension%). Разрешённые расширения: %extensions%.'
+        forbidden: 'Файл «%media%» находится в зарезервированной папке и не может быть изменён.'
+        in_use: 'Файл «%media%» используется в поле «%field%» сущности «%entity%». Его нельзя удалить.'
+    inaccessible:
+        explanation: 'Файл «%media%» недоступен. Возможно, он был удалён или перемещён.'
+        label: 'Недоступный файл'
+    move_modal:
+        content: 'Действительно переместить этот файл в папку «%directory%»?'
+        title: 'Перемещение файла'
+    move_failure: 'Не удалось переместить файл «%from%» в папку «%to%»: %error%'
+    move_success: 'Файл «%from%» перемещён в «%to%».'
+    name: 'Название'
+    placeholder: 'Введите новое имя этого файла'
+    renamed_failure: 'Не удалось переименовать файл «%from%» в «%to%»: %error%'
+    renamed_success: 'Файл «%from%» переименован в «%to%».'
+    size:
+        label: 'Размер'
+        label_long: 'Размер файла'
+    type:
+        audio: 'Аудио'
+        csv: 'CSV'
+        excel: 'Excel'
+        file: 'Файл'
+        html: 'HTML'
+        image: 'Изображение'
+        label: 'Тип'
+        label_long: 'Тип файла'
+        pdf: 'PDF'
+        powerpoint: 'PowerPoint'
+        text: 'Текст'
+        video: 'Видео'
+        word: 'Word'
+        xml: 'XML'
+        zip: 'ZIP'
+    unavailable:
+        simple: 'Файл недоступен.'
+    upload:
+        uploader:
+            default_message: 'Перетащите файлы сюда или нажмите, чтобы загрузить'
+            file_too_big: 'Файл слишком большой ({{filesize}} МиБ). Максимум: {{maxFilesize}} МиБ.'
+            invalid_file_type: 'Файлы этого типа ({{type}}) загружать нельзя. Разрешённые типы: {{acceptedFiles}}.'
+            max_files_exceeded: 'Максимальное количество файлов: {{maxFiles}}.'
+            response_error: 'Сервер ответил ошибкой (код {{statusCode}}).'
+        error:
+            already_exists: 'Файл «%file%» уже существует, измените имя файла.'
+            default: 'Не удалось загрузить файл.'
+            invalid_form: 'Форма заполнена неверно. Попробуйте ещё раз.'
+            unable_to_write_file: 'Не удалось записать файл «%file%».'
+    url:
+        label: 'URL'
+        label_long: 'Адрес файла'
+media_explorer: 'Обозреватель файлов'
+media_library: 'Медиа'
+no_file_found: 'Файлы не найдены'
+back: 'Назад'
+preview:
+    label: 'Предпросмотр'
+    unavailable: 'Предпросмотр недоступен.'
+root: 'Корень'
+variation:
+    label: 'Вариант'
+    label_plural: 'Варианты'
+    regenerated_failure: 'Не удалось пересоздать вариант «%variation%» файла «%media%».'
+    regenerated_success: 'Вариант «%variation%» файла «%media%» пересоздан.'
+    stored: 'Сохранён?'
+view:
+    grid: 'Сетка'
+    list: 'Список'

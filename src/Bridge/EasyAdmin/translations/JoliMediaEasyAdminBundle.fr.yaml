@@ -50,13 +50,14 @@ media:
         invalid_extension: 'L''extension du fichier est invalide (%extension%). Les extensions autorisées sont %extensions%.'
         forbidden: 'Le média "%media%" est stocké dans un dossier réservé et ne peut pas être modifié.'
         in_use: 'Le media "%media%" est utilisé dans le champ "%field%" de l''entité "%entity%". Il ne peut pas être supprimé.'
+        required: 'Veuillez choisir un fichier média.'
     inaccessible:
         explanation: 'Le média "%media%" n''est pas accessible. Il a peut-être été supprimé ou déplacé.'
         label: 'Média inaccessible'
+    move_failure: 'Échec du déplacement du média "%from%" vers le dossier "%to%" : %error%'
     move_modal:
         content: 'Souhaitez-vous vraiment déplacer ce média vers le dossier "%directory%" ?'
         title: 'Déplacer le média'
-    move_failure: 'Échec du déplacement du média "%from%" vers le dossier "%to%" : %error%'
     move_success: 'Le fichier "%from%" a été déplacé avec succès vers "%to%"'
     name: 'Nom'
     placeholder: 'Entrez un nouveau nom de fichier pour ce média'
