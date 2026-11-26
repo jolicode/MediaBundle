@@ -1,12 +1,13 @@
 # Changelog
 
-## [Unreleased]
+## [0.11.0] - 2026-11-26
 
 - bc break - The `Format` enum has a new `SVG` case: an exhaustive `match` on it without a `default` arm must handle it
 - bc break - `Resolver::isMediaProcessable()` takes an optional variation, and `Variation::canBeAppliedTo()` refuses the SVG media unless the variation rasterizes them. The `Converter` and the `Variation` messages about a variation that cannot be applied to a media no longer mention the voters
 - feature - SVG media can be rasterized into PNG, WebP, AVIF, JPEG or GIF variations by the libraries and variations that enable the new `rasterize_svg` setting: it is `false` by default on a library, and each variation can override it. The variations that do not rasterize SVG leave the SVG media as they are, and the Twig components output the original SVG. Rasterizing requires the `imagine` processor with the `imagick` driver and an ImageMagick built with SVG support, which is checked when the container is compiled. A variation cannot set `format: svg`, as SVG is an input-only format, and a JPEG variation of a SVG media is flattened on a white background - see the [processors documentation](doc/variations/processors.rst)
 - feature - SVG media can be rasterized with librsvg's `rsvg-convert` binary rather than with ImageMagick, by setting the `svg_renderer` setting of the `imagine` processor to `rsvg-convert`. It renders the gradients, masks, filters and CSS that the internal SVG renderer of ImageMagick does not, and works with any Imagine driver. Its path is set by the `rsvg_convert_binary` setting, or the `JOLI_MEDIA_RSVG_CONVERT_BINARY` environment variable (default: `/usr/bin/rsvg-convert`), and the `process_timeout` setting of the `imagine` processor applies to it
 - improvement - The pixel dimensions of the SVG media are now read from their `width`, `height` or `viewBox` attributes, whether the rasterization is enabled or not. The dimensions cached for SVG media before this change stay unknown until the cache pool is cleared
+- fix - The admin bridges no longer display an error with recent versions of symfony/routing (7.4.24, 8.1.12) when renaming a media stored at the root of the library (EasyAdmin, SonataAdmin), when deleting a media or a folder stored at the root (SonataAdmin, Sylius), and when browsing a top-level folder (SonataAdmin)
 
 ## [0.10.0] - 2026-10-05
 
@@ -216,3 +217,4 @@ This is the initial release of the bundle.
 [0.8.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.8.0
 [0.9.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.9.0
 [0.10.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.10.0
+[0.11.0]: https://github.com/jolicode/mediabundle/releases/tag/v0.11.0

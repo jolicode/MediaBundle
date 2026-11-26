@@ -291,10 +291,8 @@ class MediaAdminController extends AbstractController
             $this->addFlash('error', $throwable->getMessage());
         }
 
-        $parentKey = \dirname($key);
-
         return $this->redirectToRoute('joli_media_sylius_admin_explore', [
-            'key' => $parentKey,
+            'key' => $this->getParentKey($key),
         ]);
     }
 
@@ -754,6 +752,14 @@ class MediaAdminController extends AbstractController
         }
 
         return $gridView;
+    }
+
+    // the root directory is identified by an empty key, not by the "." returned by dirname()
+    private function getParentKey(string $key): string
+    {
+        $parentKey = \dirname($key);
+
+        return '.' === $parentKey ? '' : $parentKey;
     }
 
     private function getOriginalStorage(): OriginalStorage
