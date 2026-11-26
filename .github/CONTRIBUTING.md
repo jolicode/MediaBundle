@@ -29,7 +29,13 @@ If you would like to contribute code to the Media Bundle, please follow these st
 4. Make sure [docs](#update-the-documentation) are up-to-date
 5. Push your changes to your forked repository
 6. Make sure [tests](#tests), [coding standards](#coding-standards) checks and [static analysis](#static-analysis) checks are up-to-date and green
-7. [Open a pull request](https://help.github.com/articles/creating-a-pull-request) against the `main` branch of the original repository
+7. [Open a pull request](https://help.github.com/articles/creating-a-pull-request) against the `main` branch of the original repository, and fill in the checklist of the pull request template
+
+## Admin bridges
+
+The EasyAdmin, SonataAdmin and Sylius bridges offer the same features and the same translations. When you add or change a feature, fix a bug or add a translation in one bridge, please make the same change in the two others, or explain in the pull request why it only applies to some of them.
+
+Each bridge ships its translations in its `translations/` directory, and every language must have the same keys as the English file: when you add a key, add it to all the languages of the bridge. A test checks this, and a new language must be added to the three bridges.
 
 ## Coding standards
 

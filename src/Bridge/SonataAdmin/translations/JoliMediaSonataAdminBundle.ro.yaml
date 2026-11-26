@@ -1,0 +1,118 @@
+action:
+    choose_a_file: 'Alege un fișier'
+    copy: 'Copiază'
+    delete_directory: 'Șterge acest dosar'
+    delete_file: 'Șterge acest fișier'
+    move_file: 'Mută acest fișier'
+    move_to_this_directory: 'Mută în acest dosar'
+    regenerate: 'Regenerează'
+    remove: 'Elimină'
+    rename_directory: 'Redenumește dosarul'
+    rename_file: 'Redenumește fișierul'
+    search: 'Caută'
+browser:
+    audio:
+        unsupported: 'Browserul dvs. nu suportă redarea audio.'
+    video:
+        unsupported: 'Browserul dvs. nu suportă redarea video.'
+directory:
+    add: 'Adaugă acest dosar'
+    create: 'Creează un dosar nou'
+    created_failure: 'Dosarul „%directory%” nu a putut fi creat: %error%'
+    created_success: 'Dosarul „%directory%” a fost creat.'
+    create_this_directory: 'Creează acest dosar'
+    delete:
+        confirm: 'Sigur ștergeți acest dosar? Această acțiune este ireversibilă. Toate fișierele și subdosarele vor fi șterse.'
+    deleted_success: 'Dosarul „%directory%” a fost șters.'
+    forbidden: 'Dosarul „%directory%” este rezervat și nu poate fi modificat.'
+    label: 'Dosar'
+    list_failure: 'Conținutul dosarului „%directory%” nu a putut fi listat.'
+    move:
+        failure: 'Dosarul „%from%” nu a putut fi mutat în „%to%”: %error%'
+        success: 'Dosarul „%from%” a fost mutat în „%to%”.'
+    placeholder: 'Introduceți un nume pentru dosarul nou'
+    rename:
+        failure: 'Dosarul „%from%” nu a putut fi redenumit în „%to%”: %error%'
+        placeholder: 'Introduceți un nume nou pentru acest dosar'
+        success: 'Dosarul „%from%” a fost redenumit în „%to%”.'
+    sub:
+        add: 'Adaugă un subdosar'
+document:
+    download: 'Descarcă documentul'
+general: 'General'
+media:
+    add: 'Adaugă fișiere'
+    delete:
+        confirm: 'Sigur ștergeți acest fișier? Această acțiune este ireversibilă.'
+    deleted_success: 'Fișierul „%media%” a fost șters.'
+    dimensions: 'Dimensiuni'
+    search_label: 'Caută fișiere…'
+    error:
+        invalid_extension: 'Extensia fișierului este invalidă (%extension%). Extensiile permise sunt %extensions%.'
+        forbidden: 'Fișierul „%media%” se află într-un dosar rezervat și nu poate fi modificat.'
+        in_use: 'Fișierul „%media%” este folosit în câmpul „%field%” al entității „%entity%”. Nu poate fi șters.'
+    inaccessible:
+        explanation: 'Fișierul „%media%” nu este accesibil. Poate a fost șters sau mutat.'
+        label: 'Fișier inaccesibil'
+    move_modal:
+        content: 'Sigur mutați acest fișier în dosarul „%directory%”?'
+        title: 'Mutarea fișierului'
+    move_failure: 'Fișierul „%from%” nu a putut fi mutat în dosarul „%to%”: %error%'
+    move_success: 'Fișierul „%from%” a fost mutat în „%to%”.'
+    name: 'Nume'
+    placeholder: 'Introduceți un nume nou pentru acest fișier'
+    renamed_failure: 'Fișierul „%from%” nu a putut fi redenumit în „%to%”: %error%'
+    renamed_success: 'Fișierul „%from%” a fost redenumit în „%to%”.'
+    size:
+        label: 'Mărime'
+        label_long: 'Mărimea fișierului'
+    type:
+        audio: 'Audio'
+        csv: 'CSV'
+        excel: 'Excel'
+        file: 'Fișier'
+        html: 'HTML'
+        image: 'Imagine'
+        label: 'Tip'
+        label_long: 'Tipul fișierului'
+        pdf: 'PDF'
+        powerpoint: 'PowerPoint'
+        text: 'Text'
+        video: 'Video'
+        word: 'Word'
+        xml: 'XML'
+        zip: 'ZIP'
+    unavailable:
+        simple: 'Fișierul nu este disponibil.'
+    upload:
+        uploader:
+            default_message: 'Trageți fișierele aici sau faceți clic pentru încărcare'
+            file_too_big: 'Fișierul este prea mare ({{filesize}} MiB). Maximul: {{maxFilesize}} MiB.'
+            invalid_file_type: 'Nu puteți încărca fișiere de acest tip ({{type}}). Tipurile permise sunt {{acceptedFiles}}.'
+            max_files_exceeded: 'Numărul maxim de fișiere este {{maxFiles}}.'
+            response_error: 'Serverul a răspuns cu o eroare (cod {{statusCode}}).'
+        error:
+            already_exists: 'Fișierul „%file%” există deja, schimbați numele fișierului.'
+            default: 'Fișierul nu a putut fi încărcat.'
+            invalid_form: 'Formularul este invalid. Încercați din nou.'
+            unable_to_write_file: 'Fișierul „%file%” nu a putut fi scris.'
+    url:
+        label: 'URL'
+        label_long: 'Adresa fișierului'
+media_explorer: 'Explorator de fișiere'
+media_library: 'Media'
+no_file_found: 'Niciun fișier găsit'
+back: 'Înapoi'
+preview:
+    label: 'Previzualizare'
+    unavailable: 'Previzualizarea nu este disponibilă.'
+root: 'Rădăcină'
+variation:
+    label: 'Variantă'
+    label_plural: 'Variante'
+    regenerated_failure: 'Varianta „%variation%” a fișierului „%media%” nu a putut fi regenerată.'
+    regenerated_success: 'Varianta „%variation%” a fișierului „%media%” a fost regenerată.'
+    stored: 'Stocată?'
+view:
+    grid: 'Vizualizare grilă'
+    list: 'Vizualizare listă'
