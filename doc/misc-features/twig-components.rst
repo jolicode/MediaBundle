@@ -1,6 +1,9 @@
 Twig components
 ===============
 
+.. meta::
+    :description: Display media in Symfony templates with the JoliMediaBundle Twig components: img and picture tags, srcset, lazy loading and modern image formats.
+
 The bundle provides a set of Twig components to display media in your templates using HTML best practices.
 
 ``<img>`` tag

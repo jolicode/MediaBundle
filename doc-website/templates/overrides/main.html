@@ -4,46 +4,72 @@
     {% if not page.url %}
     <title>JoliMediaBundle - a set of tools to manage media files in Symfony applications.</title>
     {% elif page.meta and page.meta.title %}
-    <title>{{ page.meta.title }} - JoliMediaBundle</title>
+    <title>{{ page.meta.title }} - JoliMediaBundle, media management for Symfony</title>
     {% else %}
-    <title>{{ page.title | striptags }} - JoliMediaBundle</title>
+    <title>{{ page.title | striptags }} - JoliMediaBundle, media management for Symfony</title>
     {% endif %}
 {% endblock %}
 
 {% block extrahead %}
-    <meta property="og:title" content="{% if page.meta and page.meta.title %}{{ page.meta.title }}{% else %}{{ page.title | striptags }}{% endif %}">
-    <meta property="og:description" content="{% if page.meta and page.meta.description %}{{ page.meta.description }}{% else %}{{ page.description | striptags }}{% endif %}">
+    {% set seo_title = page.meta.title if page.meta and page.meta.title else page.title | striptags %}
+    {% set seo_description = page.meta.description if page.meta and page.meta.description else config.site_description %}
+    <meta property="og:title" content="{{ seo_title }}">
+    <meta property="og:description" content="{{ seo_description }}">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ config.site_url }}">
-    <meta property="og:image" content="{{ config.site_url }}assets/favicon.png">
+    <meta property="og:url" content="{{ page.canonical_url }}">
+    <meta property="og:site_name" content="{{ config.site_name }}">
+    <meta property="og:image" content="{{ config.site_url }}images/bridges/easyadmin/grid-view.png">
+    <meta property="og:image:alt" content="The media library of JoliMediaBundle in EasyAdmin">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{% if page.meta and page.meta.title %}{{ page.meta.title }}{% else %}{{ page.title | striptags }}{% endif %}">
-    <meta name="twitter:description" content="{% if page.meta and page.meta.description %}{{ page.meta.description }}{% else %}{{ config.site_description }}{% endif %}">
-    <meta name="twitter:image" content="{{ config.site_url }}assets/favicon.png">
+    <meta name="twitter:title" content="{{ seo_title }}">
+    <meta name="twitter:description" content="{{ seo_description }}">
+    <meta name="twitter:image" content="{{ config.site_url }}images/bridges/easyadmin/grid-view.png">
+    <meta name="twitter:image:alt" content="The media library of JoliMediaBundle in EasyAdmin">
 
     <script type="application/ld+json">
+        {% if not page.url %}
         {
             "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
+            "@type": "SoftwareSourceCode",
             "name": "JoliMediaBundle",
             "url": "{{ config.site_url }}",
-            "description": "JoliMediaBundle is a set of tools to manage media files in Symfony applications.",
-            "applicationCategory": "DeveloperTool",
-            "operatingSystem": "All",
+            "description": {{ seo_description | tojson }},
+            "codeRepository": "{{ config.repo_url }}",
             "programmingLanguage": "PHP",
+            "runtimePlatform": "Symfony",
             "license": "https://opensource.org/licenses/MIT",
             "author": {
                 "@type": "Organization",
-                "name": "JoliCode"
-            },
-            "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "USD"
-            },
-            "downloadUrl": "https://github.com/jolicode/MediaBundle"
+                "name": "JoliCode",
+                "url": "https://jolicode.com/"
+            }
         }
+        {% else %}
+        {
+            "@context": "https://schema.org",
+            "@type": "TechArticle",
+            "headline": {{ seo_title | tojson }},
+            "description": {{ seo_description | tojson }},
+            "url": "{{ page.canonical_url }}",
+            "image": "{{ config.site_url }}images/bridges/easyadmin/grid-view.png",
+            {% if page.meta.date_published %}
+            "datePublished": "{{ page.meta.date_published }}",
+            "dateModified": "{{ page.meta.date_modified }}",
+            {% endif %}
+            "inLanguage": "en",
+            "author": {
+                "@type": "Organization",
+                "name": "JoliCode",
+                "url": "https://jolicode.com/"
+            },
+            "about": {
+                "@type": "SoftwareSourceCode",
+                "name": "JoliMediaBundle",
+                "codeRepository": "{{ config.repo_url }}"
+            }
+        }
+        {% endif %}
     </script>
 {% endblock %}
 

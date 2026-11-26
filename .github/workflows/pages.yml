@@ -27,6 +27,8 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
+          # The whole history dates the pages
+          fetch-depth: 0
 
       - name: Setup castor
         uses: castor-php/setup-castor@v1

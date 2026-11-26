@@ -1,6 +1,9 @@
 Misc features
 =============
 
+.. meta::
+    :description: JoliMediaBundle features: console commands, profiler panel, events, Doctrine integration, deletion behavior, srcset, Twig components and URL generation.
+
 - `Commands <commands.rst>`_
 - `Debug Tooling <debug-tooling.rst>`_
 - `Events <events.rst>`_

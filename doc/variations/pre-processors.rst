@@ -1,6 +1,9 @@
 Pre-processors
 ==============
 
+.. meta::
+    :description: Prepare media before their conversion with the JoliMediaBundle pre-processors, for example to rotate images or apply watermarks, filters or backgrounds.
+
 JoliMediaBundle provides different types of transformations, that allow for example to resize or crop images. However, it does not provide advanced transformations to prepare the media before the conversion, such as rotating images, applying filters, backgrounds or watermarks, because these transformations are not supported by all the underlying tools used by the bundle.
 
 *Pre-processors* are responsible for applying transformations to a media before the conversion. They can be used to prepare the media before the transformation, for example to apply a watermark or rotate the media.

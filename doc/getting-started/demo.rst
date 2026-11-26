@@ -1,15 +1,20 @@
 Demo
 ====
 
+.. meta::
+    :description: Try the JoliMediaBundle demo application in your browser with WebAssembly, or run it locally with Docker and Castor to explore its admin integrations.
+
 Want to see JoliCode MediaBundle in action? the "demo" folder of the repository contains a fully functional Symfony application showcasing the bundle features integrated with EasyAdmin and Sonata Admin. You can find this demo application in the ``demo/application`` folder of the repository.
 
 Trying the demo online
 ----------------------
 
-The demo application also runs `in your browser <https://mediabundle.jolicode.com/demo/>`_, compiled to WebAssembly: no server runs PHP, and what you upload stays in your browser. Only the ``imagine`` processor with the GD driver is available there, so it cannot process AVIF, HEIC or TIFF images.
+.. tip::
 
-Starting the demo application
------------------------------
+    The demo application also runs `in your browser <https://mediabundle.jolicode.com/demo/>`_, compiled to WebAssembly: no server runs PHP, and what you upload stays in your browser. Only the ``imagine`` processor with the GD driver is available there, so it cannot process AVIF, HEIC or TIFF images.
+
+Starting the demo application in Docker
+---------------------------------------
 
 To start the demo application, you need to have Docker and `Castor <https://github.com/jolicode/castor#installation>`_ installed on your system. Then, follow these steps:
 

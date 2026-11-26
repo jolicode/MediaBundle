@@ -1,6 +1,9 @@
 JoliMediaBundle
 ===============
 
+.. meta::
+    :description: JoliMediaBundle manages media in Symfony applications: storage, variations, optimization, Twig components, and EasyAdmin, SonataAdmin and Sylius integrations.
+
 The JoliMediaBundle provides a set of tools to manage media in Symfony applications.
 
 .. tip::

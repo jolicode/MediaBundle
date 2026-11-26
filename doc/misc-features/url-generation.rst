@@ -1,6 +1,9 @@
 URL generation
 ==============
 
+.. meta::
+    :description: Generate the URLs of media and of their variations with JoliMediaBundle, as absolute paths or absolute URLs, from your PHP code or your Twig templates.
+
 Generating the URL for a given media or one of its variations can be done by calling the ``getUrl()`` method on the ``Media`` or ``MediaVariation`` object::
 
     // $library is an instance of JoliCode\MediaBundle\Library\Library. It can be retrived from the services container

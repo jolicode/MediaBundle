@@ -1,6 +1,9 @@
 Events Triggered by the MediaBundle
 ===================================
 
+.. meta::
+    :description: Hook into JoliMediaBundle with the events dispatched before and after media and folders are created, moved or deleted, for example to sanitize uploads.
+
 The ``JoliCode\MediaBundle`` provides several events that allow you to hook into various stages of media and folder operations. These events are dispatched by the bundle and can be used to customize or extend its behavior.
 
 Available Events

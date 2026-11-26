@@ -1,6 +1,9 @@
 Srcset generation
 =================
 
+.. meta::
+    :description: Generate responsive srcset attributes from the variations of a media with the JoliMediaBundle SrcsetBuilder service, in Twig or in your own PHP code.
+
 A ``srcset`` attribute lists several versions of the same image, so that the browser may pick the one that best fits the screen it renders on. This bundle builds those candidates out of the variations of a media.
 
 The `Twig components <twig-components.rst>`_ do it for you, but the generation itself lives in a service, so that anything else may use it too - an API Platform normalizer exposing the variations of a media, a JSON endpoint, a mail renderer, or your own templating.
