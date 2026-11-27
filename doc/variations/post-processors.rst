@@ -86,7 +86,7 @@ All the post-processors are enabled by default, provided the required binaries a
             mozjpeg:
                 enabled: false
 
-This can event be shotened to:
+This can even be shortened to:
 
 .. code-block:: yaml
 

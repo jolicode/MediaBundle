@@ -6,7 +6,7 @@ URL generation
 
 Generating the URL for a given media or one of its variations can be done by calling the ``getUrl()`` method on the ``Media`` or ``MediaVariation`` object::
 
-    // $library is an instance of JoliCode\MediaBundle\Library\Library. It can be retrived from the services container
+    // $library is an instance of JoliCode\MediaBundle\Library\Library. It can be retrieved from the services container
     $media = new Media('example-image.png', $library);
 
     // absolute path
@@ -20,7 +20,7 @@ Generating the URL for a given media or one of its variations can be done by cal
     echo $mediaVariation->getUrl();
     echo $mediaVariation->getUrl(UrlGeneratorInterface::ABSOLUTE_URL);
 
-There are few chances that you need to instanciate the ``Media`` or ``MediaVariation`` classes yourself. Most of the time, you'll prefer relying on the media ``Resolver`` service to get the media or media variation objects::
+You will rarely need to instantiate the ``Media`` or ``MediaVariation`` classes yourself. Most of the time, you'll prefer relying on the media ``Resolver`` service to get the media or media variation objects::
 
     $resolver = $this->get('joli_media.resolver');
     $media = $resolver->resolve('example-image.png', 'library_name');

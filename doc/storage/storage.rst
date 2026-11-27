@@ -112,7 +112,7 @@ However, there are cases where you might want to serve the original media files 
 
 .. tip::
 
-    Remember that, by doing to, every request to an original media file will go through the Symfony application, which can have a significant impact on performance. It is therefore recommended to use this option only when necessary, and to ensure that the web server is properly configured to serve the media files directly whenever possible.
+    Remember that, by doing so, every request to an original media file will go through the Symfony application, which can have a significant impact on performance. It is therefore recommended to use this option only when necessary, and to ensure that the web server is properly configured to serve the media files directly whenever possible.
 
 Content type of the served files
 --------------------------------
