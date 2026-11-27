@@ -1,15 +1,30 @@
 {
     "name": "jolicode/media-bundle",
     "type": "symfony-bundle",
-    "description": "A media management bundle for Symfony applications, with Easyadmin and SonataAdmin integrations.",
+    "description": "Media management for Symfony: upload, store, transform, compress and display images, with EasyAdmin, SonataAdmin and Sylius integrations.",
     "keywords": [
         "admin",
-        "media",
-        "gallery",
+        "avif",
         "bundle",
-        "symfony"
+        "easyadmin",
+        "flysystem",
+        "gallery",
+        "image",
+        "media",
+        "media library",
+        "responsive images",
+        "sonata",
+        "sylius",
+        "symfony",
+        "upload",
+        "webp"
     ],
-    "homepage": "https://github.com/JoliCode/MediaBundle",
+    "homepage": "https://mediabundle.jolicode.com/",
+    "support": {
+        "issues": "https://github.com/jolicode/MediaBundle/issues",
+        "source": "https://github.com/jolicode/MediaBundle",
+        "docs": "https://mediabundle.jolicode.com/"
+    },
     "require": {
         "php": ">=8.2",
         "ext-ctype": "*",
