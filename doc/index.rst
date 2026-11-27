@@ -43,12 +43,17 @@ The bundle is designed to be extensible and can be easily customized to fit your
 
 The bundle does not aim to provide a complete Digital Asset Management (DAM) solution, but rather to be a flexible and easy-to-use media management library that can be integrated into your Symfony applications. If you need a full DAM solution, you might want to consider other tools that are specifically designed for that purpose.
 
-🤔 Why another media bundle?
----------------------------
+Design choices
+--------------
 
-There are multiple ways of managing media files in Symfony applications, and several bundles already exist to provide such features. However, most of them are either unmaintained, too complex, or do not follow best practices. Most of the time, managing media files in Symfony applications requires a lot of custom code to assemble multiple libraries, and we end up with a solution that is hard to maintain and does not follow best practices.
+The bundle relies on a few design choices:
 
-The JoliMediaBundle aims to fill this gap by providing a modern, flexible, and easy-to-use solution to manage media in Symfony applications.
+- Media are referenced by their path. There is no media entity and no database table: the files in the storage are the only source of truth. With Doctrine, a `dedicated column type <misc-features/using-in-doctrine-entities.rst>`_ stores this path in your entities.
+- Variations are defined in the configuration. The URL of a variation contains its name and the path of the media, nothing else, so a visitor cannot request a size you did not define.
+- The `transformers <variations/transformers.rst>`_ of a variation are combined into a single operation when possible, which avoids encoding the image several times.
+- ``cwebp``, ``mozjpeg``, ``oxipng`` and other tools are used when they are installed. Without them, the Imagine library and one PHP extension are enough: see the `dependencies <getting-started/dependencies-and-tooling.rst>`_.
+- The `Twig components <misc-features/twig-components.rst>`_ output ``srcset``, ``width``, ``height``, a WebP ``<source>`` and lazy loading, including for variations that have not been generated yet.
+- When a media is renamed or moved, the Doctrine columns that reference it are updated. When it is deleted, you choose between `emptying the column and refusing the deletion <misc-features/media-deletion-behavior.rst>`_.
 
 .. note::
 

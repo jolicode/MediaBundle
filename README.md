@@ -103,6 +103,15 @@ audit the variations, a [profiler panel](https://mediabundle.jolicode.com/misc-f
 [Doctrine type](https://mediabundle.jolicode.com/misc-features/using-in-doctrine-entities/) to
 link media to your entities.
 
+## Design choices
+
+- Media are referenced by their path. There is no media entity and no database table: the files in the storage are the only source of truth.
+- Variations are defined in the configuration. The URL of a variation contains its name and the path of the media, nothing else, so a visitor cannot request a size you did not define.
+- The transformers of a variation are combined into a single operation when possible, which avoids encoding the image several times.
+- `cwebp`, `mozjpeg`, `oxipng` and other tools are used when they are installed. Without them, the Imagine library and one PHP extension are enough.
+- The Twig components output `srcset`, `width`, `height`, a WebP `<source>` and lazy loading, including for variations that have not been generated yet.
+- When a media is renamed or moved, the Doctrine columns that reference it are updated. When it is deleted, you choose between emptying the column and refusing the deletion.
+
 ## Installation
 
 JoliMediaBundle requires PHP 8.2 or later, and Symfony 7 or 8:
