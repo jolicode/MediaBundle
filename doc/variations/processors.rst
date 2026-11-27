@@ -180,7 +180,7 @@ The setting is disabled by default. It is set on a library, for all its variatio
 
 SVG is an input format only: no processor outputs SVG, and the configuration rejects a variation whose ``format`` is ``svg``. A variation that does not define a ``format`` turns a SVG media into a PNG one. The transformers use the intrinsic size of the SVG image, read from the ``width`` and ``height`` attributes of its root element (unitless or in pixels), or else from its ``viewBox``. The image is rendered at the size of the variation, so that it stays sharp when it is enlarged, and on a transparent background.
 
-With the default ``imagick`` SVG renderer, rasterizing requires the ``imagick`` driver, along with the SVG support of ImageMagick (see the `dependencies documentation <../getting-started/dependencies-and-tooling.rst#the-imagine-library>`_): when one of them is missing, the container fails to compile with an error that tells what to install.
+With the default ``imagick`` SVG renderer, rasterizing requires the ``imagick`` driver, along with the SVG support of ImageMagick (see the `dependencies documentation <../getting-started/dependencies-and-tooling.rst#required-the-imagine-library>`_): when one of them is missing, the container fails to compile with an error that tells what to install.
 
 Choosing the SVG renderer
 ^^^^^^^^^^^^^^^^^^^^^^^^^
