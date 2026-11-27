@@ -28,4 +28,5 @@
     - [Variation voters](variations/variation-voters.md)
 - Misc.
     - [Storage](storage/storage.md)
+    - [Managing media from your code](storage/managing-media.md)
     - [Tests and QA tooling](tests-and-qa-tooling.md)
