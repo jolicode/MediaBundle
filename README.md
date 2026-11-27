@@ -6,6 +6,15 @@
   <sub><em><h6>Media management for Symfony: upload, store, transform, compress and display</h6></em></sub>
 </h1>
 
+<div align="center">
+
+[![CI](https://github.com/jolicode/MediaBundle/actions/workflows/ci.yml/badge.svg)](https://github.com/jolicode/MediaBundle/actions/workflows/ci.yml)
+[![PHPStan level 8](https://img.shields.io/badge/PHPStan-level_8-brightgreen)](phpstan.neon)
+[![PHP Version Require](https://poser.pugx.org/jolicode/media-bundle/require/php)](https://packagist.org/packages/jolicode/media-bundle)
+[![License](https://poser.pugx.org/jolicode/media-bundle/license)](LICENSE.md)
+
+</div>
+
 JoliMediaBundle manages the media of a Symfony application, from the upload to the `<img>` tag:
 it stores the files with [Flysystem](https://flysystem.thephpleague.com/), generates optimized
 variations of the images (resized, cropped, converted to WebP or AVIF), outputs responsive
