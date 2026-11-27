@@ -248,7 +248,7 @@ First, you need to update the image resources in Sylius to use the Media resourc
     #[ORM\Table(name: 'sylius_avatar_image')]
     class AvatarImage extends BaseAvatarImage
     {
-        +use EntityWithMediaImageTrait;
+    +    use EntityWithMediaImageTrait;
     }
 
 Upgrade your database
@@ -276,7 +276,7 @@ Upgrade your database
 
         public function up(Schema $schema): void
         {
-            // It will generate sth like that.
+            // the generated migration looks like this
             $this->addSql('ALTER TABLE sylius_product_image ADD media VARCHAR(255) DEFAULT NULL');
             $this->addSql('COMMENT ON COLUMN sylius_product_image.media IS \'(DC2Type:media)\'');
             $this->addSql('ALTER TABLE sylius_avatar_image ADD media VARCHAR(255) DEFAULT NULL');
@@ -293,6 +293,7 @@ Upgrade your database
         public function down(Schema $schema): void
         {
             $this->addSql('ALTER TABLE sylius_avatar_image DROP media');
+            $this->addSql('ALTER TABLE sylius_product_image DROP media');
             $this->addSql('ALTER TABLE sylius_taxon_image DROP media');
         }
     }
@@ -300,9 +301,7 @@ Upgrade your database
 Configure the forms in the admin panel
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to [customize a form type in Sylius](https://docs.sylius.com/the-customization-guide/customizing-forms), we just need to a Form Extension.
-
-The Sylius bridge provides three form extensions.
+Sylius `customizes its form types <https://docs.sylius.com/the-customization-guide/customizing-forms>`_ with form extensions. The Sylius bridge provides three of them, which must be registered as services:
 
 .. code-block:: yaml
 
@@ -361,8 +360,7 @@ Using JoliMediaBundle to render your images
 
 By default, Sylius will use LiipImagine to render your product images.
 
-To improve the quality of your images ([avoiding multiple transformations](https://jolicode.com/blog/jolimediabundle-a-new-media-bundle-for-your-symfony-projects#let-s-get-back-to-business-why-a-new-media-bundle-for-symfony)),
-you need to make several changes on your Sylius project.
+To improve the quality of your images, by `avoiding multiple transformations <https://jolicode.com/blog/jolimediabundle-a-new-media-bundle-for-your-symfony-projects#let-s-get-back-to-business-why-a-new-media-bundle-for-symfony>`_, you need to make several changes on your Sylius project.
 
 Admin panel
 ~~~~~~~~~~~
