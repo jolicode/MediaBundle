@@ -149,6 +149,10 @@ class ProcessorsCommand extends Command
             return \sprintf('<comment>not registered</comment> (%s)', $processor->unavailabilityReason ?? 'unknown reason');
         }
 
+        if ($processor->isDisabled()) {
+            return \sprintf('<comment>disabled</comment> (%s)', $processor->disabledReason);
+        }
+
         if ([] !== $processor->getMissingBinaries()) {
             return '<error>binary missing</error>';
         }

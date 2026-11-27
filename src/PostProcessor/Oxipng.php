@@ -33,7 +33,7 @@ readonly class Oxipng extends AbstractPostProcessor implements PostProcessorInte
     {
         $this->checkFormat($binary->getFormat());
 
-        if (false === $this->isEnabled() || isset($postProcessingOptions['enabled']) && false === $postProcessingOptions['enabled']) {
+        if (!$this->isEnabledFor($postProcessingOptions)) {
             $this->logger?->info('Oxipng post-processor is disabled, skipping processing.');
 
             return $binary;

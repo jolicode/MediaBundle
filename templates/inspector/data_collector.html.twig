@@ -435,6 +435,9 @@
                                                     {% if not processor.registered %}
                                                         <span class="badge">Not registered</span>
                                                         {% if processor.unavailabilityReason %}<br /><small>{{ processor.unavailabilityReason }}</small>{% endif %}
+                                                    {% elseif processor.disabledReason %}
+                                                        <span class="badge">Disabled</span>
+                                                        <br /><small>{{ processor.disabledReason }}</small>
                                                     {% elseif processor.missingBinaries is not empty %}
                                                         <span class="badge badge-warning">Binary missing</span>
                                                     {% else %}

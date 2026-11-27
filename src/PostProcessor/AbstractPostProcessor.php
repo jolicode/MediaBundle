@@ -48,6 +48,14 @@ abstract readonly class AbstractPostProcessor extends AbstractProcessCreator imp
         return $this->processTimeout;
     }
 
+    /**
+     * @param array<string, mixed> $postProcessingOptions the options of the library and the variation, which override the global ones
+     */
+    protected function isEnabledFor(array $postProcessingOptions): bool
+    {
+        return false !== ($postProcessingOptions['enabled'] ?? $this->options['enabled'] ?? true) && $this->isEnabled();
+    }
+
     protected function isEnabled(): bool
     {
         if (null === $this->binary || '' === $this->binary || '0' === $this->binary) {

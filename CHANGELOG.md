@@ -7,6 +7,7 @@
 - fix - Add the missing English translations of the EasyAdmin and SonataAdmin bridges (the "General" tab, and the media deletion confirmation and renaming messages of SonataAdmin), the missing French translation of the EasyAdmin media field error, and the missing French translation of the Sylius directory name
 - fix - The assets of the Sonata Admin bridge are now found when the application runs in a subfolder: their URLs lacked its base path
 - fix - Moving or deleting a media or a folder of a library other than the default one no longer updates, nullifies or protects the Doctrine `media` columns referencing the file at the same path in the default library
+- fix - A post-processor can be disabled in the global `joli_media.post_processors` configuration, with `enabled: false` or `jpegoptim: false` as a shortcut, and a library or a variation can enable it again. The `joli:media:debug:processors` command reports it as disabled, and no longer fails when its binary is missing
 
 ## [0.11.0] - 2026-11-26
 

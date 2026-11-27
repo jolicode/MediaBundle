@@ -19,7 +19,8 @@ readonly class ProcessorStatus
     /**
      * @param string[]              $inputFormats
      * @param string[]              $outputFormats
-     * @param array<string, string> $binaries      the path of each binary this processor runs, indexed by binary name
+     * @param array<string, string> $binaries       the path of each binary this processor runs, indexed by binary name
+     * @param string|null           $disabledReason set when a registered post-processor is disabled in the global configuration
      */
     public function __construct(
         public string $name,
@@ -30,7 +31,13 @@ readonly class ProcessorStatus
         public array $inputFormats = [],
         public array $outputFormats = [],
         public array $binaries = [],
+        public ?string $disabledReason = null,
     ) {
+    }
+
+    public function isDisabled(): bool
+    {
+        return null !== $this->disabledReason;
     }
 
     /**
@@ -51,7 +58,7 @@ readonly class ProcessorStatus
 
     public function isUsable(): bool
     {
-        return $this->registered && [] === $this->getMissingBinaries();
+        return $this->registered && !$this->isDisabled() && [] === $this->getMissingBinaries();
     }
 
     /**
