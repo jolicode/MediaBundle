@@ -1,33 +1,108 @@
 <h1 align="center">
   <a href="https://github.com/jolicode/MediaBundle"><img src="https://jolicode.com/media/original/oss/headers/joli-media-bundle.png" alt="JoliMediaBundle"></a>
   <br />
-  JoliMediaBundle – Media management for Symfony
+  JoliMediaBundle
   <br />
-  <sub><em><h6>Upload, store, manage, transform, compress and display all in one tool.</h6></em></sub>
+  <sub><em><h6>Media management for Symfony: upload, store, transform, compress and display</h6></em></sub>
 </h1>
 
-This bundle provides a tools to manage media in Symfony applications and embed a full-featured media library in your admin.
+JoliMediaBundle manages the media of a Symfony application, from the upload to the `<img>` tag:
+it stores the files with [Flysystem](https://flysystem.thephpleague.com/), generates optimized
+variations of the images (resized, cropped, converted to WebP or AVIF), outputs responsive
+markup, and adds a media library to
+[EasyAdmin](https://symfony.com/bundles/EasyAdminBundle/current/index.html),
+[SonataAdmin](https://symfony.com/bundles/SonataAdminBundle/current/index.html) and
+[Sylius / Sylius Stack](https://stack.sylius.com/).
 
-- [EasyAdmin](https://symfony.com/bundles/EasyAdminBundle/current/index.html), [SonataAdmin](https://symfony.com/bundles/SonataAdminBundle/current/index.html) and [Sylius / Sylius Stack](https://stack.sylius.com/) integrations
-- abstract media storage
-- processors to transform media (crop / resize / etc.)
-- post processors to optimize the media size
-- Twig components to output `<img>` and `<picture>` tags
-- CLI commands to generate and inspect media variations that are high quality yet lightweight
-- the ability to generate URLs for media and their variations
-- events to allow you to hook into the media processing pipeline
-- an integration with Doctrine entities, so you can easily manage media in your entities
-- debug toolbar and profiler panel to monitor media processing in your application
+> [!TIP]
+> Try it in your browser: [the demo application](https://mediabundle.jolicode.com/demo/) runs in
+> WebAssembly, with its EasyAdmin, SonataAdmin and Sylius admins. There is nothing to install,
+> and what you upload stays in your browser.
 
-![The MediaBundle provides integrations with Easyadmin and Sonata Admin](doc/images/bridges/easyadmin/grid-view.png)
+## Usage
+
+Define a variation:
+
+```yaml
+# config/packages/joli_media.yaml
+joli_media:
+    libraries:
+        default:
+            original:
+                flysystem: media.original.storage
+                url_generator:
+                    path: /media/original/
+            cache:
+                flysystem: media.cache.storage
+                url_generator:
+                    path: /media/cache/
+            enable_auto_webp: true
+            pixel_ratios: [1, 2]
+            variations:
+                card:
+                    transformers:
+                        thumbnail:
+                            width: 400
+                            height: 300
+```
+
+Use it in a template:
+
+```twig
+<twig:joli:Picture path="photo.jpg" variation="card" alt="A circle pattern" />
+```
+
+And get a WebP alternative, a version for high-density screens, the dimensions and lazy loading:
+
+```html
+<picture>
+    <source
+        sizes="400px"
+        srcset="/media/cache/card-webp/photo.4ca76c43.webp 400w, /media/cache/card-2x-webp/photo.4ca76c43.webp 800w"
+        type="image/webp"
+        width="400"
+        height="300"
+    />
+    <img
+        src="/media/cache/card/photo.jpg"
+        loading="lazy"
+        decoding="async"
+        alt="A circle pattern"
+        srcset="/media/cache/card/photo.jpg 400w, /media/cache/card-2x/photo.jpg 800w"
+        sizes="400px"
+        width="400"
+        height="300"
+    />
+</picture>
+```
+
+Each file is generated the first time it is requested, then served as a static file.
+
+## A media library in your admin
+
+The [EasyAdmin](https://mediabundle.jolicode.com/bridges/easy-admin/),
+[SonataAdmin](https://mediabundle.jolicode.com/bridges/sonata-admin/) and
+[Sylius](https://mediabundle.jolicode.com/bridges/sylius/) bridges add a media library to browse,
+upload and organize the files, and a media picker for your forms.
+
+![The media library of JoliMediaBundle in EasyAdmin](doc/images/bridges/easyadmin/grid-view.png)
+
+The bundle also comes with
+[console commands](https://mediabundle.jolicode.com/misc-features/commands/) to generate and
+audit the variations, a [profiler panel](https://mediabundle.jolicode.com/misc-features/debug-tooling/),
+[events](https://mediabundle.jolicode.com/misc-features/events/) and a
+[Doctrine type](https://mediabundle.jolicode.com/misc-features/using-in-doctrine-entities/) to
+link media to your entities.
 
 ## Installation
 
-JoliMediaBundle requires Symfony 7+. It can be installed via Composer:
+JoliMediaBundle requires PHP 8.2 or later, and Symfony 7 or 8:
 
 ```
 composer require jolicode/media-bundle
 ```
+
+Then follow the [getting started guide](https://mediabundle.jolicode.com/getting-started/).
 
 ## Documentation
 
