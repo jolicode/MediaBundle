@@ -75,7 +75,7 @@ The configured value is also exposed as the ``joli_media.process_timeout`` conta
 Example minimal configuration
 -----------------------------
 
-Here is an example minimal configuration that defines one library and one variation:
+Here is an example minimal configuration that defines one library and one variation. The ``default.original.storage`` and ``default.cache.storage`` Flysystem services must be defined in your application: the `quick start <quick-start.rst>`_ shows how to declare them with ``league/flysystem-bundle``.
 
 .. code-block:: yaml
 

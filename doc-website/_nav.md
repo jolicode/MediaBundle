@@ -1,5 +1,6 @@
 - [Home](index.md)
 - [Getting started](getting-started/index.md)
+    - [Quick start](getting-started/quick-start.md)
     - [Installation](getting-started/installation.md)
     - [Configuration](getting-started/configuration.md)
     - [Dependencies and tooling](getting-started/dependencies-and-tooling.md)
