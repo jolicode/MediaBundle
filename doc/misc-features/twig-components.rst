@@ -254,7 +254,7 @@ generates:
 
     <picture class="picture-class">
         <source
-            srcset="/path/to/cache/variation-name-webp/example-image.b79a8399.webp"
+            srcset="/path/to/cache/variation-name-webp/example-image.3d90ba74.webp"
             type="image/webp"
             width="200"
             height="200"
@@ -265,7 +265,7 @@ generates:
             alt="Alternative text"
             width="200"
             height="200"
-            loading="lazy
+            loading="lazy"
             decoding="async"
         >
     </picture>
@@ -307,7 +307,7 @@ generates the exact same HTML as the previous example, but with two additional `
             height="300"
         >
         <source
-            srcset="/path/to/cache/variation-name-webp/example-image.b79a8399.webp"
+            srcset="/path/to/cache/variation-name-webp/example-image.3d90ba74.webp"
             type="image/webp"
             width="200"
             height="200"
@@ -318,7 +318,7 @@ generates the exact same HTML as the previous example, but with two additional `
             alt="Alternative text"
             width="200"
             height="200"
-            loading="lazy
+            loading="lazy"
             decoding="async"
         >
     </picture>
@@ -351,7 +351,7 @@ The above code generates the following HTML:
     <picture class="picture-class">
         <source
             media="(min-width: 1024px)"
-            srcset="/path/to/cache/variation-extra-large-webp/example-image.d601f6f2.webp"
+            srcset="/path/to/cache/variation-extra-large-webp/example-image.3d90ba74.webp"
             type="image/webp"
             width="2560"
             height="2560"
@@ -365,7 +365,7 @@ The above code generates the following HTML:
         >
         <source
             media="(max-width: 1023px)"
-            srcset="/path/to/cache/variation-large-webp/example-image.d601f6f2.webp"
+            srcset="/path/to/cache/variation-large-webp/example-image.3d90ba74.webp"
             type="image/webp"
             width="1920"
             height="1920"
@@ -378,7 +378,7 @@ The above code generates the following HTML:
             height="1920"
         >
         <source
-            srcset="/path/to/cache/variation-name-webp/example-image.d601f6f2.webp"
+            srcset="/path/to/cache/variation-name-webp/example-image.3d90ba74.webp"
             type="image/webp"
             width="200"
             height="200"
@@ -389,7 +389,7 @@ The above code generates the following HTML:
             alt="Alternative text"
             width="200"
             height="200"
-            loading="lazy
+            loading="lazy"
             decoding="async"
         >
     </picture>
@@ -433,8 +433,8 @@ This will generate the following HTML:
             media="(width > 1024px)"
             sizes="1920px"
             srcset="
-                /media/cache/variation-large-webp/example-image.b79a8399.webp 1920w,
-                /media/cache/variation-extra-large-webp/example-image.b79a8399.webp 2560w
+                /path/to/cache/variation-large-webp/example-image.3d90ba74.webp 1920w,
+                /path/to/cache/variation-extra-large-webp/example-image.3d90ba74.webp 2560w
             "
             type="image/webp"
             width="1920"
@@ -444,8 +444,8 @@ This will generate the following HTML:
             media="(width > 1024px)"
             sizes="1920px"
             srcset="
-                /media/cache/variation-large/example-image.png 1920w,
-                /media/cache/variation-extra-large/example-image.png 2560w
+                /path/to/cache/variation-large/example-image.png 1920w,
+                /path/to/cache/variation-extra-large/example-image.png 2560w
             "
             type="image/png"
             width="1920"
@@ -455,8 +455,8 @@ This will generate the following HTML:
             media="(width > 768px)"
             sizes="1024px"
             srcset="
-                /media/cache/variation-small-webp/miexample-imagere.b79a8399.webp 1024w,
-                /media/cache/variation-large-webp/example-image.b79a8399.webp 1600w
+                /path/to/cache/variation-medium-webp/example-image.3d90ba74.webp 1024w,
+                /path/to/cache/variation-large-webp/example-image.3d90ba74.webp 1600w
             "
             type="image/webp"
             width="1024"
@@ -466,15 +466,15 @@ This will generate the following HTML:
             media="(width > 768px)"
             sizes="1024px"
             srcset="
-                /media/cache/variation-small/example-image.png 1024w,
-                /media/cache/variation-large/example-image.png 1600w
+                /path/to/cache/variation-medium/example-image.png 1024w,
+                /path/to/cache/variation-large/example-image.png 1600w
             "
             type="image/png"
             width="1024"
             height="683"
         >
         <source
-            srcset="/media/cache/variation-name-webp/example-image.b79a8399.webp"
+            srcset="/path/to/cache/variation-name-webp/example-image.3d90ba74.webp"
             type="image/webp"
             width="200"
             height="200"
@@ -485,7 +485,7 @@ This will generate the following HTML:
             alt="Alternative text"
             width="200"
             height="200"
-            loading="lazy
+            loading="lazy"
             decoding="async"
         >
     </picture>
@@ -517,8 +517,8 @@ will generate the following HTML:
         media="(width > 1024px)"
         sizes="1024px"
         srcset="
-            /media/cache/variation-large/example-image.png 1920w,
-            /media/cache/variation-extra-large/example-image.png 2560w
+            /path/to/cache/variation-large/example-image.png 1920w,
+            /path/to/cache/variation-extra-large/example-image.png 2560w
         "
         type="image/png"
         width="1920"
