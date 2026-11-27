@@ -29,3 +29,10 @@ Additionally, define the routes for the media library in your routing configurat
     # filepath: config/routes/joli_media.yaml
     _joli_media:
         resource: "@JoliMediaBundle/config/routes.php"
+
+Versioning and stability
+------------------------
+
+The bundle is released in 0.x versions. A minor version (0.10.0, 0.11.0...) may break backward compatibility, while a patch version (0.11.1...) only fixes bugs.
+
+Each change that breaks backward compatibility is listed at the top of the release in the `CHANGELOG <https://github.com/jolicode/MediaBundle/blob/main/CHANGELOG.md>`_, with a ``bc break`` label and the way to adapt your code. Read it before upgrading to a new minor version, and require the bundle with a constraint such as ``^0.11`` that does not cross minor versions.
