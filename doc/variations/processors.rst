@@ -29,6 +29,48 @@ Processors priority
 
 Several processors may be able to handle the same conversion. They are tried in the following order, and the first one that succeeds wins: ``cwebp``, ``gif2webp``, ``gifsicle``, then ``imagine``. The specialized processors come first because they produce better results for the formats they handle.
 
+Supported formats
+~~~~~~~~~~~~~~~~~
+
+A variation outputs the format set by its ``format`` option: AVIF, GIF, JPEG, PNG or WebP. When it sets none, it keeps the format of the media, or uses the one in the second column of the following table for the formats that no processor outputs.
+
+.. list-table::
+    :header-rows: 1
+
+    * - Format of the media
+      - Output without a ``format`` option
+      - Processors able to convert it
+    * - JPEG
+      - JPEG
+      - ``cwebp`` (to WebP), ``imagine``
+    * - PNG
+      - PNG
+      - ``cwebp`` (to WebP), ``imagine``
+    * - WebP
+      - WebP
+      - ``cwebp`` (to WebP), ``imagine``
+    * - GIF
+      - GIF
+      - ``gif2webp`` (to WebP), ``gifsicle`` (to GIF), ``imagine``
+    * - AVIF
+      - AVIF
+      - ``imagine``
+    * - TIFF
+      - JPEG
+      - ``cwebp`` (to WebP), ``imagine``
+    * - HEIF, HEIC
+      - JPEG
+      - ``imagine``, after the `HEIF pre-processor <pre-processors.rst#heif-pre-processor>`_
+    * - SVG
+      - PNG
+      - ``imagine``, when `rasterizing SVG images`_ is enabled
+
+The ``imagine`` processor relies on the PHP extension of its driver: with ``gd``, the AVIF, HEIF and TIFF formats are not supported, and with ``imagick``, the AVIF and HEIF formats require the ``libheif`` libraries (see the `dependencies <../getting-started/dependencies-and-tooling.rst#required-the-imagine-library>`_).
+
+Animated GIF images keep their animation when they are converted by ``gif2webp`` or ``gifsicle``. Converting them to AVIF only keeps their first frame (see the `imagine processor options`_).
+
+The other files, such as PDF documents or videos, can be stored in a library, browsed and picked in the admin bridges, and linked to your entities. They have no variations: their URL is the one of the original file, and the `Twig components <../misc-features/twig-components.rst>`_ output the original file.
+
 Default configuration
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -180,7 +222,7 @@ The setting is disabled by default. It is set on a library, for all its variatio
 
 SVG is an input format only: no processor outputs SVG, and the configuration rejects a variation whose ``format`` is ``svg``. A variation that does not define a ``format`` turns a SVG media into a PNG one. The transformers use the intrinsic size of the SVG image, read from the ``width`` and ``height`` attributes of its root element (unitless or in pixels), or else from its ``viewBox``. The image is rendered at the size of the variation, so that it stays sharp when it is enlarged, and on a transparent background.
 
-With the default ``imagick`` SVG renderer, rasterizing requires the ``imagick`` driver, along with the SVG support of ImageMagick (see the `dependencies documentation <../getting-started/dependencies-and-tooling.rst#the-imagine-library>`_): when one of them is missing, the container fails to compile with an error that tells what to install.
+With the default ``imagick`` SVG renderer, rasterizing requires the ``imagick`` driver, along with the SVG support of ImageMagick (see the `dependencies documentation <../getting-started/dependencies-and-tooling.rst#required-the-imagine-library>`_): when one of them is missing, the container fails to compile with an error that tells what to install.
 
 Choosing the SVG renderer
 ^^^^^^^^^^^^^^^^^^^^^^^^^

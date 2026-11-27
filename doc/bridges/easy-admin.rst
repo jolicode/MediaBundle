@@ -44,6 +44,10 @@ The ``media`` part of these paths is configurable with the ``path_prefix`` optio
             resource: "@JoliMediaEasyAdminBundle/src/Controller/"
             prefix: /admin/media
 
+.. note::
+
+    The media library of the admin manages the `default library <../getting-started/configuration.rst>`_ of the bundle. The other libraries are not browsable in the admin.
+
 Configuring the EasyAdmin Integration
 -------------------------------------
 
@@ -94,7 +98,7 @@ The ``upload`` section of the configuration allows you to control the media uplo
 The ``visibility`` section of the configuration allows you to control the visibility of various features in the EasyAdmin media interface:
 
 - ``show_variations_list``: Shows the list of variations in a dedicated tab on the media show page.
-- ``show_variations_list_admin_variations``: Shows the variations defined in by the admin bridge in the variations list tab.
+- ``show_variations_list_admin_variations``: Shows the variations defined by the admin bridge in the variations list tab.
 - ``show_variations_stored``: Enables the display of whether media variations are stored.
 - ``show_variations_action_regenerate``: Enables the "Regenerate Variations" action for media.
 - ``show_html_code``: Displays the HTML code for embedding media.

@@ -75,25 +75,18 @@ Here is the default configuration that defines the post-processors options:
 Disabling a post-processor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All the post-processors are enabled by default, provided the required binaries are installed on your system. If you want to disable a post-processor, you can set the ``enabled`` key to ``false`` in the post-processor configuration. For example, to completely disable jpeg files optimization:
+All the post-processors are enabled by default, provided the required binaries are installed on your system. A post-processor is disabled in the ``post_processors`` configuration of a library, or of a variation, by setting it to ``false``. For example, to disable the optimization of the JPEG files in a library:
 
 .. code-block:: yaml
 
     joli_media:
-        post_processors:
-            jpegoptim:
-                enabled: false
-            mozjpeg:
-                enabled: false
+        libraries:
+            default:
+                post_processors:
+                    jpegoptim: false
+                    mozjpeg: false
 
-This can event be shotened to:
-
-.. code-block:: yaml
-
-    joli_media:
-        post_processors:
-            jpegoptim: false
-            mozjpeg: false
+This is a shortcut for ``jpegoptim: { enabled: false }``. A variation can enable the post-processor again with ``jpegoptim: { enabled: true }``.
 
 Customizing post-processor options for a library or a variation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

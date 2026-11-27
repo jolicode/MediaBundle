@@ -1,10 +1,10 @@
-Using the MediaBundle in Doctrine Entities
+Using JoliMediaBundle in Doctrine Entities
 ==========================================
 
 .. meta::
     :description: Link media to your Doctrine entities with JoliMediaBundle: add a media property with the dedicated Doctrine type, and use it in your forms and templates.
 
-The MediaBundle itself does not offer database entities. However, it is designed to easily integrate into your existing entities, so you can link media to your own entities.
+JoliMediaBundle itself does not offer database entities. However, it is designed to easily integrate into your existing entities, so you can link media to your own entities.
 
 Adding a Media Property
 -----------------------
@@ -104,6 +104,19 @@ In case the media cannot be resolved, you can specify a custom message to be dis
             unresolvedMediaMessage: 'The media "{{ value }}" could not be found.',
         )]
         public ?string $image = null;
+
+Moving and Renaming Media
+-------------------------
+
+When a media is moved or renamed with the bundle, from an admin bridge or with the ``move()`` method of the `storage <../storage/managing-media.rst>`_, the columns of your entities that reference it are updated to its new path. Moving a folder updates the columns that reference any media it contains, in its sub-folders as well.
+
+All the columns using the ``Types::MEDIA`` or ``Types::MEDIA_LONG`` types are updated, in all the entity managers, without any configuration. The updates of each entity manager run in a transaction: when one of them fails, the transactions are rolled back, and the media is moved back to its previous path.
+
+Keep in mind that:
+
+- the columns are updated with a DQL ``UPDATE`` query: the entities already loaded in the current request keep the previous path, and the Doctrine lifecycle events of the entities are not dispatched;
+- a column stores the path of the media, not the name of its library: the media columns reference the media of the default library;
+- the files moved outside of the bundle, directly in the storage, do not update the columns.
 
 Configuring the Media Deletion Behavior
 ---------------------------------------

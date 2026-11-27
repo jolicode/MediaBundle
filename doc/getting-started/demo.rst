@@ -4,7 +4,7 @@ Demo
 .. meta::
     :description: Try the JoliMediaBundle demo application in your browser with WebAssembly, or run it locally with Docker and Castor to explore its admin integrations.
 
-Want to see JoliCode MediaBundle in action? the "demo" folder of the repository contains a fully functional Symfony application showcasing the bundle features integrated with EasyAdmin and Sonata Admin. You can find this demo application in the ``demo/application`` folder of the repository.
+Want to see JoliMediaBundle in action? The "demo" folder of the repository contains a fully functional Symfony application showcasing the bundle features integrated with EasyAdmin, SonataAdmin and Sylius. You can find this demo application in the ``demo/application`` folder of the repository.
 
 Trying the demo online
 ----------------------
@@ -67,12 +67,12 @@ To also remove the containers, networks, and volumes associated with the demo ap
 
     $ castor demo:docker:destroy
 
-Using the demo application to contribute to JoliCode MediaBundle
-----------------------------------------------------------------
+Using the demo application to contribute to JoliMediaBundle
+-----------------------------------------------------------
 
-The demo application can be a good playground to write and test your contributions to the MediaBundle. When the demo application is started using Castor, it uses the local version of the MediaBundle from your cloned repository. This way, any changes you make to the MediaBundle code will be directly available in the demo application.
+The demo application can be a good playground to write and test your contributions to JoliMediaBundle. When the demo application is started using Castor, it uses the local version of JoliMediaBundle from your cloned repository. This way, any changes you make to the JoliMediaBundle code will be directly available in the demo application.
 
-When working on asset files (e.g. JavaScript and stylesheets provided by the admin bridges), it can however be a bit anoying to have to rebuild the assets each time you make a change. To ease this process, you can use the following Castor command to watch for changes and automatically rebuild the assets:
+When working on asset files (e.g. JavaScript and stylesheets provided by the admin bridges), it can however be a bit annoying to have to rebuild the assets each time you make a change. To ease this process, you can use the following Castor command to watch for changes and automatically rebuild the assets:
 
 .. code-block:: terminal
 
@@ -84,7 +84,7 @@ Each time an asset file is modified, it will be rebuilt in the bridges' folders.
 
     $ castor demo:app:front:watch
 
-This way, you can have a smooth development experience when working on the MediaBundle and its demo application. Once the changes are ready, don't forget to stop the watcher and build the assets one last time for production using:
+This way, you can have a smooth development experience when working on JoliMediaBundle and its demo application. Once the changes are ready, don't forget to stop the watcher and build the assets one last time for production using:
 
 .. code-block:: terminal
 

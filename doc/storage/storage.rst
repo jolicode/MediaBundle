@@ -4,7 +4,7 @@ Media Storage
 .. meta::
     :description: How JoliMediaBundle stores original media and their variations with Flysystem libraries, and how to serve them with a web server or its controllers.
 
-The JoliMedia bundle does not directly implement a media storage system. Instead, it heavily relies on the `Flysystem <https://flysystem.thephpleague.com/>`_ library to provide a flexible and extensible storage system.
+JoliMediaBundle does not directly implement a media storage system. Instead, it heavily relies on the `Flysystem <https://flysystem.thephpleague.com/>`_ library to provide a flexible and extensible storage system.
 
 In the jargon of the ``JoliMediaBundle``, a "Library" describes a collection of Media: how the original media, as added by users or the data source, and the "variations", which are transformed (i.e. reduced in size, or with graphical filters) versions of the original files, are stored.
 
@@ -69,7 +69,7 @@ Defining these services "by hand" is done by creating a service that implements 
             arguments:
                 '$adapter': '@filesystem.cache.adapter'
 
-This snippet defines two Flysystem services: ``filesystem.original.storage`` and ``filesystem.cache.storage``, that are respectively used to store the original media files and the variations of the media. The services can be named whatever you want, as long as they are referenced in the ``libraries`` configuration of the JoliMediaBundle. Of course, if your application requires multiple libraries, you'll have to define as many Flysystem services as you need.
+This snippet defines two Flysystem services: ``filesystem.original.storage`` and ``filesystem.cache.storage``, that are respectively used to store the original media files and the variations of the media. The services can be named whatever you want, as long as they are referenced in the ``libraries`` configuration of JoliMediaBundle. Of course, if your application requires multiple libraries, you'll have to define as many Flysystem services as you need.
 
 Serving media directly with a web server
 ----------------------------------------
@@ -78,10 +78,10 @@ For performance reasons, it is advised to serve the media files directly from th
 
 The default Symfony `Web server configuration <https://symfony.com/doc/current/setup/web_server_configuration.html#nginx>`_ includes directives to try to serve static files directly, with a fallback to the Symfony application if the file is not found. This means that, if a media file is not found or is not readable by the web server, the request will be forwarded to the Symfony application, which can then handle the request and return a 404 error or a custom response. This can be a normal behavior (for example, if a variation is requested but not generated yet), or an error (if the media file is missing, or if the web server application user is missing permissions to access the file).
 
-Serving media with the JoliMedia controllers
---------------------------------------------
+Serving media with the JoliMediaBundle controllers
+--------------------------------------------------
 
-The JoliMedia bundle provides `two controllers <https://github.com/jolicode/MediaBundle/blob/main/src/Controller/MediaController.php>`_ to serve media files and their variations:
+JoliMediaBundle provides `two controllers <https://github.com/jolicode/MediaBundle/blob/main/src/Controller/MediaController.php>`_ to serve media files and their variations:
 
 - The ``variation`` controller tries to resolve a requested media variation, and if it is not found, it tries to generate it on the fly. Subsequent requests for the same variation should be served directly by the web server (provided the cache storage is accessible by the web server).
 - The ``media`` controller is designed to serve original media files. By default, this controller returns a 404 error, as original media should usually not be served by PHP, but rather by the web server. Silently serving these files using PHP could work, but it could also be the sign that the web server is misconfigured, and that the media files are not accessible by the web server application user.
@@ -112,7 +112,70 @@ However, there are cases where you might want to serve the original media files 
 
 .. tip::
 
-    Remember that, by doing to, every request to an original media file will go through the Symfony application, which can have a significant impact on performance. It is therefore recommended to use this option only when necessary, and to ensure that the web server is properly configured to serve the media files directly whenever possible.
+    Remember that, by doing so, every request to an original media file will go through the Symfony application, which can have a significant impact on performance. It is therefore recommended to use this option only when necessary, and to ensure that the web server is properly configured to serve the media files directly whenever possible.
+
+Private media
+-------------
+
+Some media must only be served to some users: invoices, contracts, documents reserved to the customers... Store them in a dedicated library, whose storages are outside of the ``public/`` directory, so that the web server cannot serve them:
+
+.. code-block:: yaml
+
+    # config/packages/flysystem.yaml
+    flysystem:
+        storages:
+            private.original.storage:
+                adapter: 'local'
+                options:
+                    directory: '%kernel.project_dir%/var/private-media/original'
+            private.cache.storage:
+                adapter: 'local'
+                options:
+                    directory: '%kernel.project_dir%/var/private-media/cache'
+
+Let the bundle serve the original files with the ``enable_serve_using_php`` option, and give the library its own URL prefix:
+
+.. code-block:: yaml
+
+    # config/packages/joli_media.yaml
+    joli_media:
+        default_library: default
+        libraries:
+            default:
+                # ...
+            private:
+                original:
+                    flysystem: private.original.storage
+                    enable_serve_using_php: true
+                    url_generator:
+                        path: /private-media/original/
+                cache:
+                    flysystem: private.cache.storage
+                    url_generator:
+                        path: /private-media/cache/
+                variations:
+                    preview:
+                        transformers:
+                            widen:
+                                width: 300
+
+The original files and their variations are then served by the ``media`` and ``variation`` controllers, behind the Symfony firewall. Restrict their URL prefix with an ``access_control`` rule:
+
+.. code-block:: yaml
+
+    # config/packages/security.yaml
+    security:
+        # ...
+        access_control:
+            - { path: ^/private-media/, roles: ROLE_USER }
+
+Anonymous visitors now get a ``401`` or a redirection to the login page, depending on your firewall, while the authenticated users get the files. The `URL generation <../misc-features/url-generation.rst>`_ and the `Twig components <../misc-features/twig-components.rst>`_ work as usual, with the ``library`` option set to ``private``.
+
+Keep in mind that:
+
+- every request goes through PHP, the variations included, and the controllers load each file in memory before sending it;
+- an ``access_control`` rule checks the URL, not the media: to check that a user may access a given file, for example that the invoice is theirs, serve the files with your own controller, which reads them with the ``getBinary()`` method of the ``Media`` object;
+- with an object storage such as Amazon S3, the `pre-signed URLs <../misc-features/url-generation.rst#temporary-pre-signed-urls>`_ are an alternative: the storage serves the files itself, during a limited time.
 
 Content type of the served files
 --------------------------------

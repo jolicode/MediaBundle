@@ -4,33 +4,30 @@ JoliMediaBundle
 .. meta::
     :description: JoliMediaBundle manages media in Symfony applications: storage, variations, optimization, Twig components, and EasyAdmin, SonataAdmin and Sylius integrations.
 
-The JoliMediaBundle provides a set of tools to manage media in Symfony applications.
+JoliMediaBundle provides a set of tools to manage media in Symfony applications.
 
 .. tip::
 
     **Try it without installing anything:** the `demo application <https://mediabundle.jolicode.com/demo/>`_ runs in your browser, compiled to WebAssembly, with its EasyAdmin, SonataAdmin and Sylius admins. Upload your own images and see their variations: nothing leaves your browser. The `demo page <getting-started/demo.rst>`_ explains how to run it locally with Docker.
 
-It proposes multiple features:
+It provides:
 
-- `EasyAdmin <bridges/easy-admin.rst>`_, `SonataAdmin <bridges/sonata-admin.rst>`_ and `Sylius <bridges/sylius.rst>`_ integrations
-- abstract media storage
-- processors to transform media (crop / resize / etc.)
-- post processors to optimize the media size
-- Twig components to output ``<img>`` and ``<picture>`` tags
-- `CLI commands <misc-features/commands.rst>`_ to generate and inspect media variations that are high quality yet lightweight
-- `Twig components <misc-features/twig-components.rst>`_ to display media using best practices
-- `srcset generation <misc-features/srcset.rst>`_, usable from the Twig components as well as from your own code
-- the ability to generate `URLs for media <misc-features/url-generation.rst>`_ and their `variations <variations/variations.rst>`_
-- `events <misc-features/events.rst>`_ to allow you to hook into the media processing pipeline
-- an `integration with Doctrine entities <misc-features/using-in-doctrine-entities.rst>`_ is provided, so you can easily manage media in your entities
+- a `media library <bridges/index.rst>`_ for `EasyAdmin <bridges/easy-admin.rst>`_, `SonataAdmin <bridges/sonata-admin.rst>`_ and `Sylius <bridges/sylius.rst>`_, with a media picker for your forms
+- a storage layer built on `Flysystem <storage/storage.rst>`_, for local files as well as object storages
+- `variations <variations/variations.rst>`_ that resize, crop and convert the images, then `optimize <variations/post-processors.rst>`_ their size
+- `Twig components <misc-features/twig-components.rst>`_ that output ``<img>`` and ``<picture>`` tags, with their ``srcset`` and dimensions
+- the `generation of URLs <misc-features/url-generation.rst>`_ and `srcset attributes <misc-features/srcset.rst>`_ from your own code
+- a `Doctrine column type <misc-features/using-in-doctrine-entities.rst>`_ to link media to your entities
+- `console commands <misc-features/commands.rst>`_ to generate and audit the variations, and a `profiler panel <misc-features/debug-tooling.rst>`_
+- `events <misc-features/events.rst>`_ to hook into the creation, move and deletion of media
 
 .. image:: ../images/bridges/easyadmin/grid-view.png
    :alt: The EasyAdmin media library grid view
 
-🤓 Goals and approach
---------------------
+Goals and approach
+------------------
 
-The JoliMediaBundle aims to provide numerous facilities to manage media in Symfony applications, by using the best tools available, and following best practices. It is built on top of the `Flysystem <https://flysystem.thephpleague.com/>`_ library to provide an abstraction layer for file storage, and multiple media processing libraries to handle media transformations and optimizations.
+JoliMediaBundle aims to provide numerous facilities to manage media in Symfony applications, by using the best tools available, and following best practices. It is built on top of the `Flysystem <https://flysystem.thephpleague.com/>`_ library to provide an abstraction layer for file storage, and multiple media processing libraries to handle media transformations and optimizations.
 
 The project seeks to provide:
 
@@ -43,31 +40,25 @@ The bundle is designed to be extensible and can be easily customized to fit your
 
 The bundle does not aim to provide a complete Digital Asset Management (DAM) solution, but rather to be a flexible and easy-to-use media management library that can be integrated into your Symfony applications. If you need a full DAM solution, you might want to consider other tools that are specifically designed for that purpose.
 
-🤔 Why another media bundle?
----------------------------
+Design choices
+--------------
 
-There are multiple ways of managing media files in Symfony applications, and several bundles already exist to provide such features. However, most of them are either unmaintained, too complex, or do not follow best practices. Most of the time, managing media files in Symfony applications requires a lot of custom code to assemble multiple libraries, and we end up with a solution that is hard to maintain and does not follow best practices.
+The bundle relies on a few design choices:
 
-The JoliMediaBundle aims to fill this gap by providing a modern, flexible, and easy-to-use solution to manage media in Symfony applications.
+- Media are referenced by their path. There is no media entity and no database table: the files in the storage are the only source of truth. With Doctrine, a `dedicated column type <misc-features/using-in-doctrine-entities.rst>`_ stores this path in your entities.
+- Variations are defined in the configuration. The URL of a variation contains its name and the path of the media, nothing else, so a visitor cannot request a size you did not define.
+- The `transformers <variations/transformers.rst>`_ of a variation are combined into a single operation when possible, which avoids encoding the image several times.
+- ``cwebp``, ``mozjpeg``, ``oxipng`` and other tools are used when they are installed. Without them, the Imagine library and one PHP extension are enough: see the `dependencies <getting-started/dependencies-and-tooling.rst>`_.
+- The `Twig components <misc-features/twig-components.rst>`_ output ``srcset``, ``width``, ``height``, a WebP ``<source>`` and lazy loading, including for variations that have not been generated yet.
+- When a media is renamed or moved, the Doctrine columns that reference it are updated. When it is deleted, you choose between `emptying the column and refusing the deletion <misc-features/media-deletion-behavior.rst>`_.
 
 .. note::
 
     You can learn more about the motivations behind the creation of this bundle by reading the `blog post published on JoliCode's blog <https://jolicode.com/blog/jolimediabundle-a-new-media-bundle-for-your-symfony-projects>`_.
 
-🗣️ Vocabulary
--------------
+Where to start
+--------------
 
-The library uses multiple terms that are defined below.
-
-- **Binary**: A binary represents a file. It can have a content, a size, an extension or a mime type.
-- **Library**: A *library* is a structure that describes where the *media* managed by the library are stored. A library also defines the *variations* that can be applied to these media, and where the according *media variations* are stored.
-- **Libraries container**: the *libraries container* is a structure that gives access to the *libraries*.
-- **OriginalStorage** and **CacheStorage**: The *original storage* describes the place where the original *media* are stored, while the *cache storage* is the storage where the *media variations* are stored. Both storages are grouped in a *library*.
-- **Variation**: A *variation* is a set of transformers that can be applied to a *media*, which generates a *media variation* that is stored in a *cache storage*.
-- **Transformers** are operations that can successively be applied to a *media* to create a *variation*.
-- a **Transformation** is the operation during which a *media* is transformed into a *variation* using the associated *transformers*.
-- **Processors** are responsible for executing a *transformation*, that is applying the *transformers* to the *media*.
-- **Post-processors** are responsible for optimizing the *variation* after the *transformation*.
-- **Pre-processors** are responsible for preparing the *media* before the *transformation*, for example if you need to apply transforms that are not supported by this bundle
-- the **Converter** is the conversion service. Given a *media*, it can generate one or more *variations*.
-- the **Resolver** service allows to locate a *media* or a *media variation* in a *storage*. It is used by the *converter* to locate the *media* to convert.
+- The `quick start <getting-started/quick-start.rst>`_ displays a first image variation in a few minutes.
+- The `concepts <concepts.rst>`_ page defines the terms used in this documentation: library, variation, transformer, processor...
+- The `admin bridges <bridges/index.rst>`_ add the media library to your back office.

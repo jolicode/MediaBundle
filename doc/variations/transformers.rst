@@ -132,7 +132,7 @@ By default, the crop area will be centered on the image. If you want to crop the
 
 With the example above (a ``900x600`` image) and a ``300x300`` thumbnail, the crop area will be defined as follows:
 
-- if you set the ``crop_position`` option to ``25%`` for a ``300x300`` thumbnail, the resulting image will be cropped from ```150x0`` to ``450x300``.
+- if you set the ``crop_position`` option to ``25%`` for a ``300x300`` thumbnail, the resulting image will be cropped from ``150x0`` to ``450x300``.
 - if you set the ``crop_position`` option to ``50%``, the resulting image will be cropped from ``300x0`` to ``600x300``
 - if you set the ``crop_position`` option to ``75%``, the resulting image will be cropped from ``450x0`` to ``750x300``
 - if you set the ``crop_position`` option to ``100%``, the resulting image will be cropped from ``600x0`` to ``900x300``.

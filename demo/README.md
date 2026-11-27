@@ -1,7 +1,7 @@
 # JoliMediaBundle demo project
 
 This folder contains a Symfony application showcasing JoliMediaBundle, integrated
-with EasyAdmin and Sonata Admin. It always runs against the bundle sources of this
+with EasyAdmin, SonataAdmin and Sylius. It always runs against the bundle sources of this
 repository, which makes it a convenient playground to develop the bundle.
 
 ## Running the application locally

@@ -20,7 +20,7 @@ The ``libraries`` configuration defines where and how the media files are stored
 
 .. tip::
 
-    Read more about how the JoliMediaBundle stores media files in the `Storage documentation <../storage/storage.rst>`_.
+    Read more about how JoliMediaBundle stores media files in the `Storage documentation <../storage/storage.rst>`_.
 
 Each library can have its own configuration for the original media and the cache media, as well as the variations that can be created from the original media.
 
@@ -28,7 +28,7 @@ A library is defined by a name and contains the multiple information:
 
 - ``original``: the configuration of the original media storage:
 
-  - the ``flysystem`` key contains the id of a Flysystem service that addresses the location where original media are stored. Flysystem is a filesystem abstraction library that allows you to easily swap out a local filesystem for a remote one. The Flysystem service must be defined in the Symfony configuration. You can eithier define it by yourself, or use the `league/flysystem-bundle <https://github.com/thephpleague/flysystem-bundle>`_ or `oneup/flysystem-bundle <https://github.com/1up-lab/OneupFlysystemBundle>`_ to ease up the configuration.
+  - the ``flysystem`` key contains the id of a Flysystem service that addresses the location where original media are stored. Flysystem is a filesystem abstraction library that allows you to easily swap out a local filesystem for a remote one. The Flysystem service must be defined in the Symfony configuration. You can either define it by yourself, or use the `league/flysystem-bundle <https://github.com/thephpleague/flysystem-bundle>`_ or `oneup/flysystem-bundle <https://github.com/1up-lab/OneupFlysystemBundle>`_ to ease up the configuration.
   - its ``url_generator``: the configuration of the way URLs should be generated for the media
 
     - ``strategy``: the strategy to use to generate the URL.
@@ -75,7 +75,7 @@ The configured value is also exposed as the ``joli_media.process_timeout`` conta
 Example minimal configuration
 -----------------------------
 
-Here is an example minimal configuration that defines one library and one variation:
+Here is an example minimal configuration that defines one library and one variation. The ``default.original.storage`` and ``default.cache.storage`` Flysystem services must be defined in your application: the `quick start <quick-start.rst>`_ shows how to declare them with ``league/flysystem-bundle``.
 
 .. code-block:: yaml
 

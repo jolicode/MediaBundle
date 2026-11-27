@@ -1,4 +1,4 @@
-Events Triggered by the MediaBundle
+Events Triggered by JoliMediaBundle
 ===================================
 
 .. meta::
@@ -31,7 +31,7 @@ The ``PreResolveMediaEvent`` is triggered before a media object is resolved. Thi
 
 .. note::
 
-    There events are triggered when using the APIs provided by the bundle (in the ``OriginalStorage`` class). If media or folders are created or deleted using other means (e.g. directly in the filesystem), these events will not be triggered.
+    These events are triggered when using the APIs provided by the bundle (in the ``OriginalStorage`` class). If media or folders are created or deleted using other means (e.g. directly in the filesystem), these events will not be triggered.
 
 Using Events in Your Application
 --------------------------------

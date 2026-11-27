@@ -40,6 +40,10 @@ Then, import the bundle configuration in the ``config/packages/joli_media_sylius
     imports:
         - { resource: '@JoliMediaSyliusBundle/config/app.php' }
 
+.. note::
+
+    The media library of the admin manages the `default library <../getting-started/configuration.rst>`_ of the bundle. The other libraries are not browsable in the admin.
+
 Configuring the Sylius Integration
 ----------------------------------
 
@@ -87,7 +91,7 @@ The ``upload`` section of the configuration allows you to control the media uplo
 The ``visibility`` section of the configuration allows you to control the visibility of various features in the Sylius media interface:
 
 - ``show_variations_list``: Shows the list of variations in a dedicated tab on the media show page.
-- ``show_variations_list_admin_variations``: Shows the variations defined in by the admin bridge in the variations list tab.
+- ``show_variations_list_admin_variations``: Shows the variations defined by the admin bridge in the variations list tab.
 - ``show_variations_stored``: Enables the display of whether media variations are stored.
 - ``show_variations_action_regenerate``: Enables the "Regenerate Variations" action for media.
 - ``show_html_code``: Displays the HTML code for embedding media.
@@ -248,7 +252,7 @@ First, you need to update the image resources in Sylius to use the Media resourc
     #[ORM\Table(name: 'sylius_avatar_image')]
     class AvatarImage extends BaseAvatarImage
     {
-        +use EntityWithMediaImageTrait;
+    +    use EntityWithMediaImageTrait;
     }
 
 Upgrade your database
@@ -276,7 +280,7 @@ Upgrade your database
 
         public function up(Schema $schema): void
         {
-            // It will generate sth like that.
+            // the generated migration looks like this
             $this->addSql('ALTER TABLE sylius_product_image ADD media VARCHAR(255) DEFAULT NULL');
             $this->addSql('COMMENT ON COLUMN sylius_product_image.media IS \'(DC2Type:media)\'');
             $this->addSql('ALTER TABLE sylius_avatar_image ADD media VARCHAR(255) DEFAULT NULL');
@@ -293,6 +297,7 @@ Upgrade your database
         public function down(Schema $schema): void
         {
             $this->addSql('ALTER TABLE sylius_avatar_image DROP media');
+            $this->addSql('ALTER TABLE sylius_product_image DROP media');
             $this->addSql('ALTER TABLE sylius_taxon_image DROP media');
         }
     }
@@ -300,9 +305,7 @@ Upgrade your database
 Configure the forms in the admin panel
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to [customize a form type in Sylius](https://docs.sylius.com/the-customization-guide/customizing-forms), we just need to a Form Extension.
-
-The Sylius bridge provides three form extensions.
+Sylius `customizes its form types <https://docs.sylius.com/the-customization-guide/customizing-forms>`_ with form extensions. The Sylius bridge provides three of them, which must be registered as services:
 
 .. code-block:: yaml
 
@@ -356,13 +359,12 @@ This optional ``folder`` parameter can be passed to the field type, to specify w
         ])
     ;
 
-Using the JoliMediaBundle to render your images
------------------------------------------------
+Using JoliMediaBundle to render your images
+-------------------------------------------
 
 By default, Sylius will use LiipImagine to render your product images.
 
-To improve the quality of your images ([avoiding multiple transformations](https://jolicode.com/blog/jolimediabundle-a-new-media-bundle-for-your-symfony-projects#let-s-get-back-to-business-why-a-new-media-bundle-for-symfony)),
-you need to make several changes on your Sylius project.
+To improve the quality of your images, by `avoiding multiple transformations <https://jolicode.com/blog/jolimediabundle-a-new-media-bundle-for-your-symfony-projects#let-s-get-back-to-business-why-a-new-media-bundle-for-symfony>`_, you need to make several changes on your Sylius project.
 
 Admin panel
 ~~~~~~~~~~~

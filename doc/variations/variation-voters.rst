@@ -6,7 +6,7 @@ Variation voters
 
 There are cases where you want to restrict the media that are eligible to be converted using a given `variation <variations.rst>`_. For example, you could want to restrict the use of a certain variation to the files located in a specific directory, or to the files that are larger than a minimal size.
 
-The MediaBundle provides a way to define *voters* that can be used to restrict the media that can be converted using a given variation. A voter is a service that implements the ``Joli\MediaBundle\Variation\Voter\VoterInterface`` interface. This interface defines a single method, ``vote(Media $media)``, that should return a boolean indicating whether the voter supports the given media.
+JoliMediaBundle provides a way to define *voters* that can be used to restrict the media that can be converted using a given variation. A voter is a service that implements the ``JoliCode\MediaBundle\Variation\Voter\VoterInterface`` interface. This interface defines a single method, ``vote(Media $media)``, that should return a boolean indicating whether the voter supports the given media.
 
 Some voter classes are provided by the bundle out of the box and can be configured in the ``config/packages/joli_media.yaml`` file as a ``voters`` key under the variation definition that should use the voter.
 
@@ -68,7 +68,7 @@ The "filesize" voter restricts the use of the variation to the media that are la
 
 The "format" voter restricts the use of the variation to the media that have a specific format. The voter has the following options:
 
-- ``format``: the format of the media (for example, "jpeg", "png", "webp", ...)
+- ``format``: the format of the media (for example, "jpeg", "png", "webp", ...). Any extension of the format is accepted: "jpg" and "jpeg" both match the JPEG images.
 
 "mimeType" voter
 ~~~~~~~~~~~~~~~~
@@ -106,8 +106,8 @@ For example:
                                 height: 64
                         voters:
                             -
-                                type: format
-                                format: jpg
+                                type: filesize
+                                max: 5000000
                             -
                                 type: oneOf
                                 voters:
@@ -135,6 +135,6 @@ For example:
                                                 max: 2000000
                                                 min: 100000
 
-With the above configuration, the ``profile_picture`` variation will be applied to the media that are in the ``jpg`` format and that are either in the ``image/png`` MIME type or that are in the ``uploaded-files/user-profile-pictures`` directory and have a size between 5KB and 100KB, or that are in the ``archive/user-profile`` directory and have a size between 100KB and 2MB.
+With the above configuration, the ``profile_picture`` variation will be applied to the media smaller than 5MB that are either PNG images, or in the ``uploaded-files/user-profile-pictures`` directory with a size between 5KB and 100KB, or in the ``archive/user-profile`` directory with a size between 100KB and 2MB.
 
 There can be up to 3 nesting levels in ``allOf`` or ``oneOf`` voters, which allows to create complex conditions that must be met for the variation to be applied to the media.
