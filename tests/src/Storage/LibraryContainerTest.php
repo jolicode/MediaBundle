@@ -86,6 +86,16 @@ class LibraryContainerTest extends BaseTestCase
         self::assertFalse($this->libraries->has('non-existent'));
     }
 
+    public function testIsDefault(): void
+    {
+        self::assertTrue($this->libraries->isDefault($this->defaultLibrary));
+        self::assertFalse($this->libraries->isDefault($this->customLibrary));
+
+        $this->libraries->setDefaultLibraryName('custom');
+        self::assertFalse($this->libraries->isDefault($this->defaultLibrary));
+        self::assertTrue($this->libraries->isDefault($this->customLibrary));
+    }
+
     public function testSetDefaultLibraryName(): void
     {
         $this->libraries->setDefaultLibraryName('custom');

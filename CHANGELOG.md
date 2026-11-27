@@ -6,6 +6,7 @@
 - feature - Add German, Romanian and Russian translations to the EasyAdmin and SonataAdmin bridges
 - fix - Add the missing English translations of the EasyAdmin and SonataAdmin bridges (the "General" tab, and the media deletion confirmation and renaming messages of SonataAdmin), the missing French translation of the EasyAdmin media field error, and the missing French translation of the Sylius directory name
 - fix - The assets of the Sonata Admin bridge are now found when the application runs in a subfolder: their URLs lacked its base path
+- fix - Moving or deleting a media or a folder of a library other than the default one no longer updates, nullifies or protects the Doctrine `media` columns referencing the file at the same path in the default library
 
 ## [0.11.0] - 2026-11-26
 

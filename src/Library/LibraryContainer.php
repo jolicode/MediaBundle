@@ -62,6 +62,11 @@ class LibraryContainer
         return $this->libraries->has($name);
     }
 
+    public function isDefault(Library $library): bool
+    {
+        return $library->getName() === $this->defaultLibraryName;
+    }
+
     /**
      * @return iterable<Library>
      */

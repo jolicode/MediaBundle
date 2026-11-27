@@ -9,6 +9,7 @@ use JoliCode\MediaBundle\Cache\MediaEntityMetadata;
 use JoliCode\MediaBundle\Cache\MediaEntityMetadataWarmer;
 use JoliCode\MediaBundle\Doctrine\Type\MediaType;
 use JoliCode\MediaBundle\Event\PostMoveMediaEvent;
+use JoliCode\MediaBundle\Library\LibraryContainer;
 use Symfony\Contracts\Cache\CacheInterface;
 
 readonly class MoveMediaEventListener
@@ -16,11 +17,16 @@ readonly class MoveMediaEventListener
     public function __construct(
         private Registry $managerRegistry,
         private CacheInterface $cache,
+        private LibraryContainer $libraryContainer,
     ) {
     }
 
     public function onMediaPostMove(PostMoveMediaEvent $event): void
     {
+        if (!$this->libraryContainer->isDefault($event->originalStorage->getLibrary())) {
+            return;
+        }
+
         /**
          * @var MediaEntityMetadata[] $metadata
          */

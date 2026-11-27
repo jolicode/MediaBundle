@@ -132,6 +132,24 @@ class DeleteFolderEventListenerTest extends WebTestCase
         yield 'consecutive_slashes_with_leading_and_trailing' => ['/sub//folder/'];
     }
 
+    public function testFolderDeleteInAnotherLibrary(): void
+    {
+        $restrictedPath = 'sub/folder/circle-pattern.png';
+        $setNullPath = 'sub/folder/deep/test.txt';
+
+        /** @var LibraryContainer $libraries */
+        $libraries = static::getContainer()->get('joli_media.library_container');
+        $otherStorage = $libraries->get('auto_generate')->getOriginalStorage();
+        $otherStorage->createMedia($restrictedPath, 'dummy content')->store();
+        $otherStorage->createMedia($setNullPath, 'dummy content')->store();
+
+        $otherStorage->deleteDirectory('sub');
+
+        $this->assertFalse($otherStorage->has($restrictedPath), 'The folder of another library should be deleted, whatever the entities of the default library use.');
+        $this->assertSame(1, $this->pageRepository->count(['mediaRestrict' => $restrictedPath]), 'Deleting a folder of another library should not update the entities.');
+        $this->assertSame(1, $this->pageRepository->count(['mediaSetNull' => $setNullPath]), 'Deleting a folder of another library should not set the entity fields to null.');
+    }
+
     protected static function getKernelClass(): string
     {
         return Kernel::class;

@@ -107,6 +107,29 @@ class DeleteMediaEventListenerTest extends WebTestCase
         yield 'consecutive_slashes_with_leading_and_trailing' => ['/sub//folder/'];
     }
 
+    public function testMediaDeleteInAnotherLibrary(): void
+    {
+        $restrictedPath = 'sub/folder/circle-pattern.png';
+        $setNullPath = 'sub/folder/deep/test.txt';
+
+        /** @var LibraryContainer $libraries */
+        $libraries = static::getContainer()->get('joli_media.library_container');
+        $otherStorage = $libraries->get('auto_generate')->getOriginalStorage();
+
+        try {
+            $otherStorage->createMedia($restrictedPath, 'dummy content')->store();
+            $otherStorage->createMedia($setNullPath, 'dummy content')->store();
+
+            $otherStorage->delete($restrictedPath);
+            $otherStorage->delete($setNullPath);
+        } finally {
+            $otherStorage->getFilesystem()->deleteDirectory('sub');
+        }
+
+        $this->assertSame(1, $this->pageRepository->count(['mediaRestrict' => $restrictedPath]), 'Deleting a media of another library should not be restricted by the entities.');
+        $this->assertSame(1, $this->pageRepository->count(['mediaSetNull' => $setNullPath]), 'Deleting a media of another library should not set the entity fields to null.');
+    }
+
     protected static function getKernelClass(): string
     {
         return Kernel::class;
