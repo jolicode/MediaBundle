@@ -240,6 +240,26 @@ class MoveFolderEventListenerTest extends WebTestCase
         }
     }
 
+    public function testFolderMoveInAnotherLibrary(): void
+    {
+        $path = 'sub/folder/deep/test.txt';
+
+        /** @var LibraryContainer $libraries */
+        $libraries = static::getContainer()->get('joli_media.library_container');
+        $otherStorage = $libraries->get('auto_generate')->getOriginalStorage();
+        $otherStorage->createMedia($path, 'dummy content')->store();
+
+        try {
+            $otherStorage->moveFolder('sub/folder', 'other-folder');
+        } finally {
+            $otherStorage->getFilesystem()->deleteDirectory('sub');
+            $otherStorage->getFilesystem()->deleteDirectory('other-folder');
+        }
+
+        $this->assertCount(1, $this->articleRepository->findBy(['media' => $path]), 'Moving a folder of another library should not update the entities.');
+        $this->assertCount(1, $this->pageRepository->findBy(['mediaDefault' => $path]), 'Moving a folder of another library should not update the entities.');
+    }
+
     protected static function getKernelClass(): string
     {
         return Kernel::class;

@@ -48,6 +48,8 @@ In this example:
 
 The fields without the ``#[MediaDeleteBehavior]`` attribute are left untouched when the media is deleted: they keep a path which no longer exists.
 
+The media columns only reference the media of the default library: the deletion behaviors only apply to the media deleted in this library.
+
 Deleting a folder
 -----------------
 

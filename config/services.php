@@ -184,6 +184,7 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             service('doctrine'),
             service(CacheInterface::class),
+            service('joli_media.library_container'),
         ])
         ->tag('kernel.event_listener', [
             'event' => MediaEvents::PRE_DELETE_FOLDER,
@@ -197,6 +198,7 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             service('doctrine'),
             service(CacheInterface::class),
+            service('joli_media.library_container'),
         ])
         ->tag('kernel.event_listener', [
             'event' => MediaEvents::POST_MOVE_FOLDER,
@@ -206,6 +208,7 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             service('doctrine'),
             service(CacheInterface::class),
+            service('joli_media.library_container'),
         ])
         ->tag('kernel.event_listener', [
             'event' => MediaEvents::PRE_DELETE_MEDIA,
@@ -219,6 +222,7 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             service('doctrine'),
             service(CacheInterface::class),
+            service('joli_media.library_container'),
         ])
         ->tag('kernel.event_listener', [
             'event' => MediaEvents::POST_MOVE_MEDIA,

@@ -138,6 +138,25 @@ class MoveMediaEventListenerTest extends WebTestCase
         }
     }
 
+    public function testMediaMoveInAnotherLibrary(): void
+    {
+        $path = 'sub/folder/deep/test.txt';
+
+        /** @var LibraryContainer $libraries */
+        $libraries = static::getContainer()->get('joli_media.library_container');
+        $otherStorage = $libraries->get('auto_generate')->getOriginalStorage();
+        $otherStorage->createMedia($path, 'dummy content')->store();
+
+        try {
+            $otherStorage->move($path, 'sub/folder/deep/test-2.txt');
+        } finally {
+            $otherStorage->getFilesystem()->deleteDirectory('sub');
+        }
+
+        $this->assertCount(1, $this->articleRepository->findBy(['media' => $path]), 'Moving a media of another library should not update the entities.');
+        $this->assertCount(1, $this->pageRepository->findBy(['mediaDefault' => $path]), 'Moving a media of another library should not update the entities.');
+    }
+
     protected static function getKernelClass(): string
     {
         return Kernel::class;

@@ -115,7 +115,7 @@ All the columns using the ``Types::MEDIA`` or ``Types::MEDIA_LONG`` types are up
 Keep in mind that:
 
 - the columns are updated with a DQL ``UPDATE`` query: the entities already loaded in the current request keep the previous path, and the Doctrine lifecycle events of the entities are not dispatched;
-- a column stores the path of the media, not the name of its library: the media columns reference the media of the default library;
+- the media columns only reference the media of the default library: only the media moved or deleted in this library update the columns;
 - the files moved outside of the bundle, directly in the storage, do not update the columns.
 
 Configuring the Media Deletion Behavior

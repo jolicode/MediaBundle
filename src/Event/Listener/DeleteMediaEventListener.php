@@ -10,6 +10,7 @@ use JoliCode\MediaBundle\Doctrine\Type\MediaType;
 use JoliCode\MediaBundle\Event\PostDeleteMediaEvent;
 use JoliCode\MediaBundle\Event\PreDeleteMediaEvent;
 use JoliCode\MediaBundle\Exception\MediaInUseException;
+use JoliCode\MediaBundle\Library\LibraryContainer;
 use Symfony\Contracts\Cache\CacheInterface;
 
 readonly class DeleteMediaEventListener
@@ -17,11 +18,16 @@ readonly class DeleteMediaEventListener
     public function __construct(
         private Registry $managerRegistry,
         private CacheInterface $cache,
+        private LibraryContainer $libraryContainer,
     ) {
     }
 
     public function onMediaPreDelete(PreDeleteMediaEvent $event): void
     {
+        if (!$this->libraryContainer->isDefault($event->originalStorage->getLibrary())) {
+            return;
+        }
+
         /**
          * @var array<string, array<class-string, array<string, Strategy>>> $metadata
          */
@@ -51,6 +57,10 @@ readonly class DeleteMediaEventListener
 
     public function onMediaPostDelete(PostDeleteMediaEvent $event): void
     {
+        if (!$this->libraryContainer->isDefault($event->originalStorage->getLibrary())) {
+            return;
+        }
+
         $objectManagers = [];
         $mediaType = new MediaType();
 
