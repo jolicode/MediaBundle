@@ -3,7 +3,7 @@ site_name = "JoliMediaBundle"
 site_description = "JoliMediaBundle provides a set of tools to manage media files in Symfony applications."
 site_url = "https://mediabundle.jolicode.com/"
 repo_url = "https://github.com/jolicode/MediaBundle"
-copyright = 'JoliMediaBundle is licensed under <a href="https://github.com/jolicode/MediaBundle/blob/main/LICENSE">MIT license</a>'
+copyright = 'JoliMediaBundle is licensed under <a href="https://github.com/jolicode/MediaBundle/blob/main/LICENSE.md">MIT license</a>'
 docs_dir = "var/input"
 site_dir = "var/output"
 exclude_docs = "_nav.md"

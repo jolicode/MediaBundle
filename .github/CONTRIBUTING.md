@@ -4,7 +4,7 @@ First of all, thank you for your interest in contributing to the Media Bundle! W
 
 ## New contributor guide
 
-Make sure that you have read our [Code of Conduct](CODE_OF_CONDUCT.md) and that you agree with it. All the contributions to this project are governed by this code of conduct and must adhere to the project [license](LICENSE.md) (MIT).
+Make sure that you have read our [Code of Conduct](CODE_OF_CONDUCT.md) and that you agree with it. All the contributions to this project are governed by this code of conduct and must adhere to the project [license](../LICENSE.md) (MIT).
 
 All the contributions to this project must be made through pull requests and written in English.
 
