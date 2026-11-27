@@ -6,7 +6,7 @@ Variation voters
 
 There are cases where you want to restrict the media that are eligible to be converted using a given `variation <variations.rst>`_. For example, you could want to restrict the use of a certain variation to the files located in a specific directory, or to the files that are larger than a minimal size.
 
-JoliMediaBundle provides a way to define *voters* that can be used to restrict the media that can be converted using a given variation. A voter is a service that implements the ``Joli\MediaBundle\Variation\Voter\VoterInterface`` interface. This interface defines a single method, ``vote(Media $media)``, that should return a boolean indicating whether the voter supports the given media.
+JoliMediaBundle provides a way to define *voters* that can be used to restrict the media that can be converted using a given variation. A voter is a service that implements the ``JoliCode\MediaBundle\Variation\Voter\VoterInterface`` interface. This interface defines a single method, ``vote(Media $media)``, that should return a boolean indicating whether the voter supports the given media.
 
 Some voter classes are provided by the bundle out of the box and can be configured in the ``config/packages/joli_media.yaml`` file as a ``voters`` key under the variation definition that should use the voter.
 
