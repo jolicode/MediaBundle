@@ -1,4 +1,4 @@
-Events Triggered by the MediaBundle
+Events Triggered by JoliMediaBundle
 ===================================
 
 .. meta::

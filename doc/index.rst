@@ -4,7 +4,7 @@ JoliMediaBundle
 .. meta::
     :description: JoliMediaBundle manages media in Symfony applications: storage, variations, optimization, Twig components, and EasyAdmin, SonataAdmin and Sylius integrations.
 
-The JoliMediaBundle provides a set of tools to manage media in Symfony applications.
+JoliMediaBundle provides a set of tools to manage media in Symfony applications.
 
 .. tip::
 
@@ -27,7 +27,7 @@ It provides:
 Goals and approach
 ------------------
 
-The JoliMediaBundle aims to provide numerous facilities to manage media in Symfony applications, by using the best tools available, and following best practices. It is built on top of the `Flysystem <https://flysystem.thephpleague.com/>`_ library to provide an abstraction layer for file storage, and multiple media processing libraries to handle media transformations and optimizations.
+JoliMediaBundle aims to provide numerous facilities to manage media in Symfony applications, by using the best tools available, and following best practices. It is built on top of the `Flysystem <https://flysystem.thephpleague.com/>`_ library to provide an abstraction layer for file storage, and multiple media processing libraries to handle media transformations and optimizations.
 
 The project seeks to provide:
 

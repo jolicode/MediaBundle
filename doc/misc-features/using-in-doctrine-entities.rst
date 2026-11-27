@@ -1,10 +1,10 @@
-Using the MediaBundle in Doctrine Entities
+Using JoliMediaBundle in Doctrine Entities
 ==========================================
 
 .. meta::
     :description: Link media to your Doctrine entities with JoliMediaBundle: add a media property with the dedicated Doctrine type, and use it in your forms and templates.
 
-The MediaBundle itself does not offer database entities. However, it is designed to easily integrate into your existing entities, so you can link media to your own entities.
+JoliMediaBundle itself does not offer database entities. However, it is designed to easily integrate into your existing entities, so you can link media to your own entities.
 
 Adding a Media Property
 -----------------------

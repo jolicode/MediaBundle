@@ -4,7 +4,7 @@ Media Storage
 .. meta::
     :description: How JoliMediaBundle stores original media and their variations with Flysystem libraries, and how to serve them with a web server or its controllers.
 
-The JoliMedia bundle does not directly implement a media storage system. Instead, it heavily relies on the `Flysystem <https://flysystem.thephpleague.com/>`_ library to provide a flexible and extensible storage system.
+JoliMediaBundle does not directly implement a media storage system. Instead, it heavily relies on the `Flysystem <https://flysystem.thephpleague.com/>`_ library to provide a flexible and extensible storage system.
 
 In the jargon of the ``JoliMediaBundle``, a "Library" describes a collection of Media: how the original media, as added by users or the data source, and the "variations", which are transformed (i.e. reduced in size, or with graphical filters) versions of the original files, are stored.
 
@@ -69,7 +69,7 @@ Defining these services "by hand" is done by creating a service that implements 
             arguments:
                 '$adapter': '@filesystem.cache.adapter'
 
-This snippet defines two Flysystem services: ``filesystem.original.storage`` and ``filesystem.cache.storage``, that are respectively used to store the original media files and the variations of the media. The services can be named whatever you want, as long as they are referenced in the ``libraries`` configuration of the JoliMediaBundle. Of course, if your application requires multiple libraries, you'll have to define as many Flysystem services as you need.
+This snippet defines two Flysystem services: ``filesystem.original.storage`` and ``filesystem.cache.storage``, that are respectively used to store the original media files and the variations of the media. The services can be named whatever you want, as long as they are referenced in the ``libraries`` configuration of JoliMediaBundle. Of course, if your application requires multiple libraries, you'll have to define as many Flysystem services as you need.
 
 Serving media directly with a web server
 ----------------------------------------
@@ -78,10 +78,10 @@ For performance reasons, it is advised to serve the media files directly from th
 
 The default Symfony `Web server configuration <https://symfony.com/doc/current/setup/web_server_configuration.html#nginx>`_ includes directives to try to serve static files directly, with a fallback to the Symfony application if the file is not found. This means that, if a media file is not found or is not readable by the web server, the request will be forwarded to the Symfony application, which can then handle the request and return a 404 error or a custom response. This can be a normal behavior (for example, if a variation is requested but not generated yet), or an error (if the media file is missing, or if the web server application user is missing permissions to access the file).
 
-Serving media with the JoliMedia controllers
---------------------------------------------
+Serving media with the JoliMediaBundle controllers
+--------------------------------------------------
 
-The JoliMedia bundle provides `two controllers <https://github.com/jolicode/MediaBundle/blob/main/src/Controller/MediaController.php>`_ to serve media files and their variations:
+JoliMediaBundle provides `two controllers <https://github.com/jolicode/MediaBundle/blob/main/src/Controller/MediaController.php>`_ to serve media files and their variations:
 
 - The ``variation`` controller tries to resolve a requested media variation, and if it is not found, it tries to generate it on the fly. Subsequent requests for the same variation should be served directly by the web server (provided the cache storage is accessible by the web server).
 - The ``media`` controller is designed to serve original media files. By default, this controller returns a 404 error, as original media should usually not be served by PHP, but rather by the web server. Silently serving these files using PHP could work, but it could also be the sign that the web server is misconfigured, and that the media files are not accessible by the web server application user.

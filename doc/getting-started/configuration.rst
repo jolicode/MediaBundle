@@ -20,7 +20,7 @@ The ``libraries`` configuration defines where and how the media files are stored
 
 .. tip::
 
-    Read more about how the JoliMediaBundle stores media files in the `Storage documentation <../storage/storage.rst>`_.
+    Read more about how JoliMediaBundle stores media files in the `Storage documentation <../storage/storage.rst>`_.
 
 Each library can have its own configuration for the original media and the cache media, as well as the variations that can be created from the original media.
 

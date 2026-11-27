@@ -356,8 +356,8 @@ This optional ``folder`` parameter can be passed to the field type, to specify w
         ])
     ;
 
-Using the JoliMediaBundle to render your images
------------------------------------------------
+Using JoliMediaBundle to render your images
+-------------------------------------------
 
 By default, Sylius will use LiipImagine to render your product images.
 
