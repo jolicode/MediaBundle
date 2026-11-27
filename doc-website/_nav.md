@@ -3,6 +3,7 @@
     - [Quick start](getting-started/quick-start.md)
     - [Installation](getting-started/installation.md)
     - [Configuration](getting-started/configuration.md)
+    - [Concepts](concepts.md)
     - [Dependencies and tooling](getting-started/dependencies-and-tooling.md)
     - [Demo](getting-started/demo.md)
 - [Admin bridges](bridges/index.md)
