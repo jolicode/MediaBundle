@@ -40,6 +40,10 @@ Then, import the bundle configuration in the ``config/packages/joli_media_sylius
     imports:
         - { resource: '@JoliMediaSyliusBundle/config/app.php' }
 
+.. note::
+
+    The media library of the admin manages the `default library <../getting-started/configuration.rst>`_ of the bundle. The other libraries are not browsable in the admin.
+
 Configuring the Sylius Integration
 ----------------------------------
 

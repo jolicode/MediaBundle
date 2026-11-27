@@ -32,6 +32,10 @@ Additionally, define the routes for the media library in your routing configurat
         resource: "@JoliMediaSonataAdminBundle/src/Controller/"
         prefix: /admin/media
 
+.. note::
+
+    The media library of the admin manages the `default library <../getting-started/configuration.rst>`_ of the bundle. The other libraries are not browsable in the admin.
+
 Configuring the Sonata Admin Integration
 ----------------------------------------
 
@@ -89,6 +93,27 @@ You can configure the number of items displayed per page:
     joli_media_sonata_admin:
         pagination:
             per_page: 25
+
+Media library menu item
+-----------------------
+
+To add a link to the media library in your Sonata Admin menu, add the ``joli_media_sonata_admin_explore`` route to a group of the dashboard:
+
+.. code-block:: yaml
+
+    # config/packages/sonata_admin.yaml
+    sonata_admin:
+        dashboard:
+            groups:
+                contents:
+                    label: Contents
+                    items:
+                        - admin.post
+                        -
+                            route: joli_media_sonata_admin_explore
+                            label: Media library
+
+From the media library, you will be able to upload new files and switch between a grid or a list view to browse them. You can also organize your media by creating sub-folders, and perform CRUD operations.
 
 Media selector widget
 ---------------------
@@ -148,6 +173,23 @@ The ``MediaChoiceType`` can be nested into a ``CollectionType``, allowing you to
         }
     }
 
+
+Displaying media in lists and show pages
+----------------------------------------
+
+The fields of your entities which use the `Doctrine media type <../misc-features/using-in-doctrine-entities.rst>`_ are displayed as a preview of the media in the list and show pages of your admins, without any configuration::
+
+    class BrandAdmin extends AbstractAdmin
+    {
+        protected function configureListFields(ListMapper $list): void
+        {
+            $list
+                ->addIdentifier('name')
+                // displayed as a thumbnail of the media
+                ->add('logo')
+            ;
+        }
+    }
 
 Restricting access to the Media library controller
 --------------------------------------------------

@@ -44,6 +44,10 @@ The ``media`` part of these paths is configurable with the ``path_prefix`` optio
             resource: "@JoliMediaEasyAdminBundle/src/Controller/"
             prefix: /admin/media
 
+.. note::
+
+    The media library of the admin manages the `default library <../getting-started/configuration.rst>`_ of the bundle. The other libraries are not browsable in the admin.
+
 Configuring the EasyAdmin Integration
 -------------------------------------
 
