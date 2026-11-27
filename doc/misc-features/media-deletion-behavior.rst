@@ -46,6 +46,16 @@ In this example:
 - The ``image`` field is configured with the SET_NULL behavior. When the associated media is deleted, the field will be set to null.
 - The ``requiredImage`` field is configured with the RESTRICT behavior. If the media is still in use, an exception will be thrown, preventing its deletion.
 
+The fields without the ``#[MediaDeleteBehavior]`` attribute are left untouched when the media is deleted: they keep a path which no longer exists.
+
+Deleting a folder
+-----------------
+
+The same behaviors apply when a folder is deleted, to all the media it contains, in its sub-folders as well:
+
+- if a field with the ``RESTRICT`` behavior references one of these media, a ``MediaInUseException`` is thrown before anything is deleted;
+- otherwise, the folder is deleted, then the fields with the ``SET_NULL`` behavior that referenced one of its media are set to ``null``.
+
 Customizing the Listener
 ------------------------
 
