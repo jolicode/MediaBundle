@@ -227,7 +227,7 @@ class JoliMediaBundle extends AbstractBundle
     /**
      * @param array<string, mixed> $postProcessorsConfig
      *
-     * @return array<string, array{binaries: array<string, string>, unavailabilityReason: string|null}>
+     * @return array<string, array{binaries: array<string, string>, unavailabilityReason: string|null, disabledReason: string|null}>
      */
     private function buildPostProcessorDiagnostics(array $postProcessorsConfig): array
     {
@@ -239,6 +239,9 @@ class JoliMediaBundle extends AbstractBundle
             $diagnostics[$name] = [
                 'binaries' => isset($postProcessorConfig['binary']) ? [$name => $postProcessorConfig['binary']] : [],
                 'unavailabilityReason' => null === $postProcessorConfig ? 'it is not configured' : null,
+                'disabledReason' => false === ($postProcessorConfig['options']['enabled'] ?? true)
+                    ? \sprintf('it is disabled in the "joli_media.post_processors.%s.options.enabled" configuration, a library or a variation can enable it again', $name)
+                    : null,
             ];
         }
 
@@ -564,6 +567,20 @@ class JoliMediaBundle extends AbstractBundle
             ->defaultNull()
             ->info('Overrides the global "process_timeout" configuration, in seconds, for the external binary processes created by this processor. Use 0 to disable the timeout.')
         ;
+    }
+
+    private function addPostProcessorEnabledNode(string $postProcessorName, bool $global): NodeDefinition
+    {
+        $node = (new TreeBuilder('enabled', 'boolean'))->getRootNode()
+            ->info(sprintf('Enable the %s post-processor', $postProcessorName))
+        ;
+
+        // without a default value in the libraries and variations, the global value applies
+        if ($global) {
+            $node->defaultTrue();
+        }
+
+        return $node;
     }
 
     private function addVariationPreProcessorsNode(): NodeDefinition
@@ -910,6 +927,7 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['options' => ['enabled' => false]])
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.gifsicle%')
@@ -928,10 +946,7 @@ class JoliMediaBundle extends AbstractBundle
             ->addDefaultsIfNotSet()
             ->treatFalseLike(['enabled' => false])
             ->children()
-                ->booleanNode('enabled')
-                    ->defaultTrue()
-                    ->info('Enable the gifsicle post-processor')
-                ->end()
+                ->append($this->addPostProcessorEnabledNode('gifsicle', 'options' === $name))
                 ->integerNode('optimize')
                     ->defaultValue(3)
                     ->min(1)
@@ -958,6 +973,7 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['options' => ['enabled' => false]])
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.jpegoptim%')
@@ -976,10 +992,7 @@ class JoliMediaBundle extends AbstractBundle
             ->addDefaultsIfNotSet()
             ->treatFalseLike(['enabled' => false])
             ->children()
-                ->booleanNode('enabled')
-                    ->defaultTrue()
-                    ->info('Enable the jpegoptim post-processor')
-                ->end()
+                ->append($this->addPostProcessorEnabledNode('jpegoptim', 'options' === $name))
                 ->booleanNode('strip_all')
                     ->defaultValue(true)
                     ->info('Strip  all (Comment & Exif) markers from output file')
@@ -1004,6 +1017,7 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['options' => ['enabled' => false]])
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.mozjpeg%')
@@ -1022,10 +1036,7 @@ class JoliMediaBundle extends AbstractBundle
             ->addDefaultsIfNotSet()
             ->treatFalseLike(['enabled' => false])
             ->children()
-                ->booleanNode('enabled')
-                    ->defaultTrue()
-                    ->info('Enable the mozjpeg post-processor')
-                ->end()
+                ->append($this->addPostProcessorEnabledNode('mozjpeg', 'options' === $name))
                 ->booleanNode('optimize')
                     ->defaultValue(false)
                     ->info('Optimize Huffman table')
@@ -1050,6 +1061,7 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['options' => ['enabled' => false]])
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.oxipng%')
@@ -1068,10 +1080,7 @@ class JoliMediaBundle extends AbstractBundle
             ->addDefaultsIfNotSet()
             ->treatFalseLike(['enabled' => false])
             ->children()
-                ->booleanNode('enabled')
-                    ->defaultTrue()
-                    ->info('Enable the oxipng post-processor')
-                ->end()
+                ->append($this->addPostProcessorEnabledNode('oxipng', 'options' === $name))
                 ->integerNode('optimization')
                     ->defaultValue(4)
                     ->min(0)
@@ -1100,6 +1109,7 @@ class JoliMediaBundle extends AbstractBundle
 
         return $treeBuilder->getRootNode()
             ->addDefaultsIfNotSet()
+            ->treatFalseLike(['options' => ['enabled' => false]])
             ->children()
                 ->scalarNode('binary')
                     ->defaultValue('%joli_media.binary.pngquant%')
@@ -1118,10 +1128,7 @@ class JoliMediaBundle extends AbstractBundle
             ->addDefaultsIfNotSet()
             ->treatFalseLike(['enabled' => false])
             ->children()
-                ->booleanNode('enabled')
-                    ->defaultTrue()
-                    ->info('Enable the pngquant post-processor')
-                ->end()
+                ->append($this->addPostProcessorEnabledNode('pngquant', 'options' === $name))
                 ->scalarNode('quality')
                     ->defaultValue('75-85')
                     ->info("Don't save below min, use fewer colors below max")

@@ -157,6 +157,7 @@ class DataCollector extends AbstractDataCollector
             'class' => $processor->class,
             'registered' => $processor->registered,
             'unavailabilityReason' => $processor->unavailabilityReason,
+            'disabledReason' => $processor->disabledReason,
             'inputFormats' => $processor->inputFormats,
             'outputFormats' => $processor->outputFormats,
             'binaries' => $processor->binaries,

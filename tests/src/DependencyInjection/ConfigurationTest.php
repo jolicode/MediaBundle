@@ -29,6 +29,58 @@ class ConfigurationTest extends TestCase
         $this->assertNull($config['processors']['imagine']['process_timeout']);
     }
 
+    public function testPostProcessorsCanBeDisabledGlobally(): void
+    {
+        $config = $this->processConfiguration([
+            [
+                'post_processors' => [
+                    'jpegoptim' => false,
+                    'pngquant' => ['options' => false],
+                    'oxipng' => ['options' => ['enabled' => false]],
+                ],
+            ],
+        ]);
+
+        $this->assertFalse($config['post_processors']['jpegoptim']['options']['enabled']);
+        $this->assertSame('%joli_media.binary.jpegoptim%', $config['post_processors']['jpegoptim']['binary']);
+        $this->assertFalse($config['post_processors']['pngquant']['options']['enabled']);
+        $this->assertFalse($config['post_processors']['oxipng']['options']['enabled']);
+        $this->assertTrue($config['post_processors']['mozjpeg']['options']['enabled']);
+    }
+
+    public function testLibrariesAndVariationsDoNotEnableThePostProcessorsByDefault(): void
+    {
+        $config = $this->processConfiguration([
+            [
+                'libraries' => [
+                    'default' => [
+                        'original' => ['flysystem' => 'flysystem.original'],
+                        'cache' => ['flysystem' => 'flysystem.cache'],
+                        'post_processors' => [
+                            'pngquant' => ['speed' => 2],
+                            'jpegoptim' => ['enabled' => true],
+                        ],
+                        'variations' => [
+                            'thumbnail' => [
+                                'post_processors' => [
+                                    'oxipng' => ['optimization' => 2],
+                                    'jpegoptim' => false,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $library = $config['libraries']['default'];
+        $this->assertArrayNotHasKey('enabled', $library['post_processors']['pngquant']);
+        $this->assertArrayNotHasKey('enabled', $library['post_processors']['mozjpeg']);
+        $this->assertTrue($library['post_processors']['jpegoptim']['enabled']);
+        $this->assertArrayNotHasKey('enabled', $library['variations']['thumbnail']['post_processors']['oxipng']);
+        $this->assertFalse($library['variations']['thumbnail']['post_processors']['jpegoptim']['enabled']);
+    }
+
     public function testDefaultSvgRendererConfiguration(): void
     {
         $config = $this->processConfiguration([]);

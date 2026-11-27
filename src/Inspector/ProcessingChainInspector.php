@@ -15,9 +15,9 @@ use JoliCode\MediaBundle\Processor\ProcessorInterface;
 readonly class ProcessingChainInspector
 {
     /**
-     * @param iterable<PreProcessorInterface>                                                            $preProcessors
-     * @param array<string, array{binaries?: array<string, string>, unavailabilityReason?: string|null}> $processorDiagnostics
-     * @param array<string, array{binaries?: array<string, string>, unavailabilityReason?: string|null}> $postProcessorDiagnostics
+     * @param iterable<PreProcessorInterface>                                                                                          $preProcessors
+     * @param array<string, array{binaries?: array<string, string>, unavailabilityReason?: string|null}>                               $processorDiagnostics
+     * @param array<string, array{binaries?: array<string, string>, unavailabilityReason?: string|null, disabledReason?: string|null}> $postProcessorDiagnostics
      */
     public function __construct(
         private ProcessorContainer $processorContainer,
@@ -101,6 +101,7 @@ readonly class ProcessingChainInspector
                 class: $postProcessor instanceof PostProcessorInterface ? $postProcessor::class : null,
                 inputFormats: $postProcessor instanceof PostProcessorInterface ? $this->toFormatValues($postProcessor->getProcessableFormats()) : [],
                 binaries: $registered ? ($diagnostic['binaries'] ?? []) : [],
+                disabledReason: $registered ? ($diagnostic['disabledReason'] ?? null) : null,
             );
         }
 

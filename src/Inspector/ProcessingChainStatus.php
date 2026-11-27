@@ -27,13 +27,13 @@ readonly class ProcessingChainStatus
     }
 
     /**
-     * @return ProcessorStatus[] the registered processors whose binaries cannot be executed
+     * @return ProcessorStatus[] the registered and enabled processors whose binaries cannot be executed
      */
     public function getBrokenProcessors(): array
     {
         return array_values(array_filter(
             $this->getAll(),
-            static fn (ProcessorStatus $status): bool => $status->registered && [] !== $status->getMissingBinaries(),
+            static fn (ProcessorStatus $status): bool => $status->registered && !$status->isDisabled() && [] !== $status->getMissingBinaries(),
         ));
     }
 

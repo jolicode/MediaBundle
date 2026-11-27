@@ -5,6 +5,7 @@ namespace JoliCode\MediaBundle\Tests\Command;
 use Imagine\Imagick\Imagine as ImagickImagine;
 use JoliCode\MediaBundle\Command\Debug\ProcessorsCommand;
 use JoliCode\MediaBundle\Inspector\ProcessingChainInspector;
+use JoliCode\MediaBundle\PostProcessor\Jpegoptim;
 use JoliCode\MediaBundle\PostProcessor\PostProcessorContainer;
 use JoliCode\MediaBundle\Processor\Cwebp;
 use JoliCode\MediaBundle\Processor\Gifsicle;
@@ -88,16 +89,39 @@ class DebugProcessorsCommandTest extends TestCase
         self::assertStringContainsString('/nonexistent/cwebp', $commandTester->getDisplay());
     }
 
+    public function testItReportsADisabledPostProcessorWithoutFailing(): void
+    {
+        $processorContainer = new ProcessorContainer();
+        $processorContainer->add('imagine', new Imagine(new ImagickImagine()));
+        $postProcessorContainer = new PostProcessorContainer();
+        $postProcessorContainer->add('jpegoptim', new Jpegoptim('/nonexistent/jpegoptim', ['enabled' => false]));
+
+        $commandTester = $this->createCommandTester($processorContainer, self::DIAGNOSTICS, $postProcessorContainer, [
+            'jpegoptim' => [
+                'binaries' => ['jpegoptim' => '/nonexistent/jpegoptim'],
+                'unavailabilityReason' => null,
+                'disabledReason' => 'it is disabled in the "joli_media.post_processors.jpegoptim.options.enabled" configuration',
+            ],
+        ]);
+
+        self::assertSame(Command::SUCCESS, $commandTester->execute([]));
+        self::assertStringContainsString('disabled', $commandTester->getDisplay());
+        self::assertStringContainsString('joli_media.post_processors.jpegoptim.options.enabled', $commandTester->getDisplay());
+        self::assertStringNotContainsString('binary missing', $commandTester->getDisplay());
+    }
+
     /**
-     * @param array<string, array{binaries: array<string, string>, unavailabilityReason: string|null}> $diagnostics
+     * @param array<string, array{binaries: array<string, string>, unavailabilityReason: string|null}>                              $diagnostics
+     * @param array<string, array{binaries: array<string, string>, unavailabilityReason: string|null, disabledReason: string|null}> $postProcessorDiagnostics
      */
-    private function createCommandTester(ProcessorContainer $processorContainer, array $diagnostics): CommandTester
+    private function createCommandTester(ProcessorContainer $processorContainer, array $diagnostics, PostProcessorContainer $postProcessorContainer = new PostProcessorContainer(), array $postProcessorDiagnostics = []): CommandTester
     {
         return new CommandTester(new ProcessorsCommand(new ProcessingChainInspector(
             $processorContainer,
-            new PostProcessorContainer(),
+            $postProcessorContainer,
             [],
             $diagnostics,
+            $postProcessorDiagnostics,
         )));
     }
 }

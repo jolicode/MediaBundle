@@ -33,7 +33,7 @@ readonly class Jpegoptim extends AbstractPostProcessor implements PostProcessorI
     {
         $this->checkFormat($binary->getFormat());
 
-        if (false === $this->isEnabled() || isset($postProcessingOptions['enabled']) && false === $postProcessingOptions['enabled']) {
+        if (!$this->isEnabledFor($postProcessingOptions)) {
             $this->logger?->info('Jpegoptim post-processor is disabled, skipping processing.');
 
             return $binary;
