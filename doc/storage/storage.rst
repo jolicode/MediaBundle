@@ -114,6 +114,69 @@ However, there are cases where you might want to serve the original media files 
 
     Remember that, by doing so, every request to an original media file will go through the Symfony application, which can have a significant impact on performance. It is therefore recommended to use this option only when necessary, and to ensure that the web server is properly configured to serve the media files directly whenever possible.
 
+Private media
+-------------
+
+Some media must only be served to some users: invoices, contracts, documents reserved to the customers... Store them in a dedicated library, whose storages are outside of the ``public/`` directory, so that the web server cannot serve them:
+
+.. code-block:: yaml
+
+    # config/packages/flysystem.yaml
+    flysystem:
+        storages:
+            private.original.storage:
+                adapter: 'local'
+                options:
+                    directory: '%kernel.project_dir%/var/private-media/original'
+            private.cache.storage:
+                adapter: 'local'
+                options:
+                    directory: '%kernel.project_dir%/var/private-media/cache'
+
+Let the bundle serve the original files with the ``enable_serve_using_php`` option, and give the library its own URL prefix:
+
+.. code-block:: yaml
+
+    # config/packages/joli_media.yaml
+    joli_media:
+        default_library: default
+        libraries:
+            default:
+                # ...
+            private:
+                original:
+                    flysystem: private.original.storage
+                    enable_serve_using_php: true
+                    url_generator:
+                        path: /private-media/original/
+                cache:
+                    flysystem: private.cache.storage
+                    url_generator:
+                        path: /private-media/cache/
+                variations:
+                    preview:
+                        transformers:
+                            widen:
+                                width: 300
+
+The original files and their variations are then served by the ``media`` and ``variation`` controllers, behind the Symfony firewall. Restrict their URL prefix with an ``access_control`` rule:
+
+.. code-block:: yaml
+
+    # config/packages/security.yaml
+    security:
+        # ...
+        access_control:
+            - { path: ^/private-media/, roles: ROLE_USER }
+
+Anonymous visitors now get a ``401`` or a redirection to the login page, depending on your firewall, while the authenticated users get the files. The `URL generation <../misc-features/url-generation.rst>`_ and the `Twig components <../misc-features/twig-components.rst>`_ work as usual, with the ``library`` option set to ``private``.
+
+Keep in mind that:
+
+- every request goes through PHP, the variations included, and the controllers load each file in memory before sending it;
+- an ``access_control`` rule checks the URL, not the media: to check that a user may access a given file, for example that the invoice is theirs, serve the files with your own controller, which reads them with the ``getBinary()`` method of the ``Media`` object;
+- with an object storage such as Amazon S3, the `pre-signed URLs <../misc-features/url-generation.rst#temporary-pre-signed-urls>`_ are an alternative: the storage serves the files itself, during a limited time.
+
 Content type of the served files
 --------------------------------
 
